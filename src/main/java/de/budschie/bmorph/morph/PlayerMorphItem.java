@@ -1,5 +1,9 @@
 package de.budschie.bmorph.morph;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.function.Predicate;
+
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 
@@ -103,6 +107,8 @@ public class PlayerMorphItem extends MorphItem
 		public ResourceLocation elytraResourceLocation = null;
 		public ResourceLocation capeResourceLocation = null;
 		
+		private Predicate<PlayerModelPart> isWearing = null;
+		
 		public AdvancedAbstractClientPlayerEntity(ClientWorld world, GameProfile profile)
 		{
 			super(world, profile);
@@ -129,7 +135,12 @@ public class PlayerMorphItem extends MorphItem
 		@Override
 		public boolean isWearing(PlayerModelPart part)
 		{
-			return true;
+			return this.isWearing == null ? true : isWearing.test(part);
+		}
+		
+		public void setIsWearing(Predicate<PlayerModelPart> isWearing)
+		{
+			this.isWearing = isWearing;
 		}
 		
 		@Override

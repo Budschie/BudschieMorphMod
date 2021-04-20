@@ -8,11 +8,15 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import de.budschie.bmorph.entity.MorphEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.LivingRenderer;
+import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3f;
 
 public class MorphEntityRenderer extends EntityRenderer<MorphEntity>
 {
@@ -48,21 +52,29 @@ public class MorphEntityRenderer extends EntityRenderer<MorphEntity>
 		}
 		
 		toRender.ticksExisted = entity.ticksExisted;
-		
+//		
 		EntityRenderer<? super Entity> manager = Minecraft.getInstance().getRenderManager().getRenderer(toRender);
 //		
-//		if(manager instanceof IEntityRenderer)
-//		{
-//			matrixStack.rotate(Vector3f.YP.rotationDegrees(((toRender.ticksExisted + partialTicks) * 5f) % 360));
-//			matrixStack.translate(0, Math.sin((toRender.ticksExisted + partialTicks) * 0.25f) * 0.15f + 0.15f, 0);
-//			matrixStack.rotate(Vector3f.XP.rotationDegrees(180));
-//			matrixStack.translate(0.0D, (double)-1.501F, 0.0D);
-//
-//			@SuppressWarnings("unchecked")
-//			IEntityRenderer<? extends Entity, ?> renderer = (IEntityRenderer<? extends Entity, ?>) manager;
-//			renderer.getEntityModel().render(matrixStack, buffer.getBuffer(RenderType.getEntityTranslucentCull(manager.getEntityTexture(toRender))), light, LivingRenderer.getPackedOverlay((LivingEntity) toRender, 0), 0, .35f, 1f, .7f);
-//		}
+		if(manager instanceof LivingRenderer<?, ?>)
+		{
+			matrixStack.rotate(Vector3f.YP.rotationDegrees(((toRender.ticksExisted + partialTicks) * 5f) % 360));
+			matrixStack.translate(0, Math.sin((toRender.ticksExisted + partialTicks) * 0.25f) * 0.15f + 0.15f, 0);
+			matrixStack.rotate(Vector3f.XP.rotationDegrees(180));
+			matrixStack.translate(0.0D, (double)-1.501F, 0.0D);
+
+			@SuppressWarnings("unchecked")
+			LivingRenderer<? extends Entity, ?> renderer = (LivingRenderer<? extends Entity, ?>) manager;
+			
+			// Fu** it i have no idea how to solve this xD so im gonna use raw type not gonna deal with that right now
+			// this instantly lands on my TODO list
+	         for(LayerRenderer layerrenderer : renderer.layerRenderers) {
+	             layerrenderer.render(matrixStack, buffer, light, toRender, 0, 0, partialTicks, 0, 0, 0);
+	          }
+			
+			//renderer.getEntityModel().render(matrixStack, buffer.getBuffer(RenderType.getEntityTranslucentCull(manager.getEntityTexture(toRender))), light, LivingRenderer.getPackedOverlay((LivingEntity) toRender, 0), 1, 1, 1, 1);
+			renderer.getEntityModel().render(matrixStack, buffer.getBuffer(RenderType.getEntityTranslucentCull(manager.getEntityTexture(toRender))), light, LivingRenderer.getPackedOverlay((LivingEntity) toRender, 0), 0, .35f, 1f, .7f);
+		}
 		
-		manager.render(toRender, 0, partialTicks, matrixStack, buffer, light);
+//		manager.render(toRender, 0, partialTicks, matrixStack, buffer, light);
 	}
 }

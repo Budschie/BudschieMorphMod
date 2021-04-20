@@ -7,6 +7,7 @@ import java.util.WeakHashMap;
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.morph.MorphItem;
+import de.budschie.bmorph.morph.PlayerMorphItem.AdvancedAbstractClientPlayerEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -77,6 +78,14 @@ public class RenderHandler
 						// WTF?!?
 						entity.setPrimaryHand(player.getPrimaryHand() == HandSide.LEFT ? HandSide.RIGHT : HandSide.LEFT);
 					}
+					
+					if(toRender instanceof AdvancedAbstractClientPlayerEntity)
+					{
+						AdvancedAbstractClientPlayerEntity advanced = (AdvancedAbstractClientPlayerEntity) toRender;
+						
+						// I LOVE lambdas!
+						advanced.setIsWearing(part -> player.isWearing(part));
+					}
 				}
 				
 				if(toRender.world != player.world)
@@ -94,7 +103,7 @@ public class RenderHandler
 					entity.chasingPosY = player.chasingPosY;
 					entity.prevChasingPosY = player.prevChasingPosY;
 					entity.chasingPosZ = player.chasingPosZ;
-					entity.prevChasingPosZ = player.prevChasingPosZ;					
+					entity.prevChasingPosZ = player.prevChasingPosZ;		
 					
 					if(entity.isElytraFlying() != player.isElytraFlying())
 					{
@@ -113,6 +122,9 @@ public class RenderHandler
 					entity.prevRenderYawOffset = player.prevRenderYawOffset;
 					entity.rotationYawHead = player.rotationYawHead;
 					entity.prevRotationYawHead = player.prevRotationYawHead;
+					
+					entity.rotationPitch = player.rotationPitch;
+					entity.prevRotationPitch = player.prevRotationPitch;
 					
 					entity.distanceWalkedModified = player.distanceWalkedModified;
 					entity.prevDistanceWalkedModified = player.prevDistanceWalkedModified;
