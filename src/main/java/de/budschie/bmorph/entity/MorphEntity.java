@@ -16,6 +16,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 public class MorphEntity extends Entity
 {
@@ -33,6 +34,13 @@ public class MorphEntity extends Entity
 	{
 		super(EntityRegistry.MORPH_ENTITY.get(), world);
 		this.getDataManager().set(MORPH_ITEM, morphItem);
+	}
+	
+	@Override
+	public void tick()
+	{
+		super.tick();
+		//ticksExisted++;
 	}
 
 	@Override
@@ -61,7 +69,7 @@ public class MorphEntity extends Entity
 	@Override
 	public IPacket<?> createSpawnPacket()
 	{
-		return new SSpawnObjectPacket(this);
+		return NetworkHooks.getEntitySpawningPacket(this);
 	}	
 	
 	@Override
