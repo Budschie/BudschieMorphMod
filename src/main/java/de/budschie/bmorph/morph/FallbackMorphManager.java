@@ -3,7 +3,7 @@ package de.budschie.bmorph.morph;
 import java.util.HashMap;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -32,8 +32,10 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 		
 		if(handler != null)
 		{
-			handler.getDefaultApplier().accept(nbt);
+			nbt = handler.getDefaultApplier().apply(nbt);
 		}
+		else
+			nbt = new CompoundNBT();
 		
 		return new FallbackMorphItem(nbt, entity);
 	}
@@ -50,8 +52,7 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 		else
 		{
 			CompoundNBT nbt = new CompoundNBT();
-			handler.getDefaultApplier().accept(nbt);
-			return new FallbackMorphItem(nbt, entity);
+			return new FallbackMorphItem(handler.getDefaultApplier().apply(nbt), entity);
 		}
 	}
 
@@ -87,11 +88,16 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 		}
 	}
 	
+	public void addDataHandler(EntityType<?> entityType, SpecialDataHandler dataHandler)
+	{
+		dataHandlers.put(EntityType.getKey(entityType).toString(), dataHandler);
+	}
+	
 	public static class SpecialDataHandler
 	{
 		private BiPredicate<FallbackMorphItem, FallbackMorphItem> equalsMethod;
 		private BiFunction<EntityType<?>, CompoundNBT, Integer> hashFunction;
-		private Consumer<CompoundNBT> defaultApplier;
+		private Function<CompoundNBT, CompoundNBT> defaultApplier;
 		
 		/** 
 		 * The methods listed below shall be implemented in following manner:
@@ -101,7 +107,7 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 		 * 
 		 **/
 		public SpecialDataHandler(BiPredicate<FallbackMorphItem, FallbackMorphItem> equalsMethod,
-				BiFunction<EntityType<?>, CompoundNBT, Integer> hashFunction, Consumer<CompoundNBT> defaultApplier)
+				BiFunction<EntityType<?>, CompoundNBT, Integer> hashFunction, Function<CompoundNBT, CompoundNBT> defaultApplier)
 		{
 			this.equalsMethod = equalsMethod;
 			this.hashFunction = hashFunction;
@@ -118,7 +124,7 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 			return hashFunction;
 		}
 
-		public Consumer<CompoundNBT> getDefaultApplier()
+		public Function<CompoundNBT, CompoundNBT> getDefaultApplier()
 		{
 			return defaultApplier;
 		}

@@ -8,6 +8,7 @@ import de.budschie.bmorph.morph.FallbackMorphItem;
 import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.PlayerMorphItem;
+import de.budschie.bmorph.morph.VanillaFallbackMorphData;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
@@ -45,6 +46,8 @@ public class BMorphMod
 		MorphHandler.addMorphItem("fallback_morph_item", () -> new FallbackMorphItem());
 		
 		MorphManagerHandlers.registerDefaultManagers();
+		
+		VanillaFallbackMorphData.intialiseFallbackData();
 	}
 	
 	public void onClientSetup(final FMLClientSetupEvent event)
