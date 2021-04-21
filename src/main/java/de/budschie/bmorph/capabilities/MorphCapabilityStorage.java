@@ -19,6 +19,8 @@ public class MorphCapabilityStorage implements IStorage<IMorphCapability>
 		if(instance.getCurrentMorph().isPresent())
 			cap.put("currentMorph", instance.getCurrentMorph().get().serialize());
 		
+		cap.put("morphList", instance.getMorphList().serialize());
+		
 		return cap;
 	}
 
@@ -32,6 +34,8 @@ public class MorphCapabilityStorage implements IStorage<IMorphCapability>
 		if(rs)
 		{
 			instance.setCurrentMorph(Optional.of(MorphHandler.deserializeMorphItem(cap.getCompound("currentMorph"))));
-		}		
+		}
+		
+		instance.getMorphList().deserialize(cap.getCompound("morphList"));
 	}
 }
