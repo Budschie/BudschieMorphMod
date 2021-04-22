@@ -61,32 +61,6 @@ public class MorphEntityRenderer extends EntityRenderer<MorphEntity>
 		
 		toRender.setPosition(entity.getPosX(), entity.getPosY(), entity.getPosZ());
 		
-//		if(manager instanceof LivingRenderer<?, ?>)
-//		{
-//			buffer.getBuffer(RenderType.getArmor
-//		}
-		
-//		if(manager instanceof LivingRenderer<?, ?>)
-//		{
-//			matrixStack.rotate(Vector3f.YP.rotationDegrees(((toRender.ticksExisted + partialTicks) * 5f) % 360));
-//			matrixStack.translate(0, Math.sin((toRender.ticksExisted + partialTicks) * 0.25f) * 0.15f + 0.15f, 0);
-//			matrixStack.rotate(Vector3f.XP.rotationDegrees(180));
-//			matrixStack.translate(0.0D, (double)-1.501F, 0.0D);
-//
-//			@SuppressWarnings("unchecked")
-//			LivingRenderer<? super LivingEntity, ?> renderer = (LivingRenderer<? super LivingEntity, ?>) manager;
-//			
-//			// Fu** it i have no idea how to solve this xD so im gonna use raw type not gonna deal with that right now
-//			// Lol now it works without raw types so yay for me
-//			// this instantly lands on my TODO list
-//	         for(LayerRenderer<? super LivingEntity, ?> layerrenderer : renderer.layerRenderers) {
-//	             layerrenderer.render(matrixStack, buffer, light, (LivingEntity) toRender, 0, 0, partialTicks, 0, 0, 0);
-//	          }
-//			
-//			//renderer.getEntityModel().render(matrixStack, buffer.getBuffer(RenderType.getEntityTranslucentCull(manager.getEntityTexture(toRender))), light, LivingRenderer.getPackedOverlay((LivingEntity) toRender, 0), 1, 1, 1, 1);
-//			renderer.getEntityModel().render(matrixStack, buffer.getBuffer(RenderType.getEntityTranslucentCull(manager.getEntityTexture(toRender))), light, LivingRenderer.getPackedOverlay((LivingEntity) toRender, 0), 0, .35f, 1f, .7f);
-//		}
-		
 		matrixStack.rotate(Vector3f.YP.rotationDegrees(((toRender.ticksExisted + partialTicks) * 5f) % 360));
 		matrixStack.translate(0, Math.sin((toRender.ticksExisted + partialTicks) * 0.25f) * 0.15f + 0.15f, 0);
 		
