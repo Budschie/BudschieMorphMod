@@ -58,11 +58,11 @@ public class MorphGui
 				RenderSystem.enableBlend();
 				RenderSystem.defaultBlendFunc();
 				
-				AbstractGui.blit(stack, 5, (int) ((i + offset) * 64), 0, 0, 0, 48, scaledHeight / amountOfRectanglesVertical + 1, 64, 48);
+				AbstractGui.blit(stack, 5, (int) ((i + offset) * 64), 0, 0, 0, 48, 64, 64, 48);
 				
-				Entity thisisnotyetinagoodstateofperfromance = morphList.get(i).createEntity(Minecraft.getInstance().world);
+				Entity thiscouldintheorybecachedbutiamtolazytodothat = morphList.get(i).createEntity(Minecraft.getInstance().world);
 				
-				InventoryScreen.drawEntityOnScreen(24, (int) (59 + (i + offset) * 64), 20, -70, 30, (LivingEntity) thisisnotyetinagoodstateofperfromance);
+				InventoryScreen.drawEntityOnScreen(24, (int) (59 + (i + offset) * 64), 20, -70, 30, (LivingEntity) thiscouldintheorybecachedbutiamtolazytodothat);
 			}
 		}
 	}

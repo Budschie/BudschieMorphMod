@@ -13,8 +13,6 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.LivingRenderer;
-import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
@@ -120,7 +118,7 @@ public class MorphEntityRenderer extends EntityRenderer<MorphEntity>
 				else
 				{
 					System.out.println("If you see this, then there is an error with rendering that you should report as a bug.");
-					builder = buffer.getBuffer(RenderType.getSolid());
+					builder = buffer.getBuffer(renderType);
 				}
 				
 //				IVertexBuilder builder = (p_getBuffer_1_ instanceof RenderType.Type) ? buffer.getBuffer(RenderType.getEntityTranslucent(((RenderType.Type)p_getBuffer_1_).renderState.texture) : buffer.getBuffer(p_getBuffer_1_);

@@ -1,7 +1,5 @@
 package de.budschie.bmorph.commands;
 
-import java.util.Optional;
-
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 
