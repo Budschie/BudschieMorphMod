@@ -6,23 +6,25 @@ import java.util.WeakHashMap;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
+import de.budschie.bmorph.morph.AdvancedAbstractClientPlayerEntity;
 import de.budschie.bmorph.morph.MorphItem;
-import de.budschie.bmorph.morph.PlayerMorphItem.AdvancedAbstractClientPlayerEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.util.HandSide;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
-@EventBusSubscriber
+@EventBusSubscriber(value = Dist.CLIENT)
 public class RenderHandler
 {
 	public static WeakHashMap<UUID, Entity> cachedEntities = new WeakHashMap<>();
@@ -58,7 +60,7 @@ public class RenderHandler
 			{
 				event.setCanceled(true);
 
-				ClientPlayerEntity player = Minecraft.getInstance().player;
+				PlayerEntity player = event.getPlayer();
 				
 				Entity toRender = cachedEntities.get(player.getUniqueID());
 				

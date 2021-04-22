@@ -1,19 +1,10 @@
 package de.budschie.bmorph.morph;
 
-import java.util.function.Predicate;
-
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
-import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerModelPart;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class PlayerMorphItem extends MorphItem
@@ -40,30 +31,8 @@ public class PlayerMorphItem extends MorphItem
 	@Override
 	public Entity createEntity(World world)
 	{		
-		System.out.println(gameProfile.getId());
-		
-		AdvancedAbstractClientPlayerEntity entity = new AdvancedAbstractClientPlayerEntity((ClientWorld) world, gameProfile);
-		
-		Minecraft.getInstance().getSkinManager().loadProfileTextures(gameProfile, (type, resourceLocation, texture) -> 
-		{
-			System.out.println("Downloading texture with hash " + texture.getHash());
-			System.out.println("URL: " + texture.getUrl());
-			
-			if(type == Type.CAPE)
-			{
-				entity.capeResourceLocation = Minecraft.getInstance().getSkinManager().loadSkin(texture, type);;
-			}
-			else if(type == Type.SKIN)
-			{
-				entity.skinResourceLocation = Minecraft.getInstance().getSkinManager().loadSkin(texture, type);
-			}
-			else if(type == Type.ELYTRA)
-			{
-				entity.elytraResourceLocation = Minecraft.getInstance().getSkinManager().loadSkin(texture, type);
-			}
-		}, true);
-		
-		return entity;
+		// -69420 points for code style... TODO: This is f****** stupid...
+		return UglyHackThatDoesntWork.thisisstupid.apply(gameProfile, world);
 	}
 
 	@Override
@@ -96,60 +65,5 @@ public class PlayerMorphItem extends MorphItem
 	public int hashCode()
 	{
 		return MorphManagerHandlers.PLAYER.hashCodeFor(this);
-	}
-	
-	public static class AdvancedAbstractClientPlayerEntity extends AbstractClientPlayerEntity
-	{
-		public ResourceLocation skinResourceLocation = DefaultPlayerSkin.getDefaultSkin(getUniqueID());
-		public ResourceLocation elytraResourceLocation = null;
-		public ResourceLocation capeResourceLocation = null;
-		
-		private Predicate<PlayerModelPart> isWearing = null;
-		
-		public AdvancedAbstractClientPlayerEntity(ClientWorld world, GameProfile profile)
-		{
-			super(world, profile);
-		}
-		
-		@Override
-		public ResourceLocation getLocationSkin()
-		{
-			return skinResourceLocation;
-		}
-		
-		@Override
-		public boolean hasPlayerInfo()
-		{
-			return capeResourceLocation != null;
-		}
-		
-		@Override
-		public boolean isPlayerInfoSet()
-		{
-			return elytraResourceLocation != null;
-		}
-		
-		@Override
-		public boolean isWearing(PlayerModelPart part)
-		{
-			return this.isWearing == null ? true : isWearing.test(part);
-		}
-		
-		public void setIsWearing(Predicate<PlayerModelPart> isWearing)
-		{
-			this.isWearing = isWearing;
-		}
-		
-		@Override
-		public ResourceLocation getLocationElytra()
-		{
-			return elytraResourceLocation;
-		}
-		
-		@Override
-		public ResourceLocation getLocationCape()
-		{
-			return capeResourceLocation;
-		}
-	}
+	}	
 }

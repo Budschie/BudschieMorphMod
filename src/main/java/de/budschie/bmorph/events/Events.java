@@ -4,6 +4,7 @@ import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.entity.MorphEntity;
 import de.budschie.bmorph.main.BMorphMod;
+import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,7 +23,7 @@ public class Events
 	{
 		if(!event.getEntity().world.isRemote)
 		{
-			BMorphMod.server.getPlayerList().getPlayers().forEach(player -> 
+			ServerSetup.server.getPlayerList().getPlayers().forEach(player -> 
 			{
 				LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 				

@@ -59,7 +59,7 @@ public class DefaultMorphCapability implements IMorphCapability
 		if(player.world.isRemote)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphAddedSynchronizer.MorphAddedPacket(null, item));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphAddedSynchronizer.MorphAddedPacket(player.getUniqueID(), item));
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.main.BMorphMod;
+import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -48,7 +49,7 @@ public class MorphCommand
 							
 							if(morph.isPresent())
 							{
-								morph.resolve().get().setMorph(MorphManagerHandlers.PLAYER.createMorph(EntityType.PLAYER, BMorphMod.server.getPlayerProfileCache().getGameProfileForUsername(ctx.getArgument("playername", String.class))));
+								morph.resolve().get().setMorph(MorphManagerHandlers.PLAYER.createMorph(EntityType.PLAYER, ServerSetup.server.getPlayerProfileCache().getGameProfileForUsername(ctx.getArgument("playername", String.class))));
 								morph.resolve().get().syncMorphChange(player);
 							}
 							

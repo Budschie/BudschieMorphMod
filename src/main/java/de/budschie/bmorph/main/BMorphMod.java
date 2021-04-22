@@ -11,27 +11,26 @@ import de.budschie.bmorph.morph.VanillaFallbackMorphData;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(value = References.MODID)
+@EventBusSubscriber(bus = Bus.MOD)
 public class BMorphMod
 {
-	public static MinecraftServer server;
-		
 	public BMorphMod()
 	{
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCommonSetup);
-		
-		MinecraftForge.EVENT_BUS.addListener(this::onServerStarting);
-		
 		EntityRegistry.ENTITY_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
 		EntityRegistry.SERIALIZER_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
 	
-	public void onCommonSetup(final FMLCommonSetupEvent event)
+	@SubscribeEvent
+	public static void onCommonSetup(final FMLCommonSetupEvent event)
 	{
 		MorphCapabilityAttacher.register();
 		System.out.println("Registered capabilities.");
@@ -44,13 +43,5 @@ public class BMorphMod
 		MorphManagerHandlers.registerDefaultManagers();
 		
 		VanillaFallbackMorphData.intialiseFallbackData();
-	}
-	
-	public void onServerStarting(FMLServerStartingEvent event)
-	{
-		MorphCommand.registerCommands(event.getServer().getCommandManager().getDispatcher());
-		System.out.println("Registered commands.");
-		
-		server = event.getServer();
-	}
+	}	
 }
