@@ -1,7 +1,5 @@
 package de.budschie.bmorph.morph;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.function.Predicate;
 
 import com.mojang.authlib.GameProfile;
@@ -43,7 +41,6 @@ public class PlayerMorphItem extends MorphItem
 	public Entity createEntity(World world)
 	{		
 		System.out.println(gameProfile.getId());
-		
 		
 		AdvancedAbstractClientPlayerEntity entity = new AdvancedAbstractClientPlayerEntity((ClientWorld) world, gameProfile);
 		

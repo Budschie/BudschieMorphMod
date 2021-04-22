@@ -4,19 +4,20 @@ import org.lwjgl.glfw.GLFW;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
-import de.budschie.bmorph.main.BMorphMod;
+import de.budschie.bmorph.main.ClientSetup;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.network.MorphRequestMorphIndexChange.RequestMorphIndexChangePacket;
-import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
-@EventBusSubscriber(bus = Bus.FORGE)
+@EventBusSubscriber(bus = Bus.FORGE, value = Dist.CLIENT)
 public class MorphGuiHandler
 {
 	private static boolean toggle = false;
@@ -36,13 +37,13 @@ public class MorphGuiHandler
 	@SubscribeEvent
 	public static void onPressedKey(ClientTickEvent event)
 	{
-		if(BMorphMod.TOGGLE_MORPH_UI.isPressed())
+		if(ClientSetup.TOGGLE_MORPH_UI.isPressed())
 			toggle();
 		
-		if(toggle && BMorphMod.SCROLL_DOWN_MORPH_UI.isPressed())
+		if(toggle && ClientSetup.SCROLL_DOWN_MORPH_UI.isPressed())
 			MorphGui.scrollDown();
 		
-		if(toggle && BMorphMod.SCROLL_UP_MORPH_UI.isPressed())
+		if(toggle && ClientSetup.SCROLL_UP_MORPH_UI.isPressed())
 			MorphGui.scrollUp();
 	}
 	
