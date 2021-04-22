@@ -134,7 +134,7 @@ public class MorphEntity extends Entity
 							if(!resolvedCaps.getMorphList().contains(getMorphItem()))
 							{
 								resolvedCaps.getMorphList().addToMorphList(getMorphItem());
-								resolvedCaps.syncWithClients(player);
+								resolvedCaps.syncMorphAcquisition(player, getMorphItem());
 								this.remove();
 								
 								this.world.playSound(null, getPosition(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.AMBIENT, 2, (this.rand.nextFloat() - 0.5f) + 1);

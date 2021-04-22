@@ -16,10 +16,13 @@ public class MorphCapabilityStorage implements IStorage<IMorphCapability>
 	{
 		CompoundNBT cap = new CompoundNBT();
 		
-		if(instance.getCurrentMorph().isPresent())
-			cap.put("currentMorph", instance.getCurrentMorph().get().serialize());
+		if(instance.getCurrentMorphItem().isPresent())
+			cap.put("currentMorphItem", instance.getCurrentMorphItem().get().serialize());
 		
-		cap.put("morphList", instance.getMorphList().serialize());
+		if(instance.getCurrentMorphIndex().isPresent())
+			cap.putInt("currentMorphIndex", instance.getCurrentMorphIndex().get());
+		
+		cap.put("morphList", instance.getMorphList().serializeNBT());
 		
 		return cap;
 	}
@@ -29,13 +32,19 @@ public class MorphCapabilityStorage implements IStorage<IMorphCapability>
 	{
 		CompoundNBT cap = (CompoundNBT) nbt;
 		
-		boolean rs = cap.contains("currentMorph");
+		boolean hasItem = cap.contains("currentMorphItem");
+		boolean hasIndex = cap.contains("currentMorphIndex");
 		
-		if(rs)
+		if(hasItem)
 		{
-			instance.setCurrentMorph(Optional.of(MorphHandler.deserializeMorphItem(cap.getCompound("currentMorph"))));
+			instance.setMorph(MorphHandler.deserializeMorphItem(cap.getCompound("currentMorphItem")));
 		}
 		
-		instance.getMorphList().deserialize(cap.getCompound("morphList"));
+		if(hasIndex)
+		{
+			instance.setMorph(cap.getInt("currentMorphIndex"));
+		}
+		
+		instance.getMorphList().deserializeNBT(cap.getCompound("morphList"));
 	}
 }

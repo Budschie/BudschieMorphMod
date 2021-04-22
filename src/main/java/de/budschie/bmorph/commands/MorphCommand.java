@@ -50,8 +50,8 @@ public class MorphCommand
 							
 							if(morph.isPresent())
 							{
-								morph.resolve().get().setCurrentMorph(Optional.of(MorphManagerHandlers.PLAYER.createMorph(EntityType.PLAYER, BMorphMod.server.getPlayerProfileCache().getGameProfileForUsername(ctx.getArgument("playername", String.class)))));
-								morph.resolve().get().syncWithClients(player);
+								morph.resolve().get().setMorph(MorphManagerHandlers.PLAYER.createMorph(EntityType.PLAYER, BMorphMod.server.getPlayerProfileCache().getGameProfileForUsername(ctx.getArgument("playername", String.class))));
+								morph.resolve().get().syncMorphChange(player);
 							}
 							
 							return 0;
@@ -66,8 +66,8 @@ public class MorphCommand
 					
 					if(morph.isPresent())
 					{
-						morph.resolve().get().setCurrentMorph(Optional.empty());
-						morph.resolve().get().syncWithClients(player);
+						morph.resolve().get().demorph();
+						morph.resolve().get().syncMorphChange(player);
 					}
 					
 					return 0;
@@ -82,8 +82,8 @@ public class MorphCommand
 		{
 			nbtData.putString("id", rs.toString());
 			
-			morph.resolve().get().setCurrentMorph(Optional.of(MorphManagerHandlers.FALLBACK.createMorph(ForgeRegistries.ENTITIES.getValue(rs), nbtData, null)));
-			morph.resolve().get().syncWithClients(entity);
+			morph.resolve().get().setMorph(MorphManagerHandlers.FALLBACK.createMorph(ForgeRegistries.ENTITIES.getValue(rs), nbtData, null));
+			morph.resolve().get().syncMorphChange(entity);
 		}
 		
 		return 0;

@@ -1,6 +1,11 @@
 package de.budschie.bmorph.network;
 
 import de.budschie.bmorph.main.References;
+import de.budschie.bmorph.network.MorphAddedSynchronizer.MorphAddedPacket;
+import de.budschie.bmorph.network.MorphCapabilityFullSynchronizer.MorphPacket;
+import de.budschie.bmorph.network.MorphChangedSynchronizer.MorphChangedPacket;
+import de.budschie.bmorph.network.MorphRemovedSynchronizer.MorphRemovedPacket;
+import de.budschie.bmorph.network.MorphRequestMorphIndexChange.RequestMorphIndexChangePacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -16,7 +21,18 @@ public class MainNetworkChannel
 		
 	public static void registerMainNetworkChannels()
 	{
-		INSTANCE.registerMessage(id++, MorphCapabilitySynchronizer.MorphPacket.class, MorphCapabilitySynchronizer::encode,
-				MorphCapabilitySynchronizer::decode, MorphCapabilitySynchronizer::handle);
+//		INSTANCE.registerMessage(id++, MorphCapabilityFullSynchronizer.MorphPacket.class, MorphCapabilityFullSynchronizer::encode,
+//				MorphCapabilityFullSynchronizer::decode, MorphCapabilityFullSynchronizer::handle);
+		
+		registerSimpleImplPacket(MorphPacket.class, new MorphCapabilityFullSynchronizer());
+		registerSimpleImplPacket(MorphAddedPacket.class, new MorphAddedSynchronizer());
+		registerSimpleImplPacket(MorphRemovedPacket.class, new MorphRemovedSynchronizer());
+		registerSimpleImplPacket(MorphChangedPacket.class, new MorphChangedSynchronizer());
+		registerSimpleImplPacket(RequestMorphIndexChangePacket.class, new MorphRequestMorphIndexChange());
+	}
+	
+	public static <T> void registerSimpleImplPacket(Class<T> packetClass, ISimpleImplPacket<T> packet)
+	{
+		INSTANCE.registerMessage(id++, packetClass, packet::encode, packet::decode, packet::handle);
 	}
 }
