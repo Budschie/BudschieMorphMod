@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
+import de.budschie.bmorph.morph.functionality.AbilityLookupTableHandler;
 import de.budschie.bmorph.network.MorphRequestMorphIndexChange.RequestMorphIndexChangePacket;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.LazyOptional;
@@ -40,7 +41,10 @@ public class MorphRequestMorphIndexChange implements ISimpleImplPacket<RequestMo
 				}
 				else
 				{
+					resolved.deapplyAbilities(ctx.get().getSender());
 					resolved.setMorph(packet.requestedIndex);
+					resolved.getCurrentMorph().ifPresent(morph -> resolved.setCurrentAbilities(AbilityLookupTableHandler.getAbilitiesFor(morph)));
+					resolved.applyAbilities(ctx.get().getSender());
 					resolved.syncMorphChange(ctx.get().getSender());
 				}
 			}

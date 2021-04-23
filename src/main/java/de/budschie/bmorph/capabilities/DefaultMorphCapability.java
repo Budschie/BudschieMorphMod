@@ -1,9 +1,11 @@
 package de.budschie.bmorph.capabilities;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
+import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.network.MorphAddedSynchronizer;
 import de.budschie.bmorph.network.MorphCapabilityFullSynchronizer;
@@ -20,6 +22,8 @@ public class DefaultMorphCapability implements IMorphCapability
 	
 	MorphList morphList = new MorphList();
 	
+	ArrayList<Ability> currentAbilities;
+	
 	private boolean dirty = true;
 	
 	@Override
@@ -29,7 +33,7 @@ public class DefaultMorphCapability implements IMorphCapability
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, player.getUniqueID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, serializeAbilities(), player.getUniqueID()));
 		}
 	}
 	
@@ -40,7 +44,7 @@ public class DefaultMorphCapability implements IMorphCapability
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTo), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, player.getUniqueID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTo), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, serializeAbilities(), player.getUniqueID()));
 		}
 	}
 	
@@ -50,7 +54,7 @@ public class DefaultMorphCapability implements IMorphCapability
 		if(player.world.isRemote)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphChangedSynchronizer.MorphChangedPacket(player.getUniqueID(), currentMorphIndex, morph));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphChangedSynchronizer.MorphChangedPacket(player.getUniqueID(), currentMorphIndex, morph, serializeAbilities()));
 	}
 
 	@Override
@@ -69,6 +73,23 @@ public class DefaultMorphCapability implements IMorphCapability
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphRemovedPacket(player.getUniqueID(), index));
+	}
+	
+	private ArrayList<String> serializeAbilities()
+	{
+		if(getCurrentAbilities() == null || getCurrentAbilities().size() == 0)
+			return new ArrayList<>();
+		else
+		{
+			ArrayList<String> toString = new ArrayList<>();
+			
+			for(Ability ability : getCurrentAbilities())
+			{
+				toString.add(ability.getRegistryName().toString());
+			}
+			
+			return toString;
+		}
 	}
 	
 	@Override
@@ -164,5 +185,31 @@ public class DefaultMorphCapability implements IMorphCapability
 		this.morph = Optional.empty();
 		this.currentMorphIndex = Optional.empty();
 		dirty = true;
+	}
+
+	@Override
+	public ArrayList<Ability> getCurrentAbilities()
+	{
+		return currentAbilities;
+	}
+
+	@Override
+	public void setCurrentAbilities(ArrayList<Ability> abilities)
+	{
+		this.currentAbilities = abilities;
+	}
+
+	@Override
+	public void applyAbilities(PlayerEntity player)
+	{
+		if(getCurrentAbilities() != null)
+			getCurrentAbilities().forEach(ability -> ability.enableAbility(player, getCurrentMorph().get()));
+	}
+
+	@Override
+	public void deapplyAbilities(PlayerEntity player)
+	{
+		if(getCurrentAbilities() != null)
+			getCurrentAbilities().forEach(ability -> ability.disableAbility(player, getCurrentMorph().get()));
 	}
 }

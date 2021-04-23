@@ -8,6 +8,7 @@ import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
+import de.budschie.bmorph.morph.functionality.AbilityLookupTableHandler;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntitySummonArgument;
@@ -49,6 +50,8 @@ public class MorphCommand
 							
 							if(morph.isPresent())
 							{
+								morph.resolve().get().deapplyAbilities(player);
+								morph.resolve().get().setCurrentAbilities(null);
 								morph.resolve().get().setMorph(MorphManagerHandlers.PLAYER.createMorph(EntityType.PLAYER, ServerSetup.server.getPlayerProfileCache().getGameProfileForUsername(ctx.getArgument("playername", String.class))));
 								morph.resolve().get().syncMorphChange(player);
 							}
@@ -65,7 +68,9 @@ public class MorphCommand
 					
 					if(morph.isPresent())
 					{
+						morph.resolve().get().deapplyAbilities(player);
 						morph.resolve().get().demorph();
+						morph.resolve().get().setCurrentAbilities(null);
 						morph.resolve().get().syncMorphChange(player);
 					}
 					
@@ -81,7 +86,10 @@ public class MorphCommand
 		{
 			nbtData.putString("id", rs.toString());
 			
+			morph.resolve().get().deapplyAbilities(entity);
 			morph.resolve().get().setMorph(MorphManagerHandlers.FALLBACK.createMorph(ForgeRegistries.ENTITIES.getValue(rs), nbtData, null));
+			morph.resolve().get().getCurrentMorph().ifPresent(currentMorph -> morph.resolve().get().setCurrentAbilities(AbilityLookupTableHandler.getAbilitiesFor(currentMorph)));
+			morph.resolve().get().applyAbilities(entity);
 			morph.resolve().get().syncMorphChange(entity);
 		}
 		

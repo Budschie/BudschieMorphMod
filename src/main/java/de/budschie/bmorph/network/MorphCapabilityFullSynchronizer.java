@@ -1,5 +1,6 @@
 package de.budschie.bmorph.network;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -9,12 +10,16 @@ import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
+import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.network.MorphCapabilityFullSynchronizer.MorphPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.registries.IForgeRegistry;
 
 public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphPacket>
 {
@@ -27,6 +32,11 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 		buffer.writeBoolean(packet.entityIndex.isPresent());
 		packet.getEntityData().ifPresent(data -> buffer.writeCompoundTag(data.serialize()));
 		packet.getEntityIndex().ifPresent(data -> buffer.writeInt(data));
+		
+		buffer.writeInt(packet.getAbilities().size());
+		
+		for(String str : packet.getAbilities())
+			buffer.writeString(str);
 	}
 	
 	@Override
@@ -49,7 +59,14 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 		if(hasIndex)
 			entityIndex = Optional.of(buffer.readInt());
 		
-		return new MorphPacket(toMorph, entityIndex, morphList, playerUUID);
+		int amountOfAbilities = buffer.readInt();
+		
+		ArrayList<String> abilities = new ArrayList<>(amountOfAbilities);
+		
+		for(int i = 0; i < amountOfAbilities; i++)
+			abilities.add(buffer.readString());
+		
+		return new MorphPacket(toMorph, entityIndex, morphList, abilities, playerUUID);
 	}
 	
 	@Override
@@ -57,10 +74,12 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 	{
 		ctx.get().enqueueWork(() ->
 		{
-			LazyOptional<IMorphCapability> cap = Minecraft.getInstance().getConnection().getWorld().getPlayerByUuid(message.getPlayer()).getCapability(MorphCapabilityAttacher.MORPH_CAP);
+			LazyOptional<IMorphCapability> cap = Minecraft.getInstance().world.getPlayerByUuid(message.getPlayer()).getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			
 			if(cap.isPresent())
 			{
+				cap.resolve().get().deapplyAbilities(Minecraft.getInstance().world.getPlayerByUuid(message.getPlayer()));
+				
 				if(message.entityData.isPresent())
 					cap.resolve().get().setMorph(message.entityData.get());
 				else if(message.entityIndex.isPresent())
@@ -69,6 +88,19 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 					cap.resolve().get().demorph();
 				
 				cap.resolve().get().setMorphList(message.morphList);
+				
+				ArrayList<Ability> resolvedAbilities = new ArrayList<>();
+				
+				IForgeRegistry<Ability> registry = GameRegistry.findRegistry(Ability.class);
+				
+				for(String name : message.getAbilities())
+				{
+					ResourceLocation resourceLocation = new ResourceLocation(name);
+					resolvedAbilities.add(registry.getValue(resourceLocation));
+				}
+				
+				cap.resolve().get().setCurrentAbilities(resolvedAbilities);
+				cap.resolve().get().applyAbilities(Minecraft.getInstance().world.getPlayerByUuid(message.getPlayer()));
 			}
 		});
 	}
@@ -78,34 +110,21 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 		private Optional<MorphItem> entityData;
 		private Optional<Integer> entityIndex;
 		private MorphList morphList;
+		private ArrayList<String> abilities;
 		private UUID player;
 		
-		public MorphPacket(Optional<MorphItem> entityData, Optional<Integer> entityIndex, MorphList morphList, UUID player)
+		public MorphPacket(Optional<MorphItem> entityData, Optional<Integer> entityIndex, MorphList morphList, ArrayList<String> abilities, UUID player)
 		{
 			this.entityData = entityData;
 			this.player = player;
 			this.morphList = morphList;
 			this.entityIndex = entityIndex;
+			this.abilities = abilities;
 		}
 		
-		public void setEntityData(Optional<MorphItem> entityData)
+		public ArrayList<String> getAbilities()
 		{
-			this.entityData = entityData;
-		}
-		
-		public void setPlayer(UUID player)
-		{
-			this.player = player;
-		}
-		
-		public void setMorphList(MorphList morphList)
-		{
-			this.morphList = morphList;
-		}
-		
-		public void setEntityIndex(Optional<Integer> entityIndex)
-		{
-			this.entityIndex = entityIndex;
+			return abilities;
 		}
 		
 		public Optional<MorphItem> getEntityData()

@@ -1,9 +1,13 @@
 package de.budschie.bmorph.capabilities;
 
+import java.util.ArrayList;
 import java.util.Optional;
+
+import javax.annotation.Nullable;
 
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
+import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 
@@ -31,6 +35,15 @@ public interface IMorphCapability
 	public void syncMorphChange(PlayerEntity player);
 	public void syncMorphAcquisition(PlayerEntity player, MorphItem item);
 	public void syncMorphRemoval(PlayerEntity player, int index);
+	
+	@Nullable
+	/** This list returns all currently active abilities. It may be null. **/
+	public ArrayList<Ability> getCurrentAbilities();
+	
+	public void setCurrentAbilities(ArrayList<Ability> abilities);
+	
+	public void applyAbilities(PlayerEntity player);
+	public void deapplyAbilities(PlayerEntity player);
 	
 	public boolean isDirty();
 	public void cleanDirty();

@@ -21,7 +21,7 @@ modId="bmorph" #mandatory
 # see the associated build.gradle script for how to populate this completely automatically during a build
 version="${file.jarVersion}" #mandatory
  # A display name for the mod
-displayName="Example Mod" #mandatory
+displayName="Budschie's Morph Mod" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification https://mcforge.readthedocs.io/en/latest/gettingstarted/autoupdate/
 #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
@@ -29,9 +29,9 @@ displayName="Example Mod" #mandatory
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="bmorph.png" #optional
 # A text field displayed in the mod UI
-credits="Thanks for this example mod goes to Java" #optional
+credits="Credits to the Forge Discord for existing" #optional
 # A text field displayed in the mod UI
-authors="Love, Cheese and small house plants" #optional
+authors="Budschie" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
 This is a long form description of the mod. You can write whatever you want here

@@ -8,7 +8,10 @@ import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.PlayerMorphItem;
 import de.budschie.bmorph.morph.VanillaFallbackMorphData;
+import de.budschie.bmorph.morph.functionality.AbilityLookupTableHandler;
+import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import de.budschie.bmorph.network.MainNetworkChannel;
+import net.minecraft.entity.EntityType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -27,6 +30,7 @@ public class BMorphMod
 	{
 		EntityRegistry.ENTITY_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
 		EntityRegistry.SERIALIZER_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
+		AbilityRegistry.ABILITY_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
 	
 	@SubscribeEvent
@@ -43,5 +47,7 @@ public class BMorphMod
 		MorphManagerHandlers.registerDefaultManagers();
 		
 		VanillaFallbackMorphData.intialiseFallbackData();
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.BAT, AbilityRegistry.FLY_ABILITY.get());
 	}	
 }

@@ -1,7 +1,5 @@
 package de.budschie.bmorph.capabilities;
 
-import java.util.Optional;
-
 import de.budschie.bmorph.morph.MorphHandler;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
