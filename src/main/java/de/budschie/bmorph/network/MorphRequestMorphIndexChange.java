@@ -37,7 +37,11 @@ public class MorphRequestMorphIndexChange implements ISimpleImplPacket<RequestMo
 			{
 				IMorphCapability resolved = cap.resolve().get();
 				
-				if(packet.getRequestedIndex() >= resolved.getMorphList().getMorphArrayList().size() || packet.getRequestedIndex() < 0)
+				if(packet.getRequestedIndex() == -1)
+				{
+					MorphUtil.morphToServer(Optional.empty(), Optional.empty(), ctx.get().getSender());
+				}
+				else if(packet.getRequestedIndex() >= resolved.getMorphList().getMorphArrayList().size() || packet.getRequestedIndex() < 0)
 				{
 					System.out.println("Player " + ctx.get().getSender().getName().getString() + " with UUID " + ctx.get().getSender().getUniqueID() + " has tried to send invalid data!");
 				}

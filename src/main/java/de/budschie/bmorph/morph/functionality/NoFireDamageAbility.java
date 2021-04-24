@@ -18,5 +18,6 @@ public class NoFireDamageAbility extends Ability
 	@Override
 	public void onUsedAbility(PlayerEntity player, MorphItem currentMorph)
 	{
+		
 	}
 }

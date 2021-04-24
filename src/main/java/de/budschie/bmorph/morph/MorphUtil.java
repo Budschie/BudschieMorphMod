@@ -51,7 +51,7 @@ public class MorphUtil
 				else
 					resolved.demorph();
 				
-				resolved.getCurrentMorph().ifPresent(morph -> resolved.setCurrentAbilities(AbilityLookupTableHandler.getAbilitiesFor(morph)));
+				resolved.getCurrentMorph().ifPresentOrElse(morph -> resolved.setCurrentAbilities(AbilityLookupTableHandler.getAbilitiesFor(morph)), () -> resolved.setCurrentAbilities(new ArrayList<>()));
 				resolved.applyAbilities(player);
 				resolved.syncMorphChange(player);
 				resolved.applyHealthOnPlayer(player);

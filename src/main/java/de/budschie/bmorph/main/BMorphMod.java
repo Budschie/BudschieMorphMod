@@ -54,20 +54,23 @@ public class BMorphMod
 		VanillaFallbackMorphData.intialiseFallbackData();
 		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.BAT, AbilityRegistry.FLY_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.BAT, AbilityRegistry.MOB_ATTACK_ABILITY.get());
 		AbilityLookupTableHandler.addAbilityFor(EntityType.BAT, AbilityRegistry.NIGHT_VISION_ABILITY.get());
 		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.BLAZE, AbilityRegistry.FLY_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.BLAZE, AbilityRegistry.MOB_ATTACK_ABILITY.get());
 		AbilityLookupTableHandler.addAbilityFor(EntityType.BLAZE, AbilityRegistry.FIRE_SHOOTING_ABILITY.get());
 		AbilityLookupTableHandler.addAbilityFor(EntityType.BLAZE, AbilityRegistry.NO_FIRE_DAMAGE_ABILITY.get());
 		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.CREEPER, AbilityRegistry.BOOM.get());
 		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.IRON_GOLEM, AbilityRegistry.MOB_ATTACK_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.IRON_GOLEM, AbilityRegistry.YEET_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.IRON_GOLEM, AbilityRegistry.SLOWNESS_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.IRON_GOLEM, AbilityRegistry.NO_KNOCKBACK_ABILITY.get());
 		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.VILLAGER, AbilityRegistry.MOB_ATTACK_ABILITY.get());
 		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.PLAYER, AbilityRegistry.MOB_ATTACK_ABILITY.get());		
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.CHICKEN, AbilityRegistry.SLOWFALL_ABILITY.get());
 	}	
 }

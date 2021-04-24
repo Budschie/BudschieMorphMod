@@ -245,7 +245,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	@Override
 	public void applyAbilities(PlayerEntity player)
 	{
-		if(getCurrentAbilities() != null)
+		if(getCurrentAbilities() != null && getCurrentMorph().isPresent())
 			getCurrentAbilities().forEach(ability -> ability.enableAbility(player, getCurrentMorph().get()));
 	}
 
@@ -267,7 +267,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	public boolean hasAbility(Ability ability)
 	{
 		if(getCurrentAbilities() != null)
-			getCurrentAbilities().contains(ability);
+			return getCurrentAbilities().contains(ability);
 		
 		return false;
 	}

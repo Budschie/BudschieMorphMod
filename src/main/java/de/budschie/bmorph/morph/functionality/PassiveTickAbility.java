@@ -15,9 +15,8 @@ import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 
-public class PassiveTickAbility extends Ability 
+public class PassiveTickAbility extends AbstractEventAbility 
 {
-	private HashSet<UUID> playersToUpdate = new HashSet<>();
 	private int updateDuration = 0;
 	private int lastUpdate = 0;
 	private BiConsumer<PlayerEntity, IMorphCapability> handleUpdate;
@@ -26,19 +25,6 @@ public class PassiveTickAbility extends Ability
 	{
 		this.updateDuration = updateDuration;
 		this.handleUpdate = handleUpdate;
-		MinecraftForge.EVENT_BUS.register(this);
-	}
-	
-	@Override
-	public void enableAbility(PlayerEntity player, MorphItem enabledItem)
-	{
-		playersToUpdate.add(player.getUniqueID());
-	}
-	
-	@Override
-	public void disableAbility(PlayerEntity player, MorphItem disabledItem)
-	{
-		playersToUpdate.remove(player.getUniqueID());
 	}
 	
 	@SubscribeEvent
@@ -50,7 +36,7 @@ public class PassiveTickAbility extends Ability
 		{
 			lastUpdate = tickCounter;
 			
-			for(UUID uuid : playersToUpdate)
+			for(UUID uuid : trackedPlayers)
 			{
 				PlayerEntity player = ServerSetup.server.getPlayerList().getPlayerByUUID(uuid);
 				
@@ -66,13 +52,6 @@ public class PassiveTickAbility extends Ability
 				}
 			}
 		}
-	}
-	
-	@SubscribeEvent
-	public void onServerStopped(FMLServerStoppingEvent event)
-	{
-		playersToUpdate.clear();
-		System.out.println("Clearing player list of passive ability " + this.getClass().getName() + "...");
 	}
 
 	@Override

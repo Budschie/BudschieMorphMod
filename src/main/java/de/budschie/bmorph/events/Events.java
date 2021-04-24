@@ -11,6 +11,7 @@ import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.morph.PlayerMorphEvent;
 import de.budschie.bmorph.morph.PlayerMorphEvent.Server.Post;
+import de.budschie.bmorph.morph.functionality.AbilityLookupTableHandler;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import net.minecraft.client.Minecraft;
@@ -52,8 +53,10 @@ public class Events
 			{
 				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Pre(player, cap.resolve().get(), cap.resolve().get().getCurrentMorph().orElse(null)));
 				
-				ServerSetup.server.getPlayerList().getPlayers().forEach(serverPlayer -> cap.resolve().get().syncWithClient(event.getPlayer(), serverPlayer));
-				ServerSetup.server.getPlayerList().getPlayers().forEach(serverPlayer -> cap.resolve().get().syncWithClient(serverPlayer, (ServerPlayerEntity) event.getPlayer()));
+//				ServerSetup.server.getPlayerList().getPlayers().forEach(serverPlayer -> cap.resolve().get().syncWithClient(event.getPlayer(), serverPlayer));
+//				ServerSetup.server.getPlayerList().getPlayers().forEach(serverPlayer -> cap.resolve().get().syncWithClient(serverPlayer, (ServerPlayerEntity) event.getPlayer()));
+				cap.resolve().get().getCurrentMorph().ifPresent(morph -> cap.resolve().get().setCurrentAbilities(AbilityLookupTableHandler.getAbilitiesFor(morph)));
+				cap.resolve().get().syncWithClients(player);
 				
 				cap.resolve().get().applyHealthOnPlayer(player);
 				cap.resolve().get().applyAbilities(player);
@@ -100,9 +103,7 @@ public class Events
 	public static void onClonePlayer(PlayerEvent.Clone event)
 	{
 		// TODO: This may cause a crash under certain circumstances, so I should maybe replace this code!
-		
-		System.out.println("PARTY");
-		
+		// I've tested it and it doesnt cause a crash. That's good.
 		if(!(event.isWasDeath() && !ServerSetup.server.getGameRules().getBoolean(BMorphMod.KEEP_MORPH_INVENTORY)))
 		{
 			LazyOptional<IMorphCapability> oldCap = event.getOriginal().getCapability(MorphCapabilityAttacher.MORPH_CAP);

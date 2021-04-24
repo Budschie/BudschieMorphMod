@@ -40,4 +40,17 @@ public class AbilityRegistry
 	{
 		player.addPotionEffect(new EffectInstance(Effects.NIGHT_VISION, 50, 10, true, false, false, null));
 	}));
+	
+	public static RegistryObject<Ability> SLOWNESS_ABILITY = ABILITY_REGISTRY.register("slowness", () -> new PassiveTickAbility(10, (player, morph) ->
+	{
+		player.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 50, 1, true, false, false, null));
+	}));
+	
+	public static RegistryObject<Ability> SLOWFALL_ABILITY = ABILITY_REGISTRY.register("slowfall", () -> new PassiveTickAbility(10, (player, morph) ->
+	{
+		player.addPotionEffect(new EffectInstance(Effects.SLOW_FALLING, 20, 2, true, false, false, null));
+	}));
+	
+	public static RegistryObject<Ability> YEET_ABILITY = ABILITY_REGISTRY.register("yeet", () -> new YeetAbility());
+	public static RegistryObject<Ability> NO_KNOCKBACK_ABILITY = ABILITY_REGISTRY.register("no_knockback", () -> new NoKnockbackAbility());
 }

@@ -38,7 +38,7 @@ public class MorphGuiHandler
 		{
 			LazyOptional<IMorphCapability> cap = Minecraft.getInstance().player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			
-			cap.ifPresent(resolved -> resolved.getCurrentMorphIndex().ifPresent(index -> MorphGui.setCurrentScroll(index)));
+			cap.ifPresent(resolved -> resolved.getCurrentMorphIndex().ifPresent(index -> MorphGui.setCurrentScroll(index + 1)));
 		}
 	}
 	
@@ -64,7 +64,7 @@ public class MorphGuiHandler
 		if(toggle && event.getKey() == GLFW.GLFW_KEY_ENTER && event.getAction() == GLFW.GLFW_PRESS)
 		{
 			toggle = false;
-			MainNetworkChannel.INSTANCE.sendToServer(new RequestMorphIndexChangePacket(MorphGui.getCurrentScroll()));
+			MainNetworkChannel.INSTANCE.sendToServer(new RequestMorphIndexChangePacket(MorphGui.getCurrentScroll() - 1));
 		}
 	}
 	
