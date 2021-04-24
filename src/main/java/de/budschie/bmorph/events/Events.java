@@ -22,10 +22,12 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -188,6 +190,8 @@ public class Events
 				
 				if(event.getSource().isFireDamage() && resolved.hasAbility(AbilityRegistry.NO_FIRE_DAMAGE_ABILITY.get()))
 					event.setCanceled(true);
+				else if(event.getSource() == DamageSource.FALL && resolved.hasAbility(AbilityRegistry.NO_FALL_DAMAGE_ABILITY.get()))
+					event.setCanceled(true);
 			}
 		}
 	}
@@ -225,6 +229,23 @@ public class Events
 				}
 			}
 		}
+	}
+	
+	@SubscribeEvent
+	public static void onServerTick(ServerTickEvent event)
+	{
+		ServerSetup.server.getPlayerList().getPlayers().forEach(player ->
+		{
+			LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
+			
+			if(cap.isPresent())
+			{
+				IMorphCapability resolved = cap.resolve().get();
+				
+				if(resolved.hasAbility(AbilityRegistry.CLIMBING_ABILITY.get()) && player.collidedHorizontally)
+					player.setMotion(player.getMotion().add(0, .1f, 0));
+			}
+		});
 	}
 	
 	@SubscribeEvent

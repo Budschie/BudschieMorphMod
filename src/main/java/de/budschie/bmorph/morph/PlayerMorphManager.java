@@ -25,7 +25,8 @@ public class PlayerMorphManager implements IMorphManager<PlayerMorphItem, GamePr
 	}
 
 	// Sadly I can't remove this :(
-	@Deprecated(since = "The beginning lol", forRemoval = false)
+	//@Deprecated(since = "The beginning lol", forRemoval = false)
+	@Deprecated
 	@Override
 	public PlayerMorphItem createMorph(EntityType<?> entity, CompoundNBT nbt, GameProfile data)
 	{

@@ -7,6 +7,7 @@ import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.PlayerMorphItem;
 import de.budschie.bmorph.morph.VanillaFallbackMorphData;
+import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.AbilityLookupTableHandler;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import de.budschie.bmorph.network.MainNetworkChannel;
@@ -60,6 +61,10 @@ public class BMorphMod
 		AbilityLookupTableHandler.addAbilityFor(EntityType.BLAZE, AbilityRegistry.FIRE_SHOOTING_ABILITY.get());
 		AbilityLookupTableHandler.addAbilityFor(EntityType.BLAZE, AbilityRegistry.NO_FIRE_DAMAGE_ABILITY.get());
 		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.GHAST, AbilityRegistry.FLY_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.GHAST, AbilityRegistry.GHAST_SHOOTING_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.GHAST, AbilityRegistry.NO_FIRE_DAMAGE_ABILITY.get());
+		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.CREEPER, AbilityRegistry.BOOM.get());
 		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.IRON_GOLEM, AbilityRegistry.MOB_ATTACK_ABILITY.get());
@@ -72,5 +77,38 @@ public class BMorphMod
 		AbilityLookupTableHandler.addAbilityFor(EntityType.PLAYER, AbilityRegistry.MOB_ATTACK_ABILITY.get());		
 		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.CHICKEN, AbilityRegistry.SLOWFALL_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.LLAMA, AbilityRegistry.LLAMA_SPIT_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.HORSE, AbilityRegistry.INSTAJUMP_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.HORSE, AbilityRegistry.SWIFTNESS_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.HORSE, AbilityRegistry.JUMPBOOST_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.SPIDER, AbilityRegistry.CLIMBING_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.SPIDER, AbilityRegistry.NO_FALL_DAMAGE_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.SPIDER, AbilityRegistry.SWIFTNESS_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.OCELOT, AbilityRegistry.EXTREME_SWIFTNESS_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.OCELOT, AbilityRegistry.INSTAJUMP_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.OCELOT, AbilityRegistry.NIGHT_VISION_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.OCELOT, AbilityRegistry.EAT_REGEN_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.OCELOT, AbilityRegistry.NO_FALL_DAMAGE_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.RABBIT, AbilityRegistry.NO_FALL_DAMAGE_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.RABBIT, AbilityRegistry.SWIFTNESS_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.RABBIT, AbilityRegistry.JUMPBOOST_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.CAT, AbilityRegistry.SWIFTNESS_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.CAT, AbilityRegistry.NIGHT_VISION_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.CAT, AbilityRegistry.EAT_REGEN_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.WOLF, AbilityRegistry.EAT_REGEN_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.WITHER_SKELETON, AbilityRegistry.WITHER_ON_HIT_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.PARROT, AbilityRegistry.FLY_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.PAINTING, AbilityRegistry.FLY_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.PAINTING, AbilityRegistry.EXTREME_SWIFTNESS_ABILITY.get());
 	}	
 }

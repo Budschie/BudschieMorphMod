@@ -14,6 +14,8 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
+import net.minecraft.entity.passive.ParrotEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.util.HandSide;
@@ -162,6 +164,12 @@ public class RenderHandler
 					entity.ticksElytraFlying = player.getTicksElytraFlying();
 					
 					entity.setPose(player.getPose());
+					
+					if(toRender instanceof ParrotEntity)
+					{
+						ParrotEntity parrot = (ParrotEntity) entity;
+						parrot.partyParrot = true;
+					}
 				}
 				
 				toRender.ticksExisted = player.ticksExisted;

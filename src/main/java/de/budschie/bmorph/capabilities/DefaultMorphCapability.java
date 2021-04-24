@@ -144,7 +144,7 @@ public class DefaultMorphCapability implements IMorphCapability
 		// Not really implemented yet...
 		float playerHealthPercentage = player.getHealth() / player.getMaxHealth();
 		
-		if(getCurrentMorph().isEmpty())
+		if(!getCurrentMorph().isPresent())
 		{
 			player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20);
 			player.setHealth((float) Math.floor(20f * playerHealthPercentage));
@@ -158,7 +158,7 @@ public class DefaultMorphCapability implements IMorphCapability
 			{
 				float maxHealthOfEntity = ((LivingEntity)thisisnotveryperformantoranythinglikethisbutidontcarealsothisnameisverystupidsoidkmaybeishouldhchangethislaterbutontheotherhandthisisalsobtwyouhavejustfoundaneasteregginmycode).getMaxHealth();
 				player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHealthOfEntity);
-				player.setHealth((float) Math.floor(maxHealthOfEntity * playerHealthPercentage));
+				player.setHealth(Math.max((float) Math.floor(maxHealthOfEntity * playerHealthPercentage), .1f));
 			}
 			else
 			{

@@ -4,14 +4,19 @@ import org.lwjgl.glfw.GLFW;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 
+import de.budschie.bmorph.capabilities.IMorphCapability;
+import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.entity.EntityRegistry;
 import de.budschie.bmorph.entity.rendering.MorphEntityRenderer;
 import de.budschie.bmorph.morph.AdvancedAbstractClientPlayerEntity;
 import de.budschie.bmorph.morph.UglyHackThatDoesntWork;
+import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.FOVUpdateEvent;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -29,7 +34,7 @@ public class ClientSetup
 	
 	@SubscribeEvent
 	public static void onClientSetup(final FMLClientSetupEvent event)
-	{
+	{		
 		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.MORPH_ENTITY.get(), manager -> new MorphEntityRenderer(manager));
 		ClientRegistry.registerKeyBinding(USE_ABILITY_KEY);
 		ClientRegistry.registerKeyBinding(SCROLL_DOWN_MORPH_UI);
@@ -63,5 +68,26 @@ public class ClientSetup
 			
 			return entity;
 		};
+	}
+	
+	@EventBusSubscriber(bus = Bus.FORGE)
+	public static class FovHandler
+	{
+		@SubscribeEvent
+		public static void onFOVUpdated(final FOVUpdateEvent event)
+		{
+			LazyOptional<IMorphCapability> cap = Minecraft.getInstance().player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
+			
+			if(cap.isPresent())
+			{
+				IMorphCapability resolved = cap.resolve().get();
+				
+				if(resolved.hasAbility(AbilityRegistry.SWIFTNESS_ABILITY.get()) || resolved.hasAbility(AbilityRegistry.EXTREME_SWIFTNESS_ABILITY.get()))
+				{
+					event.setNewfov((float) ((Minecraft.getInstance().gameSettings.fov / 100f) * (event.getEntity().isSprinting() ? 1.17f : 1)));
+//					event.setNewfov(-2);
+				}
+			}
+		}
 	}
 }
