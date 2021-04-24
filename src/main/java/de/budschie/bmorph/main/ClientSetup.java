@@ -22,6 +22,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 @EventBusSubscriber(bus = Bus.MOD, value = Dist.CLIENT)
 public class ClientSetup
 {
+	public static final KeyBinding USE_ABILITY_KEY = new KeyBinding("key.bmorph.use_ability", GLFW.GLFW_KEY_Z, "key.bmorph.bmorph_category");
 	public static final KeyBinding TOGGLE_MORPH_UI = new KeyBinding("key.bmorph.toggle_morph", GLFW.GLFW_KEY_SEMICOLON, "key.bmorph.bmorph_category");
 	public static final KeyBinding SCROLL_UP_MORPH_UI = new KeyBinding("key.bmorph.scroll_up", GLFW.GLFW_KEY_UP, "key.bmorph.bmorph_category");
 	public static final KeyBinding SCROLL_DOWN_MORPH_UI = new KeyBinding("key.bmorph.scroll_down", GLFW.GLFW_KEY_DOWN, "key.bmorph.bmorph_category");
@@ -30,9 +31,10 @@ public class ClientSetup
 	public static void onClientSetup(final FMLClientSetupEvent event)
 	{
 		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.MORPH_ENTITY.get(), manager -> new MorphEntityRenderer(manager));
-		ClientRegistry.registerKeyBinding(TOGGLE_MORPH_UI);
-		ClientRegistry.registerKeyBinding(SCROLL_UP_MORPH_UI);
+		ClientRegistry.registerKeyBinding(USE_ABILITY_KEY);
 		ClientRegistry.registerKeyBinding(SCROLL_DOWN_MORPH_UI);
+		ClientRegistry.registerKeyBinding(SCROLL_UP_MORPH_UI);
+		ClientRegistry.registerKeyBinding(TOGGLE_MORPH_UI);
 		
 		UglyHackThatDoesntWork.thisisstupid = (gameProfile, world) ->
 		{

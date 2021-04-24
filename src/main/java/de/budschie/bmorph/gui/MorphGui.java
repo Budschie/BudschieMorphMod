@@ -62,6 +62,12 @@ public class MorphGui
 				
 				InventoryScreen.drawEntityOnScreen(24, (int) (59 + (i + offset) * 64), 20, -70, 30, (LivingEntity) thiscouldintheorybecachedbutiamtolazytodothat);
 			}
+			
+			RenderSystem.enableBlend();
+			
+//			RenderSystem.
+//			RenderSystem.enableBlend();
+//			RenderSystem.defaultBlendFunc();
 		}
 	}
 	

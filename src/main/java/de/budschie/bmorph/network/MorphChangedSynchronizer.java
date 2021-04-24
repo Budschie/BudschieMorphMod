@@ -9,6 +9,7 @@ import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphItem;
+import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.network.MorphChangedSynchronizer.MorphChangedPacket;
 import net.minecraft.client.Minecraft;
@@ -69,34 +70,7 @@ public class MorphChangedSynchronizer implements ISimpleImplPacket<MorphChangedP
 	{
 		ctx.get().enqueueWork(() ->
 		{
-			LazyOptional<IMorphCapability> cap = Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayerUUID()).getCapability(MorphCapabilityAttacher.MORPH_CAP);
-			
-			if(cap.isPresent())
-			{
-				IMorphCapability resolved = cap.resolve().get();
-				
-				resolved.deapplyAbilities(Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayerUUID()));
-				
-				if(packet.getMorphIndex().isPresent())
-					resolved.setMorph(packet.getMorphIndex().get());
-				else if(packet.getMorphItem().isPresent())
-					resolved.setMorph(packet.getMorphItem().get());
-				else
-					resolved.demorph();
-				
-				ArrayList<Ability> resolvedAbilities = new ArrayList<>();
-				
-				IForgeRegistry<Ability> registry = GameRegistry.findRegistry(Ability.class);
-				
-				for(String name : packet.getAbilities())
-				{
-					ResourceLocation resourceLocation = new ResourceLocation(name);
-					resolvedAbilities.add(registry.getValue(resourceLocation));
-				}
-				
-				resolved.setCurrentAbilities(resolvedAbilities);
-				resolved.applyAbilities(Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayerUUID()));
-			}
+			MorphUtil.morphToClient(packet.getMorphItem(), packet.getMorphIndex(), packet.getAbilities(), Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayerUUID()));
 		});
 	}
 	

@@ -10,9 +10,11 @@ import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
+import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.network.MorphCapabilityFullSynchronizer.MorphPacket;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -70,38 +72,18 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 	}
 	
 	@Override
-	public void handle(MorphPacket message, Supplier<NetworkEvent.Context> ctx)
+	public void handle(MorphPacket packet, Supplier<NetworkEvent.Context> ctx)
 	{
 		ctx.get().enqueueWork(() ->
 		{
-			LazyOptional<IMorphCapability> cap = Minecraft.getInstance().world.getPlayerByUuid(message.getPlayer()).getCapability(MorphCapabilityAttacher.MORPH_CAP);
-			
+			PlayerEntity player = Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayer());
+			LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			if(cap.isPresent())
 			{
-				cap.resolve().get().deapplyAbilities(Minecraft.getInstance().world.getPlayerByUuid(message.getPlayer()));
-				
-				if(message.entityData.isPresent())
-					cap.resolve().get().setMorph(message.entityData.get());
-				else if(message.entityIndex.isPresent())
-					cap.resolve().get().setMorph(message.entityIndex.get());
-				else
-					cap.resolve().get().demorph();
-				
-				cap.resolve().get().setMorphList(message.morphList);
-				
-				ArrayList<Ability> resolvedAbilities = new ArrayList<>();
-				
-				IForgeRegistry<Ability> registry = GameRegistry.findRegistry(Ability.class);
-				
-				for(String name : message.getAbilities())
-				{
-					ResourceLocation resourceLocation = new ResourceLocation(name);
-					resolvedAbilities.add(registry.getValue(resourceLocation));
-				}
-				
-				cap.resolve().get().setCurrentAbilities(resolvedAbilities);
-				cap.resolve().get().applyAbilities(Minecraft.getInstance().world.getPlayerByUuid(message.getPlayer()));
+				IMorphCapability resolved = cap.resolve().get();
+				resolved.setMorphList(packet.getMorphList());
 			}
+			MorphUtil.morphToClient(packet.getEntityData(), packet.getEntityIndex(), packet.getAbilities(), player);			
 		});
 	}
 	

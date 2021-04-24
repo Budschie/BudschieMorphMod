@@ -4,7 +4,9 @@ import com.mojang.authlib.GameProfile;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class PlayerMorphItem extends MorphItem
@@ -32,7 +34,20 @@ public class PlayerMorphItem extends MorphItem
 	public Entity createEntity(World world)
 	{		
 		// -69420 points for code style... TODO: This is f****** stupid...
-		return UglyHackThatDoesntWork.thisisstupid.apply(gameProfile, world);
+		return world.isRemote ? UglyHackThatDoesntWork.thisisstupid.apply(gameProfile, world) : new PlayerEntity(world, new BlockPos(0, 0, 0), 0, gameProfile)
+		{
+			@Override
+			public boolean isSpectator()
+			{
+				return false;
+			}
+			
+			@Override
+			public boolean isCreative()
+			{
+				return false;
+			}
+		};
 	}
 
 	@Override

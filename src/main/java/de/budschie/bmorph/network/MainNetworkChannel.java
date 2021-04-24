@@ -5,6 +5,7 @@ import de.budschie.bmorph.network.MorphAddedSynchronizer.MorphAddedPacket;
 import de.budschie.bmorph.network.MorphCapabilityFullSynchronizer.MorphPacket;
 import de.budschie.bmorph.network.MorphChangedSynchronizer.MorphChangedPacket;
 import de.budschie.bmorph.network.MorphRemovedSynchronizer.MorphRemovedPacket;
+import de.budschie.bmorph.network.MorphRequestAbilityUsage.MorphRequestAbilityUsagePacket;
 import de.budschie.bmorph.network.MorphRequestMorphIndexChange.RequestMorphIndexChangePacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -29,6 +30,7 @@ public class MainNetworkChannel
 		registerSimpleImplPacket(MorphRemovedPacket.class, new MorphRemovedSynchronizer());
 		registerSimpleImplPacket(MorphChangedPacket.class, new MorphChangedSynchronizer());
 		registerSimpleImplPacket(RequestMorphIndexChangePacket.class, new MorphRequestMorphIndexChange());
+		registerSimpleImplPacket(MorphRequestAbilityUsagePacket.class, new MorphRequestAbilityUsage());
 	}
 	
 	public static <T> void registerSimpleImplPacket(Class<T> packetClass, ISimpleImplPacket<T> packet)

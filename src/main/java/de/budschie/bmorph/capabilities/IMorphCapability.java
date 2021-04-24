@@ -10,6 +10,7 @@ import de.budschie.bmorph.morph.MorphList;
 import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.NetworkManager;
 
 public interface IMorphCapability
 {
@@ -31,6 +32,7 @@ public interface IMorphCapability
 	
 	public void syncWithClients(PlayerEntity player);
 	public void syncWithClient(PlayerEntity player, ServerPlayerEntity syncTo);
+	public void syncWithConnection(PlayerEntity player, NetworkManager connection);
 	
 	public void syncMorphChange(PlayerEntity player);
 	public void syncMorphAcquisition(PlayerEntity player, MorphItem item);
@@ -44,6 +46,10 @@ public interface IMorphCapability
 	
 	public void applyAbilities(PlayerEntity player);
 	public void deapplyAbilities(PlayerEntity player);
+	
+	public void useAbility(PlayerEntity player);
+	
+	public boolean hasAbility(Ability ability);
 	
 	public boolean isDirty();
 	public void cleanDirty();

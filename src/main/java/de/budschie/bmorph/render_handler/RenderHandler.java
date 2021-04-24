@@ -107,6 +107,7 @@ public class RenderHandler
 					entity.chasingPosZ = player.chasingPosZ;
 					entity.prevChasingPosZ = player.prevChasingPosZ;		
 					
+					
 					if(entity.isElytraFlying() != player.isElytraFlying())
 					{
 						if(player.isElytraFlying())

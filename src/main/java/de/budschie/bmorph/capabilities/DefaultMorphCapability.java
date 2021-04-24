@@ -3,6 +3,8 @@ package de.budschie.bmorph.capabilities;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import com.google.common.collect.Lists;
+
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
 import de.budschie.bmorph.morph.functionality.Ability;
@@ -11,8 +13,12 @@ import de.budschie.bmorph.network.MorphAddedSynchronizer;
 import de.budschie.bmorph.network.MorphCapabilityFullSynchronizer;
 import de.budschie.bmorph.network.MorphChangedSynchronizer;
 import de.budschie.bmorph.network.MorphRemovedSynchronizer.MorphRemovedPacket;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.NetworkManager;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 public class DefaultMorphCapability implements IMorphCapability
@@ -45,6 +51,18 @@ public class DefaultMorphCapability implements IMorphCapability
 		else
 		{
 			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTo), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, serializeAbilities(), player.getUniqueID()));
+		}
+	}
+	
+	@Override
+	public void syncWithConnection(PlayerEntity player, NetworkManager connection)
+	{
+		if(player.world.isRemote)
+			throw new IllegalAccessError("This method may not be called on client side.");
+		else
+		{
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.NMLIST.with(() -> Lists.newArrayList(connection)), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, serializeAbilities(), player.getUniqueID()));
+			
 		}
 	}
 	
@@ -125,7 +143,32 @@ public class DefaultMorphCapability implements IMorphCapability
 	{
 		// Not really implemented yet...
 		float playerHealthPercentage = player.getHealth() / player.getMaxHealth();
-//		player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(morph.isPresent() ? morph.get().getEntityType().get)
+		
+		if(getCurrentMorph().isEmpty())
+		{
+			player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20);
+			player.setHealth((float) Math.floor(20f * playerHealthPercentage));
+		}
+		else
+		{
+			// xD why is this a legal identifier
+			Entity thisisnotveryperformantoranythinglikethisbutidontcarealsothisnameisverystupidsoidkmaybeishouldhchangethislaterbutontheotherhandthisisalsobtwyouhavejustfoundaneasteregginmycode = getCurrentMorph().get().createEntity(player.world);
+			
+			if(thisisnotveryperformantoranythinglikethisbutidontcarealsothisnameisverystupidsoidkmaybeishouldhchangethislaterbutontheotherhandthisisalsobtwyouhavejustfoundaneasteregginmycode instanceof LivingEntity)
+			{
+				float maxHealthOfEntity = ((LivingEntity)thisisnotveryperformantoranythinglikethisbutidontcarealsothisnameisverystupidsoidkmaybeishouldhchangethislaterbutontheotherhandthisisalsobtwyouhavejustfoundaneasteregginmycode).getMaxHealth();
+				player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHealthOfEntity);
+				player.setHealth((float) Math.floor(maxHealthOfEntity * playerHealthPercentage));
+			}
+			else
+			{
+				// This is some bad copy pasta right here, which is f*cking bad, but i dont wanna think right now
+				player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20);
+				player.setHealth((float) Math.floor(20f * playerHealthPercentage));
+			}
+		}
+		
+//		
 	}
 	
 	@Override
@@ -211,5 +254,21 @@ public class DefaultMorphCapability implements IMorphCapability
 	{
 		if(getCurrentAbilities() != null)
 			getCurrentAbilities().forEach(ability -> ability.disableAbility(player, getCurrentMorph().get()));
+	}
+
+	@Override
+	public void useAbility(PlayerEntity player)
+	{
+		if(getCurrentAbilities() != null)
+			getCurrentAbilities().forEach(ability -> ability.onUsedAbility(player, getCurrentMorph().get()));
+	}
+
+	@Override
+	public boolean hasAbility(Ability ability)
+	{
+		if(getCurrentAbilities() != null)
+			getCurrentAbilities().contains(ability);
+		
+		return false;
 	}
 }

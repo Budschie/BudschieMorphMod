@@ -55,7 +55,7 @@ public class MorphEntity extends Entity
 		
 		if(!this.world.isRemote)
 		{
-			List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox());
+			List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().offset(this.getPositionVec()));
 			
 			for(Entity entity : list)
 			{
