@@ -53,6 +53,9 @@ public class MorphEntity extends Entity
 	{
 		super.tick();
 		
+		if(this.ticksExisted > 20 * 300)
+			this.remove();
+		
 		if(!this.world.isRemote)
 		{
 			List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().offset(this.getPositionVec()));

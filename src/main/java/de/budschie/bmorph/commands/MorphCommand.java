@@ -69,6 +69,9 @@ public class MorphCommand
 	
 	private static int createEntityMorph(ServerPlayerEntity entity, ResourceLocation rs, CompoundNBT nbtData)
 	{
+		if(rs.toString().equals("bmorph:morph_entity"))
+			throw new IllegalArgumentException("You may not morph yourself into the morph entity.");
+		
 		nbtData.putString("id", rs.toString());
 		
 		MorphUtil.morphToServer(Optional.of(MorphManagerHandlers.FALLBACK.createMorph(ForgeRegistries.ENTITIES.getValue(rs), nbtData, null)), Optional.empty(), entity);

@@ -62,7 +62,6 @@ public class DefaultMorphCapability implements IMorphCapability
 		else
 		{
 			MainNetworkChannel.INSTANCE.send(PacketDistributor.NMLIST.with(() -> Lists.newArrayList(connection)), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, serializeAbilities(), player.getUniqueID()));
-			
 		}
 	}
 	

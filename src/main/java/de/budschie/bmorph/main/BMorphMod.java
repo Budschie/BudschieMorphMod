@@ -60,6 +60,7 @@ public class BMorphMod
 		AbilityLookupTableHandler.addAbilityFor(EntityType.BLAZE, AbilityRegistry.FLY_ABILITY.get());
 		AbilityLookupTableHandler.addAbilityFor(EntityType.BLAZE, AbilityRegistry.FIRE_SHOOTING_ABILITY.get());
 		AbilityLookupTableHandler.addAbilityFor(EntityType.BLAZE, AbilityRegistry.NO_FIRE_DAMAGE_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.BLAZE, AbilityRegistry.WATER_DISLIKE_ABILITY.get());
 		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.GHAST, AbilityRegistry.FLY_ABILITY.get());
 		AbilityLookupTableHandler.addAbilityFor(EntityType.GHAST, AbilityRegistry.GHAST_SHOOTING_ABILITY.get());
@@ -71,6 +72,7 @@ public class BMorphMod
 		AbilityLookupTableHandler.addAbilityFor(EntityType.IRON_GOLEM, AbilityRegistry.YEET_ABILITY.get());
 		AbilityLookupTableHandler.addAbilityFor(EntityType.IRON_GOLEM, AbilityRegistry.SLOWNESS_ABILITY.get());
 		AbilityLookupTableHandler.addAbilityFor(EntityType.IRON_GOLEM, AbilityRegistry.NO_KNOCKBACK_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.IRON_GOLEM, AbilityRegistry.MORE_DAMAGE_ABILITY.get());
 		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.VILLAGER, AbilityRegistry.MOB_ATTACK_ABILITY.get());
 		
@@ -110,5 +112,27 @@ public class BMorphMod
 		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.PAINTING, AbilityRegistry.FLY_ABILITY.get());
 		AbilityLookupTableHandler.addAbilityFor(EntityType.PAINTING, AbilityRegistry.EXTREME_SWIFTNESS_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.PUFFERFISH, AbilityRegistry.NAUSEA_ON_HIT_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.PUFFERFISH, AbilityRegistry.POISON_ON_HIT_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.PUFFERFISH, AbilityRegistry.WATER_BREATHING_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.SQUID, AbilityRegistry.WATER_BREATHING_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.SQUID, AbilityRegistry.WATER_SANIC_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.SQUID, AbilityRegistry.SQUID_BOOST_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.COD, AbilityRegistry.WATER_BREATHING_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.TROPICAL_FISH, AbilityRegistry.WATER_BREATHING_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.SALMON, AbilityRegistry.WATER_BREATHING_ABILITY.get());
+
+		AbilityLookupTableHandler.addAbilityFor(EntityType.DOLPHIN, AbilityRegistry.WATER_BREATHING_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.DOLPHIN, AbilityRegistry.WATER_SANIC_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.DROWNED, AbilityRegistry.WATER_BREATHING_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.ENDERMAN, AbilityRegistry.WATER_DISLIKE_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.ENDERMAN, AbilityRegistry.ENDERMAN_TELEPORT_ABILITY.get());
 	}	
 }

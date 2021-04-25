@@ -7,6 +7,7 @@ import de.budschie.bmorph.network.MorphChangedSynchronizer.MorphChangedPacket;
 import de.budschie.bmorph.network.MorphRemovedSynchronizer.MorphRemovedPacket;
 import de.budschie.bmorph.network.MorphRequestAbilityUsage.MorphRequestAbilityUsagePacket;
 import de.budschie.bmorph.network.MorphRequestMorphIndexChange.RequestMorphIndexChangePacket;
+import de.budschie.bmorph.network.SquidBoost.SquidBoostPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -31,6 +32,7 @@ public class MainNetworkChannel
 		registerSimpleImplPacket(MorphChangedPacket.class, new MorphChangedSynchronizer());
 		registerSimpleImplPacket(RequestMorphIndexChangePacket.class, new MorphRequestMorphIndexChange());
 		registerSimpleImplPacket(MorphRequestAbilityUsagePacket.class, new MorphRequestAbilityUsage());
+		registerSimpleImplPacket(SquidBoostPacket.class, new SquidBoost());
 	}
 	
 	public static <T> void registerSimpleImplPacket(Class<T> packetClass, ISimpleImplPacket<T> packet)

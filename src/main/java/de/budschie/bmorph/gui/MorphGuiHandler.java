@@ -63,6 +63,8 @@ public class MorphGuiHandler
 						Vector3d toSet = player.getMotion().add(0, .2f, 0);
 						player.setMotion(new Vector3d(toSet.x, Math.min(toSet.y, .2f), toSet.z));
 					}
+					if(resolved.hasAbility(AbilityRegistry.WATER_BREATHING_ABILITY.get()) && player.isInWater())
+						player.setAir(14 * 20);
 				}
 			});
 			

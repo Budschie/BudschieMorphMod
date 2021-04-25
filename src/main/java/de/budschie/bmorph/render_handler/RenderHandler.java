@@ -16,9 +16,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.passive.ParrotEntity;
+import net.minecraft.entity.passive.SquidEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.util.HandSide;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -164,11 +168,29 @@ public class RenderHandler
 					entity.ticksElytraFlying = player.getTicksElytraFlying();
 					
 					entity.setPose(player.getPose());
+					entity.setSwimming(player.isSwimming());
+					
+					entity.setMotion(player.getMotion());
 					
 					if(toRender instanceof ParrotEntity)
 					{
 						ParrotEntity parrot = (ParrotEntity) entity;
 						parrot.partyParrot = true;
+					}
+					
+					if(toRender instanceof SquidEntity)
+					{
+						SquidEntity squid = (SquidEntity) entity;
+						squid.lastTentacleAngle = squid.tentacleAngle;
+				        squid.tentacleAngle = MathHelper.abs(MathHelper.sin(squid.squidRotation)) * (float)Math.PI * 0.25F;
+				        squid.prevSquidRotation = squid.squidRotation;
+				        squid.squidRotation = (float) Math.sin(System.currentTimeMillis() / 250.0);
+				        
+				        Vector3d squidPitchYaw = Vector3d.fromPitchYaw(player.getPitchYaw());
+				        squid.prevSquidPitch = squid.squidPitch;
+				        squid.prevSquidYaw = squid.squidYaw;
+				        squid.squidPitch = -90;
+				        squid.squidYaw = (float) squidPitchYaw.y;
 					}
 				}
 				

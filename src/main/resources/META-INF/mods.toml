@@ -27,18 +27,18 @@ displayName="Budschie's Morph Mod" #mandatory
 # A URL for the "homepage" for this mod, displayed in the mod UI
 #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="bmorph.png" #optional
+logoFile="bmorph_logo.png" #optional
 # A text field displayed in the mod UI
 credits="Credits to the Forge Discord for existing" #optional
 # A text field displayed in the mod UI
 authors="Budschie" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-This is a long form description of the mod. You can write whatever you want here
+This mod is a mod with the aim of replacing the metamorph mod
+and porting it to 1.16.5.
 
-Have some lorem ipsum.
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis lacinia magna. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed sagittis luctus odio eu tempus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque volutpat ligula eget lacus auctor sagittis. In hac habitasse platea dictumst. Nunc gravida elit vitae sem vehicula efficitur. Donec mattis ipsum et arcu lobortis, eleifend sagittis sem rutrum. Cras pharetra quam eget posuere fermentum. Sed id tincidunt justo. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Also, one of the goals of this project was/is to make it really compatible
+with other mods and allowing other devs to create addons for this mod.
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.bmorph]] #optional

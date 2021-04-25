@@ -1,5 +1,7 @@
 package de.budschie.bmorph.events;
 
+import java.util.UUID;
+
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.entity.MorphEntity;
@@ -15,16 +17,21 @@ import de.budschie.bmorph.morph.functionality.AbilityLookupTableHandler;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import net.minecraft.client.Minecraft;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.Pose;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.GameRules;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
@@ -33,6 +40,7 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -98,6 +106,18 @@ public class Events
 					}
 				}
 			}
+		}
+	}
+	
+	@SubscribeEvent
+	public static void onPlayerChangedDimension(PlayerChangedDimensionEvent event)
+	{
+		if(!event.getEntity().world.isRemote)
+		{
+			MorphUtil.processCap(event.getPlayer(), resolved ->
+			{
+				resolved.syncWithClients(event.getPlayer());
+			});
 		}
 	}
 	
@@ -230,7 +250,7 @@ public class Events
 			}
 		}
 	}
-	
+		
 	@SubscribeEvent
 	public static void onServerTick(ServerTickEvent event)
 	{
@@ -244,6 +264,10 @@ public class Events
 				
 				if(resolved.hasAbility(AbilityRegistry.CLIMBING_ABILITY.get()) && player.collidedHorizontally)
 					player.setMotion(player.getMotion().add(0, .1f, 0));
+				if(resolved.hasAbility(AbilityRegistry.WATER_BREATHING_ABILITY.get()) && player.isInWater())
+					player.setAir(14 * 20);
+				if(resolved.hasAbility(AbilityRegistry.WATER_DISLIKE_ABILITY.get()) && player.isInWaterRainOrBubbleColumn())
+					player.attackEntityFrom(DamageSource.DROWN, 1);
 			}
 		});
 	}

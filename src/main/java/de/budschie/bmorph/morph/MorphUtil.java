@@ -2,10 +2,10 @@ package de.budschie.bmorph.morph;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
-import de.budschie.bmorph.morph.PlayerMorphEvent.Client.Pre;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.AbilityLookupTableHandler;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,6 +21,17 @@ public class MorphUtil
 	public static void morphToServer(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, PlayerEntity player)
 	{
 		morphToServer(morphItem, morphIndex, player, false);
+	}
+	
+	public static void processCap(PlayerEntity player, Consumer<IMorphCapability> capConsumer)
+	{
+		LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
+		
+		if(cap.isPresent())
+		{
+			IMorphCapability resolved = cap.resolve().get();
+			capConsumer.accept(resolved);
+		}
 	}
 	
 	public static void morphToServer(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, PlayerEntity player, boolean force)

@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 
 import de.budschie.bmorph.main.References;
 import de.budschie.bmorph.morph.MorphItem;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FireballEntity;
 import net.minecraft.entity.projectile.LlamaSpitEntity;
@@ -83,16 +84,18 @@ public class AbilityRegistry
 	public static RegistryObject<Ability> YEET_ABILITY = ABILITY_REGISTRY.register("yeet", () -> new YeetAbility());
 	public static RegistryObject<Ability> NO_KNOCKBACK_ABILITY = ABILITY_REGISTRY.register("no_knockback", () -> new NoKnockbackAbility());
 	
+	// No stun or anything like that xD perfectly balanced, as all things should be
 	public static RegistryObject<Ability> LLAMA_SPIT_ABILITY = ABILITY_REGISTRY.register("llama_spit", () -> new ProjectileShootingAbility((player, direction) -> 
 	{
 		player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_LLAMA_SPIT, SoundCategory.HOSTILE, 10, ((new Random(System.currentTimeMillis()).nextFloat() - .2f) / 2f + 1));
 		
 		//return new LlamaSpitEntity(player.world, player, direction.x, direction.y, direction.z);
-		LlamaSpitEntity entity = new LlamaSpitEntity(player.world, player.getPosX(), player.getPosY(), player.getPosZ(), direction.x, direction.y, direction.z);
+		LlamaSpitEntity entity = new LlamaSpitEntity(EntityType.LLAMA_SPIT, player.world);
 		entity.setShooter(player);
 		entity.setFire(42);
+		entity.setMotion(direction.x, direction.y, direction.z);
 		return entity;
-	}, 3));
+	}, 0));
 	
 	public static RegistryObject<Ability> SWIFTNESS_ABILITY = ABILITY_REGISTRY.register("swiftness", () -> new PassiveTickAbility(10, (player, morph) ->
 	{
@@ -109,4 +112,20 @@ public class AbilityRegistry
 	public static final RegistryObject<Ability> EAT_REGEN_ABILITY = ABILITY_REGISTRY.register("eat_regen", () -> new InstaRegenAbility());
 	
 	public static final RegistryObject<Ability> WITHER_ON_HIT_ABILITY = ABILITY_REGISTRY.register("wither_on_hit", () -> new WitherEffectOnHitAbility());
+
+	public static final RegistryObject<Ability> MORE_DAMAGE_ABILITY = ABILITY_REGISTRY.register("more_damage", () -> new AttackAbility(event -> event.setAmount(event.getAmount() + 3)));
+	
+	public static final RegistryObject<Ability> NAUSEA_ON_HIT_ABILITY = ABILITY_REGISTRY.register("nausea_on_hit", () -> new AttackAbility(event -> event.getEntityLiving().addPotionEffect(new EffectInstance(Effects.NAUSEA, 150, 12))));
+	
+	public static final RegistryObject<Ability> POISON_ON_HIT_ABILITY = ABILITY_REGISTRY.register("poison_on_hit", () -> new AttackAbility(event -> event.getEntityLiving().addPotionEffect(new EffectInstance(Effects.POISON, 40, 4))));
+
+	public static final RegistryObject<Ability> WATER_BREATHING_ABILITY = ABILITY_REGISTRY.register("water_breathing", () -> new WaterBreathingAbility());
+
+	public static final RegistryObject<Ability> WATER_SANIC_ABILITY = ABILITY_REGISTRY.register("water_sanic", () -> new WaterSanicAbility());
+	
+	public static final RegistryObject<Ability> SQUID_BOOST_ABILITY = ABILITY_REGISTRY.register("squid_boost", () -> new SquidBoostAbility());
+
+	public static final RegistryObject<Ability> WATER_DISLIKE_ABILITY = ABILITY_REGISTRY.register("water_dislike", () -> new WaterDislikeAbility());
+	
+	public static final RegistryObject<Ability> ENDERMAN_TELEPORT_ABILITY = ABILITY_REGISTRY.register("enderman_teleport", () -> new TeleportAbility(40));
 }
