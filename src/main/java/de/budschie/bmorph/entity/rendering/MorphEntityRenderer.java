@@ -66,8 +66,8 @@ public class MorphEntityRenderer extends EntityRenderer<MorphEntity>
 		
 		toRender.setPosition(entity.getPosX(), entity.getPosY(), entity.getPosZ());
 		
-		matrixStack.rotate(Vector3f.YP.rotationDegrees(((toRender.ticksExisted + partialTicks) * 5f) % 360));
-		matrixStack.translate(0, Math.sin((toRender.ticksExisted + partialTicks) * 0.25f) * 0.15f + 0.15f, 0);
+//		matrixStack.rotate(Vector3f.YP.rotationDegrees(((toRender.ticksExisted + partialTicks) * 5f) % 360));
+//		matrixStack.translate(0, Math.sin((toRender.ticksExisted + partialTicks) * 0.25f) * 0.15f + 0.15f, 0);
 		
 		
 		// This shit is beyond madness, but it at least works.

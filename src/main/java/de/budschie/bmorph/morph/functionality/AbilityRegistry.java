@@ -4,13 +4,18 @@ import java.util.Random;
 import java.util.function.Supplier;
 
 import de.budschie.bmorph.main.References;
-import de.budschie.bmorph.morph.MorphItem;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.item.FallingBlockEntity;
+import net.minecraft.entity.passive.fish.AbstractFishEntity;
+import net.minecraft.entity.passive.fish.CodEntity;
+import net.minecraft.entity.passive.fish.PufferfishEntity;
+import net.minecraft.entity.passive.fish.SalmonEntity;
+import net.minecraft.entity.passive.fish.TropicalFishEntity;
+import net.minecraft.entity.projectile.EggEntity;
 import net.minecraft.entity.projectile.FireballEntity;
 import net.minecraft.entity.projectile.LlamaSpitEntity;
 import net.minecraft.entity.projectile.SmallFireballEntity;
-import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.SoundCategory;
@@ -81,7 +86,7 @@ public class AbilityRegistry
 	}));
 
 	
-	public static RegistryObject<Ability> YEET_ABILITY = ABILITY_REGISTRY.register("yeet", () -> new YeetAbility());
+	public static RegistryObject<Ability> YEET_ABILITY = ABILITY_REGISTRY.register("yeet", () -> new AttackYeetAbility());
 	public static RegistryObject<Ability> NO_KNOCKBACK_ABILITY = ABILITY_REGISTRY.register("no_knockback", () -> new NoKnockbackAbility());
 	
 	// No stun or anything like that xD perfectly balanced, as all things should be
@@ -97,15 +102,19 @@ public class AbilityRegistry
 		return entity;
 	}, 0));
 	
-	public static RegistryObject<Ability> SWIFTNESS_ABILITY = ABILITY_REGISTRY.register("swiftness", () -> new PassiveTickAbility(10, (player, morph) ->
-	{
-		player.addPotionEffect(new EffectInstance(Effects.SPEED, 20, 2, true, false, false, null));
-	}));
+//	public static RegistryObject<Ability> SWIFTNESS_ABILITY = ABILITY_REGISTRY.register("swiftness", () -> new PassiveTickAbility(10, (player, morph) ->
+//	{
+//		player.addPotionEffect(new EffectInstance(Effects.SPEED, 20, 2, true, false, false, null));
+//	}));
+//	
+//	public static RegistryObject<Ability> EXTREME_SWIFTNESS_ABILITY = ABILITY_REGISTRY.register("extreme_swiftness", () -> new PassiveTickAbility(10, (player, morph) ->
+//	{
+//		player.addPotionEffect(new EffectInstance(Effects.SPEED, 20, 4, true, false, false, null));
+//	}));
 	
-	public static RegistryObject<Ability> EXTREME_SWIFTNESS_ABILITY = ABILITY_REGISTRY.register("extreme_swiftness", () -> new PassiveTickAbility(10, (player, morph) ->
-	{
-		player.addPotionEffect(new EffectInstance(Effects.SPEED, 20, 4, true, false, false, null));
-	}));
+	public static RegistryObject<Ability> SWIFTNESS_ABILITY = ABILITY_REGISTRY.register("swiftness", () -> new SpeedAbility(0.2F * 3));
+	
+	public static RegistryObject<Ability> EXTREME_SWIFTNESS_ABILITY = ABILITY_REGISTRY.register("extreme_swiftness", () -> new SpeedAbility(0.2F * 5));
 	
 	public static RegistryObject<Ability> INSTAJUMP_ABILITY = ABILITY_REGISTRY.register("insta_jump", () -> new InstaJumpAbility());
 	
@@ -113,7 +122,10 @@ public class AbilityRegistry
 	
 	public static final RegistryObject<Ability> WITHER_ON_HIT_ABILITY = ABILITY_REGISTRY.register("wither_on_hit", () -> new WitherEffectOnHitAbility());
 
-	public static final RegistryObject<Ability> MORE_DAMAGE_ABILITY = ABILITY_REGISTRY.register("more_damage", () -> new AttackAbility(event -> event.setAmount(event.getAmount() + 3)));
+	public static final RegistryObject<Ability> MORE_DAMAGE_ABILITY = ABILITY_REGISTRY.register("more_damage", () -> new AttackAbility(event ->
+	{
+		event.setAmount(event.getAmount() + 3);
+	}));
 	
 	public static final RegistryObject<Ability> NAUSEA_ON_HIT_ABILITY = ABILITY_REGISTRY.register("nausea_on_hit", () -> new AttackAbility(event -> event.getEntityLiving().addPotionEffect(new EffectInstance(Effects.NAUSEA, 150, 12))));
 	
@@ -128,4 +140,58 @@ public class AbilityRegistry
 	public static final RegistryObject<Ability> WATER_DISLIKE_ABILITY = ABILITY_REGISTRY.register("water_dislike", () -> new WaterDislikeAbility());
 	
 	public static final RegistryObject<Ability> ENDERMAN_TELEPORT_ABILITY = ABILITY_REGISTRY.register("enderman_teleport", () -> new TeleportAbility(40));
+	
+	public static final RegistryObject<Ability> EGG_YEET_ABILITY = ABILITY_REGISTRY.register("egg_yeet", () -> new YeetAbility(10, player -> 
+	{
+		EggEntity entity = new EggEntity(player.world, player);
+		player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_EGG_THROW, SoundCategory.NEUTRAL, 7, .7f);
+		return entity;
+	}, 2f));
+	
+	public static final RegistryObject<Ability> FISH_YEET_ABILITY = ABILITY_REGISTRY.register("fish_yeet", () -> new YeetAbility(90, player -> 
+	{
+		AbstractFishEntity entity = null;
+		
+		int fish = new Random().nextInt(4);
+		
+		switch (fish)
+		{
+		case 0:
+			entity = new CodEntity(EntityType.COD, player.world);
+			break;
+
+		case 2:
+			entity = new SalmonEntity(EntityType.SALMON, player.world);
+			break;
+
+		case 3:
+			entity = new TropicalFishEntity(EntityType.TROPICAL_FISH, player.world);
+			break;
+
+		default:
+			entity = new PufferfishEntity(EntityType.PUFFERFISH, player.world);
+			break;
+		}
+		
+		player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_PUFFER_FISH_FLOP, SoundCategory.NEUTRAL, 10, new Random().nextFloat() * 0.9f);
+		player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_PUFFER_FISH_FLOP, SoundCategory.NEUTRAL, 10, new Random().nextFloat() * 0.9f);
+		player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_LLAMA_SPIT, SoundCategory.NEUTRAL, 10, 1);
+		return entity;
+	}, .25f));
+
+	
+	public static final RegistryObject<Ability> WEB_YEET_ABILITY = ABILITY_REGISTRY.register("web_yeet", () -> new YeetAbility(10, player -> 
+	{
+		FallingBlockEntity entity = new FallingBlockEntity(player.world, 0, 0, 0, Blocks.COBWEB.getDefaultState());
+		entity.fallTime = -69420;
+		player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_EGG_THROW, SoundCategory.NEUTRAL, 10, .7f);
+		player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_SPIDER_STEP, SoundCategory.NEUTRAL, 10, new Random().nextFloat() * 0.9f + 0.1f);
+		player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_SPIDER_STEP, SoundCategory.NEUTRAL, 10, new Random().nextFloat() * 0.9f + 0.1f);
+		player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_SPIDER_STEP, SoundCategory.NEUTRAL, 10, new Random().nextFloat() * 0.9f + 0.1f);
+		return entity;
+	}, 2.5f));
+	
+	public static final RegistryObject<Ability> WEB_PASSTHROUGH_ABILITY = ABILITY_REGISTRY.register("web_passthrough", () -> new WebSpeedAbility());
+	
+	public static final RegistryObject<Ability> COOKIE_DEATH_ABILITY = ABILITY_REGISTRY.register("cookie_death", () -> new InstaDeathOnCookieAbility());
 }

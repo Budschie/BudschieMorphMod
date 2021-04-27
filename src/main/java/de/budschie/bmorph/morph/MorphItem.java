@@ -2,6 +2,7 @@ package de.budschie.bmorph.morph;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
 
@@ -38,6 +39,11 @@ public abstract class MorphItem
 	
 	public abstract EntityType<?> getEntityType();
 	public abstract Entity createEntity(World world);
+	
+	public boolean isAllowedToPickUp(PlayerEntity picker)
+	{
+		return true;
+	}
 	
 	public String getMorphItemId()
 	{

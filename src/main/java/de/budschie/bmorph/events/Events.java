@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
+import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
+import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import de.budschie.bmorph.entity.MorphEntity;
 import de.budschie.bmorph.gui.MorphGuiHandler;
 import de.budschie.bmorph.main.BMorphMod;
@@ -77,8 +79,24 @@ public class Events
 	}
 	
 	@SubscribeEvent
-	public static void onPlayerKilledLivingEntity(LivingDeathEvent event)
+	public static void onPlayerIsBeingLoaded(PlayerEvent.StartTracking event)
 	{
+		if(event.getTarget() instanceof PlayerEntity)
+		{
+			PlayerEntity player = (PlayerEntity) event.getTarget();
+			MorphUtil.processCap(player, resolved -> resolved.syncWithClient(player, (ServerPlayerEntity) event.getPlayer()));
+		}
+	}
+	
+	@SubscribeEvent
+	public static void onPlayerStoppedBeingLoaded(PlayerEvent.StopTracking event)
+	{
+		
+	}
+	
+	@SubscribeEvent
+	public static void onPlayerKilledLivingEntity(LivingDeathEvent event)
+	{		
 		if(!event.getEntity().world.isRemote)
 		{
 			if(event.getSource().getTrueSource() instanceof PlayerEntity)
@@ -94,11 +112,12 @@ public class Events
 					if(morphItem != null)
 					{
 						IMorphCapability resolved = playerMorph.resolve().get();
+						boolean shouldMorph = !ConfigManager.INSTANCE.get(BlacklistData.class).isInBlacklist(event.getEntity().getType().getRegistryName());
 						
-						if(!resolved.getMorphList().contains(morphItem))
+						if(!resolved.getMorphList().contains(morphItem) && shouldMorph)
 						{
 							MorphEntity morphEntity = new MorphEntity(event.getEntity().world, morphItem);
-							morphEntity.forceSetPosition(event.getEntity().getPosX(), event.getEntity().getPosY(), event.getEntity().getPosZ());
+							morphEntity.setPosition(event.getEntity().getPosX(), event.getEntity().getPosY(), event.getEntity().getPosZ());
 							event.getEntity().world.addEntity(morphEntity);
 							
 							System.out.println("Spawned entity!");

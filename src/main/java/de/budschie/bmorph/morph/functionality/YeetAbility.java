@@ -1,57 +1,48 @@
 package de.budschie.bmorph.morph.functionality;
 
-import java.util.ArrayList;
-import java.util.UUID;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import de.budschie.bmorph.morph.MorphItem;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraftforge.event.TickEvent.ServerTickEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
+import net.minecraft.util.math.vector.Vector3d;
 
-public class YeetAbility extends AbstractEventAbility
+// Yeet is a beautiful word
+public class YeetAbility extends StunAbility
 {
-	ArrayList<Runnable> delayedAttacks = new ArrayList<>();
+	// I LOVE THIS WORD
+	Function<PlayerEntity, Entity> yeet;
+	float yeetStrength;
 	
+	public YeetAbility(int stun, Function<PlayerEntity, Entity>  yeet, float yeetStrength)
+	{
+		super(stun);
+		this.yeet = yeet;
+		this.yeetStrength = yeetStrength;
+	}
+
+	@Override
+	public void enableAbility(PlayerEntity player, MorphItem enabledItem)
+	{
+	}
+
+	@Override
+	public void disableAbility(PlayerEntity player, MorphItem disabledItem)
+	{
+	}
+
 	@Override
 	public void onUsedAbility(PlayerEntity player, MorphItem currentMorph)
 	{
-		
-	}
-	
-	@SubscribeEvent
-	public void onPlayerAttack(LivingAttackEvent event)
-	{
-		if(event.getSource() != null && event.getSource().getTrueSource() instanceof PlayerEntity)
+		if(!isCurrentlyStunned(player.getUniqueID()))
 		{
-			PlayerEntity attacker = (PlayerEntity) event.getSource().getTrueSource();
+			stun(player.getUniqueID());
 			
-			if(trackedPlayers.contains(attacker.getUniqueID()))
-			{
-				delayedAttacks.add(() ->
-				{
-					event.getEntityLiving().setMotion(event.getEntityLiving().getMotion().add(0, .65f, 0));
-					event.getEntityLiving().world.playSound(null, attacker.getPosition(), SoundEvents.ENTITY_IRON_GOLEM_ATTACK, SoundCategory.MASTER, 10, 1);
-				});
-			}
+			Entity createdEntity = yeet.apply(player);
+			createdEntity.setPosition(player.getPosX(), player.getPosY() + player.getEyeHeight(), player.getPosZ());
+			createdEntity.setMotion(Vector3d.fromPitchYaw(player.getPitchYaw()).mul(yeetStrength, yeetStrength, yeetStrength));
+			player.world.addEntity(createdEntity);
 		}
-	}
-	
-	@SubscribeEvent
-	public void onServerTick(ServerTickEvent event)
-	{
-		delayedAttacks.forEach(attack -> attack.run());
-		delayedAttacks.clear();
-	}
-	
-	@Override
-	public void onServerStopped(FMLServerStoppingEvent event)
-	{
-		delayedAttacks.clear();
-		super.onServerStopped(event);
 	}
 }

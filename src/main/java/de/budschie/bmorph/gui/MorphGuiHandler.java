@@ -58,7 +58,7 @@ public class MorphGuiHandler
 				{
 					IMorphCapability resolved = cap.resolve().get();
 					
-					if(resolved.hasAbility(AbilityRegistry.CLIMBING_ABILITY.get()) && player.collidedHorizontally)
+					if(resolved.hasAbility(AbilityRegistry.CLIMBING_ABILITY.get()) && player.collidedHorizontally && !player.abilities.isFlying)
 					{
 						Vector3d toSet = player.getMotion().add(0, .2f, 0);
 						player.setMotion(new Vector3d(toSet.x, Math.min(toSet.y, .2f), toSet.z));

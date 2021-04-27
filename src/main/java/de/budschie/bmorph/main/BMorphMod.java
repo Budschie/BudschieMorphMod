@@ -1,13 +1,14 @@
 package de.budschie.bmorph.main;
 
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
+import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
+import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import de.budschie.bmorph.entity.EntityRegistry;
 import de.budschie.bmorph.morph.FallbackMorphItem;
 import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.PlayerMorphItem;
 import de.budschie.bmorph.morph.VanillaFallbackMorphData;
-import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.AbilityLookupTableHandler;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import de.budschie.bmorph.network.MainNetworkChannel;
@@ -16,7 +17,6 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.GameRules.BooleanValue;
 import net.minecraft.world.GameRules.Category;
 import net.minecraft.world.GameRules.RuleKey;
-import net.minecraft.world.GameRules.RuleType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -41,6 +41,9 @@ public class BMorphMod
 	public static void onCommonSetup(final FMLCommonSetupEvent event)
 	{
 		MorphCapabilityAttacher.register();
+		
+		ConfigManager.INSTANCE.register(BlacklistData.class, BlacklistData::new);
+		
 		System.out.println("Registered capabilities.");
 		
 		KEEP_MORPH_INVENTORY = GameRules.register("keepMorphInventory", Category.PLAYER, BooleanValue.create(true));
@@ -79,6 +82,7 @@ public class BMorphMod
 		AbilityLookupTableHandler.addAbilityFor(EntityType.PLAYER, AbilityRegistry.MOB_ATTACK_ABILITY.get());		
 		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.CHICKEN, AbilityRegistry.SLOWFALL_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.CHICKEN, AbilityRegistry.EGG_YEET_ABILITY.get());
 		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.LLAMA, AbilityRegistry.LLAMA_SPIT_ABILITY.get());
 		
@@ -89,6 +93,13 @@ public class BMorphMod
 		AbilityLookupTableHandler.addAbilityFor(EntityType.SPIDER, AbilityRegistry.CLIMBING_ABILITY.get());
 		AbilityLookupTableHandler.addAbilityFor(EntityType.SPIDER, AbilityRegistry.NO_FALL_DAMAGE_ABILITY.get());
 		AbilityLookupTableHandler.addAbilityFor(EntityType.SPIDER, AbilityRegistry.SWIFTNESS_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.SPIDER, AbilityRegistry.WEB_PASSTHROUGH_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.CAVE_SPIDER, AbilityRegistry.CLIMBING_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.CAVE_SPIDER, AbilityRegistry.NO_FALL_DAMAGE_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.CAVE_SPIDER, AbilityRegistry.SWIFTNESS_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.CAVE_SPIDER, AbilityRegistry.WEB_YEET_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.CAVE_SPIDER, AbilityRegistry.WEB_PASSTHROUGH_ABILITY.get());
 		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.OCELOT, AbilityRegistry.EXTREME_SWIFTNESS_ABILITY.get());
 		AbilityLookupTableHandler.addAbilityFor(EntityType.OCELOT, AbilityRegistry.INSTAJUMP_ABILITY.get());
@@ -109,6 +120,7 @@ public class BMorphMod
 		AbilityLookupTableHandler.addAbilityFor(EntityType.WITHER_SKELETON, AbilityRegistry.WITHER_ON_HIT_ABILITY.get());
 		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.PARROT, AbilityRegistry.FLY_ABILITY.get());
+		AbilityLookupTableHandler.addAbilityFor(EntityType.PARROT, AbilityRegistry.COOKIE_DEATH_ABILITY.get());
 		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.PAINTING, AbilityRegistry.FLY_ABILITY.get());
 		AbilityLookupTableHandler.addAbilityFor(EntityType.PAINTING, AbilityRegistry.EXTREME_SWIFTNESS_ABILITY.get());
@@ -134,5 +146,7 @@ public class BMorphMod
 		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.ENDERMAN, AbilityRegistry.WATER_DISLIKE_ABILITY.get());
 		AbilityLookupTableHandler.addAbilityFor(EntityType.ENDERMAN, AbilityRegistry.ENDERMAN_TELEPORT_ABILITY.get());
+		
+		AbilityLookupTableHandler.addAbilityFor(EntityType.POLAR_BEAR, AbilityRegistry.FISH_YEET_ABILITY.get());
 	}	
 }

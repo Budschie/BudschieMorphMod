@@ -1,5 +1,6 @@
 package de.budschie.bmorph.morph;
 
+import com.google.common.base.Objects;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.entity.Entity;
@@ -48,6 +49,12 @@ public class PlayerMorphItem extends MorphItem
 				return false;
 			}
 		};
+	}
+	
+	@Override
+	public boolean isAllowedToPickUp(PlayerEntity picker)
+	{
+		return picker != null && Objects.equal(gameProfile, picker.getGameProfile());
 	}
 
 	@Override

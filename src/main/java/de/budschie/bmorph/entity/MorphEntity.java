@@ -45,6 +45,7 @@ public class MorphEntity extends Entity
 	@Override
 	public void remove(boolean keepData)
 	{
+		
 		super.remove(keepData);
 	}
 	
@@ -58,7 +59,7 @@ public class MorphEntity extends Entity
 		
 		if(!this.world.isRemote)
 		{
-			List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().offset(this.getPositionVec()));
+			List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox());
 			
 			for(Entity entity : list)
 			{
@@ -74,7 +75,7 @@ public class MorphEntity extends Entity
 						{
 							IMorphCapability resolvedCaps = lazyCaps.resolve().get();
 							
-							if(!resolvedCaps.getMorphList().contains(getMorphItem()))
+							if(this.dataManager.get(MORPH_ITEM).isAllowedToPickUp(player) && !resolvedCaps.getMorphList().contains(getMorphItem()))
 							{
 								resolvedCaps.getMorphList().addToMorphList(getMorphItem());
 								resolvedCaps.syncMorphAcquisition(player, getMorphItem());

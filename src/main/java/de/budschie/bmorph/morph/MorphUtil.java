@@ -79,46 +79,49 @@ public class MorphUtil
 	
 	public static void morphToClient(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, ArrayList<String> abilities, PlayerEntity player)
 	{
-		LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
-		
-		if(cap.isPresent())
+		if(player != null)
 		{
-			IMorphCapability resolved = cap.resolve().get();
+			LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			
-			MorphItem aboutToMorphTo = null;
-			
-			if(morphItem.isPresent())
-				aboutToMorphTo = morphItem.get();
-			else if(morphIndex.isPresent())
-				aboutToMorphTo = resolved.getMorphList().getMorphArrayList().get(morphIndex.get());
-			
-			MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Client.Pre(player, resolved, aboutToMorphTo));
-			
-			resolved.deapplyAbilities(player);
-			
-			if(morphIndex.isPresent())
-				resolved.setMorph(morphIndex.get());
-			else if(morphItem.isPresent())
-				resolved.setMorph(morphItem.get());
-			else
-				resolved.demorph();
-			
-			ArrayList<Ability> resolvedAbilities = new ArrayList<>();
-			
-			IForgeRegistry<Ability> registry = GameRegistry.findRegistry(Ability.class);
-			
-			for(String name : abilities)
+			if(cap.isPresent())
 			{
-				ResourceLocation resourceLocation = new ResourceLocation(name);
-				resolvedAbilities.add(registry.getValue(resourceLocation));
+				IMorphCapability resolved = cap.resolve().get();
+				
+				MorphItem aboutToMorphTo = null;
+				
+				if(morphItem.isPresent())
+					aboutToMorphTo = morphItem.get();
+				else if(morphIndex.isPresent())
+					aboutToMorphTo = resolved.getMorphList().getMorphArrayList().get(morphIndex.get());
+				
+				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Client.Pre(player, resolved, aboutToMorphTo));
+				
+				resolved.deapplyAbilities(player);
+				
+				if(morphIndex.isPresent())
+					resolved.setMorph(morphIndex.get());
+				else if(morphItem.isPresent())
+					resolved.setMorph(morphItem.get());
+				else
+					resolved.demorph();
+				
+				ArrayList<Ability> resolvedAbilities = new ArrayList<>();
+				
+				IForgeRegistry<Ability> registry = GameRegistry.findRegistry(Ability.class);
+				
+				for(String name : abilities)
+				{
+					ResourceLocation resourceLocation = new ResourceLocation(name);
+					resolvedAbilities.add(registry.getValue(resourceLocation));
+				}
+				
+				resolved.setCurrentAbilities(resolvedAbilities);
+				resolved.applyAbilities(player);
+				
+				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Client.Post(player, resolved, aboutToMorphTo));
 			}
-			
-			resolved.setCurrentAbilities(resolvedAbilities);
-			resolved.applyAbilities(player);
-			
-			MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Client.Post(player, resolved, aboutToMorphTo));
+			else
+				System.out.println("Could not synchronize data, as the morph cap is not created yet.");
 		}
-		else
-			System.out.println("Could not synchronize data, as the morph cap is not created yet.");
 	}
 }

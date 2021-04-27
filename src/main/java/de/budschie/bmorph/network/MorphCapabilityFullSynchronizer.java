@@ -77,13 +77,17 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 		ctx.get().enqueueWork(() ->
 		{
 			PlayerEntity player = Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayer());
-			LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
-			if(cap.isPresent())
+			
+			if(player != null)
 			{
-				IMorphCapability resolved = cap.resolve().get();
-				resolved.setMorphList(packet.getMorphList());
+				LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
+				if(cap.isPresent())
+				{
+					IMorphCapability resolved = cap.resolve().get();
+					resolved.setMorphList(packet.getMorphList());
+				}
+				MorphUtil.morphToClient(packet.getEntityData(), packet.getEntityIndex(), packet.getAbilities(), player);	
 			}
-			MorphUtil.morphToClient(packet.getEntityData(), packet.getEntityIndex(), packet.getAbilities(), player);			
 		});
 	}
 	
