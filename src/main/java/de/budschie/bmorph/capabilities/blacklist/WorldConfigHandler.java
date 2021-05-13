@@ -22,7 +22,7 @@ public abstract class WorldConfigHandler
 	
 	public void readFromFile()
 	{
-		File resolvedPath = ServerSetup.server.getFile(path);
+		File resolvedPath = new File(ServerSetup.server.anvilConverterForAnvilFile.getWorldDir().toFile(), "morph_blacklist.dat");
 		
 		if(resolvedPath.exists())
 		{
@@ -41,7 +41,7 @@ public abstract class WorldConfigHandler
 	
 	public void writeToFile()
 	{
-		File resolvedPath = ServerSetup.server.getFile(path);
+		File resolvedPath = new File(ServerSetup.server.anvilConverterForAnvilFile.getWorldDir().toFile(), "morph_blacklist.dat");
 		
 		CompoundNBT serialized = write();
 		
