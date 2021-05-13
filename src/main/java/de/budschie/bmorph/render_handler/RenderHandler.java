@@ -1,5 +1,6 @@
 package de.budschie.bmorph.render_handler;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.WeakHashMap;
@@ -101,97 +102,12 @@ public class RenderHandler
 					toRender.setWorld(toRender.world);
 				}
 				
-				// I should soon clear this code up
-				if(toRender instanceof AbstractClientPlayerEntity)
-				{
-					AbstractClientPlayerEntity entity = (AbstractClientPlayerEntity) toRender;
-					
-					entity.chasingPosX = player.chasingPosX;
-					entity.prevChasingPosX = player.prevChasingPosX;
-					entity.chasingPosY = player.chasingPosY;
-					entity.prevChasingPosY = player.prevChasingPosY;
-					entity.chasingPosZ = player.chasingPosZ;
-					entity.prevChasingPosZ = player.prevChasingPosZ;		
-					
-					
-					if(entity.isElytraFlying() != player.isElytraFlying())
-					{
-						if(player.isElytraFlying())
-							entity.startFallFlying();
-						else
-							entity.stopFallFlying();
-					}
-				}
+				ArrayList<IEntitySynchronizer> list = EntitySynchronizerRegistry.getSynchronizers();
 				
-				if(toRender instanceof LivingEntity)
+				for(IEntitySynchronizer sync : list)
 				{
-					LivingEntity entity = (LivingEntity) toRender;
-					entity.renderYawOffset = event.getPlayer().prevRenderYawOffset;
-					entity.renderYawOffset = player.renderYawOffset;
-					entity.prevRenderYawOffset = player.prevRenderYawOffset;
-					entity.rotationYawHead = player.rotationYawHead;
-					entity.prevRotationYawHead = player.prevRotationYawHead;
-					
-					entity.rotationPitch = player.rotationPitch;
-					entity.prevRotationPitch = player.prevRotationPitch;
-					
-					entity.distanceWalkedModified = player.distanceWalkedModified;
-					entity.prevDistanceWalkedModified = player.prevDistanceWalkedModified;
-					
-					entity.limbSwing = player.limbSwing;
-					entity.limbSwingAmount = player.limbSwingAmount;
-					entity.prevLimbSwingAmount = player.prevLimbSwingAmount;
-					
-					entity.deathTime = player.deathTime;
-					
-					entity.hurtTime = player.hurtTime;
-					entity.velocityChanged = player.velocityChanged;
-					
-					entity.isSwingInProgress = player.isSwingInProgress;
-					entity.swingProgressInt = player.swingProgressInt;
-					
-					entity.swingProgress = player.swingProgress;
-					entity.prevSwingProgress = player.prevSwingProgress;
-					
-					entity.setInvisible(player.isInvisible());
-					
-					entity.preventEntitySpawning = player.preventEntitySpawning;
-					
-					// More WTF?!? Btw if you are asking yourself "WFT?!?", this is because else, there is some weird shit going on with hands and stuff.
-					entity.setItemStackToSlot(EquipmentSlotType.MAINHAND, player.getItemStackFromSlot(EquipmentSlotType.OFFHAND));
-					entity.setItemStackToSlot(EquipmentSlotType.OFFHAND, player.getItemStackFromSlot(EquipmentSlotType.MAINHAND));
-					entity.setItemStackToSlot(EquipmentSlotType.FEET, player.getItemStackFromSlot(EquipmentSlotType.FEET));
-					entity.setItemStackToSlot(EquipmentSlotType.LEGS, player.getItemStackFromSlot(EquipmentSlotType.LEGS));
-					entity.setItemStackToSlot(EquipmentSlotType.CHEST, player.getItemStackFromSlot(EquipmentSlotType.CHEST));
-					entity.setItemStackToSlot(EquipmentSlotType.HEAD, player.getItemStackFromSlot(EquipmentSlotType.HEAD));
-					
-					entity.ticksElytraFlying = player.getTicksElytraFlying();
-					
-					entity.setPose(player.getPose());
-					entity.setSwimming(player.isSwimming());
-					
-					entity.setMotion(player.getMotion());
-					
-					if(toRender instanceof ParrotEntity)
-					{
-						ParrotEntity parrot = (ParrotEntity) entity;
-						parrot.partyParrot = true;
-					}
-					
-					if(toRender instanceof SquidEntity)
-					{
-						SquidEntity squid = (SquidEntity) entity;
-						squid.lastTentacleAngle = squid.tentacleAngle;
-				        squid.tentacleAngle = MathHelper.abs(MathHelper.sin(squid.squidRotation)) * (float)Math.PI * 0.25F;
-				        squid.prevSquidRotation = squid.squidRotation;
-				        squid.squidRotation = (float) Math.sin(System.currentTimeMillis() / 250.0);
-				        
-				        Vector3d squidPitchYaw = Vector3d.fromPitchYaw(player.getPitchYaw());
-				        squid.prevSquidPitch = squid.squidPitch;
-				        squid.prevSquidYaw = squid.squidYaw;
-				        squid.squidPitch = -90;
-				        squid.squidYaw = (float) squidPitchYaw.y;
-					}
+					if(sync.appliesToMorph(toRender))
+						sync.applyToMorphEntity(toRender, player);
 				}
 				
 				toRender.ticksExisted = player.ticksExisted;

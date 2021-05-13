@@ -12,6 +12,11 @@ import de.budschie.bmorph.morph.VanillaFallbackMorphData;
 import de.budschie.bmorph.morph.functionality.AbilityLookupTableHandler;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import de.budschie.bmorph.network.MainNetworkChannel;
+import de.budschie.bmorph.render_handler.AbstractPlayerSynchronizer;
+import de.budschie.bmorph.render_handler.EntitySynchronizerRegistry;
+import de.budschie.bmorph.render_handler.LivingEntitySynchronzier;
+import de.budschie.bmorph.render_handler.ParrotSynchronizer;
+import de.budschie.bmorph.render_handler.SquidSynchronizer;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.GameRules.BooleanValue;
@@ -56,6 +61,11 @@ public class BMorphMod
 		MorphManagerHandlers.registerDefaultManagers();
 		
 		VanillaFallbackMorphData.intialiseFallbackData();
+		
+		EntitySynchronizerRegistry.addEntitySynchronizer(new LivingEntitySynchronzier());
+		EntitySynchronizerRegistry.addEntitySynchronizer(new ParrotSynchronizer());
+		EntitySynchronizerRegistry.addEntitySynchronizer(new SquidSynchronizer());
+		EntitySynchronizerRegistry.addEntitySynchronizer(new AbstractPlayerSynchronizer());
 		
 		AbilityLookupTableHandler.addAbilityFor(EntityType.BAT, AbilityRegistry.FLY_ABILITY.get());
 		AbilityLookupTableHandler.addAbilityFor(EntityType.BAT, AbilityRegistry.NIGHT_VISION_ABILITY.get());
