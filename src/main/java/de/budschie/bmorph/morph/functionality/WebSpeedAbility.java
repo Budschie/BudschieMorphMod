@@ -1,14 +1,9 @@
 package de.budschie.bmorph.morph.functionality;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
-
-import com.google.common.collect.Lists;
 
 import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
-import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;

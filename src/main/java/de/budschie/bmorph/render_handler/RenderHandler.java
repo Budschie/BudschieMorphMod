@@ -11,22 +11,16 @@ import de.budschie.bmorph.morph.AdvancedAbstractClientPlayerEntity;
 import de.budschie.bmorph.morph.MorphItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.passive.ParrotEntity;
-import net.minecraft.entity.passive.SquidEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.monster.AbstractSkeletonEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.util.HandSide;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -53,7 +47,37 @@ public class RenderHandler
 		}
 	}
 	
-	@SuppressWarnings("resource")
+	@SubscribeEvent
+	public static void onMorphInit(InitializeMorphEntityEvent event)
+	{
+		if(event.getPlayer() == Minecraft.getInstance().player)
+			event.getMorphEntity().setCustomNameVisible(false);
+		
+		if(event.getMorphEntity() instanceof AbstractClientPlayerEntity)
+		{
+			AbstractClientPlayerEntity entity = (AbstractClientPlayerEntity) event.getMorphEntity();
+			
+			// WTF?!?
+			entity.setPrimaryHand(event.getPlayer().getPrimaryHand() == HandSide.LEFT ? HandSide.RIGHT : HandSide.LEFT);
+		}
+		
+		if(event.getMorphEntity() instanceof AdvancedAbstractClientPlayerEntity)
+		{
+			AdvancedAbstractClientPlayerEntity advanced = (AdvancedAbstractClientPlayerEntity) event.getMorphEntity();
+			
+			// I LOVE lambdas!
+			advanced.setIsWearing(part -> event.getPlayer().isWearing(part));
+		}
+		
+		if(event.getMorphEntity() instanceof MobEntity)
+		{
+			if(event.getMorphEntity() instanceof AbstractSkeletonEntity)
+				((MobEntity)event.getMorphEntity()).setLeftHanded(event.getPlayer().getPrimaryHand() == HandSide.RIGHT);
+			else
+				((MobEntity)event.getMorphEntity()).setLeftHanded(event.getPlayer().getPrimaryHand() == HandSide.LEFT);
+		}
+	}
+	
 	@SubscribeEvent
 	public static void onRenderedHandler(RenderPlayerEvent event)
 	{
@@ -76,25 +100,8 @@ public class RenderHandler
 					toRender = currentMorph.get().createEntity(player.world);
 					cachedEntities.put(player.getUniqueID(), toRender);
 					morph.resolve().get().cleanDirty();
-					
-					if(event.getPlayer() == Minecraft.getInstance().player)
-						toRender.setCustomNameVisible(false);
-					
-					if(toRender instanceof AbstractClientPlayerEntity)
-					{
-						AbstractClientPlayerEntity entity = (AbstractClientPlayerEntity) toRender;
-						
-						// WTF?!?
-						entity.setPrimaryHand(player.getPrimaryHand() == HandSide.LEFT ? HandSide.RIGHT : HandSide.LEFT);
-					}
-					
-					if(toRender instanceof AdvancedAbstractClientPlayerEntity)
-					{
-						AdvancedAbstractClientPlayerEntity advanced = (AdvancedAbstractClientPlayerEntity) toRender;
-						
-						// I LOVE lambdas!
-						advanced.setIsWearing(part -> player.isWearing(part));
-					}
+										
+					MinecraftForge.EVENT_BUS.post(new InitializeMorphEntityEvent(player, toRender));
 				}
 				
 				if(toRender.world != player.world)

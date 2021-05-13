@@ -5,13 +5,9 @@ import java.util.Optional;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 
-import de.budschie.bmorph.capabilities.IMorphCapability;
-import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
-import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphUtil;
-import de.budschie.bmorph.morph.functionality.AbilityLookupTableHandler;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntitySummonArgument;
@@ -21,7 +17,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class MorphCommand

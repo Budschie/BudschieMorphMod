@@ -7,7 +7,6 @@ import org.lwjgl.glfw.GLFW;
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.main.ClientSetup;
-import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.network.MorphRequestAbilityUsage;
