@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
+import de.budschie.bmorph.api_interact.ShrinkAPIInteractor;
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.morph.AdvancedAbstractClientPlayerEntity;
@@ -49,7 +50,7 @@ public class RenderHandler
 	
 	@SubscribeEvent
 	public static void onMorphInit(InitializeMorphEntityEvent event)
-	{
+	{		
 		if(event.getPlayer() == Minecraft.getInstance().player)
 			event.getMorphEntity().setCustomNameVisible(false);
 		
@@ -79,7 +80,7 @@ public class RenderHandler
 	}
 	
 	@SubscribeEvent
-	public static void onRenderedHandler(RenderPlayerEvent event)
+	public static void onRenderedHandler(RenderPlayerEvent.Pre event)
 	{
 		LazyOptional<IMorphCapability> morph = event.getPlayer().getCapability(MorphCapabilityAttacher.MORPH_CAP);
 		
@@ -125,9 +126,15 @@ public class RenderHandler
 				toRender.prevPosY = player.prevPosY;
 				toRender.prevPosZ = player.prevPosZ;
 				
-				EntityRenderer<? super Entity> manager = Minecraft.getInstance().getRenderManager().getRenderer(toRender);
+				float divisor = ShrinkAPIInteractor.getInteractor().getShrinkingValue(player);
 				
+				event.getMatrixStack().push();
+				event.getMatrixStack().scale(1 / divisor, 1 / divisor, 1 / divisor);
+				
+				EntityRenderer<? super Entity> manager = Minecraft.getInstance().getRenderManager().getRenderer(toRender);
 				manager.render(toRender, 0, event.getPartialRenderTick(), event.getMatrixStack(), event.getBuffers(), event.getLight());
+			
+				event.getMatrixStack().pop();
 			}
 		}
 	}

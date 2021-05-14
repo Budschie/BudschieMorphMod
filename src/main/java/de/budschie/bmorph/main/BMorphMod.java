@@ -1,5 +1,6 @@
 package de.budschie.bmorph.main;
 
+import de.budschie.bmorph.api_interact.ShrinkAPIInteractor;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
@@ -45,6 +46,8 @@ public class BMorphMod
 	@SubscribeEvent
 	public static void onCommonSetup(final FMLCommonSetupEvent event)
 	{
+		ShrinkAPIInteractor.init();
+		
 		MorphCapabilityAttacher.register();
 		
 		ConfigManager.INSTANCE.register(BlacklistData.class, BlacklistData::new);

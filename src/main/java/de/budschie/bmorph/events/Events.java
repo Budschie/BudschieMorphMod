@@ -1,39 +1,26 @@
 package de.budschie.bmorph.events;
 
-import java.util.UUID;
-
+import de.budschie.bmorph.api_interact.ShrinkAPIInteractor;
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import de.budschie.bmorph.entity.MorphEntity;
-import de.budschie.bmorph.gui.MorphGuiHandler;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.morph.PlayerMorphEvent;
-import de.budschie.bmorph.morph.PlayerMorphEvent.Server.Post;
 import de.budschie.bmorph.morph.functionality.AbilityLookupTableHandler;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
-import de.budschie.bmorph.network.MainNetworkChannel;
-import net.minecraft.client.Minecraft;
-import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.Pose;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
-import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.world.GameRules;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
@@ -45,9 +32,9 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.network.PacketDistributor;
 
 @EventBusSubscriber
 public class Events
@@ -291,7 +278,7 @@ public class Events
 		});
 	}
 	
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void onCalculatingAABB(EntityEvent.Size event)
 	{
 		if(event.getEntity() instanceof PlayerEntity)
@@ -301,6 +288,8 @@ public class Events
 			
 			if(cap.isPresent())
 			{
+				float divisor = ShrinkAPIInteractor.getInteractor().getShrinkingValue(player);
+				
 				IMorphCapability resolved = cap.resolve().get();
 				resolved.getCurrentMorph().ifPresent(item ->
 				{					
@@ -310,11 +299,14 @@ public class Events
 					// We do this as we apply our own sneaking logic as I couldn't figure out how to get the multiplier for the eye height... F in the chat plz
 					EntitySize newSize = createdEntity.getSize(Pose.STANDING);
 					
+					newSize = newSize.scale(1 / divisor);
+					
 					if(event.getPose() == Pose.CROUCHING)
 						newSize = newSize.scale(1, .85f);
 					
 					event.setNewSize(newSize, false);
-					event.setNewEyeHeight(createdEntity.getEyeHeightAccess(event.getPose(), newSize));
+					//event.setNewEyeHeight(createdEntity.getEyeHeightAccess(event.getPose(), newSize));
+					event.setNewEyeHeight(newSize.height * 0.85f);
 					//event.setNewEyeHeight(player.getEyeHeightAccess(event.getPose(), createdEntity.getSize(event.getPose())));
 				});
 			}
