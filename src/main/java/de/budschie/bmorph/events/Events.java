@@ -278,7 +278,7 @@ public class Events
 		});
 	}
 	
-	@SubscribeEvent(priority = EventPriority.LOWEST)
+	@SubscribeEvent(priority = EventPriority.LOW)
 	public static void onCalculatingAABB(EntityEvent.Size event)
 	{
 		if(event.getEntity() instanceof PlayerEntity)
@@ -299,7 +299,10 @@ public class Events
 					// We do this as we apply our own sneaking logic as I couldn't figure out how to get the multiplier for the eye height... F in the chat plz
 					EntitySize newSize = createdEntity.getSize(Pose.STANDING);
 					
-					newSize = newSize.scale(1 / divisor);
+					if(ShrinkAPIInteractor.getInteractor().isShrunk(player))
+					{
+						newSize = newSize.scale(1.6f / divisor, 1 / divisor);
+					}
 					
 					if(event.getPose() == Pose.CROUCHING)
 						newSize = newSize.scale(1, .85f);

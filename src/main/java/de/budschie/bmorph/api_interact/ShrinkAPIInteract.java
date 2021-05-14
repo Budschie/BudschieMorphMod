@@ -21,4 +21,17 @@ public class ShrinkAPIInteract implements IShrinkAPIInteract
 		
 		return 1;
 	}
+
+	@Override
+	public boolean isShrunk(PlayerEntity player)
+	{
+		Optional<IShrinkProvider> provider = player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).resolve();
+		
+		if(provider.isPresent())
+		{
+			return provider.get().isShrunk();
+		}
+		
+		return false;
+	}
 }

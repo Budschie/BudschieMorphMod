@@ -129,11 +129,15 @@ public class RenderHandler
 				float divisor = ShrinkAPIInteractor.getInteractor().getShrinkingValue(player);
 				
 				event.getMatrixStack().push();
-				event.getMatrixStack().scale(1 / divisor, 1 / divisor, 1 / divisor);
+				
+				event.getMatrixStack().scale(0.81f / divisor, 0.81f / divisor, 0.81f / divisor);
+				
+				if(player.isCrouching() && ShrinkAPIInteractor.getInteractor().isShrunk(player))
+					event.getMatrixStack().translate(0, 1, 0);
 				
 				EntityRenderer<? super Entity> manager = Minecraft.getInstance().getRenderManager().getRenderer(toRender);
 				manager.render(toRender, 0, event.getPartialRenderTick(), event.getMatrixStack(), event.getBuffers(), event.getLight());
-			
+				
 				event.getMatrixStack().pop();
 			}
 		}
