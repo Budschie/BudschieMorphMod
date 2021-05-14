@@ -130,7 +130,8 @@ public class RenderHandler
 				
 				event.getMatrixStack().push();
 				
-				event.getMatrixStack().scale(0.81f / divisor, 0.81f / divisor, 0.81f / divisor);
+				if(ShrinkAPIInteractor.getInteractor().isShrunk(player))
+					event.getMatrixStack().scale(0.81f / divisor, 0.81f / divisor, 0.81f / divisor);
 				
 				if(player.isCrouching() && ShrinkAPIInteractor.getInteractor().isShrunk(player))
 					event.getMatrixStack().translate(0, 1, 0);
