@@ -54,7 +54,7 @@ public class PlayerMorphItem extends MorphItem
 	@Override
 	public boolean isAllowedToPickUp(PlayerEntity picker)
 	{
-		return picker != null && Objects.equal(gameProfile, picker.getGameProfile());
+		return picker != null && !Objects.equal(gameProfile, picker.getGameProfile());
 	}
 
 	@Override
