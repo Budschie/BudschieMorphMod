@@ -48,10 +48,7 @@ public class ClientSetup
 			AdvancedAbstractClientPlayerEntity entity = new AdvancedAbstractClientPlayerEntity((ClientWorld) world, gameProfile);
 			
 			Minecraft.getInstance().getSkinManager().loadProfileTextures(gameProfile, (type, resourceLocation, texture) -> 
-			{
-				System.out.println("Downloading texture with hash " + texture.getHash());
-				System.out.println("URL: " + texture.getUrl());
-				
+			{				
 				if(type == Type.CAPE)
 				{
 					entity.capeResourceLocation = Minecraft.getInstance().getSkinManager().loadSkin(texture, type);;
