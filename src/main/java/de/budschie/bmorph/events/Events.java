@@ -106,8 +106,6 @@ public class Events
 							MorphEntity morphEntity = new MorphEntity(event.getEntity().world, morphItem);
 							morphEntity.setPosition(event.getEntity().getPosX(), event.getEntity().getPosY(), event.getEntity().getPosZ());
 							event.getEntity().world.addEntity(morphEntity);
-							
-							System.out.println("Spawned entity!");
 						}
 					}
 				}

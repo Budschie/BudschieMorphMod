@@ -43,8 +43,6 @@ public class ClientSetup
 		
 		UglyHackThatDoesntWork.thisisstupid = (gameProfile, world) ->
 		{
-			System.out.println(gameProfile.getId());
-			
 			AdvancedAbstractClientPlayerEntity entity = new AdvancedAbstractClientPlayerEntity((ClientWorld) world, gameProfile);
 			
 			Minecraft.getInstance().getSkinManager().loadProfileTextures(gameProfile, (type, resourceLocation, texture) -> 
