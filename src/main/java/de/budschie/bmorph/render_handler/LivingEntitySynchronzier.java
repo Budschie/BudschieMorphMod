@@ -20,14 +20,6 @@ public class LivingEntitySynchronzier implements IEntitySynchronizer
 	public void applyToMorphEntity(Entity morphEntity, PlayerEntity player)
 	{
 		LivingEntity entity = (LivingEntity) morphEntity;
-		entity.renderYawOffset = player.prevRenderYawOffset;
-		entity.renderYawOffset = player.renderYawOffset;
-		entity.prevRenderYawOffset = player.prevRenderYawOffset;
-		entity.rotationYawHead = player.rotationYawHead;
-		entity.prevRotationYawHead = player.prevRotationYawHead;
-		
-		entity.rotationPitch = player.rotationPitch;
-		entity.prevRotationPitch = player.prevRotationPitch;
 		
 		entity.distanceWalkedModified = player.distanceWalkedModified;
 		entity.prevDistanceWalkedModified = player.prevDistanceWalkedModified;
@@ -51,12 +43,21 @@ public class LivingEntitySynchronzier implements IEntitySynchronizer
 		
 		entity.preventEntitySpawning = player.preventEntitySpawning;
 		
+		entity.renderYawOffset = player.prevRenderYawOffset;
+		entity.renderYawOffset = player.renderYawOffset;
+		entity.prevRenderYawOffset = player.prevRenderYawOffset;
+		entity.rotationYawHead = player.rotationYawHead;
+		entity.prevRotationYawHead = player.prevRotationYawHead;
+		
+		if(player.getBedPosition().isPresent())
+			entity.setBedPosition(player.getBedPosition().get());
+				
 		// More WTF?!? Btw if you are asking yourself "WTF?!?", this is because else, there is some weird shit going on with hands and stuff.
 		// But this could just be me being stupid
 		
 //		System.out.println("Player main hand: " + player.getPrimaryHand() + "; Entity main hand: " + entity.getPrimaryHand());
 		
-		if(entity instanceof AbstractSkeletonEntity)
+		if(entity instanceof AbstractSkeletonEntity || entity instanceof PlayerEntity)
 		{
 			entity.setHeldItem(Hand.OFF_HAND, player.getHeldItem(Hand.MAIN_HAND));
 			entity.setHeldItem(Hand.MAIN_HAND, player.getHeldItem(Hand.OFF_HAND));
@@ -80,7 +81,6 @@ public class LivingEntitySynchronzier implements IEntitySynchronizer
 		entity.setSwimming(player.isSwimming());
 		
 		entity.setMotion(player.getMotion());
-
 	}
 
 }

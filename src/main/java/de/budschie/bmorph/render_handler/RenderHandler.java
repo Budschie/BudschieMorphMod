@@ -10,6 +10,7 @@ import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.morph.AdvancedAbstractClientPlayerEntity;
 import de.budschie.bmorph.morph.MorphItem;
+import net.gigabit101.shrink.events.PlayerEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -17,12 +18,15 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.monster.AbstractSkeletonEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.HandSide;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -30,6 +34,11 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 @EventBusSubscriber(value = Dist.CLIENT)
 public class RenderHandler
 {
+	private static final Quaternion NORTH = new Quaternion(0, -90, 0, true);
+	private static final Quaternion EAST = new Quaternion(0, -180, 0, true);
+	private static final Quaternion SOUTH = new Quaternion(0, -270, 0, true);
+	private static final Quaternion WEST = new Quaternion(0, 0, 0, true);
+	
 	public static WeakHashMap<UUID, Entity> cachedEntities = new WeakHashMap<>();
 	
 	@SubscribeEvent
@@ -127,7 +136,18 @@ public class RenderHandler
 				toRender.prevPosY = player.prevPosY;
 				toRender.prevPosZ = player.prevPosZ;
 				
+				toRender.rotationPitch = player.rotationPitch;
+				toRender.rotationYaw = player.rotationYaw;
+								
+				toRender.rotationPitch = player.rotationPitch;
+				toRender.prevRotationPitch = player.prevRotationPitch;
+				
+				toRender.rotationYaw = player.rotationYaw;
+				toRender.prevRotationYaw = player.prevRotationYaw;
+				
 				float divisor = ShrinkAPIInteractor.getInteractor().getShrinkingValue(player);
+				
+				Quaternion quat = null;
 				
 				event.getMatrixStack().push();
 				
@@ -136,7 +156,7 @@ public class RenderHandler
 				
 				if(player.isCrouching() && ShrinkAPIInteractor.getInteractor().isShrunk(player))
 					event.getMatrixStack().translate(0, 1, 0);
-				
+								
 				EntityRenderer<? super Entity> manager = Minecraft.getInstance().getRenderManager().getRenderer(toRender);
 				manager.render(toRender, 0, event.getPartialRenderTick(), event.getMatrixStack(), event.getBuffers(), event.getLight());
 				

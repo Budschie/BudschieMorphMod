@@ -14,6 +14,8 @@ import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.morph.PlayerMorphEvent;
 import de.budschie.bmorph.morph.functionality.AbilityLookupTableHandler;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
+import net.minecraft.client.gui.widget.list.KeyBindingList;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.MobEntity;
@@ -23,6 +25,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -218,6 +221,30 @@ public class Events
 					event.setCanceled(true);
 			}
 		}
+	}
+	
+	@SubscribeEvent
+	public static void onChangedPose(PlayerTickEvent event)
+	{
+//		event.player.setPose(Pose.SLEEPING);
+//		event.player.setForcedPose(Pose.SWIMMING);
+		
+		MorphUtil.processCap(event.player, cap ->
+		{
+			if(cap.hasAbility(AbilityRegistry.FLY_ABILITY.get()) && event.player.abilities.isFlying)
+			{
+				event.player.setPose(Pose.STANDING);
+				event.player.setForcedPose(null);
+			}
+			
+			if(cap.getCurrentMorph().isPresent())
+			{
+				if((event.player.getBoundingBox().maxY - event.player.getBoundingBox().minY) < 1 && event.player.getPose() == Pose.SWIMMING && !event.player.isSwimming())
+				{
+					event.player.setPose(Pose.STANDING);
+				}
+			}
+		});
 	}
 	
 	@SubscribeEvent
