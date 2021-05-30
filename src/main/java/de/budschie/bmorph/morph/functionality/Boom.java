@@ -28,16 +28,19 @@ public class Boom extends Ability
 	@Override
 	public void onUsedAbility(PlayerEntity player, MorphItem currentMorph)
 	{
-		player.attackEntityFrom(DamageSource.causeExplosionDamage(player), 69420);
-		player.world.createExplosion(player, DamageSource.causeExplosionDamage(player), new EntityExplosionContext(player), player.getPosX(), player.getPosY(), player.getPosZ(), 7, false, Mode.BREAK);
-		
-		Random rand = new Random();
-		
-		World playerWorld = player.world;
-		
-		for(int i = 0; i < 100; i++)
+		if(!player.isCreative() && player.ticksExisted > 80)
 		{
-			playerWorld.playSound(null, player.getPosition().add(rand.nextInt(21) - 10, rand.nextInt(21) - 10, rand.nextInt(21) - 10), rand.nextBoolean() ? SoundEvents.ENTITY_DRAGON_FIREBALL_EXPLODE : SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.MASTER, 20, (rand.nextFloat() - .6f) + 1);
+			player.attackEntityFrom(DamageSource.causeExplosionDamage(player), 69420);
+			player.world.createExplosion(player, DamageSource.causeExplosionDamage(player), new EntityExplosionContext(player), player.getPosX(), player.getPosY(), player.getPosZ(), 7, false, Mode.BREAK);
+			
+			Random rand = new Random();
+			
+			World playerWorld = player.world;
+			
+			for(int i = 0; i < 10; i++)
+			{
+				playerWorld.playSound(null, player.getPosition().add(rand.nextInt(21) - 10, rand.nextInt(21) - 10, rand.nextInt(21) - 10), rand.nextBoolean() ? SoundEvents.ENTITY_DRAGON_FIREBALL_EXPLODE : SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.MASTER, 20, (rand.nextFloat() - .6f) + 1);
+			}
 		}
 	}
 }
