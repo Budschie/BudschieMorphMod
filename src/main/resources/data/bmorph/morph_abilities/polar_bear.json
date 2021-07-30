@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:polar_bear",
+    "grant":
+    [
+        "bmorph:fish_yeet"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

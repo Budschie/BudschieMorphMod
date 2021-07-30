@@ -1,0 +1,15 @@
+{
+    "entity_type": "minecraft:iron_golem",
+    "grant":
+    [
+        "bmorph:mob_attack",
+        "bmorph:yeet",
+        "bmorph:slowness",
+        "bmorph:no_knockback",
+        "bmorph:more_damage"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

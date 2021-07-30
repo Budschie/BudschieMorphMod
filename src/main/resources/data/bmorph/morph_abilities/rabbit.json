@@ -1,0 +1,13 @@
+{
+    "entity_type": "minecraft:rabbit",
+    "grant":
+    [
+        "bmorph:no_fall_damage",
+        "bmorph:swiftness",
+        "bmorph:jumpboost"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

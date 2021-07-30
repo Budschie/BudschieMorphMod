@@ -1,0 +1,15 @@
+{
+    "entity_type": "minecraft:cave_spider",
+    "grant":
+    [
+        "bmorph:climbing",
+        "bmorph:no_fall_damage",
+        "bmorph:swiftness",
+        "bmorph:web_passthrough",
+        "bmorph:web_yeet"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

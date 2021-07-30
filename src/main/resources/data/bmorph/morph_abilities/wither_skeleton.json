@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:wither_skeleton",
+    "grant":
+    [
+        "bmorph:wither_on_hit"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

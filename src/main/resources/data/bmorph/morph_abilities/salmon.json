@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:salmon",
+    "grant":
+    [
+        "bmorph:water_breathing"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

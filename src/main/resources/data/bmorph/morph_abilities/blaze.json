@@ -1,0 +1,14 @@
+{
+    "entity_type": "minecraft:blaze",
+    "grant":
+    [
+        "bmorph:flying",
+        "bmorph:fire_blaze",
+        "bmorph:no_fire_damage",
+        "bmorph:water_dislike"
+    ],
+    "revoke":
+    [
+
+    ]
+}

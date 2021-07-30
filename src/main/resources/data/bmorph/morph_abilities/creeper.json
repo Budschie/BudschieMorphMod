@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:creeper",
+    "grant":
+    [
+        "bmorph:boom"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

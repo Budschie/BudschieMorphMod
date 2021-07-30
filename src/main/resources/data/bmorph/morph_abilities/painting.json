@@ -1,0 +1,12 @@
+{
+    "entity_type": "minecraft:painting",
+    "grant":
+    [
+        "bmorph:flying",
+        "bmorph:extreme_swiftness"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:villager",
+    "grant":
+    [
+        "bmorph:mob_attack"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

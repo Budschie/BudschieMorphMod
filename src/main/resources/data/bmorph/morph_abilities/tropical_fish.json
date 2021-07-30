@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:tropical_fish",
+    "grant":
+    [
+        "bmorph:water_breathing"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

@@ -1,0 +1,13 @@
+{
+    "entity_type": "minecraft:ghast",
+    "grant":
+    [
+        "bmorph:flying",
+        "bmorph:fire_ghast",
+        "bmorph:no_fire_damage"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

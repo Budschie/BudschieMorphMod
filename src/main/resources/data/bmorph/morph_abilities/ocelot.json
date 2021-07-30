@@ -1,0 +1,15 @@
+{
+    "entity_type": "minecraft:ocelot",
+    "grant":
+    [
+        "bmorph:extreme_swiftness",
+        "bmorph:insta_jump",
+        "bmorph:night_vision",
+        "bmorph:eat_regen",
+        "bmorph:no_fall_damage"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

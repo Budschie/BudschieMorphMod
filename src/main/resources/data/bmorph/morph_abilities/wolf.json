@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:wolf",
+    "grant":
+    [
+        "bmorph:eat_regen"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

@@ -1,0 +1,13 @@
+{
+    "entity_type": "minecraft:cat",
+    "grant":
+    [
+        "bmorph:swiftness",
+        "bmorph:night_vision",
+        "bmorph:eat_regen"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

@@ -1,0 +1,12 @@
+{
+    "entity_type": "minecraft:enderman",
+    "grant":
+    [
+        "bmorph:water_dislike",
+        "bmorph:enderman_teleport"
+    ],
+    "revoke":
+    [
+        
+    ]
+}
