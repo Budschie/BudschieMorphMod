@@ -6,16 +6,14 @@ import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import de.budschie.bmorph.entity.MorphEntity;
+import de.budschie.bmorph.json_integration.MorphAbilityManager;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.morph.PlayerMorphEvent;
-import de.budschie.bmorph.morph.functionality.AbilityLookupTableHandler;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
-import net.minecraft.client.gui.widget.list.KeyBindingList;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.MobEntity;
@@ -25,6 +23,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -42,6 +41,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 @EventBusSubscriber
 public class Events
 {
+	public static final MorphAbilityManager MORPH_ABILITY_MANAGER = new MorphAbilityManager();
+	
 	@SubscribeEvent
 	public static void onPlayerJoined(PlayerLoggedInEvent event)
 	{
@@ -57,7 +58,7 @@ public class Events
 				
 //				ServerSetup.server.getPlayerList().getPlayers().forEach(serverPlayer -> cap.resolve().get().syncWithClient(event.getPlayer(), serverPlayer));
 //				ServerSetup.server.getPlayerList().getPlayers().forEach(serverPlayer -> cap.resolve().get().syncWithClient(serverPlayer, (ServerPlayerEntity) event.getPlayer()));
-				cap.resolve().get().getCurrentMorph().ifPresent(morph -> cap.resolve().get().setCurrentAbilities(AbilityLookupTableHandler.getAbilitiesFor(morph)));
+				cap.resolve().get().getCurrentMorph().ifPresent(morph -> cap.resolve().get().setCurrentAbilities(MORPH_ABILITY_MANAGER.getAbilitiesFor(morph)));
 				cap.resolve().get().syncWithClients(player);
 				
 				cap.resolve().get().applyHealthOnPlayer(player);
@@ -76,6 +77,12 @@ public class Events
 			PlayerEntity player = (PlayerEntity) event.getTarget();
 			MorphUtil.processCap(player, resolved -> resolved.syncWithClient(player, (ServerPlayerEntity) event.getPlayer()));
 		}
+	}
+	
+	@SubscribeEvent
+	public static void onRegisterReloadResourceLoaders(AddReloadListenerEvent event)
+	{
+		event.addListener(MORPH_ABILITY_MANAGER);
 	}
 	
 	@SubscribeEvent

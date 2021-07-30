@@ -6,8 +6,8 @@ import java.util.function.Consumer;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
+import de.budschie.bmorph.events.Events;
 import de.budschie.bmorph.morph.functionality.Ability;
-import de.budschie.bmorph.morph.functionality.AbilityLookupTableHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -64,7 +64,7 @@ public class MorphUtil
 				
 				//resolved.getCurrentMorph().ifPresentOrElse(morph -> resolved.setCurrentAbilities(AbilityLookupTableHandler.getAbilitiesFor(morph)), () -> resolved.setCurrentAbilities(new ArrayList<>()));
 				if(resolved.getCurrentMorph().isPresent())
-					resolved.setCurrentAbilities(AbilityLookupTableHandler.getAbilitiesFor(resolved.getCurrentMorph().get()));
+					resolved.setCurrentAbilities(Events.MORPH_ABILITY_MANAGER.getAbilitiesFor(resolved.getCurrentMorph().get()));
 				else
 					resolved.setCurrentAbilities(null);
 				

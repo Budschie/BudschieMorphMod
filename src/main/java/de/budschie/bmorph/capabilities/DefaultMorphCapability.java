@@ -1,6 +1,7 @@
 package de.budschie.bmorph.capabilities;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.google.common.collect.Lists;
@@ -28,7 +29,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	
 	MorphList morphList = new MorphList();
 	
-	ArrayList<Ability> currentAbilities;
+	List<Ability> currentAbilities;
 	
 	private boolean dirty = true;
 	
@@ -230,13 +231,13 @@ public class DefaultMorphCapability implements IMorphCapability
 	}
 
 	@Override
-	public ArrayList<Ability> getCurrentAbilities()
+	public List<Ability> getCurrentAbilities()
 	{
 		return currentAbilities;
 	}
 
 	@Override
-	public void setCurrentAbilities(ArrayList<Ability> abilities)
+	public void setCurrentAbilities(List<Ability> abilities)
 	{
 		this.currentAbilities = abilities;
 	}

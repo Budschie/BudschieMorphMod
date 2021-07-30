@@ -10,7 +10,6 @@ import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.PlayerMorphItem;
 import de.budschie.bmorph.morph.VanillaFallbackMorphData;
-import de.budschie.bmorph.morph.functionality.AbilityLookupTableHandler;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.render_handler.AbstractPlayerSynchronizer;
@@ -18,7 +17,6 @@ import de.budschie.bmorph.render_handler.EntitySynchronizerRegistry;
 import de.budschie.bmorph.render_handler.LivingEntitySynchronzier;
 import de.budschie.bmorph.render_handler.ParrotSynchronizer;
 import de.budschie.bmorph.render_handler.SquidSynchronizer;
-import net.minecraft.entity.EntityType;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.GameRules.BooleanValue;
 import net.minecraft.world.GameRules.Category;
@@ -69,97 +67,5 @@ public class BMorphMod
 		EntitySynchronizerRegistry.addEntitySynchronizer(new ParrotSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new SquidSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new AbstractPlayerSynchronizer());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.BAT, AbilityRegistry.FLY_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.BAT, AbilityRegistry.NIGHT_VISION_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.BLAZE, AbilityRegistry.FLY_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.BLAZE, AbilityRegistry.FIRE_SHOOTING_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.BLAZE, AbilityRegistry.NO_FIRE_DAMAGE_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.BLAZE, AbilityRegistry.WATER_DISLIKE_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.GHAST, AbilityRegistry.FLY_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.GHAST, AbilityRegistry.GHAST_SHOOTING_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.GHAST, AbilityRegistry.NO_FIRE_DAMAGE_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.CREEPER, AbilityRegistry.BOOM.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.IRON_GOLEM, AbilityRegistry.MOB_ATTACK_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.IRON_GOLEM, AbilityRegistry.YEET_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.IRON_GOLEM, AbilityRegistry.SLOWNESS_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.IRON_GOLEM, AbilityRegistry.NO_KNOCKBACK_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.IRON_GOLEM, AbilityRegistry.MORE_DAMAGE_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.VILLAGER, AbilityRegistry.MOB_ATTACK_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.PLAYER, AbilityRegistry.MOB_ATTACK_ABILITY.get());		
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.CHICKEN, AbilityRegistry.SLOWFALL_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.CHICKEN, AbilityRegistry.EGG_YEET_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.LLAMA, AbilityRegistry.LLAMA_SPIT_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.HORSE, AbilityRegistry.INSTAJUMP_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.HORSE, AbilityRegistry.SWIFTNESS_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.HORSE, AbilityRegistry.JUMPBOOST_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.SPIDER, AbilityRegistry.CLIMBING_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.SPIDER, AbilityRegistry.NO_FALL_DAMAGE_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.SPIDER, AbilityRegistry.SWIFTNESS_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.SPIDER, AbilityRegistry.WEB_PASSTHROUGH_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.CAVE_SPIDER, AbilityRegistry.CLIMBING_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.CAVE_SPIDER, AbilityRegistry.NO_FALL_DAMAGE_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.CAVE_SPIDER, AbilityRegistry.SWIFTNESS_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.CAVE_SPIDER, AbilityRegistry.WEB_YEET_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.CAVE_SPIDER, AbilityRegistry.WEB_PASSTHROUGH_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.OCELOT, AbilityRegistry.EXTREME_SWIFTNESS_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.OCELOT, AbilityRegistry.INSTAJUMP_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.OCELOT, AbilityRegistry.NIGHT_VISION_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.OCELOT, AbilityRegistry.EAT_REGEN_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.OCELOT, AbilityRegistry.NO_FALL_DAMAGE_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.RABBIT, AbilityRegistry.NO_FALL_DAMAGE_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.RABBIT, AbilityRegistry.SWIFTNESS_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.RABBIT, AbilityRegistry.JUMPBOOST_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.CAT, AbilityRegistry.SWIFTNESS_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.CAT, AbilityRegistry.NIGHT_VISION_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.CAT, AbilityRegistry.EAT_REGEN_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.WOLF, AbilityRegistry.EAT_REGEN_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.WITHER_SKELETON, AbilityRegistry.WITHER_ON_HIT_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.PARROT, AbilityRegistry.FLY_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.PARROT, AbilityRegistry.COOKIE_DEATH_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.PAINTING, AbilityRegistry.FLY_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.PAINTING, AbilityRegistry.EXTREME_SWIFTNESS_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.PUFFERFISH, AbilityRegistry.NAUSEA_ON_HIT_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.PUFFERFISH, AbilityRegistry.POISON_ON_HIT_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.PUFFERFISH, AbilityRegistry.WATER_BREATHING_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.SQUID, AbilityRegistry.WATER_BREATHING_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.SQUID, AbilityRegistry.WATER_SANIC_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.SQUID, AbilityRegistry.SQUID_BOOST_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.COD, AbilityRegistry.WATER_BREATHING_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.TROPICAL_FISH, AbilityRegistry.WATER_BREATHING_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.SALMON, AbilityRegistry.WATER_BREATHING_ABILITY.get());
-
-		AbilityLookupTableHandler.addAbilityFor(EntityType.DOLPHIN, AbilityRegistry.WATER_BREATHING_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.DOLPHIN, AbilityRegistry.WATER_SANIC_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.DROWNED, AbilityRegistry.WATER_BREATHING_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.ENDERMAN, AbilityRegistry.WATER_DISLIKE_ABILITY.get());
-		AbilityLookupTableHandler.addAbilityFor(EntityType.ENDERMAN, AbilityRegistry.ENDERMAN_TELEPORT_ABILITY.get());
-		
-		AbilityLookupTableHandler.addAbilityFor(EntityType.POLAR_BEAR, AbilityRegistry.FISH_YEET_ABILITY.get());
 	}	
 }

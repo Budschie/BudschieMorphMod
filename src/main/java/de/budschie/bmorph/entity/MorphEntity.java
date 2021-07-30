@@ -58,27 +58,18 @@ public class MorphEntity extends Entity
 	{
 		super.tick();
 		
-//		this.prevPosX = getPosX();
-//		this.prevPosY = getPosY();
-//		this.prevPosZ = getPosZ();
-		
 		if(this.ticksExisted > 20 * 300)
 			this.remove();
 		
 		if(!isOnGround())
 			this.setMotion(this.getMotion().x, this.getMotion().y - 0.04f, this.getMotion().z);
-//		else if(!world.isRemote)
-//			pushOutOfBlocks(this.getPosX(), (this.getBoundingBox().minY + this.getBoundingBox().maxY) / 2.0D, this.getPosZ());
-		
-		//this.move(MoverType.SELF, new Vector3d(this.getPosX(), this.getPosY(), this.getPosZ()).add(this.getMotion()));
-	
-		//this.move(MoverType.SELF, new Vector3d(this.getPosX(), this.getPosY(), this.getPosZ()));
 		
         if (!this.onGround || horizontalMag(this.getMotion()) > (double)1.0E-5F || (this.ticksExisted + this.getEntityId()) % 4 == 0) 
         {
             this.move(MoverType.SELF, this.getMotion());
         }
 		
+        // Check if the entity is being picked up and handle it
 		if(!this.world.isRemote)
 		{
 			List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox());
@@ -144,10 +135,12 @@ public class MorphEntity extends Entity
 		if (direction.getAxis() == Direction.Axis.X)
 		{
 			this.setMotion((double) (f1 * f), vector3d1.y, vector3d1.z);
-		} else if (direction.getAxis() == Direction.Axis.Y)
+		} 
+		else if (direction.getAxis() == Direction.Axis.Y)
 		{
 			this.setMotion(vector3d1.x, (double) (f1 * f), vector3d1.z);
-		} else if (direction.getAxis() == Direction.Axis.Z)
+		} 
+		else if (direction.getAxis() == Direction.Axis.Z)
 		{
 			this.setMotion(vector3d1.x, vector3d1.y, (double) (f1 * f));
 		}

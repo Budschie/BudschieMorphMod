@@ -1,6 +1,7 @@
 package de.budschie.bmorph.capabilities;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Nullable;
@@ -40,9 +41,9 @@ public interface IMorphCapability
 	
 	@Nullable
 	/** This list returns all currently active abilities. It may be null. **/
-	public ArrayList<Ability> getCurrentAbilities();
+	public List<Ability> getCurrentAbilities();
 	
-	public void setCurrentAbilities(ArrayList<Ability> abilities);
+	public void setCurrentAbilities(List<Ability> abilities);
 	
 	public void applyAbilities(PlayerEntity player);
 	public void deapplyAbilities(PlayerEntity player);
