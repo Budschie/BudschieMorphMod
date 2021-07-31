@@ -1,10 +1,10 @@
 package de.budschie.bmorph.json_integration;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -140,7 +140,7 @@ public class MorphAbilityManager extends JsonReloadListener
 				}
 				
 				return true;
-			}).map(strRaw -> AbilityRegistry.REGISTRY.get().getValue(new ResourceLocation(strRaw))).toList();
+			}).map(strRaw -> AbilityRegistry.REGISTRY.get().getValue(new ResourceLocation(strRaw))).collect(Collectors.toList());
 		}
 	}
 }
