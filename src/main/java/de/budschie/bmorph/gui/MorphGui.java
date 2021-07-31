@@ -1,5 +1,6 @@
 package de.budschie.bmorph.gui;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -9,6 +10,7 @@ import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.main.References;
 import de.budschie.bmorph.morph.MorphItem;
+import de.budschie.bmorph.morph.MorphList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
@@ -17,6 +19,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.LazyOptional;
 
+@Deprecated
 public class MorphGui
 {	
 	private static final ResourceLocation MORPH_WINDOW_NORMAL = new ResourceLocation(References.MODID, "textures/gui/morph_window_normal.png");
@@ -24,6 +27,13 @@ public class MorphGui
 	private static final ResourceLocation DEMORPH = new ResourceLocation(References.MODID, "textures/gui/demorph.png");
 	
 	private static int currentScroll = 0;
+
+	private static ArrayList<Entity> calculatedCachedEntities;
+	
+	public static void onHide()
+	{
+		calculatedCachedEntities = null;
+	}
 	
 	public static void render(MatrixStack stack)
 	{		
@@ -44,6 +54,7 @@ public class MorphGui
 								
 			//AbstractGui.blit(stack, 1, (int) (((offset < 0 && !(offset > (-morphList.size()))) ? offset % 1 : offset) * (64)), 48, scaledHeight + 64, 0, 0, 48, scaledHeight + 64, 48, 64);
 			
+			// What the fuck?
 			int fromIndex = Math.max(0, (int) Math.floor(-offset)), toIndex = (int) Math.min(amountOfRectanglesVertical + Math.ceil(-offset), morphList.size() + 1);
 			
 			for(int i = fromIndex; i < toIndex; i++)
