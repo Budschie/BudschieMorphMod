@@ -3,6 +3,7 @@
     "key.bmorph.toggle_morph": "Toggle Morph UI",
     "key.bmorph.scroll_up": "Scroll Up",
     "key.bmorph.scroll_down": "Scroll Down",
+    "key.bmorph.morph": "Morph",
     "key.bmorph.bmorph_category": "Budschie's Morph Mod Controls",
     "gamerule.keepMorphInventory": "Keep Morph Inventory"
 }

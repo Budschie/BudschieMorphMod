@@ -31,6 +31,7 @@ public class ClientSetup
 	public static final KeyBinding TOGGLE_MORPH_UI = new KeyBinding("key.bmorph.toggle_morph", GLFW.GLFW_KEY_SEMICOLON, "key.bmorph.bmorph_category");
 	public static final KeyBinding SCROLL_UP_MORPH_UI = new KeyBinding("key.bmorph.scroll_up", GLFW.GLFW_KEY_UP, "key.bmorph.bmorph_category");
 	public static final KeyBinding SCROLL_DOWN_MORPH_UI = new KeyBinding("key.bmorph.scroll_down", GLFW.GLFW_KEY_DOWN, "key.bmorph.bmorph_category");
+	public static final KeyBinding MORPH_UI = new KeyBinding("key.bmorph.morph", GLFW.GLFW_KEY_ENTER, "key.bmorph.bmorph_category");
 	
 	@SubscribeEvent
 	public static void onClientSetup(final FMLClientSetupEvent event)
@@ -40,6 +41,7 @@ public class ClientSetup
 		ClientRegistry.registerKeyBinding(SCROLL_DOWN_MORPH_UI);
 		ClientRegistry.registerKeyBinding(SCROLL_UP_MORPH_UI);
 		ClientRegistry.registerKeyBinding(TOGGLE_MORPH_UI);
+		ClientRegistry.registerKeyBinding(MORPH_UI);
 		
 		UglyHackThatDoesntWork.thisisstupid = (gameProfile, world) ->
 		{
