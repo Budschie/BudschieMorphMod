@@ -9,7 +9,6 @@ public class InstaJumpAbility extends Ability
 	@Override
 	public void enableAbility(PlayerEntity player, MorphItem enabledItem)
 	{
-		System.out.println(player.stepHeight);
 		player.stepHeight = 1.45f;
 	}
 
