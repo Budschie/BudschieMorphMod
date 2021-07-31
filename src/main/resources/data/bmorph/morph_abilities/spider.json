@@ -2,6 +2,7 @@
     "entity_type": "minecraft:spider",
     "grant":
     [
+        "bmorph:insta_jump",
         "bmorph:climbing",
         "bmorph:no_fall_damage",
         "bmorph:swiftness",
