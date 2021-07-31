@@ -134,7 +134,7 @@ public class NewMorphGui
 			}
 			else
 			{
-				if(morphEntity.isEmpty())
+				if(!morphEntity.isPresent())
 					morphEntity = Optional.of(morphItem.createEntity(Minecraft.getInstance().world));
 				
 			    IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
