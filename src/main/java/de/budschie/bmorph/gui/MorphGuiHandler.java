@@ -40,8 +40,12 @@ public class MorphGuiHandler
 		{
 			LazyOptional<IMorphCapability> cap = Minecraft.getInstance().player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			
-			cap.ifPresent(resolved -> resolved.getCurrentMorphIndex().ifPresent(index -> MorphGui.setCurrentScroll(index + 1)));
+			cap.ifPresent(resolved -> resolved.getCurrentMorphIndex().ifPresent(index -> NewMorphGui.setScroll(index + 1)));
+			
+			NewMorphGui.showGui();
 		}
+		else
+			NewMorphGui.hideGui();
 	}
 	
 	@SubscribeEvent
@@ -74,29 +78,30 @@ public class MorphGuiHandler
 				MainNetworkChannel.INSTANCE.sendToServer(new MorphRequestAbilityUsage.MorphRequestAbilityUsagePacket());
 			
 			if(toggle && ClientSetup.SCROLL_DOWN_MORPH_UI.isPressed())
-				MorphGui.scrollDown();
+				NewMorphGui.scroll(1);
 			
 			if(toggle && ClientSetup.SCROLL_UP_MORPH_UI.isPressed())
-				MorphGui.scrollUp();
+				NewMorphGui.scroll(-1);
 		}
 	}
 	
 	@SubscribeEvent
 	public static void onPressedKeyboardKeyRaw(KeyInputEvent event)
 	{
-		if(toggle && event.getKey() == GLFW.GLFW_KEY_ENTER && event.getAction() == GLFW.GLFW_PRESS)
+		if(toggle && ClientSetup.MORPH_UI.isPressed())
 		{
-			toggle = false;
-			MainNetworkChannel.INSTANCE.sendToServer(new RequestMorphIndexChangePacket(MorphGui.getCurrentScroll() - 1));
+			toggle();
+			MainNetworkChannel.INSTANCE.sendToServer(new RequestMorphIndexChangePacket(NewMorphGui.getScroll() - 1));
 		}
 	}
 	
 	@SubscribeEvent
 	public static void onRenderOverlayEvent(RenderGameOverlayEvent.Post event)
 	{
-		if(toggle && event.getType() == ElementType.VIGNETTE)
+		if(toggle && event.getType() == ElementType.TEXT)
 		{
-			MorphGui.render(event.getMatrixStack());
+			// MorphGui.render(event.getMatrixStack());
+			NewMorphGui.render(event.getMatrixStack());
 		}
 	}
 	
