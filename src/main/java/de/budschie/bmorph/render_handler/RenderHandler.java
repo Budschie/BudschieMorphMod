@@ -147,8 +147,6 @@ public class RenderHandler
 				
 				float divisor = ShrinkAPIInteractor.getInteractor().getShrinkingValue(player);
 				
-				Quaternion quat = null;
-				
 				event.getMatrixStack().push();
 				
 				if(ShrinkAPIInteractor.getInteractor().isShrunk(player))
