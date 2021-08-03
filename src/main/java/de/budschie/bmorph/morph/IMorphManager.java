@@ -10,7 +10,13 @@ public interface IMorphManager<T extends MorphItem, D>
 	
 	T createMorphFromEntity(Entity entity);
 	
-	T createMorph(EntityType<?> entity, CompoundNBT nbt, D data);
+	T createMorph(EntityType<?> entity, CompoundNBT nbt, D data, boolean forceNBT);
+	
+	default T createMorph(EntityType<?> entity, CompoundNBT nbt, D data)
+	{
+		return createMorph(entity, nbt, data, false);
+	}
+	
 	T createMorph(EntityType<?> entity, D data);
 	
 	boolean equalsFor(T item1, T item2);

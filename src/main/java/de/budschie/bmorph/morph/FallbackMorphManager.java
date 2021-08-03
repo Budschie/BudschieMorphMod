@@ -26,16 +26,19 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 	}
 
 	@Override
-	public FallbackMorphItem createMorph(EntityType<?> entity, CompoundNBT nbt, Void data)
+	public FallbackMorphItem createMorph(EntityType<?> entity, CompoundNBT nbt, Void data, boolean forceNBT)
 	{
 		SpecialDataHandler handler = dataHandlers.get(EntityType.getKey(entity).toString());
 		
-		if(handler != null)
+		if(!forceNBT)
 		{
-			nbt = handler.getDefaultApplier().apply(nbt);
+			if(handler != null)
+			{
+				nbt = handler.getDefaultApplier().apply(nbt);
+			}
+			else
+				nbt = new CompoundNBT();
 		}
-		else
-			nbt = new CompoundNBT();
 		
 		return new FallbackMorphItem(nbt, entity);
 	}

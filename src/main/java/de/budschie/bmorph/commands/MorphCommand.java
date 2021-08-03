@@ -69,7 +69,7 @@ public class MorphCommand
 		
 		nbtData.putString("id", rs.toString());
 		
-		MorphUtil.morphToServer(Optional.of(MorphManagerHandlers.FALLBACK.createMorph(ForgeRegistries.ENTITIES.getValue(rs), nbtData, null)), Optional.empty(), entity);
+		MorphUtil.morphToServer(Optional.of(MorphManagerHandlers.FALLBACK.createMorph(ForgeRegistries.ENTITIES.getValue(rs), nbtData, null, true)), Optional.empty(), entity);
 		
 		return 0;
 	}

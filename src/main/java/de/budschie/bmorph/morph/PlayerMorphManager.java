@@ -28,7 +28,7 @@ public class PlayerMorphManager implements IMorphManager<PlayerMorphItem, GamePr
 	//@Deprecated(since = "The beginning lol", forRemoval = false)
 	@Deprecated
 	@Override
-	public PlayerMorphItem createMorph(EntityType<?> entity, CompoundNBT nbt, GameProfile data)
+	public PlayerMorphItem createMorph(EntityType<?> entity, CompoundNBT nbt, GameProfile data, boolean forceNBT)
 	{
 		if(entity != EntityType.PLAYER)
 			throw new IllegalAccessError("Please only call this method for player morphs.");
