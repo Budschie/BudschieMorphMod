@@ -10,7 +10,6 @@ import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.morph.AdvancedAbstractClientPlayerEntity;
 import de.budschie.bmorph.morph.MorphItem;
-import net.gigabit101.shrink.events.PlayerEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -18,7 +17,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.monster.AbstractSkeletonEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Direction;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraftforge.api.distmarker.Dist;
@@ -26,7 +24,6 @@ import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -44,16 +41,24 @@ public class RenderHandler
 	@SubscribeEvent
 	public static void onRenderHandEvent(RenderHandEvent event)
 	{
-		@SuppressWarnings("resource")
 		LazyOptional<IMorphCapability> morph = Minecraft.getInstance().player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 		
 		if(morph.isPresent())
 		{
+			event.setCanceled(true);
+			
 			Optional<MorphItem> currentMorph = morph.resolve().get().getCurrentMorph();
 			
 			if(currentMorph.isPresent())
 			{
 				event.setCanceled(true);
+
+				PlayerEntity player = Minecraft.getInstance().player;
+				
+				Entity toRender = cachedEntities.get(player.getUniqueID());
+				
+//				EntityRenderer<? super Entity> manager = Minecraft.getInstance().getRenderManager().getRenderer(toRender);
+				
 			}
 		}
 	}
@@ -138,7 +143,6 @@ public class RenderHandler
 				
 				toRender.rotationPitch = player.rotationPitch;
 				toRender.rotationYaw = player.rotationYaw;
-								
 				toRender.rotationPitch = player.rotationPitch;
 				toRender.prevRotationPitch = player.prevRotationPitch;
 				
@@ -154,8 +158,12 @@ public class RenderHandler
 				
 				if(player.isCrouching() && ShrinkAPIInteractor.getInteractor().isShrunk(player))
 					event.getMatrixStack().translate(0, 1, 0);
-								
+							
+				
+				// info: We are getting NOTEX when displaying tVariant render thingys by better animals plus https://github.com/itsmeow/betteranimalsplus/blob/1.16/src/main/java/its_meow/betteranimalsplus/client/ClientLifecycleHandler.java
+				// NOTE: This does not occur when using tSingle...
 				EntityRenderer<? super Entity> manager = Minecraft.getInstance().getRenderManager().getRenderer(toRender);
+				//System.out.println(texture);
 				manager.render(toRender, 0, event.getPartialRenderTick(), event.getMatrixStack(), event.getBuffers(), event.getLight());
 				
 				event.getMatrixStack().pop();
