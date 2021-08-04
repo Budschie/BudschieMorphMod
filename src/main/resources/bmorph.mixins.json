@@ -2,8 +2,8 @@
 	"required": true,
 	"package": "de.budschie.bmorph.mixin",
 	"compatibilityLevel": "JAVA_8",
-	"refmap": "bmorph.refmap.json",
-	"mixins": [
+	"refmap": "bmorph-refmap.json",
+	"client": [
         "PlayerRendererMixin"
 	],
 	"minVersion": "0.8"

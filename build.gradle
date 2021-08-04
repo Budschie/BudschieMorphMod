@@ -192,9 +192,13 @@ jar {
             'Implementation-Version': "${version}",
             'Implementation-Vendor' :'bmorphsareus',
             'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            'TweakClass': 'org.spongepowered.asm.launch.MixinTweak',
+            'TweakOrder': 0,
             'MixinConfigs': 'bmorph.mixins.json'
         ])
     }
+    
+    rename 'mixin.refmap.json', 'bmorph-refmap.json'
 }
 
 // Example configuration to allow publishing using the maven-publish task

@@ -39,41 +39,6 @@ public class RenderHandler
 	
 	private static boolean lock = false;
 	
-	// New method: extend from playerrenderer
-	@SubscribeEvent
-	public static void onRenderHandEvent(RenderHandEvent event)
-	{
-		if(!lock)
-		{
-			lock = true;
-			LazyOptional<IMorphCapability> morph = Minecraft.getInstance().player
-					.getCapability(MorphCapabilityAttacher.MORPH_CAP);
-	
-			if (morph.isPresent())
-			{
-				event.setCanceled(true);
-	
-				Optional<MorphItem> currentMorph = morph.resolve().get().getCurrentMorph();
-	
-				if (currentMorph.isPresent())
-				{
-					event.setCanceled(true);
-	
-					PlayerEntity player = Minecraft.getInstance().player;
-	
-					checkCache(player.getUniqueID(), morph.resolve().get(), player);
-	
-					Entity toRender = cachedEntities.get(player.getUniqueID());
-	
-					EntityRenderer<? super Entity> manager = Minecraft.getInstance().getRenderManager()
-							.getRenderer(toRender);
-				}
-			}
-			
-			lock = false;
-		}
-	}
-	
 	@SubscribeEvent
 	public static void onMorphInit(InitializeMorphEntityEvent event)
 	{		
@@ -105,10 +70,12 @@ public class RenderHandler
 		}
 	}
 	
-	private static void checkCache(UUID playerUUID, IMorphCapability capability, PlayerEntity player)
+	public static void checkCache(PlayerEntity player)
 	{
+		IMorphCapability capability = player.getCapability(MorphCapabilityAttacher.MORPH_CAP).resolve().get();
+		
 		// Check if the entity is cached or if it should be updated
-		if(cachedEntities.get(playerUUID) == null || capability.isDirty())
+		if(cachedEntities.get(player.getUniqueID()) == null || capability.isDirty())
 		{
 			Entity toCache = capability.getCurrentMorph().get().createEntity(player.world);
 			cachedEntities.put(player.getUniqueID(), toCache);
@@ -133,7 +100,7 @@ public class RenderHandler
 
 				PlayerEntity player = event.getPlayer();
 				
-				checkCache(player.getUniqueID(), morph.resolve().get(), player);
+				checkCache(player);
 				
 				Entity toRender = cachedEntities.get(player.getUniqueID());
 				
