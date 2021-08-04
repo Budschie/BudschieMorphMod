@@ -34,65 +34,42 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 @EventBusSubscriber(value = Dist.CLIENT)
 public class RenderHandler
 {	
-	// this is not a good idea.
-	public static final MorphFirstPersonRenderer FPR = new MorphFirstPersonRenderer(Minecraft.getInstance());
 	
 	public static WeakHashMap<UUID, Entity> cachedEntities = new WeakHashMap<>();
+	
+	private static boolean lock = false;
 	
 	@SubscribeEvent
 	public static void onRenderHandEvent(RenderHandEvent event)
 	{
-		LazyOptional<IMorphCapability> morph = Minecraft.getInstance().player
-				.getCapability(MorphCapabilityAttacher.MORPH_CAP);
-
-		if (morph.isPresent())
+		if(!lock)
 		{
-			event.setCanceled(true);
-
-			Optional<MorphItem> currentMorph = morph.resolve().get().getCurrentMorph();
-
-			if (currentMorph.isPresent())
+			lock = true;
+			LazyOptional<IMorphCapability> morph = Minecraft.getInstance().player
+					.getCapability(MorphCapabilityAttacher.MORPH_CAP);
+	
+			if (morph.isPresent())
 			{
 				event.setCanceled(true);
-
-				PlayerEntity player = Minecraft.getInstance().player;
-
-				checkCache(player.getUniqueID(), morph.resolve().get(), player);
-
-				Entity toRender = cachedEntities.get(player.getUniqueID());
-
-				EntityRenderer<? super Entity> manager = Minecraft.getInstance().getRenderManager()
-						.getRenderer(toRender);
-
-				if (manager instanceof BipedRenderer<?, ?>)
+	
+				Optional<MorphItem> currentMorph = morph.resolve().get().getCurrentMorph();
+	
+				if (currentMorph.isPresent())
 				{
-//					BipedModel<?> model = ((BipedRenderer<?, ?>)manager).entityModel;
-//					
-//					event.getMatrixStack().push();
-//					//Minecraft.getInstance().getFirstPersonRenderer().transformFirstPerson(event.getMatrixStack(), player.getPrimaryHand(), player.getSwingProgress(event.getPartialTicks()));
-//					// Minecraft.getInstance().getFirstPersonRenderer().renderItemInFirstPerson(0, null, null, null, 0);
-//					event.getMatrixStack().rotate(Vector3f.YP.rotationDegrees(92.0F));
-//					event.getMatrixStack().rotate(Vector3f.XP.rotationDegrees(45.0F));
-//					event.getMatrixStack().rotate(Vector3f.ZP.rotationDegrees(-1 * -41.0F));
-//					event.getMatrixStack().translate((double) (1 * 0.3F), (double) -1.1F, (double) 0.45F);
-//					model.bipedLeftArm.render(event.getMatrixStack(), event.getBuffers().getBuffer(RenderType.getEntityCutout(manager.getEntityTexture(toRender))), event.getLight(), event.getLight());
-//					event.getMatrixStack().pop();
-
-					FPR.setModel(Optional.of((BipedRenderer) manager));
-				} else
-					FPR.setModel(Optional.empty());
-
-				// TODO: Move this tick in client tick
-				FPR.tick();
-				
-				event.getMatrixStack().push();
-
-				FPR.renderItemInFirstPerson(event.getPartialTicks(), event.getMatrixStack(),
-						Minecraft.getInstance().getRenderTypeBuffers().getBufferSource(),
-						Minecraft.getInstance().player, event.getLight());
-				
-				event.getMatrixStack().pop();
+					event.setCanceled(true);
+	
+					PlayerEntity player = Minecraft.getInstance().player;
+	
+					checkCache(player.getUniqueID(), morph.resolve().get(), player);
+	
+					Entity toRender = cachedEntities.get(player.getUniqueID());
+	
+					EntityRenderer<? super Entity> manager = Minecraft.getInstance().getRenderManager()
+							.getRenderer(toRender);
+				}
 			}
+			
+			lock = false;
 		}
 	}
 	
