@@ -1,7 +1,5 @@
 package de.budschie.bmorph.mixin;
 
-import java.util.function.BiConsumer;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,9 +21,11 @@ import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.PlayerRenderer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.entity.model.PlayerModel;
+import net.minecraft.client.renderer.entity.model.QuadrupedModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 
@@ -50,10 +50,21 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 			Entity cachedEntity = RenderHandler.cachedEntities.get(playerIn.getUniqueID()); 
 			EntityRenderer<?> renderer = Minecraft.getInstance().getRenderManager().getRenderer(cachedEntity);
 			
-			checkIfBiped(renderer, (casted, model) ->
+			if(renderer instanceof LivingRenderer<?, ?>)
 			{
-				renderArm(playerIn, casted.entityModel.bipedRightArm, matrixStackIn, combinedLightIn, bufferIn, casted, (MobEntity) cachedEntity, combinedLightIn);
-			});
+				ModelRenderer armRenderer = null;
+
+				LivingRenderer<? super LivingEntity, ?> living = (LivingRenderer<? super LivingEntity, ?>) renderer;
+				
+				if(living.entityModel instanceof BipedModel<?>)
+					armRenderer = ((BipedModel<?>)living.entityModel).bipedRightArm;
+				
+				if(living.entityModel instanceof QuadrupedModel<?>)
+					armRenderer = ((QuadrupedModel<?>)living.entityModel).legFrontRight;
+				
+				if(armRenderer != null)
+					renderArm(playerIn, armRenderer, matrixStackIn, combinedLightIn, bufferIn, living, (LivingEntity)cachedEntity, combinedLightIn);
+			}
 		}
 	}
 	
@@ -69,10 +80,21 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 			Entity cachedEntity = RenderHandler.cachedEntities.get(playerIn.getUniqueID()); 
 			EntityRenderer<?> renderer = Minecraft.getInstance().getRenderManager().getRenderer(cachedEntity);
 			
-			checkIfBiped(renderer, (casted, model) ->
+			if(renderer instanceof LivingRenderer<?, ?>)
 			{
-				renderArm(playerIn, casted.entityModel.bipedLeftArm, matrixStackIn, combinedLightIn, bufferIn, casted, (MobEntity) cachedEntity, combinedLightIn);
-			});
+				ModelRenderer armRenderer = null;
+
+				LivingRenderer<? super LivingEntity, ?> living = (LivingRenderer<? super LivingEntity, ?>) renderer;
+				
+				if(living.entityModel instanceof BipedModel<?>)
+					armRenderer = ((BipedModel<?>)living.entityModel).bipedRightArm;
+				
+				if(living.entityModel instanceof QuadrupedModel<?>)
+					armRenderer = ((QuadrupedModel<?>)living.entityModel).legFrontLeft;
+				
+				if(armRenderer != null)
+					renderArm(playerIn, armRenderer, matrixStackIn, combinedLightIn, bufferIn, living, (LivingEntity)cachedEntity, combinedLightIn);
+			}
 		}
 	}
 	
@@ -81,13 +103,21 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 	{
 	}
 	
-	private void renderArm(AbstractClientPlayerEntity player, ModelRenderer arm, MatrixStack matrixStack, int combinedLightIn, IRenderTypeBuffer buffer, BipedRenderer<? super MobEntity, ?> renderer, MobEntity entity, int light)
+	private void renderArm(AbstractClientPlayerEntity player, ModelRenderer arm, MatrixStack matrixStack, int combinedLightIn, IRenderTypeBuffer buffer, LivingRenderer<? super LivingEntity, ?> renderer, LivingEntity entity, int light)
 	{
 		setModelVisibilities(player);
-		renderer.entityModel.swimAnimation = 0.0f;
+		
 		renderer.entityModel.swingProgress = 0.0f;
-		renderer.entityModel.isSneak = false;
-		renderer.entityModel.setRotationAngles(entity, 0, 0, 0, 0, 0);
+		
+		if(renderer instanceof BipedRenderer<?, ?>)
+		{
+			BipedRenderer<? super MobEntity, ?> casted = (BipedRenderer<? super MobEntity, ?>) renderer;
+			casted.entityModel.swimAnimation = 0.0f;
+			casted.entityModel.isSneak = false;
+		}
+		
+		renderer.entityModel.setRotationAngles((MobEntity) entity, 0, 0, 0, 0, 0);
+		
 		arm.rotateAngleX = 0;
 		arm.render(matrixStack, buffer.getBuffer(RenderType.getEntityCutout(renderer.getEntityTexture(entity))), combinedLightIn, OverlayTexture.NO_OVERLAY);
 	}
@@ -95,13 +125,5 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 	private boolean checkMorphPresent(PlayerEntity player)
 	{
 		return player != null && player.getCapability(MorphCapabilityAttacher.MORPH_CAP).resolve().get().getCurrentMorph().isPresent();
-	}
-	
-	private void checkIfBiped(EntityRenderer<?> renderer, BiConsumer<BipedRenderer<? super MobEntity, ?>, BipedModel<?>> bipedModel)
-	{
-		if(renderer instanceof BipedRenderer<?, ?>)
-		{
-			bipedModel.accept(((BipedRenderer<? super MobEntity, ?>)renderer), ((BipedRenderer<?, ?>)renderer).entityModel);
-		}
 	}
 }
