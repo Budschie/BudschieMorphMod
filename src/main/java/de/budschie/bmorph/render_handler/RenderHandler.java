@@ -39,6 +39,7 @@ public class RenderHandler
 	
 	private static boolean lock = false;
 	
+	// New method: extend from playerrenderer
 	@SubscribeEvent
 	public static void onRenderHandEvent(RenderHandEvent event)
 	{
