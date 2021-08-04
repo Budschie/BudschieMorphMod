@@ -63,7 +63,7 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 					armRenderer = ((QuadrupedModel<?>)living.entityModel).legFrontRight;
 				
 				if(armRenderer != null)
-					renderArm(playerIn, armRenderer, matrixStackIn, combinedLightIn, bufferIn, living, (LivingEntity)cachedEntity, combinedLightIn);
+					renderArm(false, playerIn, armRenderer, matrixStackIn, combinedLightIn, bufferIn, living, (LivingEntity)cachedEntity, combinedLightIn);
 			}
 		}
 	}
@@ -71,7 +71,7 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 	@Inject(at = @At("HEAD"), method = "renderLeftArm(Lcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;ILnet/minecraft/client/entity/player/AbstractClientPlayerEntity;)V", cancellable = true)
 	private void renderLeftArm(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn,
 			AbstractClientPlayerEntity playerIn, CallbackInfo info)
-	{
+	{		
 		if(checkMorphPresent(playerIn))
 		{
 			RenderHandler.checkCache(playerIn);
@@ -93,7 +93,7 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 					armRenderer = ((QuadrupedModel<?>)living.entityModel).legFrontLeft;
 				
 				if(armRenderer != null)
-					renderArm(playerIn, armRenderer, matrixStackIn, combinedLightIn, bufferIn, living, (LivingEntity)cachedEntity, combinedLightIn);
+					renderArm(true, playerIn, armRenderer, matrixStackIn, combinedLightIn, bufferIn, living, (LivingEntity)cachedEntity, combinedLightIn);
 			}
 		}
 	}
@@ -103,8 +103,14 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 	{
 	}
 	
-	private void renderArm(AbstractClientPlayerEntity player, ModelRenderer arm, MatrixStack matrixStack, int combinedLightIn, IRenderTypeBuffer buffer, LivingRenderer<? super LivingEntity, ?> renderer, LivingEntity entity, int light)
+	private void renderArm(boolean isLeft, AbstractClientPlayerEntity player, ModelRenderer arm, MatrixStack matrixStack, int combinedLightIn, IRenderTypeBuffer buffer, LivingRenderer<? super LivingEntity, ?> renderer, LivingEntity entity, int light)
 	{
+		matrixStack.push();
+
+		// Fix for sheep and stuff like that
+		if(renderer.entityModel instanceof QuadrupedModel<?>)
+			matrixStack.translate(isLeft ? .1 : -.1, -.6, .5);
+
 		setModelVisibilities(player);
 		
 		renderer.entityModel.swingProgress = 0.0f;
@@ -120,6 +126,7 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 		
 		arm.rotateAngleX = 0;
 		arm.render(matrixStack, buffer.getBuffer(RenderType.getEntityCutout(renderer.getEntityTexture(entity))), combinedLightIn, OverlayTexture.NO_OVERLAY);
+		matrixStack.pop();
 	}
 	
 	private boolean checkMorphPresent(PlayerEntity player)
