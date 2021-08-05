@@ -1,6 +1,5 @@
 package de.budschie.bmorph.capabilities;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +50,12 @@ public interface IMorphCapability
 	public void useAbility(PlayerEntity player);
 	
 	public boolean hasAbility(Ability ability);
+	
+	// Aggro timestamps are measured in ints. Aggro timestamp => not saved, aggro duration => saved (indicates how long mobs will be aggro)
+	public int getLastAggroTimestamp();
+	public void setLastAggroTimestamp(int timestamp);
+	public int getLastAggroDuration();
+	public void setLastAggroDuration(int aggroDuration);
 	
 	public boolean isDirty();
 	public void cleanDirty();

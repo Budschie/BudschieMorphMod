@@ -18,6 +18,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.Pose;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
@@ -41,6 +42,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 @EventBusSubscriber
 public class Events
 {
+	public static int AGGRO_TICKS_TO_PASS = 200;
+	
 	public static final MorphAbilityManager MORPH_ABILITY_MANAGER = new MorphAbilityManager();
 	
 	@SubscribeEvent
@@ -228,6 +231,14 @@ public class Events
 					event.setCanceled(true);
 			}
 		}
+		// Check if living is a Mob and therefore "evil"
+		else if(event.getSource().getTrueSource() instanceof PlayerEntity && event.getEntityLiving() instanceof IMob && !event.getEntity().world.isRemote)
+		{
+			PlayerEntity source = (PlayerEntity) event.getSource().getTrueSource();
+			
+			LazyOptional<IMorphCapability> cap = source.getCapability(MorphCapabilityAttacher.MORPH_CAP);
+			aggro(cap.resolve().get(), AGGRO_TICKS_TO_PASS);
+		}
 	}
 	
 	@SubscribeEvent
@@ -266,6 +277,12 @@ public class Events
 		event.getPlayer().recalculateSize();
 	}
 	
+	private static void aggro(IMorphCapability capability, int aggroDuration)
+	{
+		capability.setLastAggroTimestamp(ServerSetup.server.getTickCounter());
+		capability.setLastAggroDuration(aggroDuration);
+	}
+	
 	@SubscribeEvent
 	public static void onTargetBeingSet(LivingSetAttackTargetEvent event)
 	{
@@ -282,9 +299,16 @@ public class Events
 				
 				if(resolved.getCurrentMorph().isPresent())
 				{
-					if(!resolved.hasAbility(AbilityRegistry.MOB_ATTACK_ABILITY.get()))
+					if(!resolved.hasAbility(AbilityRegistry.MOB_ATTACK_ABILITY.get()) && (ServerSetup.server.getTickCounter() - resolved.getLastAggroTimestamp()) > resolved.getLastAggroDuration())
 						aggressor.setAttackTarget(null);
+					else
+					{
+						aggro(resolved, AGGRO_TICKS_TO_PASS);
+					}
 				}
+				// Do this so that we can't morph to player, wait the 10 sec, and move back.
+				else
+					aggro(resolved, AGGRO_TICKS_TO_PASS);
 			}
 		}
 	}

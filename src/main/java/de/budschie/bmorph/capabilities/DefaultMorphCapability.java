@@ -24,6 +24,9 @@ import net.minecraftforge.fml.network.PacketDistributor;
 
 public class DefaultMorphCapability implements IMorphCapability
 {
+	int aggroTimestamp = 0;
+	int aggroDuration = 0;
+	
 	Optional<MorphItem> morph = Optional.empty();
 	Optional<Integer> currentMorphIndex = Optional.empty();
 	
@@ -271,4 +274,30 @@ public class DefaultMorphCapability implements IMorphCapability
 		
 		return false;
 	}
+
+	@Override
+	public int getLastAggroTimestamp()
+	{
+		return aggroTimestamp;
+	}
+
+	@Override
+	public void setLastAggroTimestamp(int timestamp)
+	{
+		this.aggroTimestamp = timestamp;
+	}
+
+	@Override
+	public int getLastAggroDuration()
+	{
+		return aggroDuration;
+	}
+
+	@Override
+	public void setLastAggroDuration(int aggroDuration)
+	{
+		this.aggroDuration = aggroDuration;
+	}
+	
+	
 }
