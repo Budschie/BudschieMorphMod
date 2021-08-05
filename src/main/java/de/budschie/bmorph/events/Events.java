@@ -237,7 +237,7 @@ public class Events
 			PlayerEntity source = (PlayerEntity) event.getSource().getTrueSource();
 			
 			LazyOptional<IMorphCapability> cap = source.getCapability(MorphCapabilityAttacher.MORPH_CAP);
-			aggro(cap.resolve().get(), AGGRO_TICKS_TO_PASS);
+			aggro(cap.resolve().get(), ServerSetup.server.getGameRules().getInt(BMorphMod.MORPH_AGGRO_DURATION));
 		}
 	}
 	
@@ -303,12 +303,12 @@ public class Events
 						aggressor.setAttackTarget(null);
 					else
 					{
-						aggro(resolved, AGGRO_TICKS_TO_PASS);
+						aggro(resolved, ServerSetup.server.getGameRules().getInt(BMorphMod.MORPH_AGGRO_DURATION));
 					}
 				}
 				// Do this so that we can't morph to player, wait the 10 sec, and move back.
 				else
-					aggro(resolved, AGGRO_TICKS_TO_PASS);
+					aggro(resolved, ServerSetup.server.getGameRules().getInt(BMorphMod.MORPH_AGGRO_DURATION));
 			}
 		}
 	}

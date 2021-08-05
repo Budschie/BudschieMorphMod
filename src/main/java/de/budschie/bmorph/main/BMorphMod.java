@@ -21,6 +21,7 @@ import de.budschie.bmorph.render_handler.SquidSynchronizer;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.GameRules.BooleanValue;
 import net.minecraft.world.GameRules.Category;
+import net.minecraft.world.GameRules.IntegerValue;
 import net.minecraft.world.GameRules.RuleKey;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
@@ -35,6 +36,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public class BMorphMod
 {
 	public static RuleKey<BooleanValue> KEEP_MORPH_INVENTORY;
+	public static RuleKey<IntegerValue> MORPH_AGGRO_DURATION;
 	
 	public BMorphMod()
 	{
@@ -55,6 +57,7 @@ public class BMorphMod
 		System.out.println("Registered capabilities.");
 		
 		KEEP_MORPH_INVENTORY = GameRules.register("keepMorphInventory", Category.PLAYER, BooleanValue.create(true));
+		MORPH_AGGRO_DURATION = GameRules.register("morphAggroDuration", Category.PLAYER, IntegerValue.create(200));
 		
 		MainNetworkChannel.registerMainNetworkChannels();
 		
