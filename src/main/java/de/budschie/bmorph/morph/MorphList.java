@@ -17,9 +17,9 @@ public class MorphList
 	{
 		CompoundNBT tag = new CompoundNBT();
 		
-		Iterator<MorphItem> it = playerMorphItems.iterator();
+		Iterator<MorphItem> it = morphArrayList.iterator();
 		
-		for(int i = 0; i < playerMorphItems.size(); i++)
+		for(int i = 0; i < morphArrayList.size(); i++)
 		{
 			tag.put(Integer.valueOf(i).toString(), it.next().serialize());
 		}
