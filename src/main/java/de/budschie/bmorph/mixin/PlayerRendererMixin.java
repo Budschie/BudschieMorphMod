@@ -122,7 +122,7 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 			casted.entityModel.isSneak = false;
 		}
 		
-		renderer.entityModel.setRotationAngles((MobEntity) entity, 0, 0, 0, 0, 0);
+		renderer.entityModel.setRotationAngles((LivingEntity) entity, 0, 0, 0, 0, 0);
 		
 		arm.rotateAngleX = 0;
 		arm.render(matrixStack, buffer.getBuffer(RenderType.getEntityCutout(renderer.getEntityTexture(entity))), combinedLightIn, OverlayTexture.NO_OVERLAY);
@@ -131,6 +131,6 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 	
 	private boolean checkMorphPresent(PlayerEntity player)
 	{
-		return player != null && player.getCapability(MorphCapabilityAttacher.MORPH_CAP).resolve().get().getCurrentMorph().isPresent();
+		return player != null && player.getCapability(MorphCapabilityAttacher.MORPH_CAP).isPresent() && player.getCapability(MorphCapabilityAttacher.MORPH_CAP).resolve().get().getCurrentMorph().isPresent();
 	}
 }

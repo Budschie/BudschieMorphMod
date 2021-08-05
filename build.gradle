@@ -10,7 +10,7 @@ buildscript {
     }
 
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'    
     }
 }
@@ -20,7 +20,7 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.16.5-1.4.0'
+version = '1.16.5-1.4.1'
 group = 'de.budschie.bmorph' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'bmorph'
 
@@ -157,8 +157,9 @@ dependencies {
     implementation fg.deobf("curse.maven:quark-243121:3394265")
     implementation fg.deobf("curse.maven:autoreglib-250363:3326041")
     // implementation fg.deobf("curse.maven:iceandfire-264231:3361256")
-    // implementation fg.deobf("curse.maven:citadel-331936:3390028")
+    implementation fg.deobf("curse.maven:citadel-331936:3390028")
     implementation fg.deobf("curse.maven:betteranimalsplus-054919:3286395")
+    implementation fg.deobf("curse.maven:rats-323596:3319810")
     
     annotationProcessor 'org.spongepowered:mixin:0.8:processor'
         
