@@ -1,5 +1,6 @@
 package de.budschie.bmorph.capabilities;
 
+import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphHandler;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -21,6 +22,8 @@ public class MorphCapabilityStorage implements IStorage<IMorphCapability>
 			cap.putInt("currentMorphIndex", instance.getCurrentMorphIndex().get());
 		
 		cap.put("morphList", instance.getMorphList().serializeNBT());
+		
+		cap.putInt("aggroDuration", Math.max(0, instance.getLastAggroDuration() - (ServerSetup.server.getTickCounter() - instance.getLastAggroTimestamp())));
 		
 		return cap;
 	}
@@ -44,5 +47,7 @@ public class MorphCapabilityStorage implements IStorage<IMorphCapability>
 		}
 		
 		instance.getMorphList().deserializeNBT(cap.getCompound("morphList"));
+		
+		instance.setLastAggroDuration(cap.getInt("aggroDuration"));
 	}
 }
