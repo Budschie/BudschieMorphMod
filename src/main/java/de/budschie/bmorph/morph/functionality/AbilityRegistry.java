@@ -125,7 +125,7 @@ public class AbilityRegistry
 
 	public static final RegistryObject<Ability> MORE_DAMAGE_ABILITY = ABILITY_REGISTRY.register("more_damage", () -> new AttackAbility(event ->
 	{
-		event.setAmount(event.getAmount() + 3);
+		event.setAmount(event.getAmount() + 12);
 	}));
 	
 	public static final RegistryObject<Ability> NAUSEA_ON_HIT_ABILITY = ABILITY_REGISTRY.register("nausea_on_hit", () -> new AttackAbility(event -> event.getEntityLiving().addPotionEffect(new EffectInstance(Effects.NAUSEA, 150, 12))));
