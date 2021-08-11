@@ -2,6 +2,8 @@ package de.budschie.bmorph.gui;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -19,12 +21,22 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraftforge.common.util.LazyOptional;
 
-public class NewMorphGui
+public class FilteredSimpleMorphGui extends AbstractMorphGui
 {
-	public static ArrayList<MorphWidget> morphWidgets = new ArrayList<>();
-	private static int scroll = 0;
+	private ArrayList<MorphWidget> morphWidgets;
+	private int scroll = 0;
+	private Function<ArrayList<MorphItem>, ArrayList<MorphItem>> filter;
 	
-	public static void showGui()
+	public FilteredSimpleMorphGui(ResourceLocation morphGuiTypeIcon, String unlocalizedGuiType, Function<ArrayList<MorphItem>, ArrayList<MorphItem>> filter)
+	{
+		super(morphGuiTypeIcon, unlocalizedGuiType);
+		
+		this.filter = filter;
+		this.morphWidgets = new ArrayList<>();
+	}
+	
+	@Override
+	public void showGui()
 	{
 		LazyOptional<IMorphCapability> cap = Minecraft.getInstance().player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 		
@@ -33,6 +45,7 @@ public class NewMorphGui
 			IMorphCapability resolved = cap.resolve().get();
 	
 			ArrayList<MorphItem> morphList = resolved.getMorphList().getMorphArrayList();
+			morphList = filter.apply(morphList);
 			
 			morphWidgets.add(new MorphWidget(null));
 			
@@ -40,15 +53,18 @@ public class NewMorphGui
 			{
 				morphWidgets.add(new MorphWidget(item));
 			}
+			
 		}
 	}
 	
-	public static void hideGui()
+	@Override
+	public void hideGui()
 	{
 		morphWidgets = new ArrayList<>();
 	}
 	
-	public static void render(MatrixStack matrixStack)
+	@Override
+	public void renderWidgets(MatrixStack matrixStack)
 	{							
 		scroll = Math.max(Math.min(scroll, morphWidgets.size() - 1), 0);
 		
@@ -77,22 +93,26 @@ public class NewMorphGui
 		}
 	}
 	
-	public static void scroll(int amount)
+	@Override
+	public int getMorphIndex()
+	{
+		return scroll - 1;
+	}
+	
+	@Override
+	public void scroll(int amount)
 	{
 		scroll += amount;
 	}
 	
-	public static void setScroll(int scroll)
+	@Override
+	public void setScroll(int scroll)
 	{
-		NewMorphGui.scroll = scroll;
+		// Remap from -1 to x to 0 to x.
+		this.scroll = scroll < 0 ? -1 : scroll + 1;
 	}
 	
-	public static int getScroll()
-	{
-		return scroll;
-	}
-	
-	public static ArrayList<MorphWidget> getMorphWidgets()
+	public ArrayList<MorphWidget> getMorphWidgets()
 	{
 		return morphWidgets;
 	}
