@@ -31,9 +31,9 @@ public class MorphList
 	{
 		Set<String> keys = tag.keySet();
 		
-		for(String str : keys)
+		for(int i = 0; i < keys.size(); i++)
 		{
-			CompoundNBT morphTag = tag.getCompound(str);
+			CompoundNBT morphTag = tag.getCompound(String.valueOf(i));
 			
 			MorphItem item = MorphHandler.deserializeMorphItem(morphTag);
 			playerMorphItems.add(item);
