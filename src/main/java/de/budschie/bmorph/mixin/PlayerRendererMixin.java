@@ -28,6 +28,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Hand;
+import net.minecraft.util.HandSide;
 
 @Mixin(value = PlayerRenderer.class)
 public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>>
@@ -120,7 +122,15 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 			BipedRenderer<? super MobEntity, ?> casted = (BipedRenderer<? super MobEntity, ?>) renderer;
 			casted.entityModel.swimAnimation = 0.0f;
 			casted.entityModel.isSneak = false;
+						
+			//Temp.translateShitAndStuff(isLeft ? , matrixStack);
 		}
+		
+		// DAMN IT JAVA
+		// This is utterly fucking retarded
+		if((renderer instanceof BipedRenderer<?, ?> || renderer.getEntityModel() instanceof PlayerModel<?>) && isLeft && player.getPrimaryHand() == HandSide.LEFT && player.getHeldItem(Hand.MAIN_HAND).isEmpty())
+			matrixStack.translate(.65, 0, 0);
+
 		
 		renderer.entityModel.setRotationAngles((LivingEntity) entity, 0, 0, 0, 0, 0);
 		
