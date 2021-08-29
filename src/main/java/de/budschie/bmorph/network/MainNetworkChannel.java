@@ -6,6 +6,7 @@ import de.budschie.bmorph.network.MorphCapabilityFullSynchronizer.MorphPacket;
 import de.budschie.bmorph.network.MorphChangedSynchronizer.MorphChangedPacket;
 import de.budschie.bmorph.network.MorphRemovedSynchronizer.MorphRemovedPacket;
 import de.budschie.bmorph.network.MorphRequestAbilityUsage.MorphRequestAbilityUsagePacket;
+import de.budschie.bmorph.network.MorphRequestFavouriteChange.MorphRequestFavouriteChangePacket;
 import de.budschie.bmorph.network.MorphRequestMorphIndexChange.RequestMorphIndexChangePacket;
 import de.budschie.bmorph.network.SquidBoost.SquidBoostPacket;
 import net.minecraft.util.ResourceLocation;
@@ -14,7 +15,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class MainNetworkChannel
 {
-	public static final String PROTOCOL_VERSION = "1";
+	public static final String PROTOCOL_VERSION = "2";
 	
 	public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(References.MODID, "main"), 
 			() -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
@@ -32,6 +33,7 @@ public class MainNetworkChannel
 		registerSimpleImplPacket(MorphChangedPacket.class, new MorphChangedSynchronizer());
 		registerSimpleImplPacket(RequestMorphIndexChangePacket.class, new MorphRequestMorphIndexChange());
 		registerSimpleImplPacket(MorphRequestAbilityUsagePacket.class, new MorphRequestAbilityUsage());
+		registerSimpleImplPacket(MorphRequestFavouriteChangePacket.class, new MorphRequestFavouriteChange());
 		registerSimpleImplPacket(SquidBoostPacket.class, new SquidBoost());
 	}
 	
