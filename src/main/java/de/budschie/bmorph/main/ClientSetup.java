@@ -29,8 +29,11 @@ public class ClientSetup
 {
 	public static final KeyBinding USE_ABILITY_KEY = new KeyBinding("key.bmorph.use_ability", GLFW.GLFW_KEY_Z, "key.bmorph.bmorph_category");
 	public static final KeyBinding TOGGLE_MORPH_UI = new KeyBinding("key.bmorph.toggle_morph", GLFW.GLFW_KEY_SEMICOLON, "key.bmorph.bmorph_category");
+	public static final KeyBinding TOGGLE_MORPH_FAVOURITE = new KeyBinding("key.bmorph.toggle_morph_favourite", GLFW.GLFW_KEY_F, "key.bmorph.bmorph_category");
 	public static final KeyBinding SCROLL_UP_MORPH_UI = new KeyBinding("key.bmorph.scroll_up", GLFW.GLFW_KEY_UP, "key.bmorph.bmorph_category");
 	public static final KeyBinding SCROLL_DOWN_MORPH_UI = new KeyBinding("key.bmorph.scroll_down", GLFW.GLFW_KEY_DOWN, "key.bmorph.bmorph_category");
+	public static final KeyBinding NEXT_MORPH_UI = new KeyBinding("key.bmorph.next", GLFW.GLFW_KEY_KP_ADD, "key.bmorph.bmorph_category");
+	public static final KeyBinding PREVIOUS_MORPH_UI = new KeyBinding("key.bmorph.previous", GLFW.GLFW_KEY_KP_SUBTRACT, "key.bmorph.bmorph_category");
 	public static final KeyBinding MORPH_UI = new KeyBinding("key.bmorph.morph", GLFW.GLFW_KEY_ENTER, "key.bmorph.bmorph_category");
 	
 	@SubscribeEvent
@@ -41,6 +44,9 @@ public class ClientSetup
 		ClientRegistry.registerKeyBinding(SCROLL_DOWN_MORPH_UI);
 		ClientRegistry.registerKeyBinding(SCROLL_UP_MORPH_UI);
 		ClientRegistry.registerKeyBinding(TOGGLE_MORPH_UI);
+		ClientRegistry.registerKeyBinding(TOGGLE_MORPH_FAVOURITE);
+		ClientRegistry.registerKeyBinding(NEXT_MORPH_UI);
+		ClientRegistry.registerKeyBinding(PREVIOUS_MORPH_UI);
 		ClientRegistry.registerKeyBinding(MORPH_UI);
 		
 		UglyHackThatDoesntWork.thisisstupid = (gameProfile, world) ->

@@ -23,6 +23,8 @@ public class MorphCapabilityStorage implements IStorage<IMorphCapability>
 		
 		cap.put("morphList", instance.getMorphList().serializeNBT());
 		
+		cap.put("favouriteList", instance.getFavouriteList().serialize());
+		
 		cap.putInt("aggroDuration", Math.max(0, instance.getLastAggroDuration() - (ServerSetup.server.getTickCounter() - instance.getLastAggroTimestamp())));
 		
 		return cap;
@@ -47,6 +49,8 @@ public class MorphCapabilityStorage implements IStorage<IMorphCapability>
 		}
 		
 		instance.getMorphList().deserializeNBT(cap.getCompound("morphList"));
+		
+		instance.getFavouriteList().deserialize(cap.getCompound("favouriteList"));
 		
 		instance.setLastAggroDuration(cap.getInt("aggroDuration"));
 	}

@@ -1,9 +1,9 @@
 package de.budschie.bmorph.gui;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -25,9 +25,9 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 {
 	private ArrayList<MorphWidget> morphWidgets;
 	private int scroll = 0;
-	private Function<ArrayList<MorphItem>, ArrayList<MorphItem>> filter;
+	private BiFunction<IMorphCapability, List<MorphItem>, List<MorphItem>> filter;
 	
-	public FilteredSimpleMorphGui(ResourceLocation morphGuiTypeIcon, String unlocalizedGuiType, Function<ArrayList<MorphItem>, ArrayList<MorphItem>> filter)
+	public FilteredSimpleMorphGui(ResourceLocation morphGuiTypeIcon, String unlocalizedGuiType, BiFunction<IMorphCapability, List<MorphItem>, List<MorphItem>> filter)
 	{
 		super(morphGuiTypeIcon, unlocalizedGuiType);
 		
@@ -44,14 +44,14 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 		{
 			IMorphCapability resolved = cap.resolve().get();
 	
-			ArrayList<MorphItem> morphList = resolved.getMorphList().getMorphArrayList();
-			morphList = filter.apply(morphList);
+			List<MorphItem> morphList = resolved.getMorphList().getMorphArrayList();
+			morphList = filter.apply(resolved, morphList);
 			
-			morphWidgets.add(new MorphWidget(null));
+			morphWidgets.add(new MorphWidget(null, false));
 			
 			for(MorphItem item : morphList)
 			{
-				morphWidgets.add(new MorphWidget(item));
+				morphWidgets.add(new MorphWidget(item, resolved.getFavouriteList().containsMorphItem(item)));
 			}
 			
 		}
@@ -61,6 +61,27 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 	public void hideGui()
 	{
 		morphWidgets = new ArrayList<>();
+	}
+	
+	/** This method iterates over every widget element and checks if the favourite status has changed. **/
+	private void updateGui()
+	{
+		LazyOptional<IMorphCapability> cap = Minecraft.getInstance().player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
+		
+		if(cap.isPresent())
+		{
+			IMorphCapability resolved = cap.resolve().get();
+			
+			for(int i = 1; i < morphWidgets.size(); i++)
+				morphWidgets.get(i).isFavourite = resolved.getFavouriteList().containsMorphItem(morphWidgets.get(i).morphItem);
+		}
+	}
+	
+	@Override
+	public void onFavouriteChanged()
+	{
+		// Reload every GUI element
+		updateGui();
 	}
 	
 	@Override
@@ -112,6 +133,12 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 		this.scroll = scroll < 0 ? -1 : scroll + 1;
 	}
 	
+	@Override
+	public MorphItem getMorphItem()
+	{
+		return this.scroll < 0 ? null : morphWidgets.get(scroll).morphItem;
+	}
+	
 	public ArrayList<MorphWidget> getMorphWidgets()
 	{
 		return morphWidgets;
@@ -131,13 +158,16 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 		private static final ResourceLocation MORPH_WINDOW_NORMAL = new ResourceLocation(References.MODID, "textures/gui/morph_window_normal.png");
 		private static final ResourceLocation MORPH_WINDOW_SELECTED = new ResourceLocation(References.MODID, "textures/gui/morph_window_selected.png");
 		private static final ResourceLocation DEMORPH = new ResourceLocation(References.MODID, "textures/gui/demorph.png");
+		private static final ResourceLocation FAVOURITE = new ResourceLocation(References.MODID, "textures/gui/favourite_star.png");
 		
 		Optional<Entity> morphEntity = Optional.empty();
 		MorphItem morphItem;
+		boolean isFavourite;
 		
-		public MorphWidget(MorphItem morphItem)
+		public MorphWidget(MorphItem morphItem, boolean isFavourite)
 		{
 			this.morphItem = morphItem;
+			this.isFavourite = isFavourite;
 		}
 		
 		public void render(MatrixStack stack, boolean isSelected)
@@ -171,6 +201,12 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 				buffer.finish();
 				
 				stack.pop();
+			}
+			
+			if(isFavourite)
+			{
+				Minecraft.getInstance().getTextureManager().bindTexture(FAVOURITE);
+				AbstractGui.blit(stack, 7, 7, 0, 0, 16, 16, 16, 16);
 			}
 		}
 		

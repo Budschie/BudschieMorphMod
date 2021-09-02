@@ -2,6 +2,7 @@ package de.budschie.bmorph.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
+import de.budschie.bmorph.morph.MorphItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
@@ -40,10 +41,16 @@ public abstract class AbstractMorphGui implements IForgeRegistryEntry<AbstractMo
 	/** Scrolls around in the morph menu. When scrolling up, {@code amount} is negative, when scrolling down, {@code amount} is positive. **/
 	public abstract void scroll(int amount);
 	
-	/** This method returns the morph index.
+	/**
+	 *  This method returns the morph index.
 	 * @return An integer representing the morph index. Any negative number shall represent a demorph, everything else represents a morph. 
 	**/
 	public abstract int getMorphIndex();
+	
+	/**
+	 * This method shall return the currently selected morph item, or null if there isn't any selection.
+	 */
+	public abstract MorphItem getMorphItem();
 	
 	/** This method sets the scroll of the morph gui. Any negative number represents a demorph, everything above -1 represents an index of a morph. **/
 	public abstract void setScroll(int scroll);
@@ -58,6 +65,11 @@ public abstract class AbstractMorphGui implements IForgeRegistryEntry<AbstractMo
 	public String getUnlocalizedGuiType()
 	{
 		return unlocalizedGuiType;
+	}
+	
+	public void onFavouriteChanged()
+	{
+		
 	}
 	
 	@Override

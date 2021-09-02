@@ -2,7 +2,6 @@ package de.budschie.bmorph.morph;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import net.minecraft.nbt.CompoundNBT;
@@ -15,16 +14,14 @@ public class MorphList
 	
 	public CompoundNBT serializeNBT()
 	{
-		CompoundNBT tag = new CompoundNBT();
-		
-		Iterator<MorphItem> it = morphArrayList.iterator();
-		
+		CompoundNBT rootTag = new CompoundNBT();
+				
 		for(int i = 0; i < morphArrayList.size(); i++)
 		{
-			tag.put(Integer.valueOf(i).toString(), it.next().serialize());
+			rootTag.put(Integer.valueOf(i).toString(), morphArrayList.get(i).serialize());
 		}
 		
-		return tag;
+		return rootTag;
 	}
 	
 	public void deserializeNBT(CompoundNBT tag)
@@ -83,5 +80,5 @@ public class MorphList
 	public ArrayList<MorphItem> getMorphArrayList()
 	{
 		return morphArrayList;
-	}
+	}	
 }

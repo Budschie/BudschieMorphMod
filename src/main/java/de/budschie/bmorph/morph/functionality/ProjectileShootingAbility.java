@@ -1,18 +1,11 @@
 package de.budschie.bmorph.morph.functionality;
 
-import java.util.HashMap;
-import java.util.UUID;
 import java.util.function.BiFunction;
 
-import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 
 public class ProjectileShootingAbility extends StunAbility
 {

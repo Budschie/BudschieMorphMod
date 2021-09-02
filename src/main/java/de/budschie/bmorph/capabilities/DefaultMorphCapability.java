@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.google.common.collect.Lists;
 
+import de.budschie.bmorph.morph.FavouriteList;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
 import de.budschie.bmorph.morph.functionality.Ability;
@@ -31,6 +32,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	Optional<Integer> currentMorphIndex = Optional.empty();
 	
 	MorphList morphList = new MorphList();
+	FavouriteList favouriteList = new FavouriteList(morphList);
 	
 	List<Ability> currentAbilities;
 	
@@ -43,7 +45,7 @@ public class DefaultMorphCapability implements IMorphCapability
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, serializeAbilities(), player.getUniqueID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, favouriteList, serializeAbilities(), player.getUniqueID()));
 		}
 	}
 	
@@ -54,7 +56,7 @@ public class DefaultMorphCapability implements IMorphCapability
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTo), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, serializeAbilities(), player.getUniqueID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTo), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, favouriteList, serializeAbilities(), player.getUniqueID()));
 		}
 	}
 	
@@ -65,7 +67,7 @@ public class DefaultMorphCapability implements IMorphCapability
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.NMLIST.with(() -> Lists.newArrayList(connection)), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, serializeAbilities(), player.getUniqueID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.NMLIST.with(() -> Lists.newArrayList(connection)), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, favouriteList, serializeAbilities(), player.getUniqueID()));
 		}
 	}
 	
@@ -132,6 +134,9 @@ public class DefaultMorphCapability implements IMorphCapability
 	{
 		dirty = true;
 		this.morphList = list;
+		
+		// Setting morph list not fully handled, but this is an edge case that never happens lulw
+		this.favouriteList.setMorphList(morphList);
 	}
 
 	@Override
@@ -299,5 +304,15 @@ public class DefaultMorphCapability implements IMorphCapability
 		this.aggroDuration = aggroDuration;
 	}
 	
-	
+	@Override
+	public FavouriteList getFavouriteList()
+	{
+		return favouriteList;
+	}
+
+	@Override
+	public void setFavouriteList(FavouriteList favouriteList)
+	{
+		this.favouriteList = favouriteList;
+	}
 }

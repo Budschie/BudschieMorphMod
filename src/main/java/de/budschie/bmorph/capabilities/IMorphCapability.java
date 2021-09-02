@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
+import de.budschie.bmorph.morph.FavouriteList;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
 import de.budschie.bmorph.morph.functionality.Ability;
@@ -83,6 +84,10 @@ public interface IMorphCapability
 	public void setLastAggroTimestamp(int timestamp);
 	public int getLastAggroDuration();
 	public void setLastAggroDuration(int aggroDuration);
+	
+	/** This method is a getter for the morph favourite list. **/
+	public FavouriteList getFavouriteList();
+	public void setFavouriteList(FavouriteList favouriteList);
 	
 	public boolean isDirty();
 	public void cleanDirty();

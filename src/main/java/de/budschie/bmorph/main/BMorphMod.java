@@ -44,7 +44,7 @@ public class BMorphMod
 		EntityRegistry.ENTITY_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
 		EntityRegistry.SERIALIZER_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
 		AbilityRegistry.ABILITY_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
-		MorphGuiRegistry.MORPHGUI_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
+		MorphGuiRegistry.MORPH_GUI_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
 	
 	@SubscribeEvent

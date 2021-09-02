@@ -1,8 +1,11 @@
 {
     "key.bmorph.use_ability": "Use Ability",
     "key.bmorph.toggle_morph": "Toggle Morph UI",
+    "key.bmorph.toggle_morph_favourite": "Toggle Morph Favourite",
     "key.bmorph.scroll_up": "Scroll Up",
     "key.bmorph.scroll_down": "Scroll Down",
+    "key.bmorph.next": "Switch to next Morph UI",
+    "key.bmorph.previous": "Switch to previous Morph UI",
     "key.bmorph.morph": "Morph",
     "key.bmorph.bmorph_category": "Budschie's Morph Mod Controls",
     "gamerule.keepMorphInventory": "Keep Morph Inventory",

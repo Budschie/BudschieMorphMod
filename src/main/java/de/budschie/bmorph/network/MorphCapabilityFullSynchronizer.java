@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
+import de.budschie.bmorph.morph.FavouriteList;
 import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
@@ -30,6 +31,7 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 	{		
 		buffer.writeUniqueId(packet.player);
 		packet.morphList.serializePacket(buffer);
+		packet.favouriteList.serializePacket(buffer);
 		buffer.writeBoolean(packet.entityData.isPresent());
 		buffer.writeBoolean(packet.entityIndex.isPresent());
 		packet.getEntityData().ifPresent(data -> buffer.writeCompoundTag(data.serialize()));
@@ -50,6 +52,9 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 		MorphList morphList = new MorphList();
 		morphList.deserializePacket(buffer);
 		
+		FavouriteList favouriteList = new FavouriteList(morphList);
+		favouriteList.deserializePacket(buffer);
+		
 		Optional<MorphItem> toMorph = Optional.empty();
 		Optional<Integer> entityIndex = Optional.empty();
 		
@@ -68,7 +73,7 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 		for(int i = 0; i < amountOfAbilities; i++)
 			abilities.add(buffer.readString());
 		
-		return new MorphPacket(toMorph, entityIndex, morphList, abilities, playerUUID);
+		return new MorphPacket(toMorph, entityIndex, morphList, favouriteList, abilities, playerUUID);
 	}
 	
 	@Override
@@ -85,6 +90,7 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 				{
 					IMorphCapability resolved = cap.resolve().get();
 					resolved.setMorphList(packet.getMorphList());
+					resolved.setFavouriteList(packet.getFavouriteList());
 				}
 				MorphUtil.morphToClient(packet.getEntityData(), packet.getEntityIndex(), packet.getAbilities(), player);	
 			}
@@ -96,14 +102,16 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 		private Optional<MorphItem> entityData;
 		private Optional<Integer> entityIndex;
 		private MorphList morphList;
+		private FavouriteList favouriteList;
 		private ArrayList<String> abilities;
 		private UUID player;
 		
-		public MorphPacket(Optional<MorphItem> entityData, Optional<Integer> entityIndex, MorphList morphList, ArrayList<String> abilities, UUID player)
+		public MorphPacket(Optional<MorphItem> entityData, Optional<Integer> entityIndex, MorphList morphList, FavouriteList favouriteList, ArrayList<String> abilities, UUID player)
 		{
 			this.entityData = entityData;
 			this.player = player;
 			this.morphList = morphList;
+			this.favouriteList = favouriteList;
 			this.entityIndex = entityIndex;
 			this.abilities = abilities;
 		}
@@ -126,6 +134,11 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 		public MorphList getMorphList()
 		{
 			return morphList;
+		}
+		
+		public FavouriteList getFavouriteList()
+		{
+			return favouriteList;
 		}
 		
 		public Optional<Integer> getEntityIndex()
