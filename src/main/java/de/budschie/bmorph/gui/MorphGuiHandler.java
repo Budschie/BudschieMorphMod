@@ -126,6 +126,13 @@ public class MorphGuiHandler
 				if (ClientSetup.SCROLL_UP_MORPH_UI.isPressed())
 					currentMorphGui.get().scroll(-1);
 				
+				if (ClientSetup.SCROLL_LEFT_MORPH_UI.isPressed())
+					currentMorphGui.get().horizontalScroll(-1);
+	
+				if (ClientSetup.SCROLL_RIGHT_MORPH_UI.isPressed())
+					currentMorphGui.get().horizontalScroll(1);
+
+				
 				if(ClientSetup.NEXT_MORPH_UI.isPressed())
 				{
 					currentIndex++;
@@ -149,7 +156,7 @@ public class MorphGuiHandler
 					if(cap.isPresent())
 					{
 						IMorphCapability resolved = cap.resolve().get();
-						int favouriteMorphIndex = resolved.getMorphList().getMorphArrayList().indexOf(currentMorphGui.get().getMorphItem());
+						int favouriteMorphIndex = currentMorphGui.get().getMorphIndex();
 						
 						if(favouriteMorphIndex < 0)
 							System.out.println("Yo wat");
@@ -176,12 +183,12 @@ public class MorphGuiHandler
 	{
 		if(canGuiBeDisplayed() && ClientSetup.MORPH_UI.isPressed() && currentMorphGui.isPresent())
 		{
+			MainNetworkChannel.INSTANCE.sendToServer(new RequestMorphIndexChangePacket(currentMorphGui.get().getMorphIndex()));
+			
 			if(guiHidden)
 				showGui();
 			else
-				hideGui();
-			
-			MainNetworkChannel.INSTANCE.sendToServer(new RequestMorphIndexChangePacket(currentMorphGui.get().getMorphIndex()));
+				hideGui();			
 		}
 	}
 	

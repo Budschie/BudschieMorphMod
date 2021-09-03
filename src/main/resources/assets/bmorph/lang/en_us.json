@@ -4,6 +4,8 @@
     "key.bmorph.toggle_morph_favourite": "Toggle Morph Favourite",
     "key.bmorph.scroll_up": "Scroll Up",
     "key.bmorph.scroll_down": "Scroll Down",
+    "key.bmorph.scroll_left": "Scroll Left",
+    "key.bmorph.scroll_right": "Scroll Right",
     "key.bmorph.next": "Switch to next Morph UI",
     "key.bmorph.previous": "Switch to previous Morph UI",
     "key.bmorph.morph": "Morph",

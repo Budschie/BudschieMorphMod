@@ -55,6 +55,9 @@ public abstract class AbstractMorphGui implements IForgeRegistryEntry<AbstractMo
 	/** This method sets the scroll of the morph gui. Any negative number represents a demorph, everything above -1 represents an index of a morph. **/
 	public abstract void setScroll(int scroll);
 	
+	/** This scrolls horizontally. **/
+	public abstract void horizontalScroll(int scroll);
+	
 	/** Returns the resource location of the icon of the morph gui. This will be displayed on the top of the gui when rendering the morph guis. **/
 	public ResourceLocation getMorphGuiTypeIcon()
 	{
