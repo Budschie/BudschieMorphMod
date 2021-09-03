@@ -340,6 +340,8 @@ public class Events
 					player.setAir(14 * 20);
 				if(resolved.hasAbility(AbilityRegistry.WATER_DISLIKE_ABILITY.get()) && player.isInWaterRainOrBubbleColumn())
 					player.attackEntityFrom(DamageSource.DROWN, 1);
+				if(resolved.hasAbility(AbilityRegistry.FLY_ABILITY.get()))
+					player.abilities.allowFlying = true;
 			}
 		});
 	}

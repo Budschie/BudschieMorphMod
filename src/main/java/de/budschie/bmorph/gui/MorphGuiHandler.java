@@ -104,6 +104,9 @@ public class MorphGuiHandler
 					// Updating the bubble GUI on the client so that the bubbles are always full
 					if(resolved.hasAbility(AbilityRegistry.WATER_BREATHING_ABILITY.get()) && player.isInWater())
 						player.setAir(14 * 20);
+					
+					if(resolved.hasAbility(AbilityRegistry.FLY_ABILITY.get()))
+						player.abilities.allowFlying = true;
 				}
 			});
 			
