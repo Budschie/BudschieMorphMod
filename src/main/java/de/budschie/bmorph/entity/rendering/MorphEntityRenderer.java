@@ -45,7 +45,11 @@ public class MorphEntityRenderer extends EntityRenderer<MorphEntity>
 			toRender = entity.getMorphItem().createEntity(entity.world);
 			
 			if(toRender == null)
-				throw new NullPointerException("The morph data could not be translated to an entity.");
+			{
+				// just return (this is a bit stupid)
+				// throw new NullPointerException("The morph data could not be translated to an entity.");
+				return;
+			}
 			
 			if(toRender instanceof LivingEntity)
 			{

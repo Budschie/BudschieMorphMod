@@ -1,5 +1,12 @@
 package de.budschie.bmorph.events;
 
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.budschie.bmorph.api_interact.ShrinkAPIInteractor;
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
@@ -22,6 +29,8 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -42,6 +51,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 @EventBusSubscriber
 public class Events
 {
+	private static final Logger LOGGER = LogManager.getLogger();
 	public static int AGGRO_TICKS_TO_PASS = 200;
 	
 	public static final MorphAbilityManager MORPH_ABILITY_MANAGER = new MorphAbilityManager();
@@ -349,24 +359,39 @@ public class Events
 				IMorphCapability resolved = cap.resolve().get();
 				resolved.getCurrentMorph().ifPresent(item ->
 				{					
-					Entity createdEntity = item.createEntity(event.getEntity().world);
-					createdEntity.setPose(event.getPose());
-					
-					// We do this as we apply our own sneaking logic as I couldn't figure out how to get the multiplier for the eye height... F in the chat plz
-					EntitySize newSize = createdEntity.getSize(Pose.STANDING);
-					
-					if(ShrinkAPIInteractor.getInteractor().isShrunk(player))
+					try
 					{
-						newSize = newSize.scale(1.6f / divisor, 1 / divisor);
+						Entity createdEntity = item.createEntity(event.getEntity().world);
+						createdEntity.setPose(event.getPose());
+						
+						// We do this as we apply our own sneaking logic as I couldn't figure out how to get the multiplier for the eye height... F in the chat plz
+						EntitySize newSize = createdEntity.getSize(Pose.STANDING);
+						
+						if(ShrinkAPIInteractor.getInteractor().isShrunk(player))
+						{
+							newSize = newSize.scale(1.6f / divisor, 1 / divisor);
+						}
+						
+						if(event.getPose() == Pose.CROUCHING)
+							newSize = newSize.scale(1, .85f);
+						
+						event.setNewSize(newSize, false);
+						//event.setNewEyeHeight(createdEntity.getEyeHeightAccess(event.getPose(), newSize));
+						event.setNewEyeHeight(newSize.height * 0.85f);
+						//event.setNewEyeHeight(player.getEyeHeightAccess(event.getPose(), createdEntity.getSize(event.getPose())));
 					}
-					
-					if(event.getPose() == Pose.CROUCHING)
-						newSize = newSize.scale(1, .85f);
-					
-					event.setNewSize(newSize, false);
-					//event.setNewEyeHeight(createdEntity.getEyeHeightAccess(event.getPose(), newSize));
-					event.setNewEyeHeight(newSize.height * 0.85f);
-					//event.setNewEyeHeight(player.getEyeHeightAccess(event.getPose(), createdEntity.getSize(event.getPose())));
+					catch(NullPointerException ex)
+					{
+						LOGGER.catching(ex);
+						
+						if(!player.world.isRemote)
+							MorphUtil.morphToClient(Optional.empty(), Optional.empty(), new ArrayList<String>(), player);
+						else
+						{
+							resolved.demorph();
+							player.sendMessage(new StringTextComponent(TextFormatting.RED + "Couldn't morph to " + item.getEntityType().getRegistryName().toString() + ". This is a compatability issue. If possible, report this to the mod author on GitHub."), new UUID(0, 0));
+						}
+					}
 				});
 			}
 		}
