@@ -1,6 +1,5 @@
 package de.budschie.bmorph.events;
 
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -387,7 +386,7 @@ public class Events
 						LOGGER.catching(ex);
 						
 						if(!player.world.isRemote)
-							MorphUtil.morphToClient(Optional.empty(), Optional.empty(), new ArrayList<String>(), player);
+							MorphUtil.morphToServer(Optional.empty(), Optional.empty(), player);
 						else
 						{
 							resolved.demorph();
