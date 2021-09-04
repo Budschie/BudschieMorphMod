@@ -184,6 +184,9 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 	{
 		int depth = morphWidgets.get(this.scroll).depth + 1;
 		this.horizontalScroll = depth == 0 ? 0 : (horizontalScroll + scroll) % depth;
+		
+		if(this.horizontalScroll < 0)
+			this.horizontalScroll = depth + horizontalScroll;
 	}
 	
 	private void checkScroll()
