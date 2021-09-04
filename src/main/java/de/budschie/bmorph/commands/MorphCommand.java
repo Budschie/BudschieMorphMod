@@ -14,6 +14,8 @@ import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphUtil;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
+import net.minecraft.command.arguments.EntityArgument;
+import net.minecraft.command.arguments.EntitySelector;
 import net.minecraft.command.arguments.EntitySummonArgument;
 import net.minecraft.command.arguments.NBTCompoundTagArgument;
 import net.minecraft.command.arguments.SuggestionProviders;
@@ -31,30 +33,34 @@ public class MorphCommand
 	{
 		dispatcher.register(Commands.literal("morph")
 				.requires(sender -> sender.hasPermissionLevel(2))
-				.then(Commands.argument("entity", EntitySummonArgument.entitySummon())
-						.suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
-						.executes(ctx -> 
-						{
-							return createEntityMorph(ctx.getSource().asPlayer(), ctx.getArgument("entity", ResourceLocation.class), new CompoundNBT());
-						})
-						.then(Commands.argument("nbt", NBTCompoundTagArgument.nbt())
-						.executes(ctx -> 
-						{
-							return createEntityMorph(ctx.getSource().asPlayer(), ctx.getArgument("entity", ResourceLocation.class), ctx.getArgument("nbt", CompoundNBT.class));
-						}))
+				.then(
+						Commands.argument("player", EntityArgument.player()).then(						
+							Commands.argument("entity", EntitySummonArgument.entitySummon())
+							.suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
+							.executes(ctx -> 
+							{
+								return createEntityMorph(ctx.getArgument("player", EntitySelector.class).selectOnePlayer(ctx.getSource()), ctx.getArgument("entity", ResourceLocation.class), new CompoundNBT());
+							})
+							.then(Commands.argument("nbt", NBTCompoundTagArgument.nbt())
+							.executes(ctx -> 
+							{
+								return createEntityMorph(ctx.getArgument("player", EntitySelector.class).selectOnePlayer(ctx.getSource()), ctx.getArgument("entity", ResourceLocation.class), ctx.getArgument("nbt", CompoundNBT.class));
+							})))
 						));
 		
 		dispatcher.register(Commands.literal("morphplayer")
 				.requires(sender -> sender.hasPermissionLevel(2))
-				.then(Commands.argument("playername", StringArgumentType.word())
+				.then(
+						Commands.argument("player", EntityArgument.player()).then(						
+						Commands.argument("playername", StringArgumentType.word())
 						.executes(ctx -> 
 						{
-							ServerPlayerEntity player = ctx.getSource().asPlayer();
+							ServerPlayerEntity player = ctx.getArgument("player", EntitySelector.class).selectOnePlayer(ctx.getSource());
 							
 							MorphUtil.morphToServer(Optional.of(MorphManagerHandlers.PLAYER.createMorph(EntityType.PLAYER, ServerSetup.server.getPlayerProfileCache().getGameProfileForUsername(ctx.getArgument("playername", String.class)))), Optional.empty(), player);
 							
 							return 0;
-						})));
+						}))));
 		
 		dispatcher.register(Commands.literal("demorph")
 				.requires(sender -> sender.hasPermissionLevel(2))
@@ -65,21 +71,32 @@ public class MorphCommand
 					MorphUtil.morphToServer(Optional.empty(), Optional.empty(), player);
 					
 					return 0;
-				}));
+				})
+				.then(Commands.argument("player", EntityArgument.player()).executes(ctx ->
+				{
+					ServerPlayerEntity player = ctx.getArgument("player", EntitySelector.class).selectOnePlayer(ctx.getSource());
+					
+					MorphUtil.morphToServer(Optional.empty(), Optional.empty(), player);
+					
+					return 0;
+				})));
 		
 		dispatcher.register(Commands.literal("addmorph")
 				.requires(sender -> sender.hasPermissionLevel(2))
-				.then(Commands.argument("entity", EntitySummonArgument.entitySummon())
-						.suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
-						.executes(ctx -> 
-						{
-							return addMorph(ctx.getSource().asPlayer(), ctx.getArgument("entity", ResourceLocation.class), new CompoundNBT());
-						})
-						.then(Commands.argument("nbt", NBTCompoundTagArgument.nbt())
-						.executes(ctx -> 
-						{
-							return addMorph(ctx.getSource().asPlayer(), ctx.getArgument("entity", ResourceLocation.class), ctx.getArgument("nbt", CompoundNBT.class));
-						}))
+				.then(
+						Commands.argument("player", EntityArgument.player()).then(						
+									Commands.argument("entity", EntitySummonArgument.entitySummon())
+									.suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
+									.executes(ctx -> 
+									{
+										return addMorph(ctx.getArgument("player", EntitySelector.class).selectOnePlayer(ctx.getSource()), ctx.getArgument("entity", ResourceLocation.class), new CompoundNBT());
+									})
+									.then(Commands.argument("nbt", NBTCompoundTagArgument.nbt())
+									.executes(ctx -> 
+									{
+										return addMorph(ctx.getArgument("player", EntitySelector.class).selectOnePlayer(ctx.getSource()), ctx.getArgument("entity", ResourceLocation.class), ctx.getArgument("nbt", CompoundNBT.class));
+									}))
+								)
 						));
 	}
 	
