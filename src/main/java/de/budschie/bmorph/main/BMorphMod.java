@@ -16,7 +16,7 @@ import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.render_handler.AbstractPlayerSynchronizer;
 import de.budschie.bmorph.render_handler.EntitySynchronizerRegistry;
-import de.budschie.bmorph.render_handler.LivingEntitySynchronzier;
+import 	de.budschie.bmorph.render_handler.LivingEntitySynchronzier;
 import de.budschie.bmorph.render_handler.ParrotSynchronizer;
 import de.budschie.bmorph.render_handler.SquidSynchronizer;
 import net.minecraft.world.GameRules;
