@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import javax.annotation.Nullable;
 
+import de.budschie.bmorph.morph.fallback.FallbackMorphManager;
+import de.budschie.bmorph.morph.player.PlayerMorphManager;
 import net.minecraft.entity.Entity;
 
 public class MorphManagerHandlers

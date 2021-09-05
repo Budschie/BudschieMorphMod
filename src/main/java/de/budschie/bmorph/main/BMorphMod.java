@@ -7,16 +7,15 @@ import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import de.budschie.bmorph.entity.EntityRegistry;
 import de.budschie.bmorph.gui.MorphGuiRegistry;
-import de.budschie.bmorph.morph.FallbackMorphItem;
 import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
-import de.budschie.bmorph.morph.PlayerMorphItem;
-import de.budschie.bmorph.morph.VanillaFallbackMorphData;
+import de.budschie.bmorph.morph.fallback.FallbackMorphItem;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
+import de.budschie.bmorph.morph.player.PlayerMorphItem;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.render_handler.AbstractPlayerSynchronizer;
 import de.budschie.bmorph.render_handler.EntitySynchronizerRegistry;
-import 	de.budschie.bmorph.render_handler.LivingEntitySynchronzier;
+import de.budschie.bmorph.render_handler.LivingEntitySynchronzier;
 import de.budschie.bmorph.render_handler.ParrotSynchronizer;
 import de.budschie.bmorph.render_handler.SquidSynchronizer;
 import net.minecraft.world.GameRules;
@@ -68,8 +67,8 @@ public class BMorphMod
 		
 		MorphManagerHandlers.registerDefaultManagers();
 		
-		VanillaFallbackMorphData.intialiseFallbackData();
-		APIInteractor.executeLoadClassIf(() -> ModList.get().isLoaded("betteranimalsplus"), "de.budschie.bmorph.morph.BetterAnimalsPlusFallbackMorphData");
+		// VanillaFallbackMorphData.intialiseFallbackData();
+		// APIInteractor.executeLoadClassIf(() -> ModList.get().isLoaded("betteranimalsplus"), "de.budschie.bmorph.morph.BetterAnimalsPlusFallbackMorphData");
 		
 		EntitySynchronizerRegistry.addEntitySynchronizer(new LivingEntitySynchronzier());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new ParrotSynchronizer());

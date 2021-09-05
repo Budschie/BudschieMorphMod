@@ -10,7 +10,7 @@ public abstract class MorphItem
 {
 	private String morphItemId;
 	
-	MorphItem(String morphItemId)
+	protected MorphItem(String morphItemId)
 	{
 		this.morphItemId = morphItemId;
 	}

@@ -8,6 +8,7 @@ import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.events.Events;
 import de.budschie.bmorph.morph.functionality.Ability;
+import de.budschie.bmorph.morph.player.PlayerMorphEvent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
