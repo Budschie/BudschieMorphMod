@@ -62,8 +62,11 @@ public class MorphList
 	
 	public void addToMorphList(MorphItem item)
 	{
-		playerMorphItems.add(item);
-		morphArrayList.add(item);
+		if(!contains(item))
+		{
+			playerMorphItems.add(item);
+			morphArrayList.add(item);
+		}
 	}
 	
 	public void removeFromMorphList(int index)
