@@ -25,6 +25,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 
 /** https://forums.minecraftforge.net/topic/100915-1165-make-mod-data-editable-with-datapack-adding-new-data-type/ **/
@@ -65,28 +66,31 @@ public class MorphAbilityManager extends JsonReloadListener
 		// key and a MorphAbilityEntry as a value.
 		objectIn.forEach((resourceLocation, json) ->
 		{
-			try
+			if(ModList.get().isLoaded(resourceLocation.getNamespace()))
 			{
-				JsonObject root = json.getAsJsonObject();
-				String entity = root.get("entity_type").getAsString();
-				JsonArray grantedAbilities = root.getAsJsonArray("grant");
-				JsonArray revokedAbilities = root.getAsJsonArray("revoke");
-				
-				MorphAbilityEntry entry = abilityEntries.computeIfAbsent(entity, key -> new MorphAbilityEntry());
-				
-				for(int i = 0; i < grantedAbilities.size(); i++)
+				try
 				{
-					entry.grantAbility(grantedAbilities.get(i).getAsString());
+					JsonObject root = json.getAsJsonObject();
+					String entity = root.get("entity_type").getAsString();
+					JsonArray grantedAbilities = root.getAsJsonArray("grant");
+					JsonArray revokedAbilities = root.getAsJsonArray("revoke");
+					
+					MorphAbilityEntry entry = abilityEntries.computeIfAbsent(entity, key -> new MorphAbilityEntry());
+					
+					for(int i = 0; i < grantedAbilities.size(); i++)
+					{
+						entry.grantAbility(grantedAbilities.get(i).getAsString());
+					}
+					
+					for(int i = 0; i < revokedAbilities.size(); i++)
+					{
+						entry.revokeAbility(revokedAbilities.get(i).getAsString());
+					}
 				}
-				
-				for(int i = 0; i < revokedAbilities.size(); i++)
+				catch (Exception e) 
 				{
-					entry.revokeAbility(revokedAbilities.get(i).getAsString());
+					e.printStackTrace();
 				}
-			}
-			catch (Exception e) 
-			{
-				e.printStackTrace();
 			}
 		});
 		
