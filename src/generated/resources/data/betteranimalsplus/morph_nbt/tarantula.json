@@ -1,0 +1,7 @@
+{
+  "entity_type": "betteranimalsplus:tarantula",
+  "tracked_nbt_keys": [
+    "VariantId"
+  ],
+  "default_nbt": "{}"
+}

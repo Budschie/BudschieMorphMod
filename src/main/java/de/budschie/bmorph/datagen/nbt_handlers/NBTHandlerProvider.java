@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 
 import de.budschie.bmorph.json_integration.JsonMorphNBTHandler;
 import de.budschie.bmorph.json_integration.NBTPath;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
 import net.minecraft.entity.EntityType;
@@ -22,12 +23,18 @@ public class NBTHandlerProvider implements IDataProvider
 {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private HashMap<EntityType<?>, JsonMorphNBTHandler> data = new HashMap<>();
+	private DataGenerator generator;
+	
+	public NBTHandlerProvider(DataGenerator generator)
+	{
+		this.generator = generator;
+	}
 	
 	@Override
 	public void act(DirectoryCache cache) throws IOException
 	{
 		for(Map.Entry<EntityType<?>, JsonMorphNBTHandler> entry : data.entrySet())
-			IDataProvider.save(GSON, cache, serializeJsonMorphNBTHandler(entry.getKey(), entry.getValue()), FileSystems.getDefault().getPath("data", entry.getKey().getRegistryName().getNamespace(), "morph_nbt", entry.getKey().getRegistryName().getPath() + ".json"));
+			IDataProvider.save(GSON, cache, serializeJsonMorphNBTHandler(entry.getKey(), entry.getValue()), generator.getOutputFolder().resolve(FileSystems.getDefault().getPath("data", entry.getKey().getRegistryName().getNamespace(), "morph_nbt", entry.getKey().getRegistryName().getPath() + ".json")));
 	}
 	
 	private JsonElement serializeJsonMorphNBTHandler(EntityType<?> type, JsonMorphNBTHandler nbtHandler)

@@ -1,0 +1,7 @@
+{
+  "entity_type": "betteranimalsplus:flying_fish",
+  "tracked_nbt_keys": [
+    "VariantId"
+  ],
+  "default_nbt": "{}"
+}

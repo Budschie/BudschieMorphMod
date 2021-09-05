@@ -6,20 +6,24 @@ import java.util.stream.Collectors;
 import de.budschie.bmorph.datagen.nbt_handlers.NBTHandlerProvider;
 import de.budschie.bmorph.json_integration.JsonMorphNBTHandler;
 import de.budschie.bmorph.json_integration.NBTPath;
+import de.budschie.bmorph.main.References;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
-@EventBusSubscriber
+@EventBusSubscriber(bus = Bus.MOD, modid = References.MODID)
 public class DataGeneratorHandler
 {
+	@SubscribeEvent
 	public static void onGatheringData(GatherDataEvent event)
 	{
 		if(event.includeServer())
 		{
-			NBTHandlerProvider nbtHandlerProvider = new NBTHandlerProvider();
+			NBTHandlerProvider nbtHandlerProvider = new NBTHandlerProvider(event.getGenerator());
 			
 			registerNBTHandlerProviders(nbtHandlerProvider);
 			

@@ -1,0 +1,7 @@
+{
+  "entity_type": "betteranimalsplus:squid_colossal",
+  "tracked_nbt_keys": [
+    "VariantId"
+  ],
+  "default_nbt": "{}"
+}

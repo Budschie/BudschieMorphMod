@@ -154,10 +154,10 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.16.5-36.2.2'
 
     implementation fg.deobf("curse.maven:shrink-426386:3162514")
-    implementation fg.deobf("curse.maven:quark-243121:3394265")
-    implementation fg.deobf("curse.maven:autoreglib-250363:3326041")
+    // implementation fg.deobf("curse.maven:quark-243121:3394265")
+    // implementation fg.deobf("curse.maven:autoreglib-250363:3326041")
     // implementation fg.deobf("curse.maven:iceandfire-264231:3361256")
-    implementation fg.deobf("curse.maven:citadel-331936:3390028")
+    // implementation fg.deobf("curse.maven:citadel-331936:3390028")
     implementation fg.deobf("curse.maven:betteranimalsplus-054919:3286395")
     // implementation fg.deobf("curse.maven:rats-323596:3319810")
     

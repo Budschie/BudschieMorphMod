@@ -1,0 +1,7 @@
+{
+  "entity_type": "betteranimalsplus:lammergeier",
+  "tracked_nbt_keys": [
+    "VariantId"
+  ],
+  "default_nbt": "{}"
+}
