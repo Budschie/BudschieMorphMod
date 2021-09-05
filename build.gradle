@@ -159,7 +159,7 @@ dependencies {
     // implementation fg.deobf("curse.maven:iceandfire-264231:3361256")
     implementation fg.deobf("curse.maven:citadel-331936:3390028")
     implementation fg.deobf("curse.maven:betteranimalsplus-054919:3286395")
-    implementation fg.deobf("curse.maven:rats-323596:3319810")
+    // implementation fg.deobf("curse.maven:rats-323596:3319810")
     
     annotationProcessor 'org.spongepowered:mixin:0.8:processor'
         
