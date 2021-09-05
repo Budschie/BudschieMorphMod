@@ -11,7 +11,7 @@ import net.minecraft.nbt.CompoundNBT;
 
 public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Void>
 {
-	private HashMap<String, SpecialDataHandler> dataHandlers = new HashMap<>();
+	private HashMap<EntityType<?>, SpecialDataHandler> dataHandlers = new HashMap<>();
 	
 	@Override
 	public boolean doesManagerApplyTo(EntityType<?> type)
@@ -27,8 +27,8 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 
 	@Override
 	public FallbackMorphItem createMorph(EntityType<?> entity, CompoundNBT nbt, Void data, boolean forceNBT)
-	{	
-		SpecialDataHandler handler = dataHandlers.get(EntityType.getKey(entity).toString());
+	{
+		SpecialDataHandler handler = dataHandlers.get(entity);
 		
 		if(!forceNBT)
 		{
@@ -46,7 +46,7 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 	@Override
 	public FallbackMorphItem createMorph(EntityType<?> entity, Void data)
 	{
-		SpecialDataHandler handler = dataHandlers.get(EntityType.getKey(entity).toString());
+		SpecialDataHandler handler = dataHandlers.get(entity);
 		
 		if(handler == null)
 		{
@@ -70,7 +70,7 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 			return false;
 		else
 		{
-			SpecialDataHandler handler = dataHandlers.get(EntityType.getKey(item1.getEntityType()).toString());
+			SpecialDataHandler handler = dataHandlers.get(item1.getEntityType());
 			
 			return handler == null ? true : handler.getEqualsMethod().test(item1, item2);
 		}
@@ -79,7 +79,7 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 	@Override
 	public int hashCodeFor(FallbackMorphItem item)
 	{
-		SpecialDataHandler handler = dataHandlers.get(EntityType.getKey(item.getEntityType()).toString());
+		SpecialDataHandler handler = dataHandlers.get(item.getEntityType());
 		
 		if(handler == null)
 		{
@@ -93,7 +93,12 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 	
 	public void addDataHandler(EntityType<?> entityType, SpecialDataHandler dataHandler)
 	{
-		dataHandlers.put(EntityType.getKey(entityType).toString(), dataHandler);
+		dataHandlers.put(entityType, dataHandler);
+	}
+	
+	public void setDataHandlers(HashMap<EntityType<?>, SpecialDataHandler> dataHandlers)
+	{
+		this.dataHandlers = dataHandlers;
 	}
 	
 	public static class SpecialDataHandler
