@@ -42,22 +42,31 @@ public class MorphEntityRenderer extends EntityRenderer<MorphEntity>
 		
 		if(toRender == null)
 		{
-			toRender = entity.getMorphItem().createEntity(entity.world);
-			
-			if(toRender == null)
+			// Check if the entity was not loaded in successfull
+			if(entityCache.containsKey(entity.getUniqueID()))
 			{
-				// just return (this is a bit stupid)
-				// throw new NullPointerException("The morph data could not be translated to an entity.");
 				return;
 			}
-			
-			if(toRender instanceof LivingEntity)
+			else
 			{
-				LivingEntity entityLiving = (LivingEntity) toRender;
-				entityLiving.deathTime = 0;
-				entityLiving.hurtTime = 0;
+				toRender = entity.getMorphItem().createEntity(entity.world);
+				
+				// If we did not succeed, set entityCache value to null!
+				if(toRender == null)
+				{
+					entityCache.put(entity.getUniqueID(), null);
+					return;
+				}
+				
+				if(toRender instanceof LivingEntity)
+				{
+					LivingEntity entityLiving = (LivingEntity) toRender;
+					entityLiving.deathTime = 0;
+					entityLiving.hurtTime = 0;
+				}
+				
+				entityCache.put(entity.getUniqueID(), toRender);
 			}
-			entityCache.put(entity.getUniqueID(), toRender);
 		}
 		
 		toRender.ticksExisted = entity.ticksExisted;
