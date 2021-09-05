@@ -1,4 +1,4 @@
-package de.budschie.bmorph.morph;
+package de.budschie.bmorph.morph.player;
 
 import java.util.function.BiFunction;
 

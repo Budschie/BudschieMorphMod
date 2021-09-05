@@ -1,5 +1,7 @@
-package de.budschie.bmorph.morph;
+package de.budschie.bmorph.morph.fallback;
 
+import de.budschie.bmorph.morph.MorphItem;
+import de.budschie.bmorph.morph.MorphManagerHandlers;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;

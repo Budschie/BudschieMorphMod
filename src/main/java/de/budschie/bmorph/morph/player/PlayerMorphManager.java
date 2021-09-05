@@ -1,7 +1,8 @@
-package de.budschie.bmorph.morph;
+package de.budschie.bmorph.morph.player;
 
 import com.mojang.authlib.GameProfile;
 
+import de.budschie.bmorph.morph.IMorphManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;

@@ -1,8 +1,9 @@
-package de.budschie.bmorph.morph;
+package de.budschie.bmorph.morph.player;
 
 import javax.annotation.Nullable;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
+import de.budschie.bmorph.morph.MorphItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.eventbus.api.Event;
 

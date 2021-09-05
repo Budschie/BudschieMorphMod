@@ -1,17 +1,17 @@
-package de.budschie.bmorph.morph;
+package de.budschie.bmorph.morph.fallback;
 
 import java.util.HashMap;
-import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
+import de.budschie.bmorph.morph.IMorphManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
 
 public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Void>
 {
-	private HashMap<EntityType<?>, SpecialDataHandler> dataHandlers = new HashMap<>();
+	private HashMap<EntityType<?>, IMorphNBTHandler> dataHandlers = new HashMap<>();
 	
 	@Override
 	public boolean doesManagerApplyTo(EntityType<?> type)
@@ -28,13 +28,13 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 	@Override
 	public FallbackMorphItem createMorph(EntityType<?> entity, CompoundNBT nbt, Void data, boolean forceNBT)
 	{
-		SpecialDataHandler handler = dataHandlers.get(entity);
+		IMorphNBTHandler handler = dataHandlers.get(entity);
 		
 		if(!forceNBT)
 		{
 			if(handler != null)
 			{
-				nbt = handler.getDefaultApplier().apply(nbt);
+				nbt = handler.applyDefaultNBTData(nbt);
 			}
 			else
 				nbt = new CompoundNBT();
@@ -46,7 +46,7 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 	@Override
 	public FallbackMorphItem createMorph(EntityType<?> entity, Void data)
 	{
-		SpecialDataHandler handler = dataHandlers.get(entity);
+		IMorphNBTHandler handler = dataHandlers.get(entity);
 		
 		if(handler == null)
 		{
@@ -55,7 +55,7 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 		else
 		{
 			CompoundNBT nbt = new CompoundNBT();
-			return new FallbackMorphItem(handler.getDefaultApplier().apply(nbt), entity);
+			return new FallbackMorphItem(handler.applyDefaultNBTData(nbt), entity);
 		}
 	}
 
@@ -70,16 +70,16 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 			return false;
 		else
 		{
-			SpecialDataHandler handler = dataHandlers.get(item1.getEntityType());
+			IMorphNBTHandler handler = dataHandlers.get(item1.getEntityType());
 			
-			return handler == null ? true : handler.getEqualsMethod().test(item1, item2);
+			return handler == null ? true : handler.areEquals(item1, item2);
 		}
 	}
 
 	@Override
 	public int hashCodeFor(FallbackMorphItem item)
 	{
-		SpecialDataHandler handler = dataHandlers.get(item.getEntityType());
+		IMorphNBTHandler handler = dataHandlers.get(item.getEntityType());
 		
 		if(handler == null)
 		{
@@ -87,24 +87,24 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 		}
 		else
 		{
-			return handler.getHashFunction().apply(item.getEntityType(), item.serializeAdditional());
+			return handler.getHashCodeFor(item);
 		}
 	}
 	
-	public void addDataHandler(EntityType<?> entityType, SpecialDataHandler dataHandler)
+	public void addDataHandler(EntityType<?> entityType, IMorphNBTHandler dataHandler)
 	{
 		dataHandlers.put(entityType, dataHandler);
 	}
 	
-	public void setDataHandlers(HashMap<EntityType<?>, SpecialDataHandler> dataHandlers)
+	public void setDataHandlers(HashMap<EntityType<?>, IMorphNBTHandler> dataHandlers)
 	{
 		this.dataHandlers = dataHandlers;
 	}
 	
-	public static class SpecialDataHandler
+	public static class SpecialDataHandler implements IMorphNBTHandler
 	{
 		private BiPredicate<FallbackMorphItem, FallbackMorphItem> equalsMethod;
-		private BiFunction<EntityType<?>, CompoundNBT, Integer> hashFunction;
+		private Function<FallbackMorphItem, Integer> hashFunction;
 		private Function<CompoundNBT, CompoundNBT> defaultApplier;
 		
 		/** 
@@ -115,26 +115,29 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 		 * 
 		 **/
 		public SpecialDataHandler(BiPredicate<FallbackMorphItem, FallbackMorphItem> equalsMethod,
-				BiFunction<EntityType<?>, CompoundNBT, Integer> hashFunction, Function<CompoundNBT, CompoundNBT> defaultApplier)
+				Function<FallbackMorphItem, Integer> hashFunction, Function<CompoundNBT, CompoundNBT> defaultApplier)
 		{
 			this.equalsMethod = equalsMethod;
 			this.hashFunction = hashFunction;
 			this.defaultApplier = defaultApplier;
 		}
 
-		public BiPredicate<FallbackMorphItem, FallbackMorphItem> getEqualsMethod()
+		@Override
+		public boolean areEquals(FallbackMorphItem item1, FallbackMorphItem item2)
 		{
-			return equalsMethod;
+			return equalsMethod.test(item1, item2);
 		}
 
-		public BiFunction<EntityType<?>, CompoundNBT, Integer> getHashFunction()
+		@Override
+		public int getHashCodeFor(FallbackMorphItem item)
 		{
-			return hashFunction;
+			return hashFunction.apply(item);
 		}
 
-		public Function<CompoundNBT, CompoundNBT> getDefaultApplier()
+		@Override
+		public CompoundNBT applyDefaultNBTData(CompoundNBT in)
 		{
-			return defaultApplier;
+			return defaultApplier.apply(in);
 		}
 	}
 }
