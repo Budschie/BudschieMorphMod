@@ -2,15 +2,16 @@ package de.budschie.bmorph.json_integration;
 
 import java.util.HashMap;
 
-import de.budschie.bmorph.morph.FallbackMorphManager.SpecialDataHandler;
+import de.budschie.bmorph.morph.fallback.IMorphNBTHandler;
+import de.budschie.bmorph.morph.fallback.FallbackMorphManager.SpecialDataHandler;
 import net.minecraft.entity.EntityType;
 import net.minecraftforge.eventbus.api.Event;
 
 public class MorphNBTHandlersLoadedEvent extends Event
 {
-	private HashMap<EntityType<?>, SpecialDataHandler> handlerMap;
+	private HashMap<EntityType<?>, IMorphNBTHandler> handlerMap;
 	
-	public MorphNBTHandlersLoadedEvent(HashMap<EntityType<?>, SpecialDataHandler> handlerMap)
+	public MorphNBTHandlersLoadedEvent(HashMap<EntityType<?>, IMorphNBTHandler> handlerMap)
 	{
 		this.handlerMap = handlerMap;
 	}

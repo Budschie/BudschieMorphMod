@@ -2,7 +2,6 @@ package de.budschie.bmorph.json_integration;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,20 +13,16 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import de.budschie.bmorph.morph.FallbackMorphManager.SpecialDataHandler;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
+import de.budschie.bmorph.morph.fallback.IMorphNBTHandler;
 import net.minecraft.client.resources.JsonReloadListener;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NumberNBT;
-import net.minecraft.nbt.StringNBT;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -41,43 +36,11 @@ public class MorphNBTHandler extends JsonReloadListener
 		super(GSON, "morph_nbt");
 	}
 	
-	private static Object getNBTObject(INBT nbt)
-	{
-		if(nbt == null)
-			return null;
-		
-		if(nbt.getId() == NBT.TAG_INT)
-			return Integer.valueOf(((NumberNBT)nbt).getInt());
-		else if(nbt.getId() == NBT.TAG_STRING)
-			return ((StringNBT)nbt).getString();
-		else if(nbt.getId() == NBT.TAG_BYTE)
-			return Byte.valueOf(((NumberNBT)nbt).getByte());
-		else if(nbt.getId() == NBT.TAG_LONG)
-			return Long.valueOf(((NumberNBT)nbt).getLong());
-		else
-		{
-			LOGGER.debug("Encountered rare tag with no value handling. Converting tag to string...");
-			return nbt.getString();
-		}
-	}
-	
-	private static boolean isINBTDataEqual(INBT nbt1, INBT nbt2)
-	{
-		Object nbtObject1 = getNBTObject(nbt1);
-		return nbtObject1 == null ? (nbt2 == null ? true : false) : nbtObject1.equals(getNBTObject(nbt2));
-	}
-	
-	private static Optional<Integer> getNBTHashCode(INBT nbt)
-	{
-		Object nbtObject = getNBTObject(nbt);
-		return nbtObject == null ? Optional.empty() : Optional.of(nbtObject.hashCode());
-	}
-	
 	@Override
 	protected void apply(Map<ResourceLocation, JsonElement> objectIn, IResourceManager resourceManagerIn,
 			IProfiler profilerIn)
 	{
-		HashMap<EntityType<?>, SpecialDataHandler> nbtDataHandlers = new HashMap<>();
+		HashMap<EntityType<?>, IMorphNBTHandler> nbtDataHandlers = new HashMap<>();
 		
 		MorphManagerHandlers.FALLBACK.setDataHandlers(nbtDataHandlers);
 		
@@ -111,43 +74,9 @@ public class MorphNBTHandler extends JsonReloadListener
 					final CompoundNBT defaultNBT = defaultNBTObject == null ? new CompoundNBT() : JsonToNBT.getTagFromJson(defaultNBTObject.getAsString());
 					
 					// Build SpecialDataHandler
-					SpecialDataHandler dataHandler = new SpecialDataHandler((fallback1, fallback2) ->
-					{
-						CompoundNBT fallback1Serialized = fallback1.serializeAdditional();
-						CompoundNBT fallback2Serialized = fallback2.serializeAdditional();
-						
-						for(NBTPath path : trackedNbtKeys)
-						{
-							if(!isINBTDataEqual(path.resolve(fallback1Serialized), path.resolve(fallback2Serialized)))
-								return false;
-						}
-						
-						return true;
-					}, (typeOfFallback, nbt) ->
-					{
-						int hashCode = typeOfFallback.getRegistryName().toString().hashCode();
-						
-						// Generate a hash code for every nbt element 
-						for(NBTPath path : trackedNbtKeys)
-						{
-							Optional<Integer> nbtHash = getNBTHashCode(path.resolve(nbt));
-							if(nbtHash.isPresent())
-								hashCode ^= nbtHash.get();
-						}
-						
-						return hashCode;
-					}, in ->
-					{
-						CompoundNBT out = defaultNBT.copy();
-						
-						// Copy every path from the in compound nbt to the out compound nbt
-						for(NBTPath nbtPath : trackedNbtKeys)
-							nbtPath.copyTo(in, out);
-						
-						return out;
-					});
+					JsonMorphNBTHandler nbtHandler = new JsonMorphNBTHandler(defaultNBT, trackedNbtKeys);
 					
-					nbtDataHandlers.put(entityType, dataHandler);
+					nbtDataHandlers.put(entityType, nbtHandler);
 				}
 
 			} 
