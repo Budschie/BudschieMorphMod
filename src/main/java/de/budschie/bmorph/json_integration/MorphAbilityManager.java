@@ -103,7 +103,7 @@ public class MorphAbilityManager extends JsonReloadListener
 				
 				if(!ForgeRegistries.ENTITIES.containsKey(new ResourceLocation(entity)))
 				{
-					LOGGER.warn(String.format("The given entity %s is not known to the game. Skipping this entry.", entity));
+					LOGGER.warn(String.format("The given entity %s is not known to the game. Skipping this entry. Please make sure to only load this when the mod for the entity is present. You can do this by putting this JSON file in \"data/<modname>/morph_abilities\".", entity));
 				}
 				else
 				{

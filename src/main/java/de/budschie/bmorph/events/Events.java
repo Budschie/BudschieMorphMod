@@ -13,6 +13,7 @@ import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import de.budschie.bmorph.entity.MorphEntity;
 import de.budschie.bmorph.json_integration.MorphAbilityManager;
+import de.budschie.bmorph.json_integration.MorphNBTHandler;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
@@ -54,6 +55,7 @@ public class Events
 	public static int AGGRO_TICKS_TO_PASS = 200;
 	
 	public static final MorphAbilityManager MORPH_ABILITY_MANAGER = new MorphAbilityManager();
+	public static final MorphNBTHandler MORPH_NBT_HANDLER = new MorphNBTHandler();
 	
 	@SubscribeEvent
 	public static void onPlayerJoined(PlayerLoggedInEvent event)
@@ -95,6 +97,7 @@ public class Events
 	public static void onRegisterReloadResourceLoaders(AddReloadListenerEvent event)
 	{
 		event.addListener(MORPH_ABILITY_MANAGER);
+		event.addListener(MORPH_NBT_HANDLER);
 	}
 	
 	@SubscribeEvent
