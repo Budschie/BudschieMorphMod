@@ -1,0 +1,4 @@
+{
+    "entity_type": "rats:plague_beast",
+    "default_nbt": "{OwnerUUID:\"\"}"
+}

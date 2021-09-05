@@ -8,9 +8,9 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import de.budschie.bmorph.morph.MorphManagerHandlers;
@@ -51,7 +51,6 @@ public class MorphNBTHandler extends JsonReloadListener
 				if (ModList.get().isLoaded(resourceLocation.getNamespace()))
 				{
 					JsonObject jsonObject = json.getAsJsonObject();
-					System.out.println(jsonObject.toString());
 
 					String entityTypeString = jsonObject.get("entity_type").getAsString();
 					
@@ -63,15 +62,18 @@ public class MorphNBTHandler extends JsonReloadListener
 						LOGGER.warn("The entity ", entityTypeString, " doesn't exist. Please make sure to only load this when the mod for the entity is present. You can do this by putting this JSON file in \"data/<modname>/morph_nbt\".");
 
 					// Load in the tracked nbt keys as a NBTPath array
-					JsonArray tracked = jsonObject.get("tracked_nbt_keys").getAsJsonArray();
-					final NBTPath[] trackedNbtKeys = new NBTPath[tracked.size()];
+					JsonElement tracked = jsonObject.get("tracked_nbt_keys");
+					final NBTPath[] trackedNbtKeys = new NBTPath[tracked == null ? 0 : tracked.getAsJsonArray().size()];
 
-					for (int i = 0; i < tracked.size(); i++)
-						trackedNbtKeys[i] = NBTPath.valueOf(tracked.get(i).getAsString());
+					if(tracked != null)
+					{
+						for (int i = 0; i < tracked.getAsJsonArray().size(); i++)
+							trackedNbtKeys[i] = NBTPath.valueOf(tracked.getAsJsonArray().get(i).getAsString());
+					}
 					
 					JsonElement defaultNBTObject = jsonObject.get("default_nbt");
 					
-					final CompoundNBT defaultNBT = defaultNBTObject == null ? new CompoundNBT() : JsonToNBT.getTagFromJson(defaultNBTObject.getAsString());
+					final CompoundNBT defaultNBT = defaultNBTObject == null ? new CompoundNBT() : new JsonToNBT(new StringReader(defaultNBTObject.getAsString())).readStruct();
 					
 					// Build SpecialDataHandler
 					JsonMorphNBTHandler nbtHandler = new JsonMorphNBTHandler(defaultNBT, trackedNbtKeys);
