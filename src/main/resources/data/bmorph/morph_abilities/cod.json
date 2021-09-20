@@ -2,7 +2,8 @@
     "entity_type": "minecraft:cod",
     "grant":
     [
-        "bmorph:water_breathing"
+        "bmorph:water_breathing",
+        "bmorph:water_sanic"
     ],
     "revoke":
     [
