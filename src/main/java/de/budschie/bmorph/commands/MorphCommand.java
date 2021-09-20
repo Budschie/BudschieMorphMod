@@ -1,5 +1,6 @@
 package de.budschie.bmorph.commands;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,30 +35,31 @@ public class MorphCommand
 		dispatcher.register(Commands.literal("morph")
 				.requires(sender -> sender.hasPermissionLevel(2))
 				.then(
-						Commands.argument("player", EntityArgument.player()).then(						
+						Commands.argument("player", EntityArgument.players()).then(						
 							Commands.argument("entity", EntitySummonArgument.entitySummon())
 							.suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
 							.executes(ctx -> 
 							{
-								return createEntityMorph(ctx.getArgument("player", EntitySelector.class).selectOnePlayer(ctx.getSource()), ctx.getArgument("entity", ResourceLocation.class), new CompoundNBT());
+								return createEntityMorph(ctx.getArgument("player", EntitySelector.class).selectPlayers(ctx.getSource()), ctx.getArgument("entity", ResourceLocation.class), new CompoundNBT());
 							})
 							.then(Commands.argument("nbt", NBTCompoundTagArgument.nbt())
 							.executes(ctx -> 
 							{
-								return createEntityMorph(ctx.getArgument("player", EntitySelector.class).selectOnePlayer(ctx.getSource()), ctx.getArgument("entity", ResourceLocation.class), ctx.getArgument("nbt", CompoundNBT.class));
+								return createEntityMorph(ctx.getArgument("player", EntitySelector.class).selectPlayers(ctx.getSource()), ctx.getArgument("entity", ResourceLocation.class), ctx.getArgument("nbt", CompoundNBT.class));
 							})))
 						));
 		
 		dispatcher.register(Commands.literal("morphplayer")
 				.requires(sender -> sender.hasPermissionLevel(2))
 				.then(
-						Commands.argument("player", EntityArgument.player()).then(						
+						Commands.argument("player", EntityArgument.players()).then(						
 						Commands.argument("playername", StringArgumentType.word())
 						.executes(ctx -> 
 						{
-							ServerPlayerEntity player = ctx.getArgument("player", EntitySelector.class).selectOnePlayer(ctx.getSource());
+							List<ServerPlayerEntity> players = ctx.getArgument("player", EntitySelector.class).selectPlayers(ctx.getSource());
 							
-							MorphUtil.morphToServer(Optional.of(MorphManagerHandlers.PLAYER.createMorph(EntityType.PLAYER, ServerSetup.server.getPlayerProfileCache().getGameProfileForUsername(ctx.getArgument("playername", String.class)))), Optional.empty(), player);
+							for(ServerPlayerEntity player : players)
+								MorphUtil.morphToServer(Optional.of(MorphManagerHandlers.PLAYER.createMorph(EntityType.PLAYER, ServerSetup.server.getPlayerProfileCache().getGameProfileForUsername(ctx.getArgument("playername", String.class)))), Optional.empty(), player);
 							
 							return 0;
 						}))));
@@ -72,11 +74,12 @@ public class MorphCommand
 					
 					return 0;
 				})
-				.then(Commands.argument("player", EntityArgument.player()).executes(ctx ->
+				.then(Commands.argument("player", EntityArgument.players()).executes(ctx ->
 				{
-					ServerPlayerEntity player = ctx.getArgument("player", EntitySelector.class).selectOnePlayer(ctx.getSource());
+					List<ServerPlayerEntity> players = ctx.getArgument("player", EntitySelector.class).selectPlayers(ctx.getSource());
 					
-					MorphUtil.morphToServer(Optional.empty(), Optional.empty(), player);
+					for(ServerPlayerEntity player : players)
+						MorphUtil.morphToServer(Optional.empty(), Optional.empty(), player);
 					
 					return 0;
 				})));
@@ -84,49 +87,55 @@ public class MorphCommand
 		dispatcher.register(Commands.literal("addmorph")
 				.requires(sender -> sender.hasPermissionLevel(2))
 				.then(
-						Commands.argument("player", EntityArgument.player()).then(						
+						Commands.argument("player", EntityArgument.players()).then(						
 									Commands.argument("entity", EntitySummonArgument.entitySummon())
 									.suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
 									.executes(ctx -> 
 									{
-										return addMorph(ctx.getArgument("player", EntitySelector.class).selectOnePlayer(ctx.getSource()), ctx.getArgument("entity", ResourceLocation.class), new CompoundNBT());
+										return addMorph(ctx.getArgument("player", EntitySelector.class).selectPlayers(ctx.getSource()), ctx.getArgument("entity", ResourceLocation.class), new CompoundNBT());
 									})
 									.then(Commands.argument("nbt", NBTCompoundTagArgument.nbt())
 									.executes(ctx -> 
 									{
-										return addMorph(ctx.getArgument("player", EntitySelector.class).selectOnePlayer(ctx.getSource()), ctx.getArgument("entity", ResourceLocation.class), ctx.getArgument("nbt", CompoundNBT.class));
+										return addMorph(ctx.getArgument("player", EntitySelector.class).selectPlayers(ctx.getSource()), ctx.getArgument("entity", ResourceLocation.class), ctx.getArgument("nbt", CompoundNBT.class));
 									}))
 								)
 						));
 	}
 	
-	private static int addMorph(ServerPlayerEntity entity, ResourceLocation rs, CompoundNBT nbtData)
+	private static int addMorph(List<ServerPlayerEntity> entities, ResourceLocation rs, CompoundNBT nbtData)
 	{
-		IMorphCapability capability = entity.getCapability(MorphCapabilityAttacher.MORPH_CAP).resolve().get();
-		
 		MorphItem morphItemToAdd = MorphManagerHandlers.FALLBACK.createMorph(ForgeRegistries.ENTITIES.getValue(rs), nbtData, null, true);
 		
-		if(capability.getMorphList().contains(morphItemToAdd))
-			entity.sendMessage(new StringTextComponent(TextFormatting.RED + "You may not add a morph to your list that is already present."), new UUID(0, 0));
-		else
+		for(ServerPlayerEntity entity : entities)
 		{
-			entity.sendMessage(new StringTextComponent("Added " + rs.toString() + " with its NBT data to your morph list."), new UUID(0, 0));
-			
-			capability.addToMorphList(morphItemToAdd);
-			capability.syncMorphAcquisition(entity, morphItemToAdd);
+			IMorphCapability capability = entity.getCapability(MorphCapabilityAttacher.MORPH_CAP).resolve().get();
+						
+			if(capability.getMorphList().contains(morphItemToAdd))
+				entity.sendMessage(new StringTextComponent(TextFormatting.RED + "You may not add a morph to your list that is already present."), new UUID(0, 0));
+			else
+			{
+				entity.sendMessage(new StringTextComponent("Added " + rs.toString() + " with its NBT data to your morph list."), new UUID(0, 0));
+				
+				capability.addToMorphList(morphItemToAdd);
+				capability.syncMorphAcquisition(entity, morphItemToAdd);
+			}
 		}
 		
 		return 0;
 	}
 	
-	private static int createEntityMorph(ServerPlayerEntity entity, ResourceLocation rs, CompoundNBT nbtData)
+	private static int createEntityMorph(List<ServerPlayerEntity> entities, ResourceLocation rs, CompoundNBT nbtData)
 	{
-		if(rs.toString().equals("bmorph:morph_entity"))
-			throw new IllegalArgumentException("You may not morph yourself into the morph entity.");
-		
-		nbtData.putString("id", rs.toString());
-		
-		MorphUtil.morphToServer(Optional.of(MorphManagerHandlers.FALLBACK.createMorph(ForgeRegistries.ENTITIES.getValue(rs), nbtData, null, true)), Optional.empty(), entity);
+		for(ServerPlayerEntity entity : entities)
+		{
+			if(rs.toString().equals("bmorph:morph_entity"))
+				throw new IllegalArgumentException("You may not morph yourself into the morph entity.");
+			
+			nbtData.putString("id", rs.toString());
+			
+			MorphUtil.morphToServer(Optional.of(MorphManagerHandlers.FALLBACK.createMorph(ForgeRegistries.ENTITIES.getValue(rs), nbtData, null, true)), Optional.empty(), entity);
+		}
 		
 		return 0;
 	}
