@@ -1,6 +1,5 @@
 package de.budschie.bmorph.main;
 
-import de.budschie.bmorph.api_interact.APIInteractor;
 import de.budschie.bmorph.api_interact.ShrinkAPIInteractor;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
@@ -24,7 +23,6 @@ import net.minecraft.world.GameRules.Category;
 import net.minecraft.world.GameRules.IntegerValue;
 import net.minecraft.world.GameRules.RuleKey;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
