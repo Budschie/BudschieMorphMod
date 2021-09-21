@@ -35,6 +35,16 @@ public class MorphUtil
 		}
 	}
 	
+	public static IMorphCapability getCapOrNull(PlayerEntity playerEntity)
+	{
+		LazyOptional<IMorphCapability> cap = playerEntity.getCapability(MorphCapabilityAttacher.MORPH_CAP);
+		
+		if(cap.isPresent())
+			return cap.resolve().get();
+		
+		return null;
+	}
+	
 	public static void morphToServer(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, PlayerEntity player, boolean force)
 	{
 		LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);

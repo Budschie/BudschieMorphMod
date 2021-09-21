@@ -6,5 +6,8 @@
 	"client": [
         "PlayerRendererMixin"
 	],
+	"mixins": [
+		"LookAtGoalMixin"
+	],
 	"minVersion": "0.8"
 }

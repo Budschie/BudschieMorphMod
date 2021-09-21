@@ -11,5 +11,6 @@
     "key.bmorph.morph": "Morph",
     "key.bmorph.bmorph_category": "Budschie's Morph Mod Controls",
     "gamerule.keepMorphInventory": "Keep Morph Inventory",
-    "gamerule.morphAggroDuration": "Aggro Time of nearby mobs when morphed (in ticks)"
+    "gamerule.morphAggroDuration": "Aggro Time of nearby mobs when morphed (in ticks)",
+    "gamerule.preventLookat": "Prevents entities from looking at morphed players."
 }

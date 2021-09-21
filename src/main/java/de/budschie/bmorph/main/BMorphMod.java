@@ -34,6 +34,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public class BMorphMod
 {
 	public static RuleKey<BooleanValue> KEEP_MORPH_INVENTORY;
+	public static RuleKey<BooleanValue> PREVENT_LOOKAT;
 	public static RuleKey<IntegerValue> MORPH_AGGRO_DURATION;
 	
 	public BMorphMod()
@@ -56,6 +57,7 @@ public class BMorphMod
 		System.out.println("Registered capabilities.");
 		
 		KEEP_MORPH_INVENTORY = GameRules.register("keepMorphInventory", Category.PLAYER, BooleanValue.create(true));
+		PREVENT_LOOKAT = GameRules.register("preventLookat", Category.PLAYER, BooleanValue.create(false));
 		MORPH_AGGRO_DURATION = GameRules.register("morphAggroDuration", Category.PLAYER, IntegerValue.create(200));
 		
 		MainNetworkChannel.registerMainNetworkChannels();
