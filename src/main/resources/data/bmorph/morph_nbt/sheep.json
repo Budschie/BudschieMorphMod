@@ -1,0 +1,4 @@
+{
+    "entity_type": "minecraft:sheep",
+    "tracked_nbt_keys": [ "Color" ]
+}
