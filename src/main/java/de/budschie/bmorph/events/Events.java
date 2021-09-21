@@ -32,6 +32,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -115,25 +116,28 @@ public class Events
 			{
 				PlayerEntity player = (PlayerEntity) event.getSource().getTrueSource();
 				
-				LazyOptional<IMorphCapability> playerMorph = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
-				
-				if(playerMorph.isPresent())
+				if(!(player instanceof FakePlayer))
 				{
-					MorphItem morphItem = MorphManagerHandlers.createMorphFromDeadEntity(event.getEntity());
+					LazyOptional<IMorphCapability> playerMorph = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 					
-					if(morphItem != null)
+					if(playerMorph.isPresent())
 					{
-						IMorphCapability resolved = playerMorph.resolve().get();
-						boolean shouldMorph = !ConfigManager.INSTANCE.get(BlacklistData.class).isInBlacklist(event.getEntity().getType().getRegistryName());
+						MorphItem morphItem = MorphManagerHandlers.createMorphFromDeadEntity(event.getEntity());
 						
-						if(!resolved.getMorphList().contains(morphItem) && shouldMorph)
+						if(morphItem != null)
 						{
-							MorphEntity morphEntity = new MorphEntity(event.getEntity().world, morphItem);
-							morphEntity.setPosition(event.getEntity().getPosX(), event.getEntity().getPosY(), event.getEntity().getPosZ());
-							event.getEntity().world.addEntity(morphEntity);
+							IMorphCapability resolved = playerMorph.resolve().get();
+							boolean shouldMorph = !ConfigManager.INSTANCE.get(BlacklistData.class).isInBlacklist(event.getEntity().getType().getRegistryName());
+							
+							if(!resolved.getMorphList().contains(morphItem) && shouldMorph)
+							{
+								MorphEntity morphEntity = new MorphEntity(event.getEntity().world, morphItem);
+								morphEntity.setPosition(event.getEntity().getPosX(), event.getEntity().getPosY(), event.getEntity().getPosZ());
+								event.getEntity().world.addEntity(morphEntity);
+							}
 						}
 					}
-				}
+				}				
 			}
 		}
 	}
