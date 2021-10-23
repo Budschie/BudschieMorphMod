@@ -32,5 +32,6 @@ public class ServerSetup
 	public static void onServerStopping(final FMLServerStoppingEvent event)
 	{
 		ConfigManager.INSTANCE.serverShutdown();
+		server = null;
 	}
 }
