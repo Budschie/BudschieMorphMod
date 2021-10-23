@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.events.Events;
+import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.player.PlayerMorphEvent;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,6 +23,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 // This is just a stupid class which goal is to unify the code for morphing
 public class MorphUtil
 {
+	private static Logger LOGGER = LogManager.getLogger();
+	
 	public static void morphToServer(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, PlayerEntity player)
 	{
 		morphToServer(morphItem, morphIndex, player, false);
@@ -60,7 +66,7 @@ public class MorphUtil
 			else if(morphIndex.isPresent())
 				aboutToMorphTo = resolved.getMorphList().getMorphArrayList().get(morphIndex.get());
 			
-			boolean isCanceled = MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Client.Pre(player, resolved, aboutToMorphTo));
+			boolean isCanceled = MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Pre(player, resolved, aboutToMorphTo));
 			
 			if(!(isCanceled && !force))
 			{
@@ -118,12 +124,19 @@ public class MorphUtil
 				
 				ArrayList<Ability> resolvedAbilities = new ArrayList<>();
 				
-				IForgeRegistry<Ability> registry = GameRegistry.findRegistry(Ability.class);
+				// IForgeRegistry<Ability> registry = GameRegistry.findRegistry(Ability.class);
 				
 				for(String name : abilities)
-				{
+				{					
 					ResourceLocation resourceLocation = new ResourceLocation(name);
-					resolvedAbilities.add(registry.getValue(resourceLocation));
+					Ability foundAbility = BMorphMod.DYNAMIC_ABILITY_REGISTRY.getAbility(resourceLocation);
+					
+					if(foundAbility == null)
+					{
+						LOGGER.warn("The ability %s is not present on the client. Ignoring this entry.", resourceLocation);
+					}
+					else
+						resolvedAbilities.add(foundAbility);
 				}
 				
 				resolved.setCurrentAbilities(resolvedAbilities);
