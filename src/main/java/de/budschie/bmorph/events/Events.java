@@ -12,6 +12,7 @@ import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import de.budschie.bmorph.entity.MorphEntity;
+import de.budschie.bmorph.json_integration.AbilityConfigurationHandler;
 import de.budschie.bmorph.json_integration.MorphAbilityManager;
 import de.budschie.bmorph.json_integration.MorphNBTHandler;
 import de.budschie.bmorph.main.BMorphMod;
@@ -19,8 +20,6 @@ import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphUtil;
-import de.budschie.bmorph.morph.functionality.AbilityRegistry;
-import de.budschie.bmorph.morph.player.PlayerMorphEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.MobEntity;
@@ -28,15 +27,14 @@ import net.minecraft.entity.Pose;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -55,12 +53,14 @@ public class Events
 	private static final Logger LOGGER = LogManager.getLogger();
 	public static int AGGRO_TICKS_TO_PASS = 200;
 	
+	// This field indicates whether we should resolve the ability names or not
 	public static final MorphAbilityManager MORPH_ABILITY_MANAGER = new MorphAbilityManager();
 	public static final MorphNBTHandler MORPH_NBT_HANDLER = new MorphNBTHandler();
+	public static final AbilityConfigurationHandler ABILITY_CONFIG_HANDLER = new AbilityConfigurationHandler();
 	
 	@SubscribeEvent
 	public static void onPlayerJoined(PlayerLoggedInEvent event)
-	{
+	{	
 		if(!event.getEntity().world.isRemote)
 		{
 			PlayerEntity player = event.getPlayer();
@@ -85,6 +85,17 @@ public class Events
 	}
 	
 	@SubscribeEvent
+	public static void onDatapackSyncing(OnDatapackSyncEvent event)
+	{
+		if(event.getPlayer() == null)
+		{
+			BMorphMod.DYNAMIC_ABILITY_REGISTRY.syncWithClients();
+		}
+		else
+			BMorphMod.DYNAMIC_ABILITY_REGISTRY.syncWithClient(event.getPlayer());
+	}
+	
+	@SubscribeEvent
 	public static void onPlayerIsBeingLoaded(PlayerEvent.StartTracking event)
 	{
 		if(event.getTarget() instanceof PlayerEntity)
@@ -97,6 +108,7 @@ public class Events
 	@SubscribeEvent
 	public static void onRegisterReloadResourceLoaders(AddReloadListenerEvent event)
 	{
+		event.addListener(ABILITY_CONFIG_HANDLER);
 		event.addListener(MORPH_ABILITY_MANAGER);
 		event.addListener(MORPH_NBT_HANDLER);
 	}
@@ -239,12 +251,7 @@ public class Events
 			
 			if(cap.isPresent())
 			{
-				IMorphCapability resolved = cap.resolve().get();
-				
-				if(event.getSource().isFireDamage() && resolved.hasAbility(AbilityRegistry.NO_FIRE_DAMAGE_ABILITY.get()))
-					event.setCanceled(true);
-				else if(event.getSource() == DamageSource.FALL && resolved.hasAbility(AbilityRegistry.NO_FALL_DAMAGE_ABILITY.get()))
-					event.setCanceled(true);
+				IMorphCapability resolved = cap.resolve().get();				
 			}
 		}
 		// Check if living is a Mob and therefore "evil"
@@ -265,11 +272,6 @@ public class Events
 		
 		MorphUtil.processCap(event.player, cap ->
 		{
-			if(cap.hasAbility(AbilityRegistry.FLY_ABILITY.get()) && event.player.abilities.isFlying)
-			{
-				event.player.setPose(Pose.STANDING);
-				event.player.setForcedPose(null);
-			}
 			
 			if(cap.getCurrentMorph().isPresent())
 			{
@@ -315,7 +317,7 @@ public class Events
 				
 				if(resolved.getCurrentMorph().isPresent())
 				{
-					if(!resolved.hasAbility(AbilityRegistry.MOB_ATTACK_ABILITY.get()) && (ServerSetup.server.getTickCounter() - resolved.getLastAggroTimestamp()) > resolved.getLastAggroDuration())
+					if(!resolved.shouldMobsAttack() && (ServerSetup.server.getTickCounter() - resolved.getLastAggroTimestamp()) > resolved.getLastAggroDuration())
 						aggressor.setAttackTarget(null);
 					else
 					{
@@ -327,29 +329,6 @@ public class Events
 					aggro(resolved, ServerSetup.server.getGameRules().getInt(BMorphMod.MORPH_AGGRO_DURATION));
 			}
 		}
-	}
-		
-	@SubscribeEvent
-	public static void onServerTick(ServerTickEvent event)
-	{
-		ServerSetup.server.getPlayerList().getPlayers().forEach(player ->
-		{
-			LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
-			
-			if(cap.isPresent())
-			{
-				IMorphCapability resolved = cap.resolve().get();
-				
-				if(resolved.hasAbility(AbilityRegistry.CLIMBING_ABILITY.get()) && player.collidedHorizontally)
-					player.setMotion(player.getMotion().add(0, .1f, 0));
-				if(resolved.hasAbility(AbilityRegistry.WATER_BREATHING_ABILITY.get()) && player.isInWater())
-					player.setAir(14 * 20);
-				if(resolved.hasAbility(AbilityRegistry.WATER_DISLIKE_ABILITY.get()) && player.isInWaterRainOrBubbleColumn())
-					player.attackEntityFrom(DamageSource.DROWN, 1);
-				if(resolved.hasAbility(AbilityRegistry.FLY_ABILITY.get()))
-					player.abilities.allowFlying = true;
-			}
-		});
 	}
 	
 	@SubscribeEvent(priority = EventPriority.LOW)
