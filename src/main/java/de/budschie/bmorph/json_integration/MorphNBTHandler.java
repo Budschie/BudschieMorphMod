@@ -63,13 +63,15 @@ public class MorphNBTHandler extends JsonReloadListener
 
 					// Load in the tracked nbt keys as a NBTPath array
 					JsonElement tracked = jsonObject.get("tracked_nbt_keys");
-					final NBTPath[] trackedNbtKeys = new NBTPath[tracked == null ? 0 : tracked.getAsJsonArray().size()];
+					final NBTPath[] trackedNbtKeys = new NBTPath[tracked == null ? 1 : tracked.getAsJsonArray().size() + 1];
 
 					if(tracked != null)
 					{
 						for (int i = 0; i < tracked.getAsJsonArray().size(); i++)
 							trackedNbtKeys[i] = NBTPath.valueOf(tracked.getAsJsonArray().get(i).getAsString());
 					}
+					
+					trackedNbtKeys[trackedNbtKeys.length - 1] = new NBTPath("CustomName");
 					
 					JsonElement defaultNBTObject = jsonObject.get("default_nbt");
 					
