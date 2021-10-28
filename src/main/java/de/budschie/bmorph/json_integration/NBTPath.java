@@ -36,6 +36,9 @@ public class NBTPath
 	{
 		INBT fromNBT = resolve(from);
 		
+		if(fromNBT == null)
+			return;
+		
 		CompoundNBT currentCompound = to;
 		
 		for(int i = 0; i < nodes.length - 1; i++)
