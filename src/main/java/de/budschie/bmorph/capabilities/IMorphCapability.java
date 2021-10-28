@@ -1,5 +1,6 @@
 package de.budschie.bmorph.capabilities;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import de.budschie.bmorph.morph.FavouriteList;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
 import de.budschie.bmorph.morph.functionality.Ability;
+import de.budschie.bmorph.morph.functionality.configurable.ConfigurableAbility;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.NetworkManager;
@@ -45,7 +47,13 @@ public interface IMorphCapability
 	
 	public void applyHealthOnPlayer(PlayerEntity player);
 	
-	/** By calling this method, you sync the capability data with every player. **/
+	/**
+	 * By calling this method, you sync the capability data with every player.
+	 * This method shall not be called if you intent to try to synchronize a morph
+	 * change across every client. Use
+	 * {@link IMorphCapability#syncMorphChange(PlayerEntity)} to do this.
+	 **/
+	@Deprecated
 	public void syncWithClients(PlayerEntity player);
 	
 	/** This method is used to synchronize this capability with a specific target. **/
@@ -61,6 +69,12 @@ public interface IMorphCapability
 	/** This method synchronizes the removal of a morph to all players. **/
 	public void syncMorphRemoval(PlayerEntity player, int index);
 	
+	/** Returns the value of the flag mentioned in {@link IMorphCapability#setMobAttack(boolean)}. **/
+	public boolean shouldMobsAttack();
+	
+	/** This method is a flag that indicates whether the mob attack ability is present or not. Note that this value defaults to {@code false}. **/
+	public void setMobAttack(boolean value);
+	
 	@Nullable
 	/** This list returns all currently active abilities. It may be null. **/
 	public List<Ability> getCurrentAbilities();
@@ -75,9 +89,6 @@ public interface IMorphCapability
 	
 	/** This will iterate over every ability and signal them that the button to use an ability has been pressed. **/
 	public void useAbility(PlayerEntity player);
-	
-	/** This method performs a lookup whether the given ability is present or not. **/
-	public boolean hasAbility(Ability ability);
 	
 	// Aggro timestamps are measured in ints. Aggro timestamp => not saved, aggro duration => saved (indicates how long mobs will be aggro)
 	public int getLastAggroTimestamp();

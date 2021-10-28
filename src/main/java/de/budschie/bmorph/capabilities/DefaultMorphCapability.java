@@ -25,6 +25,8 @@ import net.minecraftforge.fml.network.PacketDistributor;
 
 public class DefaultMorphCapability implements IMorphCapability
 {
+	boolean mobAttack = false;
+	
 	int aggroTimestamp = 0;
 	int aggroDuration = 0;
 	
@@ -106,9 +108,9 @@ public class DefaultMorphCapability implements IMorphCapability
 		{
 			ArrayList<String> toString = new ArrayList<>();
 			
-			for(Ability ability : getCurrentAbilities())
+			for (Ability ability : getCurrentAbilities())
 			{
-				toString.add(ability.getRegistryName().toString());
+				toString.add(ability.getResourceLocation().toString());
 			}
 			
 			return toString;
@@ -272,15 +274,6 @@ public class DefaultMorphCapability implements IMorphCapability
 	}
 
 	@Override
-	public boolean hasAbility(Ability ability)
-	{
-		if(getCurrentAbilities() != null)
-			return getCurrentAbilities().contains(ability);
-		
-		return false;
-	}
-
-	@Override
 	public int getLastAggroTimestamp()
 	{
 		return aggroTimestamp;
@@ -314,5 +307,17 @@ public class DefaultMorphCapability implements IMorphCapability
 	public void setFavouriteList(FavouriteList favouriteList)
 	{
 		this.favouriteList = favouriteList;
+	}
+
+	@Override
+	public boolean shouldMobsAttack()
+	{
+		return mobAttack;
+	}
+
+	@Override
+	public void setMobAttack(boolean value)
+	{
+		this.mobAttack = value;
 	}
 }
