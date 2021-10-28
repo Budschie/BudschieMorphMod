@@ -1,6 +1,7 @@
 package de.budschie.bmorph.network;
 
 import de.budschie.bmorph.main.References;
+import de.budschie.bmorph.network.ConfiguredAbilitySynchronizer.ConfiguredAbilityPacket;
 import de.budschie.bmorph.network.MorphAddedSynchronizer.MorphAddedPacket;
 import de.budschie.bmorph.network.MorphCapabilityFullSynchronizer.MorphPacket;
 import de.budschie.bmorph.network.MorphChangedSynchronizer.MorphChangedPacket;
@@ -35,6 +36,7 @@ public class MainNetworkChannel
 		registerSimpleImplPacket(MorphRequestAbilityUsagePacket.class, new MorphRequestAbilityUsage());
 		registerSimpleImplPacket(MorphRequestFavouriteChangePacket.class, new MorphRequestFavouriteChange());
 		registerSimpleImplPacket(SquidBoostPacket.class, new SquidBoost());
+		registerSimpleImplPacket(ConfiguredAbilityPacket.class, new ConfiguredAbilitySynchronizer());
 	}
 	
 	public static <T> void registerSimpleImplPacket(Class<T> packetClass, ISimpleImplPacket<T> packet)
