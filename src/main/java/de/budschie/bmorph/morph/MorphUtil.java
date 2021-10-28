@@ -10,15 +10,13 @@ import org.apache.logging.log4j.Logger;
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.events.Events;
+import de.budschie.bmorph.events.PlayerMorphEvent;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.functionality.Ability;
-import de.budschie.bmorph.morph.player.PlayerMorphEvent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.registries.IForgeRegistry;
 
 // This is just a stupid class which goal is to unify the code for morphing
 public class MorphUtil
@@ -51,6 +49,7 @@ public class MorphUtil
 		return null;
 	}
 	
+	/** Method to invoke a morph operation on the server. This will be synced to every player on the server. TODO: Only sync change to players that are being tracked.  **/
 	public static void morphToServer(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, PlayerEntity player, boolean force)
 	{
 		LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
@@ -94,6 +93,7 @@ public class MorphUtil
 		}
 	}
 	
+	/** This method is used to invoke functions required for handling a sync on the server on the client side. **/
 	public static void morphToClient(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, ArrayList<String> abilities, PlayerEntity player)
 	{
 		if(player != null)
