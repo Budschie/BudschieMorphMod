@@ -1,7 +1,6 @@
 package de.budschie.bmorph.api_interact;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class APIInteractor
