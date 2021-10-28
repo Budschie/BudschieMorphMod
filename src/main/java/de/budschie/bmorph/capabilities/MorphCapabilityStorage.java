@@ -42,8 +42,7 @@ public class MorphCapabilityStorage implements IStorage<IMorphCapability>
 		{
 			instance.setMorph(MorphHandler.deserializeMorphItem(cap.getCompound("currentMorphItem")));
 		}
-		
-		if(hasIndex)
+		else if(hasIndex)
 		{
 			instance.setMorph(cap.getInt("currentMorphIndex"));
 		}
