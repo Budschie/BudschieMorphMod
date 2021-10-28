@@ -1,0 +1,4 @@
+{
+    "entity_type": "minecraft:cat",
+    "tracked_nbt_keys": [ "CatType" ]
+}
