@@ -24,9 +24,15 @@ import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderNameplateEvent;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.eventbus.api.Event.Result;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 // The current state of this class...
 public class FilteredSimpleMorphGui extends AbstractMorphGui
@@ -215,6 +221,7 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 	}
 	
 	// This class represents one morph entry on the side of the screen
+	@EventBusSubscriber(value = Dist.CLIENT)
 	public static class MorphWidget implements Iterable<MorphWidget>
 	{		
 		public static final int WIDGET_WIDTH = 48;
@@ -224,11 +231,14 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 		public static final float ENTITY_SCALE_FACTOR = 30;
 		
 		public static final Quaternion ENTITY_ROTATION = new Quaternion(10, 45, 0, true);
+		public static final Quaternion NAMEPLATE_ORIENTATION = new Quaternion(0, 180 - 45, 0, true);
 		
 		private static final ResourceLocation MORPH_WINDOW_NORMAL = new ResourceLocation(References.MODID, "textures/gui/morph_window_normal.png");
 		private static final ResourceLocation MORPH_WINDOW_SELECTED = new ResourceLocation(References.MODID, "textures/gui/morph_window_selected.png");
 		private static final ResourceLocation DEMORPH = new ResourceLocation(References.MODID, "textures/gui/demorph.png");
 		private static final ResourceLocation FAVOURITE = new ResourceLocation(References.MODID, "textures/gui/favourite_star.png");
+		
+		private static Entity dumbFix = null;
 		
 		Optional<Entity> morphEntity = Optional.empty();
 		MorphItem morphItem;
@@ -245,6 +255,16 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 			this.morphItem = morphItem;
 			this.isFavourite = isFavourite;
 			this.morphListIndex = morphListIndex;
+		}
+		
+		@SubscribeEvent
+		public static void onRenderingNameplate(RenderNameplateEvent event)
+		{
+			if(dumbFix != null && event.getEntity() == dumbFix && event.getEntity().hasCustomName())
+			{
+				event.getMatrixStack().rotate(NAMEPLATE_ORIENTATION);
+				event.setResult(Result.ALLOW);
+			}
 		}
 		
 		// This is kinda dumb
@@ -290,7 +310,18 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 					stack.scale(ENTITY_SCALE_FACTOR, -ENTITY_SCALE_FACTOR, ENTITY_SCALE_FACTOR);
 					stack.rotate(ENTITY_ROTATION);
 					
+					dumbFix = this.morphEntity.get();
+					
+					Minecraft.getInstance().getRenderManager().setCameraOrientation(new Quaternion(0, 0, 0, false));
+					
+					// We have to set the position or else name tags won't get rendered because there is a distance check
+					BlockPos position = Minecraft.getInstance().getRenderManager().info.getBlockPos();
+					this.morphEntity.get().setPosition(position.getX(), position.getY(), position.getZ());
+					
+					// Note: Entity nameplate doesn't get rendered because the distance is too high.
 					Minecraft.getInstance().getRenderManager().renderEntityStatic(morphEntity.get(), 0, 0, 0, 0, 0, stack, buffer, 15728880);
+					
+					dumbFix = null;
 					
 					buffer.finish();
 					

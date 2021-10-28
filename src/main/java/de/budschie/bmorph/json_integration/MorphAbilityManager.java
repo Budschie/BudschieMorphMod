@@ -17,6 +17,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
@@ -34,6 +35,7 @@ public class MorphAbilityManager extends JsonReloadListener
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final Gson GSON = (new GsonBuilder()).create();
 	private HashMap<EntityType<?>, List<Ability>> abilityLookup = new HashMap<>();
+	private Runnable lazyResolve;
 	
 	public MorphAbilityManager()
 	{
@@ -44,6 +46,12 @@ public class MorphAbilityManager extends JsonReloadListener
 	/** This method will return null if there is no ability for the given entity type. **/
 	public List<Ability> getAbilitiesFor(EntityType<?> entity)
 	{
+		if(lazyResolve != null)
+		{
+			lazyResolve.run();
+			lazyResolve = null;
+		}
+		
 		return abilityLookup.get(entity);
 	}
 	
@@ -95,27 +103,30 @@ public class MorphAbilityManager extends JsonReloadListener
 		});
 		
 		// Resolve the stored data
-		abilityEntries.forEach((entity, entry) ->
+		this.lazyResolve = () ->
 		{
-			try
+			abilityEntries.forEach((entity, entry) ->
 			{
-				EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(entity));
-				
-				if(!ForgeRegistries.ENTITIES.containsKey(new ResourceLocation(entity)))
+				try
 				{
-					LOGGER.warn(String.format("The given entity %s is not known to the game. Skipping this entry. Please make sure to only load this when the mod for the entity is present. You can do this by putting this JSON file in \"data/<modname>/morph_abilities\".", entity));
+					EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(entity));
+					
+					if(!ForgeRegistries.ENTITIES.containsKey(new ResourceLocation(entity)))
+					{
+						LOGGER.warn(String.format("The given entity %s is not known to the game. Skipping this entry. Please make sure to only load this when the mod for the entity is present. You can do this by putting this JSON file in \"data/<modname>/morph_abilities\".", entity));
+					}
+					else
+					{
+						List<Ability> resolvedAbilities = entry.resolve();
+						abilityLookup.put(entityType, resolvedAbilities);
+					}
 				}
-				else
+				catch(Exception ex)
 				{
-					List<Ability> resolvedAbilities = entry.resolve();
-					abilityLookup.put(entityType, resolvedAbilities);
+					ex.printStackTrace();
 				}
-			}
-			catch(Exception ex)
-			{
-				ex.printStackTrace();
-			}
-		});
+			});
+		};
 	}
 	
 	private static class MorphAbilityEntry
@@ -137,14 +148,14 @@ public class MorphAbilityManager extends JsonReloadListener
 		{
 			return grantedAbilities.stream().filter(granted -> !revokedAbilities.contains(granted)).filter(exists ->
 			{
-				if(!AbilityRegistry.REGISTRY.get().containsKey(new ResourceLocation(exists)))
+				if(!BMorphMod.DYNAMIC_ABILITY_REGISTRY.doesAbilityExist(new ResourceLocation(exists)))
 				{
 					LOGGER.warn(String.format("Ability %s does not exist. Please check if every mod is loaded, or if you made a typo. Skipping this ability.", exists));
 					return false;
 				}
 				
 				return true;
-			}).map(strRaw -> AbilityRegistry.REGISTRY.get().getValue(new ResourceLocation(strRaw))).collect(Collectors.toList());
+			}).map(strRaw -> BMorphMod.DYNAMIC_ABILITY_REGISTRY.getAbility(new ResourceLocation(strRaw))).collect(Collectors.toList());
 		}
 	}
 }

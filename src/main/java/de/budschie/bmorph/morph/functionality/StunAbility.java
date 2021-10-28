@@ -16,7 +16,11 @@ public abstract class StunAbility extends Ability
 	public StunAbility(int stun)
 	{
 		this.stun = stun;
-		MinecraftForge.EVENT_BUS.register(this);
+	}
+	
+	public int getStun()
+	{
+		return stun;
 	}
 	
 	public boolean isCurrentlyStunned(UUID player)
@@ -29,10 +33,10 @@ public abstract class StunAbility extends Ability
 		delayHashMap.put(player, ServerSetup.server.getTickCounter());
 	}
 	
-	@SubscribeEvent
-	public void onServerStop(FMLServerStoppingEvent event)
-	{
-		delayHashMap.clear();
-		System.out.println("Cleared stun list for " + this.getClass().getName() + ".");
-	}
+//	@SubscribeEvent
+//	public void onServerStop(FMLServerStoppingEvent event)
+//	{
+//		delayHashMap.clear();
+//		System.out.println("Cleared stun list for " + this.getClass().getName() + ".");
+//	}
 }

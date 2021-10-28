@@ -1,4 +1,4 @@
-package de.budschie.bmorph.morph.player;
+package de.budschie.bmorph.events;
 
 import javax.annotation.Nullable;
 

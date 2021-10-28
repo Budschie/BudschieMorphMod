@@ -62,7 +62,7 @@ public class CommandProvider
 	public static enum Selector
 	{
 		SELF(playerIn -> playerIn.getCommandSource()), 
-		REVENGE_TARGET(playerIn -> playerIn.getRevengeTarget() == null ? null : playerIn.getRevengeTarget().getCommandSource()), 
+		REVENGE_TARGET(playerIn -> playerIn.getLastDamageSource() == null ? null : (playerIn.getLastDamageSource().getTrueSource() == null ? null : playerIn.getLastDamageSource().getTrueSource().getCommandSource())), 
 		LAST_ATTACKED(playerIn -> playerIn.getLastAttackedEntity() == null ? null : playerIn.getLastAttackedEntity().getCommandSource());
 		
 		private Function<PlayerEntity, CommandSource> sourceFunction;

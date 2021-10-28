@@ -1,22 +1,22 @@
-package de.budschie.bmorph.morph.functionality;
+package de.budschie.bmorph.morph.functionality.configurable;
+
+import com.mojang.serialization.Codec;
 
 import de.budschie.bmorph.morph.MorphItem;
+import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
+import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class NoKnockbackAbility extends AbstractEventAbility
 {
+	public static Codec<NoKnockbackAbility> CODEC = ModCodecs.newCodec(NoKnockbackAbility::new);
+	
 	@SubscribeEvent
 	public void onLivingKnockbackEvent(LivingKnockBackEvent event)
 	{
-		if(trackedPlayers.contains(event.getEntityLiving().getUniqueID()))
+		if(isTracked(event.getEntity()))
 				event.setCanceled(true);
-	}
-	
-	@Override
-	public void onUsedAbility(PlayerEntity player, MorphItem currentMorph)
-	{
-		
 	}
 }

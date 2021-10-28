@@ -1,8 +1,11 @@
-package de.budschie.bmorph.morph.functionality;
+package de.budschie.bmorph.morph.functionality.configurable;
 
 import java.util.ArrayList;
 
-import de.budschie.bmorph.morph.MorphItem;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -10,23 +13,26 @@ import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 
 public class AttackYeetAbility extends AbstractEventAbility
-{
+{	
+	public static final Codec<AttackYeetAbility> CODEC = RecordCodecBuilder.create(instance -> instance
+			.group(Codec.FLOAT.optionalFieldOf("yeetAmount", 1.0f).forGetter(AttackYeetAbility::getYeetAmount))
+			.apply(instance, AttackYeetAbility::new));
+	
 	private volatile boolean lock = false;
 	ArrayList<Runnable> delayedAttacks = new ArrayList<>();
 	
-	@Override
-	public void onUsedAbility(PlayerEntity player, MorphItem currentMorph)
+	private float yeetAmount;
+	
+	public AttackYeetAbility(float yeetAmount)
 	{
-		
+		this.yeetAmount = yeetAmount;
 	}
 	
-	@Override
-	public void enableAbility(PlayerEntity player, MorphItem enabledItem)
+	public float getYeetAmount()
 	{
-		super.enableAbility(player, enabledItem);
+		return yeetAmount;
 	}
 	
 	@SubscribeEvent
@@ -40,10 +46,10 @@ public class AttackYeetAbility extends AbstractEventAbility
 			{
 				while (lock);
 				lock = true;
-
+				
 				delayedAttacks.add(() ->
 				{
-					event.getEntityLiving().setMotion(event.getEntityLiving().getMotion().add(0, 1, 0));
+					event.getEntityLiving().setMotion(event.getEntityLiving().getMotion().add(0, yeetAmount, 0));
 					event.getEntityLiving().world.playSound(null, attacker.getPosition(),
 							SoundEvents.ENTITY_IRON_GOLEM_ATTACK, SoundCategory.MASTER, 10, 1);
 				});
@@ -71,12 +77,5 @@ public class AttackYeetAbility extends AbstractEventAbility
 		delayedAttacks.forEach(attack -> attack.run());
 		delayedAttacks.clear();
 		lock = false;
-	}
-	
-	@Override
-	public void onServerStopped(FMLServerStoppingEvent event)
-	{
-		delayedAttacks.clear();
-		super.onServerStopped(event);
 	}
 }

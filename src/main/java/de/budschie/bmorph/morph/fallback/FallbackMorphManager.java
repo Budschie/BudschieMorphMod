@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
+import de.budschie.bmorph.json_integration.JsonMorphNBTHandler;
+import de.budschie.bmorph.json_integration.NBTPath;
 import de.budschie.bmorph.morph.IMorphManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -11,6 +13,8 @@ import net.minecraft.nbt.CompoundNBT;
 
 public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Void>
 {
+	public static final JsonMorphNBTHandler DEFAULT_HANDLER = new JsonMorphNBTHandler(new CompoundNBT(), new NBTPath("CustomName"));
+	
 	private HashMap<EntityType<?>, IMorphNBTHandler> dataHandlers = new HashMap<>();
 	
 	@Override
@@ -25,6 +29,7 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 		return createMorph(entity.getType(), entity.serializeNBT(), null);
 	}
 
+	// This code is dumb
 	@Override
 	public FallbackMorphItem createMorph(EntityType<?> entity, CompoundNBT nbt, Void data, boolean forceNBT)
 	{
@@ -37,7 +42,7 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 				nbt = handler.applyDefaultNBTData(nbt);
 			}
 			else
-				nbt = new CompoundNBT();
+				nbt = DEFAULT_HANDLER.applyDefaultNBTData(nbt);
 		}
 		
 		return new FallbackMorphItem(nbt, entity);
@@ -50,7 +55,8 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 		
 		if(handler == null)
 		{
-			return new FallbackMorphItem(entity);
+			CompoundNBT nbt = new CompoundNBT();
+			return new FallbackMorphItem(DEFAULT_HANDLER.applyDefaultNBTData(nbt), entity);
 		}
 		else
 		{
@@ -72,7 +78,7 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 		{
 			IMorphNBTHandler handler = dataHandlers.get(item1.getEntityType());
 			
-			return handler == null ? true : handler.areEquals(item1, item2);
+			return handler == null ? DEFAULT_HANDLER.areEquals(item1, item2) : handler.areEquals(item1, item2);
 		}
 	}
 
@@ -83,7 +89,8 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 		
 		if(handler == null)
 		{
-			return EntityType.getKey(item.getEntityType()).hashCode();
+			// return EntityType.getKey(item.getEntityType()).hashCode();
+			return DEFAULT_HANDLER.getHashCodeFor(item);
 		}
 		else
 		{

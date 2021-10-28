@@ -1,19 +1,15 @@
 package de.budschie.bmorph.morph.functionality;
 
-import java.util.HashSet;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.main.ServerSetup;
-import de.budschie.bmorph.morph.MorphItem;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 
 public class PassiveTickAbility extends AbstractEventAbility 
 {
@@ -25,6 +21,11 @@ public class PassiveTickAbility extends AbstractEventAbility
 	{
 		this.updateDuration = updateDuration;
 		this.handleUpdate = handleUpdate;
+	}
+	
+	public int getUpdateDuration()
+	{
+		return updateDuration;
 	}
 	
 	@SubscribeEvent
@@ -52,11 +53,5 @@ public class PassiveTickAbility extends AbstractEventAbility
 				}
 			}
 		}
-	}
-
-	@Override
-	public void onUsedAbility(PlayerEntity player, MorphItem currentMorph)
-	{
-		
 	}
 }

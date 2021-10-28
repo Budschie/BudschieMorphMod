@@ -4,10 +4,9 @@ import java.util.HashSet;
 import java.util.UUID;
 
 import de.budschie.bmorph.morph.MorphItem;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 
 public abstract class AbstractEventAbility extends Ability 
 {
@@ -15,7 +14,7 @@ public abstract class AbstractEventAbility extends Ability
 	
 	public AbstractEventAbility()
 	{
-		MinecraftForge.EVENT_BUS.register(this);
+		
 	}
 	
 	@Override
@@ -30,10 +29,20 @@ public abstract class AbstractEventAbility extends Ability
 		trackedPlayers.remove(player.getUniqueID());
 	}
 	
-	@SubscribeEvent
-	public void onServerStopped(FMLServerStoppingEvent event)
+	@Override
+	public void onRegister()
 	{
-		trackedPlayers.clear();
-		System.out.println("Clearing player list of passive ability " + this.getClass().getName() + "...");
+		MinecraftForge.EVENT_BUS.register(this);
+	}
+	
+	@Override
+	public void onUnregister()
+	{
+		MinecraftForge.EVENT_BUS.unregister(this);
+	}
+	
+	public boolean isTracked(Entity entity)
+	{
+		return trackedPlayers.contains(entity.getUniqueID());
 	}
 }

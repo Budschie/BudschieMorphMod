@@ -85,31 +85,7 @@ public class MorphGuiHandler
 	public static void onPressedKey(ClientTickEvent event)
 	{		
 		if(Minecraft.getInstance().world != null)
-		{
-			Minecraft.getInstance().world.getPlayers().forEach(player ->
-			{
-				LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
-				
-				if(cap.isPresent())
-				{
-					IMorphCapability resolved = cap.resolve().get();
-					
-					// Initiate climbing...
-					if(resolved.hasAbility(AbilityRegistry.CLIMBING_ABILITY.get()) && player.collidedHorizontally && !player.abilities.isFlying)
-					{
-						Vector3d toSet = player.getMotion().add(0, .2f, 0);
-						player.setMotion(new Vector3d(toSet.x, Math.min(toSet.y, .2f), toSet.z));
-					}
-					
-					// Updating the bubble GUI on the client so that the bubbles are always full
-					if(resolved.hasAbility(AbilityRegistry.WATER_BREATHING_ABILITY.get()) && player.isInWater())
-						player.setAir(14 * 20);
-					
-					if(resolved.hasAbility(AbilityRegistry.FLY_ABILITY.get()))
-						player.abilities.allowFlying = true;
-				}
-			});
-			
+		{	
 			if(!currentMorphGui.isPresent())
 				traverseToIndexAndSetGui();
 			

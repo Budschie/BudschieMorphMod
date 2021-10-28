@@ -1,6 +1,7 @@
-package de.budschie.bmorph.morph.functionality;
+package de.budschie.bmorph.morph.functionality.configurable;
 
 import de.budschie.bmorph.morph.MorphItem;
+import de.budschie.bmorph.morph.functionality.StunAbility;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
