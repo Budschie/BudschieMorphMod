@@ -6,7 +6,6 @@ import net.minecraft.entity.player.PlayerEntity;
 
 public class ParrotSynchronizer implements IEntitySynchronizer
 {
-
 	@Override
 	public boolean appliesToMorph(Entity morphEntity)
 	{
@@ -17,6 +16,5 @@ public class ParrotSynchronizer implements IEntitySynchronizer
 	public void applyToMorphEntity(Entity morphEntity, PlayerEntity player)
 	{
 		ParrotEntity parrot = (ParrotEntity) morphEntity;
-		parrot.partyParrot = true;
 	}
 }
