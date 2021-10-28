@@ -10,6 +10,7 @@ import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.fallback.FallbackMorphItem;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
+import de.budschie.bmorph.morph.functionality.DynamicAbilityRegistry;
 import de.budschie.bmorph.morph.player.PlayerMorphItem;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.render_handler.AbstractPlayerSynchronizer;
@@ -36,6 +37,8 @@ public class BMorphMod
 	public static RuleKey<BooleanValue> KEEP_MORPH_INVENTORY;
 	public static RuleKey<BooleanValue> PREVENT_LOOKAT;
 	public static RuleKey<IntegerValue> MORPH_AGGRO_DURATION;
+	
+	public static DynamicAbilityRegistry DYNAMIC_ABILITY_REGISTRY;
 	
 	public BMorphMod()
 	{
@@ -74,5 +77,7 @@ public class BMorphMod
 		EntitySynchronizerRegistry.addEntitySynchronizer(new ParrotSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new SquidSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new AbstractPlayerSynchronizer());
+		
+		DYNAMIC_ABILITY_REGISTRY = new DynamicAbilityRegistry();
 	}	
 }
