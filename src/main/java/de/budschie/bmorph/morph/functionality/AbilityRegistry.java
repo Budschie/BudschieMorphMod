@@ -4,14 +4,28 @@ import java.util.function.Supplier;
 
 import de.budschie.bmorph.main.References;
 import de.budschie.bmorph.morph.functionality.configurable.AttackYeetAbility;
+import de.budschie.bmorph.morph.functionality.configurable.AttributeModifierAbility;
 import de.budschie.bmorph.morph.functionality.configurable.Boom;
 import de.budschie.bmorph.morph.functionality.configurable.ClimbingAbility;
 import de.budschie.bmorph.morph.functionality.configurable.CommandOnDisable;
 import de.budschie.bmorph.morph.functionality.configurable.CommandOnEnable;
 import de.budschie.bmorph.morph.functionality.configurable.CommandOnUseAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ConfigurableAbility;
+import de.budschie.bmorph.morph.functionality.configurable.DamageImmunityAbility;
+import de.budschie.bmorph.morph.functionality.configurable.EffectOnAttackEntity;
 import de.budschie.bmorph.morph.functionality.configurable.FlyAbility;
+import de.budschie.bmorph.morph.functionality.configurable.InstaDeathOnCookieAbility;
+import de.budschie.bmorph.morph.functionality.configurable.InstaJumpAbility;
+import de.budschie.bmorph.morph.functionality.configurable.InstaRegenAbility;
+import de.budschie.bmorph.morph.functionality.configurable.MobAttackAbility;
+import de.budschie.bmorph.morph.functionality.configurable.NoKnockbackAbility;
+import de.budschie.bmorph.morph.functionality.configurable.PassiveEffectAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PassiveTickCommandAbility;
+import de.budschie.bmorph.morph.functionality.configurable.ProjectileShootingAbility;
+import de.budschie.bmorph.morph.functionality.configurable.SquidBoostAbility;
+import de.budschie.bmorph.morph.functionality.configurable.TeleportAbility;
+import de.budschie.bmorph.morph.functionality.configurable.WaterBreathingAbility;
+import de.budschie.bmorph.morph.functionality.configurable.WaterDislikeAbility;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -37,6 +51,33 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<CommandOnDisable>> COMMAND_ON_DISABLE_ABILITY = ABILITY_REGISTRY.register("command_on_disable", () -> new ConfigurableAbility<>(CommandOnDisable.CODEC));
 	public static RegistryObject<ConfigurableAbility<CommandOnUseAbility>> COMMAND_ON_USE_ABILITY = ABILITY_REGISTRY.register("command_on_use", () -> new ConfigurableAbility<>(CommandOnUseAbility.CODEC));
 
+	public static RegistryObject<ConfigurableAbility<AttributeModifierAbility>> ATTRIBUTE_MODIFIER_ABILITY = ABILITY_REGISTRY.register("attribute_modifier", () -> new ConfigurableAbility<>(AttributeModifierAbility.CODEC));
+
+	public static RegistryObject<ConfigurableAbility<DamageImmunityAbility>> DAMAGE_IMMUNITY_ABILITY = ABILITY_REGISTRY.register("damage_immunity", () -> new ConfigurableAbility<>(DamageImmunityAbility.CODEC));
+	
+	public static RegistryObject<ConfigurableAbility<EffectOnAttackEntity>> EFFECT_ON_ATTACK_ABILITY = ABILITY_REGISTRY.register("effect_on_attack", () -> new ConfigurableAbility<>(EffectOnAttackEntity.CODEC));
+
+	public static RegistryObject<ConfigurableAbility<InstaDeathOnCookieAbility>> COOKIE_DEATH = ABILITY_REGISTRY.register("cookie_death", () -> new ConfigurableAbility<>(InstaDeathOnCookieAbility.CODEC));
+	
+	public static RegistryObject<ConfigurableAbility<InstaJumpAbility>> INSTA_JUMP_ABILITY = ABILITY_REGISTRY.register("insta_jump", () -> new ConfigurableAbility<>(InstaJumpAbility.CODEC));
+
+	public static RegistryObject<ConfigurableAbility<InstaRegenAbility>> INSTA_REGEN_ABILITY = ABILITY_REGISTRY.register("insta_regen", () -> new ConfigurableAbility<>(InstaRegenAbility.CODEC));
+	
+	public static RegistryObject<ConfigurableAbility<MobAttackAbility>> MOB_ATTACK_ABILITY = ABILITY_REGISTRY.register("mob_attack", () -> new ConfigurableAbility<>(MobAttackAbility.CODEC));
+
+	public static RegistryObject<ConfigurableAbility<NoKnockbackAbility>> NO_KNOCKBACK_ABILITY = ABILITY_REGISTRY.register("no_knockback", () -> new ConfigurableAbility<>(NoKnockbackAbility.CODEC));
+	
+	public static RegistryObject<ConfigurableAbility<PassiveEffectAbility>> PASSIVE_EFFECT_ABILITY = ABILITY_REGISTRY.register("passive_effect", () -> new ConfigurableAbility<>(PassiveEffectAbility.CODEC));
+
+	public static RegistryObject<ConfigurableAbility<ProjectileShootingAbility>> PROJECTILE_SHOOTING_ABILITY = ABILITY_REGISTRY.register("projectile_shooting", () -> new ConfigurableAbility<>(ProjectileShootingAbility.CODEC));
+
+	public static RegistryObject<ConfigurableAbility<SquidBoostAbility>> SQUID_BOOST_ABILITY = ABILITY_REGISTRY.register("squid_boost", () -> new ConfigurableAbility<>(SquidBoostAbility.CODEC));
+	
+	public static RegistryObject<ConfigurableAbility<TeleportAbility>> TELEPORT_ABILITY = ABILITY_REGISTRY.register("teleport", () -> new ConfigurableAbility<>(TeleportAbility.CODEC));
+	
+	public static RegistryObject<ConfigurableAbility<WaterBreathingAbility>> WATER_BREATHING_ABILITY = ABILITY_REGISTRY.register("water_breathing", () -> new ConfigurableAbility<>(WaterBreathingAbility.CODEC));
+
+	public static RegistryObject<ConfigurableAbility<WaterDislikeAbility>> WATER_DISLIKE_ABILITY = ABILITY_REGISTRY.register("water_dislike", () -> new ConfigurableAbility<>(WaterDislikeAbility.CODEC));
 
 	
 //	public static RegistryObject<Ability> FLY_ABILITY = ABILITY_REGISTRY.register("flying", () -> new FlyAbility());
