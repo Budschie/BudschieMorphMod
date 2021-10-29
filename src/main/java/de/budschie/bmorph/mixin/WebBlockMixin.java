@@ -1,5 +1,6 @@
 package de.budschie.bmorph.mixin;
 
+import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -13,6 +14,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
+@Mixin(value = WebBlock.class)
 public abstract class WebBlockMixin extends WebBlock
 {
 	public WebBlockMixin(Properties properties)
