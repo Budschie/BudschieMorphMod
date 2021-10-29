@@ -26,6 +26,7 @@ import de.budschie.bmorph.morph.functionality.configurable.SquidBoostAbility;
 import de.budschie.bmorph.morph.functionality.configurable.TeleportAbility;
 import de.budschie.bmorph.morph.functionality.configurable.WaterBreathingAbility;
 import de.budschie.bmorph.morph.functionality.configurable.WaterDislikeAbility;
+import de.budschie.bmorph.morph.functionality.configurable.WebSpeedAbility;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -78,6 +79,8 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<WaterBreathingAbility>> WATER_BREATHING_ABILITY = ABILITY_REGISTRY.register("water_breathing", () -> new ConfigurableAbility<>(WaterBreathingAbility.CODEC));
 
 	public static RegistryObject<ConfigurableAbility<WaterDislikeAbility>> WATER_DISLIKE_ABILITY = ABILITY_REGISTRY.register("water_dislike", () -> new ConfigurableAbility<>(WaterDislikeAbility.CODEC));
+
+	public static RegistryObject<ConfigurableAbility<WebSpeedAbility>> WEB_SPEED_ABILITY = ABILITY_REGISTRY.register("web_speed", () -> new ConfigurableAbility<>(WebSpeedAbility.CODEC));
 
 	
 //	public static RegistryObject<Ability> FLY_ABILITY = ABILITY_REGISTRY.register("flying", () -> new FlyAbility());
