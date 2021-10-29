@@ -10,7 +10,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class WaterDislikeAbility extends AbstractEventAbility
 {
-	public Codec<WaterDislikeAbility> CODEC = RecordCodecBuilder.create(instance -> instance
+	public static final Codec<WaterDislikeAbility> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(Codec.FLOAT.optionalFieldOf("damage_amount", 1.0f).forGetter(WaterDislikeAbility::getDamageAmount))
 			.apply(instance, WaterDislikeAbility::new));
 	

@@ -9,7 +9,7 @@ import net.minecraft.potion.EffectInstance;
 
 public class PassiveEffectAbility extends PassiveTickAbility
 {
-	public static Codec<PassiveEffectAbility> CODEC = RecordCodecBuilder.<PassiveEffectAbility>create(instance -> instance
+	public static final Codec<PassiveEffectAbility> CODEC = RecordCodecBuilder.<PassiveEffectAbility>create(instance -> instance
 			.group(
 					Codec.INT.optionalFieldOf("effect_frequency", 10).<PassiveEffectAbility>forGetter(inst -> inst.getUpdateDuration()),
 					ModCodecs.EFFECT_INSTANCE.fieldOf("effect_instance").forGetter(PassiveEffectAbility::getEffectInstance)

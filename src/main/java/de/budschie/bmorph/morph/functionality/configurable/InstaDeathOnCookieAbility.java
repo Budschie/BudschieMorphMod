@@ -17,7 +17,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class InstaDeathOnCookieAbility extends AbstractEventAbility
 {
-	private Codec<InstaDeathOnCookieAbility> CODEC = RecordCodecBuilder.create(instance -> instance
+	public static final Codec<InstaDeathOnCookieAbility> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(Codec.BOOL.optionalFieldOf("painful", false).forGetter(InstaDeathOnCookieAbility::isPainfulDeath))
 			.apply(instance, InstaDeathOnCookieAbility::new));
 	

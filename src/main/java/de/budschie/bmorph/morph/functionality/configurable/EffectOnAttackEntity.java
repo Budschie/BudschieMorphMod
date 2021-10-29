@@ -13,7 +13,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 /** Ability that gives entities effects when a player hurts them. **/
 public class EffectOnAttackEntity extends AbstractEventAbility
 {
-	public static Codec<EffectOnAttackEntity> CODEC = RecordCodecBuilder.create(instance -> instance
+	public static final Codec<EffectOnAttackEntity> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(ModCodecs.EFFECT_INSTANCE.fieldOf("effect_instance").forGetter(EffectOnAttackEntity::getEffectInstance)).apply(instance, EffectOnAttackEntity::new));
 	
 	private EffectInstance effectInstance;

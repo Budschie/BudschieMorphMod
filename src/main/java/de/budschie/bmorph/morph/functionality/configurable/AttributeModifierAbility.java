@@ -16,7 +16,7 @@ import net.minecraft.util.UUIDCodec;
 
 public class AttributeModifierAbility extends Ability
 {
-	public static Codec<AttributeModifierAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+	public static final Codec<AttributeModifierAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			ModCodecs.ATTRIBUTE.fieldOf("attribute").forGetter(AttributeModifierAbility::getAttribute),
 			ModCodecs.OPERATION.fieldOf("operation").forGetter(inst -> inst.getAttributeModifier().getOperation()),
 			Codec.STRING.fieldOf("name").forGetter(inst -> inst.getAttributeModifier().getName()),
