@@ -13,6 +13,7 @@ import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphUtil;
+import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
@@ -21,6 +22,7 @@ import net.minecraft.command.arguments.EntitySummonArgument;
 import net.minecraft.command.arguments.NBTCompoundTagArgument;
 import net.minecraft.command.arguments.SuggestionProviders;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
@@ -101,6 +103,45 @@ public class MorphCommand
 									}))
 								)
 						));
+		
+		dispatcher.register(Commands.literal("morph_list_ability")
+				.requires(sender -> sender.hasPermissionLevel(2))
+				.executes(ctx -> listAbilities(ctx.getSource(), ctx.getSource().asPlayer()))
+				.then(Commands.argument("player", EntityArgument.player()).executes(ctx -> listAbilities(ctx.getSource(), EntityArgument.getPlayer(ctx, "player")))));
+	}
+	
+	private static int listAbilities(CommandSource sender, PlayerEntity player)
+	{
+		IMorphCapability cap = MorphUtil.getCapOrNull(player);
+		
+		if(cap == null || cap.getCurrentAbilities().size() <= 0)
+		{
+			sender.sendErrorMessage(new StringTextComponent("The given player is currently not morphed."));
+		}
+		else
+		{
+			StringBuilder builder = new StringBuilder(TextFormatting.GREEN + "The given player currently has following abilities: ").append(TextFormatting.WHITE);
+			
+			for(int i = 0; i < cap.getCurrentAbilities().size(); i++)
+			{
+				Ability currentAbility = cap.getCurrentAbilities().get(i);
+				
+				builder.append(currentAbility.getResourceLocation().toString()).append('(').append(currentAbility.getConfigurableAbility().getRegistryName().toString()).append(')');
+				
+				if(i == (cap.getCurrentAbilities().size() - 2))
+				{
+					builder.append(" and ");
+				}
+				else if(i != (cap.getCurrentAbilities().size() - 1))
+				{
+					builder.append(", ");
+				}
+			}
+			
+			sender.sendFeedback(new StringTextComponent(builder.toString()), true);
+		}
+		
+		return 0;
 	}
 	
 	private static int addMorph(List<ServerPlayerEntity> entities, ResourceLocation rs, CompoundNBT nbtData)
