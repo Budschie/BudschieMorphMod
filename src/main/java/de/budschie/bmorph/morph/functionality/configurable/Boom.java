@@ -22,9 +22,9 @@ public class Boom extends Ability
 	private boolean causesFire;
 	
 	public static final Codec<Boom> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			Codec.BOOL.optionalFieldOf("instantKill", true).forGetter(Boom::isInstantKill),
-			Codec.BOOL.optionalFieldOf("causesFire", false).forGetter(Boom::causesFire),
-			Codec.FLOAT.optionalFieldOf("explosionSize", 7.0f).forGetter(Boom::getExplosionSize)
+			Codec.BOOL.optionalFieldOf("instant_kill", true).forGetter(Boom::isInstantKill),
+			Codec.BOOL.optionalFieldOf("causes_fire", false).forGetter(Boom::causesFire),
+			Codec.FLOAT.optionalFieldOf("explosion_size", 7.0f).forGetter(Boom::getExplosionSize)
 			).apply(instance, Boom::new));
 		
 	public Boom(boolean instantKill, boolean causesFire, float explosionSize)
@@ -47,17 +47,6 @@ public class Boom extends Ability
 	public boolean isInstantKill()
 	{
 		return instantKill;
-	}
-	
-	@Override
-	public void enableAbility(PlayerEntity player, MorphItem enabledItem)
-	{
-	}
-
-	@Override
-	public void disableAbility(PlayerEntity player, MorphItem disabledItem)
-	{
-		
 	}
 
 	@Override
