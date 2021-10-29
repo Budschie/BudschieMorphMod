@@ -22,20 +22,28 @@ import net.minecraftforge.fml.network.PacketDistributor;
 
 public class SquidBoostAbility extends StunAbility
 {
-	private Codec<SquidBoostAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+	public static final Codec<SquidBoostAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.INT.optionalFieldOf("blindness_duration").forGetter(SquidBoostAbility::getBlindnessDuration),
+			Codec.INT.optionalFieldOf("blindness_radius", 5).forGetter(SquidBoostAbility::getBlindnessRadius),
 			Codec.FLOAT.fieldOf("boost_amount").forGetter(SquidBoostAbility::getBoostAmount),
 			Codec.INT.fieldOf("stun").forGetter(SquidBoostAbility::getStun)
 			).apply(instance, SquidBoostAbility::new));
 	
 	private Optional<Integer> blindnessDuration;
 	private float boostAmount;
+	private int blindnessRadius;
 	
-	public SquidBoostAbility(Optional<Integer> blindnessDuration, float boostAmount, int stun)
+	public SquidBoostAbility(Optional<Integer> blindnessDuration, int blindnessRadius, float boostAmount, int stun)
 	{
 		super(stun);
 		this.blindnessDuration = blindnessDuration;
+		this.blindnessRadius = blindnessRadius;
 		this.boostAmount = boostAmount;
+	}
+	
+	public int getBlindnessRadius()
+	{
+		return blindnessRadius;
 	}
 	
 	public Optional<Integer> getBlindnessDuration()
@@ -59,7 +67,7 @@ public class SquidBoostAbility extends StunAbility
 			
 			if(blindnessDuration.isPresent())
 			{
-				player.world.getEntitiesWithinAABBExcludingEntity(player, new AxisAlignedBB(player.getPosition().add(-5, -5, -5), player.getPosition().add(5, 5, 5))).forEach(entity ->
+				player.world.getEntitiesWithinAABBExcludingEntity(player, new AxisAlignedBB(player.getPosition().add(-blindnessRadius, -blindnessRadius, -blindnessRadius), player.getPosition().add(blindnessRadius, blindnessRadius, blindnessRadius))).forEach(entity ->
 				{
 					if(entity instanceof LivingEntity)
 						((LivingEntity)entity).addPotionEffect(new EffectInstance(Effects.BLINDNESS, blindnessDuration.get(), 5, false, false, false));
