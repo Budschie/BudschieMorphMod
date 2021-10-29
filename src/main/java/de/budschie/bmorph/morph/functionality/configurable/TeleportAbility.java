@@ -1,5 +1,8 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.StunAbility;
 import net.minecraft.entity.player.PlayerEntity;
@@ -8,31 +11,22 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceContext.BlockMode;
 import net.minecraft.util.math.RayTraceContext.FluidMode;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
 
 public class TeleportAbility extends StunAbility
 {
+	public static final Codec<TeleportAbility> CODEC = RecordCodecBuilder
+			.create(instance -> instance.group(Codec.INT.fieldOf("stun").forGetter(TeleportAbility::getStun)).apply(instance, TeleportAbility::new));
+	
 	public TeleportAbility(int stun)
 	{
 		super(stun);
 	}
 	
-	@Override
-	public void enableAbility(PlayerEntity player, MorphItem enabledItem)
-	{
-		
-	}
-
-	@Override
-	public void disableAbility(PlayerEntity player, MorphItem disabledItem)
-	{
-		
-	}
-
 	@Override
 	public void onUsedAbility(PlayerEntity player, MorphItem currentMorph)
 	{
