@@ -36,7 +36,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	MorphList morphList = new MorphList();
 	FavouriteList favouriteList = new FavouriteList(morphList);
 	
-	List<Ability> currentAbilities;
+	List<Ability> currentAbilities = new ArrayList<>();
 	
 	private boolean dirty = true;
 	
