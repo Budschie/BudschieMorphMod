@@ -11,13 +11,17 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import de.budschie.bmorph.morph.LazyTag;
 import de.budschie.bmorph.morph.functionality.codec_addition.CommandProvider.Selector;
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -30,6 +34,8 @@ public class ModCodecs
 	public static final Codec<EntityType<?>> ENTITIES = getRegistryCodec(ForgeRegistries.ENTITIES::getValue);
 	
 	public static final Codec<Selector> SELECTOR_ENUM = getEnumCodec(Selector.class, Selector::values);
+	
+	public static final Codec<LazyTag<Block>> LAZY_BLOCK_TAGS = getLazyTagCodec(rl -> BlockTags.getCollection().get(rl)); 
 	
 	public static final Codec<Vector3d> VECTOR_3D = RecordCodecBuilder.create(instance -> instance.group(Codec.DOUBLE.fieldOf("x").forGetter(inst -> inst.x),
 			Codec.DOUBLE.fieldOf("y").forGetter(inst -> inst.y), Codec.DOUBLE.fieldOf("z").forGetter(inst -> inst.z)).apply(instance, Vector3d::new));
@@ -47,7 +53,23 @@ public class ModCodecs
 	
 	public static final Codec<CommandProvider> COMMAND_PROVIDER = RecordCodecBuilder
 			.create(instance -> instance.group(Codec.STRING.fieldOf("command").forGetter(CommandProvider::getCommand), SELECTOR_ENUM.optionalFieldOf("selector", Selector.SELF).forGetter(CommandProvider::getSelector))
-					.apply(instance, CommandProvider::new)); 
+					.apply(instance, CommandProvider::new));
+	
+	public static final <T> Codec<LazyTag<T>> getLazyTagCodec(Function<ResourceLocation, ITag<T>> resolveFunction)
+	{
+		return ResourceLocation.CODEC.flatXmap((resourceLocation) ->
+		{
+			if(resourceLocation == null)
+			{
+				return DataResult.error("The resource location was null; thus there was no tag present.");
+			}
+			
+			return DataResult.success(new LazyTag<>(resourceLocation, resolveFunction));
+		}, (fromLazyTag) ->
+		{
+			return DataResult.success(fromLazyTag.getTagName());
+		});
+	}
 	 
 	public static final <A extends Enum<A>> Codec<A> getEnumCodec(Class<A> clazz, Supplier<A[]> values)
 	{		
@@ -133,7 +155,7 @@ public class ModCodecs
 			@Override
 			public <T> DataResult<Pair<A, T>> decode(DynamicOps<T> ops, T input)
 			{
-				return DataResult.success(new Pair<A, T>(supplier.get(), input));
+				return DataResult.success(new Pair<>(supplier.get(), input));
 			}
 		};
 	}

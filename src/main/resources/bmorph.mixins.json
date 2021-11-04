@@ -8,7 +8,7 @@
 	],
 	"mixins": [
 		"LookAtGoalMixin",
-		"WebBlockMixin"
+		"MotionMultiplierMixin"
 	],
 	"minVersion": "0.8"
 }

@@ -1,0 +1,8 @@
+{
+    "ability": "bmorph:web_speed",
+    "config":
+    {
+        "speed_multiplier": 0,
+        "applies_to": "bmorph:cobweb"
+    }
+}
