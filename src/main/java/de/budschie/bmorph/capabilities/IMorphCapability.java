@@ -1,6 +1,5 @@
 package de.budschie.bmorph.capabilities;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,7 +9,6 @@ import de.budschie.bmorph.morph.FavouriteList;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
 import de.budschie.bmorph.morph.functionality.Ability;
-import de.budschie.bmorph.morph.functionality.configurable.ConfigurableAbility;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.NetworkManager;

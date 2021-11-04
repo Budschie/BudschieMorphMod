@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -31,6 +30,6 @@ public class FOVChangeAbility extends AbstractEventAbility
 	public void onFOVChangedEvent(FOVUpdateEvent event)
 	{
 		if(isTracked(event.getEntity()))
-			event.setNewfov((float) (event.getFov() * (event.getEntity().isSprinting() ? amount : 1)));
+			event.setNewfov(event.getFov() * (event.getEntity().isSprinting() ? amount : 1));
 	}
 }

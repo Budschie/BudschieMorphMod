@@ -12,17 +12,12 @@ import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
 import de.budschie.bmorph.morph.MorphUtil;
-import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.network.MorphCapabilityFullSynchronizer.MorphPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.registries.IForgeRegistry;
 
 public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphPacket>
 {

@@ -1,7 +1,6 @@
 package de.budschie.bmorph.capabilities.blacklist;
 
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 public enum ConfigManager

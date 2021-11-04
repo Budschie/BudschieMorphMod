@@ -5,21 +5,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import de.budschie.bmorph.capabilities.IMorphCapability;
-import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphUtil;
-import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.network.MorphChangedSynchronizer.MorphChangedPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistry;
 
 public class MorphChangedSynchronizer implements ISimpleImplPacket<MorphChangedPacket>
 {

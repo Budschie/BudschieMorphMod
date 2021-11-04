@@ -1,7 +1,6 @@
 package de.budschie.bmorph.morph.functionality;
 
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import de.budschie.bmorph.morph.MorphItem;
 import net.minecraft.entity.Entity;

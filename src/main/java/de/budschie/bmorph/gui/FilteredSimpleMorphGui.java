@@ -26,7 +26,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderNameplateEvent;
 import net.minecraftforge.common.util.LazyOptional;
@@ -56,6 +55,7 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 	@Override
 	public void showGui()
 	{
+		@SuppressWarnings("resource")
 		LazyOptional<IMorphCapability> cap = Minecraft.getInstance().player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 		
 		if(cap.isPresent())

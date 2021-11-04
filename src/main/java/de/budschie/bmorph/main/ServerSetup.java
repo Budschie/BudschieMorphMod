@@ -3,7 +3,6 @@ package de.budschie.bmorph.main;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import de.budschie.bmorph.commands.BlacklistCommand;
 import de.budschie.bmorph.commands.MorphCommand;
-import net.minecraft.command.impl.ReloadCommand;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

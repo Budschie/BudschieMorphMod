@@ -6,12 +6,8 @@ import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.network.ConfiguredAbilitySynchronizer;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.network.PacketDistributor;
 

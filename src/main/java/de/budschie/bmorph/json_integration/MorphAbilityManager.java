@@ -20,7 +20,6 @@ import com.google.gson.JsonObject;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
-import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import net.minecraft.client.resources.JsonReloadListener;
 import net.minecraft.entity.EntityType;
 import net.minecraft.profiler.IProfiler;

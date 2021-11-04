@@ -91,6 +91,17 @@ public class Events
 		if(event.getPlayer() == null)
 		{
 			BMorphMod.DYNAMIC_ABILITY_REGISTRY.syncWithClients();
+			
+			ServerSetup.server.getPlayerList().getPlayers().forEach(player ->
+			{
+				IMorphCapability cap = MorphUtil.getCapOrNull(player);
+				
+				if(cap != null)
+				{
+					cap.applyHealthOnPlayer(player);
+					cap.applyAbilities(player);
+				}
+			});
 		}
 		else
 			BMorphMod.DYNAMIC_ABILITY_REGISTRY.syncWithClient(event.getPlayer());

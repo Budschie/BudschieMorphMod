@@ -1,9 +1,5 @@
 package de.budschie.bmorph.morph;
 
-import de.budschie.bmorph.morph.fallback.FallbackMorphManager.SpecialDataHandler;
-import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.CompoundNBT;
-
 public class VanillaFallbackMorphData
 {
 	public static void intialiseFallbackData()
