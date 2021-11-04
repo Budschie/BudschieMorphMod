@@ -70,7 +70,7 @@ public class AbilityRegistry
 	
 	public static RegistryObject<ConfigurableAbility<PassiveEffectAbility>> PASSIVE_EFFECT_ABILITY = ABILITY_REGISTRY.register("passive_effect", () -> new ConfigurableAbility<>(PassiveEffectAbility.CODEC));
 
-	public static RegistryObject<ConfigurableAbility<ProjectileShootingAbility>> PROJECTILE_SHOOTING_ABILITY = ABILITY_REGISTRY.register("projectile_shooting", () -> new ConfigurableAbility<>(ProjectileShootingAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<ProjectileShootingAbility>> PROJECTILE_SHOOTING_ABILITY = ABILITY_REGISTRY.register("shoot_projectile", () -> new ConfigurableAbility<>(ProjectileShootingAbility.CODEC));
 
 	public static RegistryObject<ConfigurableAbility<SquidBoostAbility>> SQUID_BOOST_ABILITY = ABILITY_REGISTRY.register("squid_boost", () -> new ConfigurableAbility<>(SquidBoostAbility.CODEC));
 	
