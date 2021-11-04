@@ -4,7 +4,6 @@ import org.lwjgl.glfw.GLFW;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 
-import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityAttacher;
 import de.budschie.bmorph.entity.EntityRegistry;
 import de.budschie.bmorph.entity.rendering.MorphEntityRenderer;
 import de.budschie.bmorph.morph.player.AdvancedAbstractClientPlayerEntity;
@@ -49,9 +48,7 @@ public class ClientSetup
 		ClientRegistry.registerKeyBinding(NEXT_MORPH_UI);
 		ClientRegistry.registerKeyBinding(PREVIOUS_MORPH_UI);
 		ClientRegistry.registerKeyBinding(MORPH_UI);
-		
-		PufferfishCapabilityAttacher.register();
-		
+				
 		UglyHackThatDoesntWork.thisisstupid = (gameProfile, world) ->
 		{
 			AdvancedAbstractClientPlayerEntity entity = new AdvancedAbstractClientPlayerEntity((ClientWorld) world, gameProfile);

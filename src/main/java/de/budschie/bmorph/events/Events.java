@@ -11,6 +11,7 @@ import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
+import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityHandler;
 import de.budschie.bmorph.entity.MorphEntity;
 import de.budschie.bmorph.json_integration.AbilityConfigurationHandler;
 import de.budschie.bmorph.json_integration.MorphAbilityManager;
@@ -81,6 +82,9 @@ public class Events
 				cap.resolve().get().applyAbilities(player);
 				
 				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Post(player, cap.resolve().get(), cap.resolve().get().getCurrentMorph().orElse(null)));
+				
+				PufferfishCapabilityHandler.synchronizeWithClients(player);
+				PufferfishCapabilityHandler.synchronizeWithClient(player, (ServerPlayerEntity) player);
 			}
 		}
 	}
@@ -113,6 +117,7 @@ public class Events
 		{
 			PlayerEntity player = (PlayerEntity) event.getTarget();
 			MorphUtil.processCap(player, resolved -> resolved.syncWithClient(player, (ServerPlayerEntity) event.getPlayer()));
+			PufferfishCapabilityHandler.synchronizeWithClient(player, (ServerPlayerEntity) event.getPlayer());
 		}
 	}
 	

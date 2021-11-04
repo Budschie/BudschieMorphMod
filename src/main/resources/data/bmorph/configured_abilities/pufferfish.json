@@ -1,0 +1,45 @@
+{
+    "ability": "bmorph:pufferfish",
+    "config":
+    {
+        "effects_on_use": 
+        [
+            {
+                "potion_effect": "minecraft:poison",
+                "duration": 100,
+                "amplifier": 5,
+                "ambient": false,
+                "show_particles": true,
+                "show_icon": true
+            },
+            {
+                "potion_effect": "minecraft:nausea",
+                "duration": 100,
+                "amplifier": 5,
+                "ambient": false,
+                "show_particles": true,
+                "show_icon": true
+            },
+            {
+                "potion_effect": "minecraft:blindness",
+                "duration": 500,
+                "amplifier": 5,
+                "ambient": false,
+                "show_particles": true,
+                "show_icon": true
+            },
+            {
+                "potion_effect": "minecraft:weakness",
+                "duration": 60,
+                "amplifier": 5,
+                "ambient": false,
+                "show_particles": true,
+                "show_icon": true
+            }
+        ],
+        "stun": 400,
+        "duration": 300,
+        "direct_damage": 7,
+        "ability_radius": 3.5
+    }
+}

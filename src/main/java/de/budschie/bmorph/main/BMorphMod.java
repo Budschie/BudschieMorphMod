@@ -4,6 +4,7 @@ import de.budschie.bmorph.api_interact.ShrinkAPIInteractor;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
+import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityAttacher;
 import de.budschie.bmorph.entity.EntityRegistry;
 import de.budschie.bmorph.gui.MorphGuiRegistry;
 import de.budschie.bmorph.morph.MorphHandler;
@@ -17,6 +18,7 @@ import de.budschie.bmorph.render_handler.AbstractPlayerSynchronizer;
 import de.budschie.bmorph.render_handler.EntitySynchronizerRegistry;
 import de.budschie.bmorph.render_handler.LivingEntitySynchronzier;
 import de.budschie.bmorph.render_handler.ParrotSynchronizer;
+import de.budschie.bmorph.render_handler.PufferfishSynchronizer;
 import de.budschie.bmorph.render_handler.SquidSynchronizer;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.GameRules.BooleanValue;
@@ -54,6 +56,7 @@ public class BMorphMod
 		ShrinkAPIInteractor.init();
 		
 		MorphCapabilityAttacher.register();
+		PufferfishCapabilityAttacher.register();
 		
 		ConfigManager.INSTANCE.register(BlacklistData.class, BlacklistData::new);
 		
@@ -77,6 +80,7 @@ public class BMorphMod
 		EntitySynchronizerRegistry.addEntitySynchronizer(new ParrotSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new SquidSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new AbstractPlayerSynchronizer());
+		EntitySynchronizerRegistry.addEntitySynchronizer(new PufferfishSynchronizer());
 		
 		DYNAMIC_ABILITY_REGISTRY = new DynamicAbilityRegistry();
 	}	

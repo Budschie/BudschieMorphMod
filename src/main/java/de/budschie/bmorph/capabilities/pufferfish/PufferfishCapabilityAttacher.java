@@ -1,13 +1,11 @@
 package de.budschie.bmorph.capabilities.pufferfish;
 
-import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.main.References;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -18,7 +16,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
-@EventBusSubscriber(bus = Bus.FORGE, value = Dist.CLIENT)
+@EventBusSubscriber(bus = Bus.FORGE)
 public class PufferfishCapabilityAttacher implements ICapabilitySerializable<CompoundNBT>
 {
 	public static final ResourceLocation CAPABILITY_NAME = new ResourceLocation(References.MODID, "puffer_cap");
@@ -43,7 +41,7 @@ public class PufferfishCapabilityAttacher implements ICapabilitySerializable<Com
 	public static void onAttachCapsOnPlayer(AttachCapabilitiesEvent<Entity> event)
 	{
 		if(event.getObject() instanceof PlayerEntity)
-			event.addCapability(CAPABILITY_NAME, new MorphCapabilityAttacher());
+			event.addCapability(CAPABILITY_NAME, new PufferfishCapabilityAttacher());
 	}
 	
 	public static void register()

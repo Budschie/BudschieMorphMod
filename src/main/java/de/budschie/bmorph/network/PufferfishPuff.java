@@ -17,14 +17,15 @@ public class PufferfishPuff implements ISimpleImplPacket<PufferfishPuffPacket>
 	@Override
 	public void encode(PufferfishPuffPacket packet, PacketBuffer buffer)
 	{
+		buffer.writeInt(packet.getOriginalDuration());
 		buffer.writeInt(packet.getDuration());
-		buffer.writeUniqueId(buffer.readUniqueId());
+		buffer.writeUniqueId(packet.getPlayer());
 	}
 
 	@Override
 	public PufferfishPuffPacket decode(PacketBuffer buffer)
 	{
-		return new PufferfishPuffPacket(buffer.readInt(), buffer.readUniqueId());
+		return new PufferfishPuffPacket(buffer.readInt(), buffer.readInt(), buffer.readUniqueId());
 	}
 
 	@Override
@@ -32,7 +33,7 @@ public class PufferfishPuff implements ISimpleImplPacket<PufferfishPuffPacket>
 	{
 		ctx.get().enqueueWork(() ->
 		{
-			DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> () ->
+			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
 			{
 				PlayerEntity player = Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayer());
 				
@@ -40,7 +41,8 @@ public class PufferfishPuff implements ISimpleImplPacket<PufferfishPuffPacket>
 				{
 					player.getCapability(PufferfishCapabilityAttacher.PUFFER_CAP).ifPresent(cap ->
 					{
-						cap.puff(packet.getDuration());
+						cap.setOriginalPuffTime(packet.getOriginalDuration());
+						cap.setPuffTime(packet.getDuration());
 					});
 				}
 			});
@@ -49,11 +51,13 @@ public class PufferfishPuff implements ISimpleImplPacket<PufferfishPuffPacket>
 	
 	public static class PufferfishPuffPacket
 	{
+		private int originalDuration;
 		private int duration;
 		private UUID player;
 		
-		public PufferfishPuffPacket(int duration, UUID player)
+		public PufferfishPuffPacket(int originalDuration, int duration, UUID player)
 		{
+			this.originalDuration = originalDuration;
 			this.duration = duration;
 			this.player = player;
 		}
@@ -61,6 +65,11 @@ public class PufferfishPuff implements ISimpleImplPacket<PufferfishPuffPacket>
 		public int getDuration()
 		{
 			return duration;
+		}
+		
+		public int getOriginalDuration()
+		{
+			return originalDuration;
 		}
 		
 		public UUID getPlayer()
@@ -71,6 +80,11 @@ public class PufferfishPuff implements ISimpleImplPacket<PufferfishPuffPacket>
 		public void setDuration(int duration)
 		{
 			this.duration = duration;
+		}
+		
+		public void setOriginalDuration(int originalDuration)
+		{
+			this.originalDuration = originalDuration;
 		}
 		
 		public void setPlayer(UUID player)
