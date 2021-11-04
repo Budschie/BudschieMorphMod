@@ -1,11 +1,14 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
+import java.util.Optional;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.StunAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
+import de.budschie.bmorph.util.SoundInstance;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,21 +24,24 @@ public class ProjectileShootingAbility extends StunAbility
 					Codec.INT.optionalFieldOf("stun", 40).forGetter(ProjectileShootingAbility::getStun),
 					Codec.DOUBLE.optionalFieldOf("motion", 0.0D).forGetter(ProjectileShootingAbility::getMotion),
 					Codec.DOUBLE.optionalFieldOf("acceleration", 0.0D).forGetter(ProjectileShootingAbility::getAcceleration),
-					CompoundNBT.CODEC.optionalFieldOf("nbt", new CompoundNBT()).forGetter(ProjectileShootingAbility::getNbtData)
+					CompoundNBT.CODEC.optionalFieldOf("nbt", new CompoundNBT()).forGetter(ProjectileShootingAbility::getNbtData),
+					SoundInstance.CODEC.optionalFieldOf("sound").forGetter(ProjectileShootingAbility::getSoundInstance)
 					).apply(instance, ProjectileShootingAbility::new));
 	
 	private EntityType<?> projectileEntityType;
 	private double motion;
 	private double acceleration;
 	private CompoundNBT nbtData;
+	private Optional<SoundInstance> soundInstance;
 	
-	public ProjectileShootingAbility(EntityType<?> projectileEntityType, int stun, double motion, double acceleration, CompoundNBT nbtData)
+	public ProjectileShootingAbility(EntityType<?> projectileEntityType, int stun, double motion, double acceleration, CompoundNBT nbtData, Optional<SoundInstance> soundInstance)
 	{
 		super(stun);
 		this.motion = motion;
 		this.projectileEntityType = projectileEntityType;
 		this.acceleration = acceleration;
 		this.nbtData = nbtData;
+		this.soundInstance = soundInstance;
 	}
 	
 	public EntityType<?> getProjectileEntityType()
@@ -56,6 +62,11 @@ public class ProjectileShootingAbility extends StunAbility
 	public CompoundNBT getNbtData()
 	{
 		return nbtData;
+	}
+	
+	public Optional<SoundInstance> getSoundInstance()
+	{
+		return soundInstance;
 	}
 
 	@Override
@@ -86,6 +97,9 @@ public class ProjectileShootingAbility extends StunAbility
 			
 			player.world.addEntity(createdEntity);
 			stun(player.getUniqueID());
+			
+			if(this.soundInstance.isPresent())
+				this.soundInstance.get().playSoundAt(player);
 		}		
 	}
 }
