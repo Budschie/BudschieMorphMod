@@ -21,8 +21,7 @@ public class SoundInstance
 					SOUND_CATEGORY_CODEC.optionalFieldOf("category", SoundCategory.AMBIENT).forGetter(SoundInstance::getSoundCategory),
 					Codec.FLOAT.optionalFieldOf("pitch", 1.0f).forGetter(SoundInstance::getPitch),
 					Codec.FLOAT.optionalFieldOf("random_pitch_delta", 0.125f).forGetter(SoundInstance::getRandomPitchDelta),
-					Codec.FLOAT.optionalFieldOf("volume", 1.0f).forGetter(SoundInstance::getVolume),
-					Codec.BOOL.optionalFieldOf("distance_delay", false).forGetter(SoundInstance::isDistanceDelay))
+					Codec.FLOAT.optionalFieldOf("volume", 1.0f).forGetter(SoundInstance::getVolume))
 					.apply(instance, SoundInstance::new));
 		
 	private SoundEvent soundEvent;
@@ -30,16 +29,14 @@ public class SoundInstance
 	private float pitch;
 	private float randomPitchDelta;
 	private float volume;
-	private boolean distanceDelay;
 		
-	public SoundInstance(SoundEvent soundEvent, SoundCategory soundCategory, float pitch, float randomPitchDelta, float volume, boolean distanceDelay)
+	public SoundInstance(SoundEvent soundEvent, SoundCategory soundCategory, float pitch, float randomPitchDelta, float volume)
 	{
 		this.soundEvent = soundEvent;
 		this.soundCategory = soundCategory;
 		this.pitch = pitch;
 		this.randomPitchDelta = randomPitchDelta;
 		this.volume = volume;
-		this.distanceDelay = distanceDelay;
 	}
 
 	public SoundEvent getSoundEvent()
@@ -67,19 +64,14 @@ public class SoundInstance
 		return volume;
 	}
 
-	public boolean isDistanceDelay()
-	{
-		return distanceDelay;
-	}
-
 	public void playSoundAt(PlayerEntity player)
 	{
-		player.getEntityWorld().playSound(player.getPosX(), player.getPosY(), player.getPosZ(), soundEvent, soundCategory, volume, getRandomPitch(player.getEntityWorld()), distanceDelay);
+		playSound(player.getPosX(), player.getPosY(), player.getPosZ(), player.getEntityWorld());
 	}
 	
 	public void playSound(double x, double y, double z, World world)
 	{
-		world.playSound(x, y, z, soundEvent, soundCategory, volume, getRandomPitch(world), distanceDelay);
+		world.playSound(null, x, y, z, soundEvent, soundCategory, volume, getRandomPitch(world));
 	}
 	
 	private float getRandomPitch(World world)
