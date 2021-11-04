@@ -23,6 +23,7 @@ import de.budschie.bmorph.morph.functionality.configurable.NoKnockbackAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PassiveEffectAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PassiveTickCommandAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ProjectileShootingAbility;
+import de.budschie.bmorph.morph.functionality.configurable.SoundOnUseAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SquidBoostAbility;
 import de.budschie.bmorph.morph.functionality.configurable.TeleportAbility;
 import de.budschie.bmorph.morph.functionality.configurable.WaterBreathingAbility;
@@ -82,6 +83,7 @@ public class AbilityRegistry
 
 	public static RegistryObject<ConfigurableAbility<BlockPassthroughAbility>> BLOCK_PASSTHROUGH_ABILITY = ABILITY_REGISTRY.register("block_passthrough", () -> new ConfigurableAbility<>(BlockPassthroughAbility.CODEC));
 
+	public static RegistryObject<ConfigurableAbility<SoundOnUseAbility>> SOUND_ON_USE_ABILITY = ABILITY_REGISTRY.register("sound_on_use", () -> new ConfigurableAbility<>(SoundOnUseAbility.CODEC));
 	
 //	public static RegistryObject<Ability> FLY_ABILITY = ABILITY_REGISTRY.register("flying", () -> new FlyAbility());
 //	public static RegistryObject<Ability> MOB_ATTACK_ABILITY = ABILITY_REGISTRY.register("mob_attack", () -> new MobAttackAbility());

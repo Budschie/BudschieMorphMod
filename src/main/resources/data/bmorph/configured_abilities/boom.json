@@ -1,0 +1,9 @@
+{
+    "ability": "bmorph:boom",
+    "config":
+    {
+        "instant_kill": true,
+        "causes_fire": false,
+        "explosion_size": 7.0
+    }
+}

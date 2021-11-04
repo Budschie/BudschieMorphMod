@@ -132,6 +132,8 @@ public class RenderHandler
 				toRender.rotationYaw = player.rotationYaw;
 				toRender.prevRotationYaw = player.prevRotationYaw;
 				
+				toRender.inWater = player.isInWater();
+				
 				float divisor = ShrinkAPIInteractor.getInteractor().getShrinkingValue(player);
 				
 				event.getMatrixStack().push();

@@ -21,7 +21,8 @@ public class PassiveEffectAbility extends PassiveTickAbility
 	
 	public PassiveEffectAbility(int effectFrequency, EffectInstance effectInstance)
 	{
-		super(effectFrequency, (player, cap) -> player.addPotionEffect(effectInstance));
+		// I am not sure how performant this is...
+		super(effectFrequency, (player, cap) -> player.addPotionEffect(new EffectInstance(effectInstance)));
 		this.effectInstance = effectInstance;
 	}	
 	

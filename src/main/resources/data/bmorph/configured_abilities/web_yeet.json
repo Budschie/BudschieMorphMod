@@ -1,0 +1,22 @@
+{
+    "ability": "bmorph:shoot_projectile",
+    "config":
+    {
+        "projectile_entity": "minecraft:falling_block",
+        "stun": 20,
+        "motion": 1,
+        "sound":
+        {
+            "sound": "minecraft:entity.spider.step",
+            "pitch": 0.25
+        },
+        "nbt":
+        {
+            "Time": -1000,
+            "BlockState":
+            {
+                "Name": "minecraft:cobweb"
+            }
+        }
+    }
+}

@@ -36,7 +36,7 @@ public class PassiveTickAbility extends AbstractEventAbility
 		{
 			int tickCounter = ServerSetup.server.getTickCounter();
 			
-			if((lastUpdate + updateDuration) >= tickCounter)
+			if(tickCounter >= (lastUpdate + updateDuration))
 			{
 				lastUpdate = tickCounter;
 				

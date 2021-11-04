@@ -1,0 +1,10 @@
+{
+    "ability": "bmorph:attribute_modifier",
+    "config":
+    {
+        "attribute": "forge:swim_speed",
+        "operation": "multiply_base",
+        "name": "Swiftness Water",
+        "amount": 2
+    }
+}

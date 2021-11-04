@@ -1,0 +1,14 @@
+{
+    "ability": "bmorph:effect_on_attack",
+    "config":
+    {
+        "effect_instance":
+        {
+            "potion_effect": "minecraft:wither",
+            "duration": 400,
+            "ambient": false,
+            "show_particles": true,
+            "show_icon": true
+        }
+    }
+}

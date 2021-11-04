@@ -18,7 +18,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class AttackYeetAbility extends AbstractEventAbility
 {	
 	public static final Codec<AttackYeetAbility> CODEC = RecordCodecBuilder.create(instance -> instance
-			.group(Codec.FLOAT.optionalFieldOf("yeetAmount", 1.0f).forGetter(AttackYeetAbility::getYeetAmount))
+			.group(Codec.FLOAT.optionalFieldOf("yeet_amount", 1.0f).forGetter(AttackYeetAbility::getYeetAmount))
 			.apply(instance, AttackYeetAbility::new));
 	
 	private volatile boolean lock = false;

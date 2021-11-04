@@ -1,0 +1,15 @@
+{
+    "ability": "bmorph:effect_on_attack",
+    "config":
+    {
+        "effect_instance":
+        {
+            "potion_effect": "minecraft:nausea",
+            "duration": 100,
+            "amplifier": 3,
+            "ambient": true,
+            "show_particles": false,
+            "show_icon": false
+        }
+    }
+}

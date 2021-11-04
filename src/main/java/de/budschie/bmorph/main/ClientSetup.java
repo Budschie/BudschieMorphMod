@@ -4,11 +4,11 @@ import org.lwjgl.glfw.GLFW;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 
+import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityAttacher;
 import de.budschie.bmorph.entity.EntityRegistry;
 import de.budschie.bmorph.entity.rendering.MorphEntityRenderer;
 import de.budschie.bmorph.morph.player.AdvancedAbstractClientPlayerEntity;
 import de.budschie.bmorph.morph.player.UglyHackThatDoesntWork;
-import net.minecraft.block.AbstractBlock.Properties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.world.ClientWorld;
@@ -38,8 +38,6 @@ public class ClientSetup
 	@SubscribeEvent
 	public static void onClientSetup(final FMLClientSetupEvent event)
 	{		
-		Properties p = null;
-		
 		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.MORPH_ENTITY.get(), manager -> new MorphEntityRenderer(manager));
 		ClientRegistry.registerKeyBinding(USE_ABILITY_KEY);
 		ClientRegistry.registerKeyBinding(SCROLL_DOWN_MORPH_UI);
@@ -51,6 +49,8 @@ public class ClientSetup
 		ClientRegistry.registerKeyBinding(NEXT_MORPH_UI);
 		ClientRegistry.registerKeyBinding(PREVIOUS_MORPH_UI);
 		ClientRegistry.registerKeyBinding(MORPH_UI);
+		
+		PufferfishCapabilityAttacher.register();
 		
 		UglyHackThatDoesntWork.thisisstupid = (gameProfile, world) ->
 		{

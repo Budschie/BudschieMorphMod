@@ -1,0 +1,7 @@
+{
+    "ability": "bmorph:teleport",
+    "config":
+    {
+        "stun": 40
+    }
+}

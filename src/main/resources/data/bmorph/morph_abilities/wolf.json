@@ -2,7 +2,7 @@
     "entity_type": "minecraft:wolf",
     "grant":
     [
-        "bmorph:eat_regen"
+        "bmorph:all_food_insta_regen"
     ],
     "revoke":
     [

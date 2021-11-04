@@ -1,0 +1,13 @@
+{
+    "ability": "bmorph:shoot_projectile",
+    "config":
+    {
+        "projectile_entity": "minecraft:llama_spit",
+        "stun": 3,
+        "motion": 1.5,
+        "sound":
+        {
+            "sound": "minecraft:entity.llama.spit"
+        }
+    }
+}

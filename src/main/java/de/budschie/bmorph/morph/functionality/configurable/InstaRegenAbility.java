@@ -5,20 +5,21 @@ import java.util.Optional;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import de.budschie.bmorph.morph.LazyTag;
 import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
+import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.item.Item;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class InstaRegenAbility extends AbstractEventAbility
 {	
 	public static final Codec<InstaRegenAbility> CODEC = RecordCodecBuilder
-			.create(instance -> instance.group(ResourceLocation.CODEC.optionalFieldOf("consumed_item_tag").forGetter(InstaRegenAbility::getItemTag),
+			.create(instance -> instance.group(ModCodecs.LAZY_ITEM_TAGS.optionalFieldOf("consumed_item_tag").forGetter(InstaRegenAbility::getItemTag),
 					Codec.FLOAT.fieldOf("health_regenerated").forGetter(InstaRegenAbility::getHealthRegenerated)).apply(instance, InstaRegenAbility::new));
 	
-	private Optional<ResourceLocation> itemTag;
+	private Optional<LazyTag<Item>> itemTag;
 	private float healthRegenerated;
 	
 	/**
@@ -26,13 +27,13 @@ public class InstaRegenAbility extends AbstractEventAbility
 	 * 
 	 * It checks when
 	 **/
-	public InstaRegenAbility(Optional<ResourceLocation> itemTag, float healthRegenerated)
+	public InstaRegenAbility(Optional<LazyTag<Item>> itemTag, float healthRegenerated)
 	{
 		this.healthRegenerated = healthRegenerated;
 		this.itemTag = itemTag;
 	}
 	
-	public Optional<ResourceLocation> getItemTag()
+	public Optional<LazyTag<Item>> getItemTag()
 	{
 		return itemTag;
 	}
@@ -49,7 +50,7 @@ public class InstaRegenAbility extends AbstractEventAbility
 		{
 			PlayerEntity player = (PlayerEntity) event.getEntityLiving();
 			
-			if(itemTag.isPresent() ? ItemTags.createOptional(getResourceLocation()).contains(event.getItem().getItem()) : event.getItem().isFood())
+			if(itemTag.isPresent() ? itemTag.get().test(event.getItem().getItem()) : event.getItem().isFood())
 			{
 				player.setHealth(Math.min(player.getMaxHealth(), player.getHealth() + healthRegenerated));
 			}

@@ -1,0 +1,8 @@
+{
+    "ability": "bmorph:insta_regen",
+    "config":
+    {
+        "consumed_item_tag": "minecraft:fishes",
+        "health_regenerated": 5
+    }
+}

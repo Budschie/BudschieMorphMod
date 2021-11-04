@@ -1,0 +1,7 @@
+{
+    "ability": "bmorph:insta_regen",
+    "config":
+    {
+        "health_regenerated": 2
+    }
+}

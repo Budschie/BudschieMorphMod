@@ -1,0 +1,14 @@
+{
+    "ability": "bmorph:passive_effect",
+    "config":
+    {
+        "effect_instance":
+        {
+            "potion_effect": "minecraft:slow_falling",
+            "duration": 20,
+            "ambient": true,
+            "show_particles": false,
+            "show_icon": false
+        }
+    }
+}

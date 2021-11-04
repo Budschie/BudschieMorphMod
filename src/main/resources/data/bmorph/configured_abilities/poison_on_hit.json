@@ -1,0 +1,15 @@
+{
+    "ability": "bmorph:effect_on_attack",
+    "config":
+    {
+        "effect_instance":
+        {
+            "potion_effect": "minecraft:poison",
+            "duration": 600,
+            "amplifier": 1,
+            "ambient": false,
+            "show_particles": true,
+            "show_icon": true
+        }
+    }
+}

@@ -23,7 +23,7 @@ public class AbstractPlayerSynchronizer implements IEntitySynchronizer
 		entity.prevChasingPosY = player.prevChasingPosY;
 		entity.chasingPosZ = player.chasingPosZ;
 		entity.prevChasingPosZ = player.prevChasingPosZ;
-
+		
 		if (entity.isElytraFlying() != player.isElytraFlying())
 		{
 			if (player.isElytraFlying())

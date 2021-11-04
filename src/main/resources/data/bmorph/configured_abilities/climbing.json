@@ -1,0 +1,8 @@
+{
+    "ability": "bmorph:climbing",
+    "config":
+    {
+        "max_climbing_speed": 0.4,
+        "climbing_speed_acceleration": 0.2
+    }
+}

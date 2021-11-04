@@ -5,7 +5,7 @@
         "effect_instance":
         {
             "potion_effect": "minecraft:night_vision",
-            "duration": 100,
+            "duration": 250,
             "ambient": true,
             "show_particles": false,
             "show_icon": false

@@ -3,9 +3,9 @@
     "grant":
     [
         "bmorph:extreme_swiftness",
-        "bmorph:insta_jump",
+        "bmorph:one_block_insta_jump",
         "bmorph:night_vision",
-        "bmorph:eat_regen",
+        "bmorph:fish_insta_regen",
         "bmorph:no_fall_damage"
     ],
     "revoke":

@@ -1,0 +1,13 @@
+{
+    "ability": "bmorph:shoot_projectile",
+    "config":
+    {
+        "projectile_entity": "minecraft:fireball",
+        "stun": 40,
+        "acceleration": 0.15,
+        "sound":
+        {
+            "sound": "minecraft:entity.ghast.shoot"
+        }
+    }
+}

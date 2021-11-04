@@ -2,7 +2,7 @@
     "entity_type": "minecraft:horse",
     "grant":
     [
-        "bmorph:insta_jump",
+        "bmorph:higher_insta_jump",
         "bmorph:swiftness",
         "bmorph:jumpboost"
     ],

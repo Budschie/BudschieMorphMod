@@ -98,8 +98,7 @@ public class Events
 				
 				if(cap != null)
 				{
-					cap.applyHealthOnPlayer(player);
-					cap.applyAbilities(player);
+					MorphUtil.morphToServer(cap.getCurrentMorphItem(), cap.getCurrentMorphIndex(), player);
 				}
 			});
 		}

@@ -9,7 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 
 public class InstaJumpAbility extends Ability
 {
-	public static final Codec<InstaJumpAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(Codec.FLOAT.fieldOf("stepHeight").forGetter(InstaJumpAbility::getStepHeight)).apply(instance, InstaJumpAbility::new));
+	public static final Codec<InstaJumpAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(Codec.FLOAT.fieldOf("step_height").forGetter(InstaJumpAbility::getStepHeight)).apply(instance, InstaJumpAbility::new));
 	
 	private float stepHeight;
 	

@@ -1,0 +1,7 @@
+{
+    "ability": "bmorph:yeet",
+    "config":
+    {
+        "yeet_amount": 1.0
+    }
+}

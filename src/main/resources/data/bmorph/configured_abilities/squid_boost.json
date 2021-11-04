@@ -1,0 +1,8 @@
+{
+    "ability": "bmorph:squid_boost",
+    "config":
+    {
+        "stun": 40,
+        "boost_amount": 3
+    }
+}

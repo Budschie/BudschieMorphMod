@@ -1,0 +1,7 @@
+{
+    "ability": "bmorph:damage_immunity",
+    "config":
+    {
+        "immune_to_damage": "onFire"
+    }
+}

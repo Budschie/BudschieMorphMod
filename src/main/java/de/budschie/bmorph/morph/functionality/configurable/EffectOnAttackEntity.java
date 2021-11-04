@@ -37,7 +37,7 @@ public class EffectOnAttackEntity extends AbstractEventAbility
 			
 			if(isTracked(player))
 			{
-				event.getEntityLiving().addPotionEffect(this.effectInstance);
+				event.getEntityLiving().addPotionEffect(new EffectInstance(this.effectInstance));
 			}
 		}
 	}
