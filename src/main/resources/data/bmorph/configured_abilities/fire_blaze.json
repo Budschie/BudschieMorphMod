@@ -1,0 +1,9 @@
+{
+    "ability": "bmorph:shoot_projectile",
+    "config":
+    {
+        "projectile_entity": "minecraft:small_fireball",
+        "stun": 20,
+        "acceleration": 0.67
+    }
+}
