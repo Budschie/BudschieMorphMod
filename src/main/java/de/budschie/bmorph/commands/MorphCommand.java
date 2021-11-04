@@ -114,9 +114,13 @@ public class MorphCommand
 	{
 		IMorphCapability cap = MorphUtil.getCapOrNull(player);
 		
-		if(cap == null || cap.getCurrentAbilities().size() <= 0)
+		if(cap == null || !cap.getCurrentMorph().isPresent())
 		{
 			sender.sendErrorMessage(new StringTextComponent("The given player is currently not morphed."));
+		}
+		else if(cap.getCurrentAbilities().size() <= 0)
+		{
+			sender.sendFeedback(new StringTextComponent(TextFormatting.AQUA + "The given player has no abilities, but they are morphed."), true);
 		}
 		else
 		{
