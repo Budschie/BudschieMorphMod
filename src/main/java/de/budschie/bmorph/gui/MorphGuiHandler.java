@@ -8,19 +8,18 @@ import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.main.ClientSetup;
 import de.budschie.bmorph.morph.FavouriteNetworkingHelper;
-import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.network.MorphRequestAbilityUsage;
 import de.budschie.bmorph.network.MorphRequestMorphIndexChange.RequestMorphIndexChangePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -84,76 +83,79 @@ public class MorphGuiHandler
 	@SubscribeEvent
 	public static void onPressedKey(ClientTickEvent event)
 	{		
-		if(Minecraft.getInstance().world != null)
-		{	
-			if(!currentMorphGui.isPresent())
-				traverseToIndexAndSetGui();
-			
-			if(ClientSetup.TOGGLE_MORPH_UI.isPressed())
-			{				
-				if (guiHidden)
-					showGui();
-				else
-					hideGui();
-			}
-			
-			if(canGuiBeDisplayed())
-			{
-				if (ClientSetup.SCROLL_DOWN_MORPH_UI.isPressed())
-					currentMorphGui.get().scroll(1);
-	
-				if (ClientSetup.SCROLL_UP_MORPH_UI.isPressed())
-					currentMorphGui.get().scroll(-1);
-				
-				if (ClientSetup.SCROLL_LEFT_MORPH_UI.isPressed())
-					currentMorphGui.get().horizontalScroll(-1);
-	
-				if (ClientSetup.SCROLL_RIGHT_MORPH_UI.isPressed())
-					currentMorphGui.get().horizontalScroll(1);
-
-				
-				if(ClientSetup.NEXT_MORPH_UI.isPressed())
-				{
-					currentIndex++;
-					currentIndex %= MorphGuiRegistry.REGISTRY.get().getValues().size();
+		if(event.phase == Phase.END)
+		{
+			if(Minecraft.getInstance().world != null)
+			{	
+				if(!currentMorphGui.isPresent())
 					traverseToIndexAndSetGui();
-					updateCurrentMorphUI();
+				
+				if(ClientSetup.TOGGLE_MORPH_UI.isPressed())
+				{				
+					if (guiHidden)
+						showGui();
+					else
+						hideGui();
 				}
 				
-				if(ClientSetup.PREVIOUS_MORPH_UI.isPressed())
+				if(canGuiBeDisplayed())
 				{
-					currentIndex--;
-					currentIndex %= MorphGuiRegistry.REGISTRY.get().getValues().size();
-					traverseToIndexAndSetGui();
-					updateCurrentMorphUI();
-				}
-				
-				if(ClientSetup.TOGGLE_MORPH_FAVOURITE.isPressed())
-				{
-					LazyOptional<IMorphCapability> cap = Minecraft.getInstance().player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
+					if (ClientSetup.SCROLL_DOWN_MORPH_UI.isPressed())
+						currentMorphGui.get().scroll(1);
+		
+					if (ClientSetup.SCROLL_UP_MORPH_UI.isPressed())
+						currentMorphGui.get().scroll(-1);
 					
-					if(cap.isPresent())
+					if (ClientSetup.SCROLL_LEFT_MORPH_UI.isPressed())
+						currentMorphGui.get().horizontalScroll(-1);
+		
+					if (ClientSetup.SCROLL_RIGHT_MORPH_UI.isPressed())
+						currentMorphGui.get().horizontalScroll(1);
+	
+					
+					if(ClientSetup.NEXT_MORPH_UI.isPressed())
 					{
-						IMorphCapability resolved = cap.resolve().get();
-						int favouriteMorphIndex = currentMorphGui.get().getMorphIndex();
-						
-						if(favouriteMorphIndex < 0)
-							System.out.println("Yo wat");
-						else
-						{
-							if(resolved.getFavouriteList().containsMorphItem(resolved.getMorphList().getMorphArrayList().get(favouriteMorphIndex)))
-								FavouriteNetworkingHelper.removeFavouriteMorph(favouriteMorphIndex);
-							else
-								FavouriteNetworkingHelper.addFavouriteMorph(favouriteMorphIndex);
-						}
+						currentIndex++;
+						currentIndex %= MorphGuiRegistry.REGISTRY.get().getValues().size();
+						traverseToIndexAndSetGui();
+						updateCurrentMorphUI();
 					}
 					
-					currentMorphGui.ifPresent(morphGui -> morphGui.onFavouriteChanged());
+					if(ClientSetup.PREVIOUS_MORPH_UI.isPressed())
+					{
+						currentIndex--;
+						currentIndex %= MorphGuiRegistry.REGISTRY.get().getValues().size();
+						traverseToIndexAndSetGui();
+						updateCurrentMorphUI();
+					}
+					
+					if(ClientSetup.TOGGLE_MORPH_FAVOURITE.isPressed())
+					{
+						LazyOptional<IMorphCapability> cap = Minecraft.getInstance().player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
+						
+						if(cap.isPresent())
+						{
+							IMorphCapability resolved = cap.resolve().get();
+							int favouriteMorphIndex = currentMorphGui.get().getMorphIndex();
+							
+							if(favouriteMorphIndex < 0)
+								System.out.println("Yo wat");
+							else
+							{
+								if(resolved.getFavouriteList().containsMorphItem(resolved.getMorphList().getMorphArrayList().get(favouriteMorphIndex)))
+									FavouriteNetworkingHelper.removeFavouriteMorph(favouriteMorphIndex);
+								else
+									FavouriteNetworkingHelper.addFavouriteMorph(favouriteMorphIndex);
+							}
+						}
+						
+						currentMorphGui.ifPresent(morphGui -> morphGui.onFavouriteChanged());
+					}
 				}
+				
+				if(ClientSetup.USE_ABILITY_KEY.isPressed())
+					MainNetworkChannel.INSTANCE.sendToServer(new MorphRequestAbilityUsage.MorphRequestAbilityUsagePacket());			
 			}
-			
-			if(ClientSetup.USE_ABILITY_KEY.isPressed())
-				MainNetworkChannel.INSTANCE.sendToServer(new MorphRequestAbilityUsage.MorphRequestAbilityUsagePacket());			
 		}
 	}
 	

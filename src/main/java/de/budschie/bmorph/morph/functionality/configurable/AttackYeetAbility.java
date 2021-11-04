@@ -10,6 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -62,20 +63,26 @@ public class AttackYeetAbility extends AbstractEventAbility
 	@SubscribeEvent
 	public void onServerTick(ServerTickEvent event)
 	{
-		while(lock);
-		lock = true;
-		delayedAttacks.forEach(attack -> attack.run());
-		delayedAttacks.clear();
-		lock = false;
+		if(event.phase == Phase.END)
+		{
+			while(lock);
+			lock = true;
+			delayedAttacks.forEach(attack -> attack.run());
+			delayedAttacks.clear();
+			lock = false;
+		}
 	}
 	
 	@SubscribeEvent
 	public void onClientTick(ClientTickEvent event)
 	{
-		while(lock);
-		lock = true;
-		delayedAttacks.forEach(attack -> attack.run());
-		delayedAttacks.clear();
-		lock = false;
+		if(event.phase == Phase.END)
+		{
+			while(lock);
+			lock = true;
+			delayedAttacks.forEach(attack -> attack.run());
+			delayedAttacks.clear();
+			lock = false;
+		}
 	}
 }

@@ -34,6 +34,7 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -270,17 +271,20 @@ public class Events
 //		event.player.setPose(Pose.SLEEPING);
 //		event.player.setForcedPose(Pose.SWIMMING);
 		
-		MorphUtil.processCap(event.player, cap ->
+		if(event.phase == Phase.END)
 		{
-			
-			if(cap.getCurrentMorph().isPresent())
+			MorphUtil.processCap(event.player, cap ->
 			{
-				if((event.player.getBoundingBox().maxY - event.player.getBoundingBox().minY) < 1 && event.player.getPose() == Pose.SWIMMING && !event.player.isSwimming())
+				
+				if(cap.getCurrentMorph().isPresent())
 				{
-					event.player.setPose(Pose.STANDING);
+					if((event.player.getBoundingBox().maxY - event.player.getBoundingBox().minY) < 1 && event.player.getPose() == Pose.SWIMMING && !event.player.isSwimming())
+					{
+						event.player.setPose(Pose.STANDING);
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 	
 	@SubscribeEvent

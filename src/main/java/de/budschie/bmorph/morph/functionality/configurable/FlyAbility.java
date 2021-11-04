@@ -7,6 +7,7 @@ import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -16,6 +17,7 @@ public class FlyAbility extends AbstractEventAbility
 	
 	public FlyAbility()
 	{
+		
 	}
 	
 	@Override
@@ -37,11 +39,14 @@ public class FlyAbility extends AbstractEventAbility
 	@SubscribeEvent
 	public void onPlayerTickEvent(PlayerTickEvent event)
 	{
-		if(trackedPlayers.contains(event.player.getUniqueID()) && event.player.abilities.isFlying)
+		if(event.phase == Phase.END)
 		{
-			event.player.setPose(Pose.STANDING);
-			event.player.setForcedPose(null);
-			event.player.abilities.allowFlying = true;
+			if(trackedPlayers.contains(event.player.getUniqueID()) && event.player.abilities.isFlying)
+			{
+				event.player.setPose(Pose.STANDING);
+				event.player.setForcedPose(null);
+				event.player.abilities.allowFlying = true;
+			}
 		}
 	}
 }

@@ -8,6 +8,7 @@ import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.main.ServerSetup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -31,24 +32,27 @@ public class PassiveTickAbility extends AbstractEventAbility
 	@SubscribeEvent
 	public void onServerTick(ServerTickEvent event)
 	{
-		int tickCounter = ServerSetup.server.getTickCounter();
-		
-		if((lastUpdate + updateDuration) >= tickCounter)
+		if(event.phase == Phase.START)
 		{
-			lastUpdate = tickCounter;
+			int tickCounter = ServerSetup.server.getTickCounter();
 			
-			for(UUID uuid : trackedPlayers)
+			if((lastUpdate + updateDuration) >= tickCounter)
 			{
-				PlayerEntity player = ServerSetup.server.getPlayerList().getPlayerByUUID(uuid);
+				lastUpdate = tickCounter;
 				
-				if(player != null)
+				for(UUID uuid : trackedPlayers)
 				{
-					LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
+					PlayerEntity player = ServerSetup.server.getPlayerList().getPlayerByUUID(uuid);
 					
-					if(cap.isPresent())
+					if(player != null)
 					{
-						IMorphCapability resolved = cap.resolve().get();
-						handleUpdate.accept(player, resolved);
+						LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
+						
+						if(cap.isPresent())
+						{
+							IMorphCapability resolved = cap.resolve().get();
+							handleUpdate.accept(player, resolved);
+						}
 					}
 				}
 			}
