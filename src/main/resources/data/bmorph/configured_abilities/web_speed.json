@@ -1,5 +1,5 @@
 {
-    "ability": "bmorph:web_speed",
+    "ability": "bmorph:block_passthrough",
     "config":
     {
         "speed_multiplier": 1.5,
