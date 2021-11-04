@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
@@ -64,7 +64,7 @@ public class SoundInstance
 		return volume;
 	}
 
-	public void playSoundAt(PlayerEntity player)
+	public void playSoundAt(Entity player)
 	{
 		playSound(player.getPosX(), player.getPosY(), player.getPosZ(), player.getEntityWorld());
 	}
