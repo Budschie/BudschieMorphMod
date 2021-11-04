@@ -13,7 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.TickEvent.ClientTickEvent;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -81,9 +81,11 @@ public class ClientSetup
 	{
 		
 		@SubscribeEvent
-		public static void onPlayerNotInWorld(ClientTickEvent event)
+		public static void onPlayerNotInWorld(ClientPlayerNetworkEvent.LoggedOutEvent event)
 		{
-			// TODO: Find solution on how to detect if the client left the game
+			// Unregister every ability when leaving world
+			if(event.getPlayer() != null)
+				BMorphMod.DYNAMIC_ABILITY_REGISTRY.unregisterAll();
 		}
 	}
 	
