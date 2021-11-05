@@ -38,8 +38,6 @@ public class DefaultMorphCapability implements IMorphCapability
 	
 	List<Ability> currentAbilities = new ArrayList<>();
 	
-	private boolean dirty = true;
-	
 	@Override
 	public void syncWithClients(PlayerEntity player)
 	{
@@ -120,21 +118,18 @@ public class DefaultMorphCapability implements IMorphCapability
 	@Override
 	public void addToMorphList(MorphItem morphItem)
 	{
-		dirty = true;
 		morphList.addToMorphList(morphItem);
 	}
 
 	@Override
 	public void removeFromMorphList(int index)
 	{
-		dirty = true;
 		morphList.removeFromMorphList(index);
 	}
 	
 	@Override
 	public void setMorphList(MorphList list)
 	{
-		dirty = true;
 		this.morphList = list;
 		
 		// Setting morph list not fully handled, but this is an edge case that never happens lulw
@@ -205,23 +200,11 @@ public class DefaultMorphCapability implements IMorphCapability
 	}
 
 	@Override
-	public boolean isDirty()
-	{
-		return dirty;
-	}
-
-	@Override
-	public void cleanDirty()
-	{
-		dirty = false;
-	}
-
-	@Override
 	public void setMorph(int index)
 	{
 		this.morph = Optional.empty();
 		this.currentMorphIndex = Optional.of(index);
-		dirty = true;
+//		dirty = true;
 	}
 
 	@Override
@@ -229,7 +212,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	{
 		this.morph = Optional.of(morph);
 		this.currentMorphIndex = Optional.empty();
-		dirty = true;
+//		dirty = true;
 	}
 
 	@Override
@@ -237,7 +220,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	{
 		this.morph = Optional.empty();
 		this.currentMorphIndex = Optional.empty();
-		dirty = true;
+//		dirty = true;
 	}
 
 	@Override

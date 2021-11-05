@@ -1,13 +1,14 @@
 package de.budschie.bmorph.render_handler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.WeakHashMap;
 
 import de.budschie.bmorph.api_interact.ShrinkAPIInteractor;
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
+import de.budschie.bmorph.events.PlayerMorphEvent;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.player.AdvancedAbstractClientPlayerEntity;
 import net.minecraft.client.Minecraft;
@@ -28,11 +29,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber(value = Dist.CLIENT)
 public class RenderHandler
-{	
-	
-	public static WeakHashMap<UUID, Entity> cachedEntities = new WeakHashMap<>();
-	
-	private static boolean lock = false;
+{		
+	private static HashMap<UUID, Entity> cachedEntities = new HashMap<>();
 	
 	@SubscribeEvent
 	public static void onMorphInit(InitializeMorphEntityEvent event)
@@ -65,18 +63,17 @@ public class RenderHandler
 		}
 	}
 	
-	public static void checkCache(PlayerEntity player)
+	@SubscribeEvent
+	public static void onMorphed(PlayerMorphEvent.Client.Post event)
 	{
-		IMorphCapability capability = player.getCapability(MorphCapabilityAttacher.MORPH_CAP).resolve().get();
-		
-		// Check if the entity is cached or if it should be updated
-		if(cachedEntities.get(player.getUniqueID()) == null || capability.isDirty())
+		if(event.getAboutToMorphTo() == null)
+			cachedEntities.remove(event.getPlayer().getUniqueID());
+		else
 		{
-			Entity toCache = capability.getCurrentMorph().get().createEntity(player.world);
-			cachedEntities.put(player.getUniqueID(), toCache);
-			capability.cleanDirty();
-								
-			MinecraftForge.EVENT_BUS.post(new InitializeMorphEntityEvent(player, toCache));
+			Entity toCreate = event.getMorphCapability().getCurrentMorph().get().createEntity(event.getPlayer().world);
+			cachedEntities.put(event.getPlayer().getUniqueID(), toCreate);
+			
+			MinecraftForge.EVENT_BUS.post(new InitializeMorphEntityEvent(event.getPlayer(), toCreate));
 		}
 	}
 	
@@ -95,13 +92,11 @@ public class RenderHandler
 
 				PlayerEntity player = event.getPlayer();
 				
-				checkCache(player);
-				
 				Entity toRender = cachedEntities.get(player.getUniqueID());
-				
-				if(toRender == null || morph.resolve().get().isDirty())
-				{
-				}
+//				
+//				if(toRender == null || morph.resolve().get().isDirty())
+//				{
+//				}
 				
 				if(toRender.world != player.world)
 				{
@@ -128,6 +123,10 @@ public class RenderHandler
 				toRender.rotationYaw = player.rotationYaw;
 				toRender.rotationPitch = player.rotationPitch;
 				toRender.prevRotationPitch = player.prevRotationPitch;
+				
+				toRender.lastTickPosX = player.lastTickPosX;
+				toRender.lastTickPosY = player.lastTickPosY;
+				toRender.lastTickPosZ = player.lastTickPosZ;
 				
 				toRender.rotationYaw = player.rotationYaw;
 				toRender.prevRotationYaw = player.prevRotationYaw;

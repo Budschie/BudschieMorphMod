@@ -97,7 +97,4 @@ public interface IMorphCapability
 	/** This method is a getter for the morph favourite list. **/
 	public FavouriteList getFavouriteList();
 	public void setFavouriteList(FavouriteList favouriteList);
-	
-	public boolean isDirty();
-	public void cleanDirty();
 }
