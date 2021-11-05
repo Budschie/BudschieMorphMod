@@ -3,10 +3,7 @@ package de.budschie.bmorph.network;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityAttacher;
 import de.budschie.bmorph.network.PufferfishPuff.PufferfishPuffPacket;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -33,19 +30,7 @@ public class PufferfishPuff implements ISimpleImplPacket<PufferfishPuffPacket>
 	{
 		ctx.get().enqueueWork(() ->
 		{
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
-			{
-				PlayerEntity player = Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayer());
-				
-				if(player != null)
-				{
-					player.getCapability(PufferfishCapabilityAttacher.PUFFER_CAP).ifPresent(cap ->
-					{
-						cap.setOriginalPuffTime(packet.getOriginalDuration());
-						cap.setPuffTime(packet.getDuration());
-					});
-				}
-			});
+			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientOnlyShit.handlePufferfishPacketClient(packet));
 		});
 	}
 	
