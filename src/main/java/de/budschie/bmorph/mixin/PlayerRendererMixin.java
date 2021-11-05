@@ -46,10 +46,10 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 	{
 		if(checkMorphPresent(playerIn))
 		{
-			RenderHandler.checkCache(playerIn);
+//			RenderHandler.checkCache(playerIn);
 			info.cancel();
 			
-			Entity cachedEntity = RenderHandler.cachedEntities.get(playerIn.getUniqueID()); 
+			Entity cachedEntity = RenderHandler.getCachedEntity(playerIn); 
 			EntityRenderer<?> renderer = Minecraft.getInstance().getRenderManager().getRenderer(cachedEntity);
 			
 			if(renderer instanceof LivingRenderer<?, ?>)
@@ -76,10 +76,10 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 	{		
 		if(checkMorphPresent(playerIn))
 		{
-			RenderHandler.checkCache(playerIn);
+//			RenderHandler.checkCache(playerIn);
 			info.cancel();
 			
-			Entity cachedEntity = RenderHandler.cachedEntities.get(playerIn.getUniqueID()); 
+			Entity cachedEntity = RenderHandler.getCachedEntity(playerIn); 
 			EntityRenderer<?> renderer = Minecraft.getInstance().getRenderManager().getRenderer(cachedEntity);
 			
 			if(renderer instanceof LivingRenderer<?, ?>)
@@ -132,7 +132,7 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 			matrixStack.translate(.65, 0, 0);
 
 		
-		renderer.entityModel.setRotationAngles((LivingEntity) entity, 0, 0, 0, 0, 0);
+		renderer.entityModel.setRotationAngles(entity, 0, 0, 0, 0, 0);
 		
 		arm.rotateAngleX = 0;
 		arm.render(matrixStack, buffer.getBuffer(RenderType.getEntityCutout(renderer.getEntityTexture(entity))), combinedLightIn, OverlayTexture.NO_OVERLAY);
