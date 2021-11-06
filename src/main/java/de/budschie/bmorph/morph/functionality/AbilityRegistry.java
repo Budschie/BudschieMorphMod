@@ -14,7 +14,9 @@ import de.budschie.bmorph.morph.functionality.configurable.CommandOnUseAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ConfigurableAbility;
 import de.budschie.bmorph.morph.functionality.configurable.DamageImmunityAbility;
 import de.budschie.bmorph.morph.functionality.configurable.EffectOnAttackEntity;
+import de.budschie.bmorph.morph.functionality.configurable.ElderGuardianJumpscareAbility;
 import de.budschie.bmorph.morph.functionality.configurable.FlyAbility;
+import de.budschie.bmorph.morph.functionality.configurable.GuardianAbility;
 import de.budschie.bmorph.morph.functionality.configurable.InstaDeathOnCookieAbility;
 import de.budschie.bmorph.morph.functionality.configurable.InstaJumpAbility;
 import de.budschie.bmorph.morph.functionality.configurable.InstaRegenAbility;
@@ -87,6 +89,8 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<SoundOnUseAbility>> SOUND_ON_USE_ABILITY = ABILITY_REGISTRY.register("sound_on_use", () -> new ConfigurableAbility<>(SoundOnUseAbility.CODEC));
 	
 	public static RegistryObject<ConfigurableAbility<PufferfishAbility>> PUFFERFISH_ABILITY = ABILITY_REGISTRY.register("pufferfish", () -> new ConfigurableAbility<>(PufferfishAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<GuardianAbility>> GUARDIAN_ABILITY = ABILITY_REGISTRY.register("guardian_laser", () -> new ConfigurableAbility<>(GuardianAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<ElderGuardianJumpscareAbility>> ELDER_GUARDIAN_JUMPSCARE_ABILITY = ABILITY_REGISTRY.register("elder_guardian_jumpscare", () -> new ConfigurableAbility<>(ElderGuardianJumpscareAbility.CODEC));
 
 //	public static RegistryObject<Ability> FLY_ABILITY = ABILITY_REGISTRY.register("flying", () -> new FlyAbility());
 //	public static RegistryObject<Ability> MOB_ATTACK_ABILITY = ABILITY_REGISTRY.register("mob_attack", () -> new MobAttackAbility());

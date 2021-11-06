@@ -53,7 +53,10 @@ public class ConfigurableAbility<A extends Ability> extends ForgeRegistryEntry<C
 		
 		if(nbt.get().left().isPresent())
 		{
-			return Optional.of((CompoundNBT)nbt.get().left().get());
+			if(nbt.get().left().get() instanceof CompoundNBT)
+				return Optional.of((CompoundNBT)nbt.get().left().get());
+			else
+				return Optional.of(new CompoundNBT());
 		}
 		else
 			LOGGER.warn("There was an error serializing the ability %s with its codec %s: %s", ability.getResourceLocation(), this.getRegistryName(), nbt.get().right().get().message());

@@ -1,0 +1,9 @@
+{
+    "ability": "bmorph:guardian_laser",
+    "config":
+    {
+        "damage": 15.0,
+        "attack_duration": 80,
+        "max_distance_to_target": 50
+    }
+}

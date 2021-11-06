@@ -11,6 +11,8 @@ import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
+import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityAttacher;
+import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityHandler;
 import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityHandler;
 import de.budschie.bmorph.entity.MorphEntity;
 import de.budschie.bmorph.json_integration.AbilityConfigurationHandler;
@@ -21,6 +23,8 @@ import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphUtil;
+import de.budschie.bmorph.network.DisposePlayerMorphData;
+import de.budschie.bmorph.network.MainNetworkChannel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.MobEntity;
@@ -48,6 +52,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 @EventBusSubscriber
 public class Events
@@ -85,6 +90,9 @@ public class Events
 				
 				PufferfishCapabilityHandler.synchronizeWithClients(player);
 				PufferfishCapabilityHandler.synchronizeWithClient(player, (ServerPlayerEntity) player);
+				
+				GuardianBeamCapabilityHandler.synchronizeWithClients(player);
+				GuardianBeamCapabilityHandler.synchronizeWithClient(player, (ServerPlayerEntity) player);
 			}
 		}
 	}
@@ -117,7 +125,9 @@ public class Events
 		{
 			PlayerEntity player = (PlayerEntity) event.getTarget();
 			MorphUtil.processCap(player, resolved -> resolved.syncWithClient(player, (ServerPlayerEntity) event.getPlayer()));
+			
 			PufferfishCapabilityHandler.synchronizeWithClient(player, (ServerPlayerEntity) event.getPlayer());
+			GuardianBeamCapabilityHandler.synchronizeWithClient(player, (ServerPlayerEntity) event.getPlayer());
 		}
 	}
 	
@@ -132,7 +142,19 @@ public class Events
 	@SubscribeEvent
 	public static void onPlayerStoppedBeingLoaded(PlayerEvent.StopTracking event)
 	{
+		event.getPlayer().getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).ifPresent(cap ->
+		{
+			if(cap.getAttackedEntity().isPresent() && cap.getAttackedEntity().get() == event.getTarget().getEntityId())
+			{
+				GuardianBeamCapabilityHandler.unattackServer(event.getPlayer());
+			}
+		});
 		
+		if(event.getTarget() instanceof PlayerEntity)
+		{
+			// Tell the client to demorph the given player that is now not tracked.
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()), new DisposePlayerMorphData.DisposePlayerMorphDataPacket(event.getTarget().getUniqueID()));
+		}
 	}
 	
 	@SubscribeEvent

@@ -13,10 +13,13 @@ import de.budschie.bmorph.events.Events;
 import de.budschie.bmorph.events.PlayerMorphEvent;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.functionality.Ability;
+import de.budschie.bmorph.render_handler.RenderHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.DistExecutor;
 
 // This is just a stupid class which goal is to unify the code for morphing
 public class MorphUtil
@@ -139,7 +142,13 @@ public class MorphUtil
 						resolvedAbilities.add(foundAbility);
 				}
 				
+				MorphItem javaSucks = aboutToMorphTo;
+				
 				resolved.setCurrentAbilities(resolvedAbilities);
+				
+				// Create entity right before we apply the abilities
+				DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> RenderHandler.onBuildNewEntity(player, resolved, javaSucks));
+				
 				resolved.applyAbilities(player);
 				
 				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Client.Post(player, resolved, aboutToMorphTo));

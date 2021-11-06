@@ -1,0 +1,16 @@
+{
+    "ability": "bmorph:elder_guardian_jumpscare",
+    "config":
+    {
+        "frequency": 1800,
+        "distance": 50,
+        "effect_instances":
+        [
+            {
+                "potion_effect": "minecraft:mining_fatigue",
+                "amplifier": 2,
+                "duration": 2500
+            }
+        ]
+    }
+}

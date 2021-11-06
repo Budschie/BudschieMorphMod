@@ -48,12 +48,14 @@ public class AttributeModifierAbility extends Ability
 	@Override
 	public void enableAbility(PlayerEntity player, MorphItem enabledItem)
 	{
-		player.getAttribute(attribute).applyNonPersistentModifier(attributeModifier);
+		if(!player.getEntityWorld().isRemote)
+			player.getAttribute(attribute).applyNonPersistentModifier(attributeModifier);
 	}
 	
 	@Override
 	public void disableAbility(PlayerEntity player, MorphItem disabledItem)
 	{
-		player.getAttribute(attribute).removeModifier(attributeModifier);
+		if(!player.getEntityWorld().isRemote)
+			player.getAttribute(attribute).removeModifier(attributeModifier);
 	}
 }

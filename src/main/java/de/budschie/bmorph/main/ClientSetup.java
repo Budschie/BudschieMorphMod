@@ -73,7 +73,7 @@ public class ClientSetup
 		};
 	}
 
-	@EventBusSubscriber(bus = Bus.FORGE)
+	@EventBusSubscriber(bus = Bus.FORGE, value = Dist.CLIENT)
 	public static class ClientEvents
 	{
 		

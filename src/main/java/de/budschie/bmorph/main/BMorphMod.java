@@ -4,6 +4,7 @@ import de.budschie.bmorph.api_interact.ShrinkAPIInteractor;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
+import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityAttacher;
 import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityAttacher;
 import de.budschie.bmorph.entity.EntityRegistry;
 import de.budschie.bmorph.gui.MorphGuiRegistry;
@@ -57,6 +58,7 @@ public class BMorphMod
 		
 		MorphCapabilityAttacher.register();
 		PufferfishCapabilityAttacher.register();
+		GuardianBeamCapabilityAttacher.register();
 		
 		ConfigManager.INSTANCE.register(BlacklistData.class, BlacklistData::new);
 		

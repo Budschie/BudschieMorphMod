@@ -1,0 +1,13 @@
+{
+    "entity_type": "minecraft:guardian",
+    "grant":
+    [
+        "bmorph:guardian_laser",
+        "bmorph:water_breathing",
+        "bmorph:water_sanic"
+    ],
+    "revoke":
+    [
+        
+    ]
+}
