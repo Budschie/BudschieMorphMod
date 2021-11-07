@@ -39,6 +39,8 @@ public class BMorphMod
 {
 	public static RuleKey<BooleanValue> KEEP_MORPH_INVENTORY;
 	public static RuleKey<BooleanValue> PREVENT_LOOKAT;
+	public static RuleKey<BooleanValue> DO_MORPH_DROPS;
+
 	public static RuleKey<IntegerValue> MORPH_AGGRO_DURATION;
 	
 	public static DynamicAbilityRegistry DYNAMIC_ABILITY_REGISTRY;
@@ -66,6 +68,7 @@ public class BMorphMod
 		
 		KEEP_MORPH_INVENTORY = GameRules.register("keepMorphInventory", Category.PLAYER, BooleanValue.create(true));
 		PREVENT_LOOKAT = GameRules.register("preventLookat", Category.PLAYER, BooleanValue.create(false));
+		DO_MORPH_DROPS = GameRules.register("doMorphDrops", Category.DROPS, BooleanValue.create(true));
 		MORPH_AGGRO_DURATION = GameRules.register("morphAggroDuration", Category.PLAYER, IntegerValue.create(200));
 		
 		MainNetworkChannel.registerMainNetworkChannels();

@@ -160,7 +160,7 @@ public class Events
 	@SubscribeEvent
 	public static void onPlayerKilledLivingEntity(LivingDeathEvent event)
 	{		
-		if(!event.getEntity().world.isRemote)
+		if(!event.getEntity().world.isRemote && ServerSetup.server.getGameRules().getBoolean(BMorphMod.DO_MORPH_DROPS))
 		{
 			if(event.getSource().getTrueSource() instanceof PlayerEntity)
 			{
