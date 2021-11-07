@@ -203,7 +203,7 @@ public class GuardianAbility extends AbstractEventAbility
 				Entity targettedEntity = ((ServerWorld)event.getPlayer().getEntityWorld()).getEntityByUuid(event.getCapability().getAttackedEntityServer().get());
 				
 				// Check if entity is null or out of bounds
-				if(targettedEntity == null || targettedEntity.getPositionVec().squareDistanceTo(event.getPlayer().getPositionVec()) > (maxDistance * maxDistance))
+				if(targettedEntity == null || !targettedEntity.isAlive() || targettedEntity.getPositionVec().squareDistanceTo(event.getPlayer().getPositionVec()) > (maxDistance * maxDistance))
 				{
 					GuardianBeamCapabilityHandler.unattackServer(event.getPlayer());
 					deapplyAbilityEffects(event.getPlayer());
