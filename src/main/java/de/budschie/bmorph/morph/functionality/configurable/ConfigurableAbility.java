@@ -17,7 +17,7 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.NBTDynamicOps;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
-public class ConfigurableAbility<A extends Ability> extends ForgeRegistryEntry<ConfigurableAbility<A>>
+public class ConfigurableAbility<A extends Ability> extends ForgeRegistryEntry<ConfigurableAbility<? extends Ability>>
 {
 	private static final Logger LOGGER = LogManager.getLogger();
 	
