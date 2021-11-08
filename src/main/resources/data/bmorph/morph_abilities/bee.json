@@ -1,0 +1,12 @@
+{
+    "entity_type": "minecraft:bee",
+    "grant":
+    [
+        "bmorph:flying",
+        "bmorph:poison_on_hit"
+    ],
+    "revoke":
+    [
+
+    ]
+}
