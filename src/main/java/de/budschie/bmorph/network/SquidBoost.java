@@ -29,11 +29,14 @@ public class SquidBoost implements ISimpleImplPacket<SquidBoostPacket>
 	{
 		ctx.get().enqueueWork(() ->
 		{
-			PlayerEntity potentialPlayer = Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayer());
-			
-			if(potentialPlayer != null)
+			if(Minecraft.getInstance().world != null)
 			{
-				potentialPlayer.setMotion(potentialPlayer.getMotion().add(potentialPlayer.getForward().mul(packet.strength, packet.strength, packet.strength)));
+				PlayerEntity potentialPlayer = Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayer());
+				
+				if(potentialPlayer != null)
+				{
+					potentialPlayer.setMotion(potentialPlayer.getMotion().add(potentialPlayer.getForward().mul(packet.strength, packet.strength, packet.strength)));
+				}
 			}
 		});
 	}

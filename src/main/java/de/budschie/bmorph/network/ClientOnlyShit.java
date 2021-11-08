@@ -14,30 +14,36 @@ public class ClientOnlyShit
 {
 	public static void handlePufferfishPacketClient(PufferfishPuffPacket packet)
 	{
-		PlayerEntity player = Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayer());
-
-		if (player != null)
+		if(Minecraft.getInstance().world != null)
 		{
-			player.getCapability(PufferfishCapabilityAttacher.PUFFER_CAP).ifPresent(cap ->
+			PlayerEntity player = Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayer());
+	
+			if (player != null)
 			{
-				cap.setOriginalPuffTime(packet.getOriginalDuration());
-				cap.setPuffTime(packet.getDuration());
-			});
+				player.getCapability(PufferfishCapabilityAttacher.PUFFER_CAP).ifPresent(cap ->
+				{
+					cap.setOriginalPuffTime(packet.getOriginalDuration());
+					cap.setPuffTime(packet.getDuration());
+				});
+			}
 		}
 	}
 	
 	public static void handleGuardianPacketClient(GuardianBeamAttackPacket packet)
 	{
-		PlayerEntity player = Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayer());
-
-		if (player != null)
+		if(Minecraft.getInstance().world != null)
 		{
-			player.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).ifPresent(cap ->
+			PlayerEntity player = Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayer());
+	
+			if (player != null)
 			{
-				cap.setAttackedEntity(packet.getEntity());
-				cap.setAttackProgression(packet.getAttackProgression());
-				cap.setMaxAttackProgression(packet.getMaxAttackProgression());
-			});
+				player.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).ifPresent(cap ->
+				{
+					cap.setAttackedEntity(packet.getEntity());
+					cap.setAttackProgression(packet.getAttackProgression());
+					cap.setMaxAttackProgression(packet.getMaxAttackProgression());
+				});
+			}
 		}
 	}
 	

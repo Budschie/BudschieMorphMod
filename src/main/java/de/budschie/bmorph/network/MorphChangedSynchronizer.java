@@ -62,7 +62,8 @@ public class MorphChangedSynchronizer implements ISimpleImplPacket<MorphChangedP
 	{
 		ctx.get().enqueueWork(() ->
 		{
-			MorphUtil.morphToClient(packet.getMorphItem(), packet.getMorphIndex(), packet.getAbilities(), Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayerUUID()));
+			if(Minecraft.getInstance().world != null)
+				MorphUtil.morphToClient(packet.getMorphItem(), packet.getMorphIndex(), packet.getAbilities(), Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayerUUID()));
 		});
 	}
 	

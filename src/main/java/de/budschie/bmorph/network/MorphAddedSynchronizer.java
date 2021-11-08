@@ -33,13 +33,16 @@ public class MorphAddedSynchronizer implements ISimpleImplPacket<MorphAddedPacke
 	{
 		ctx.get().enqueueWork(() ->
 		{
-			LazyOptional<IMorphCapability> cap = Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayerUUID()).getCapability(MorphCapabilityAttacher.MORPH_CAP);
-			
-			if(cap.isPresent())
+			if(Minecraft.getInstance().world != null)
 			{
-				IMorphCapability resolved = cap.resolve().get();
+					LazyOptional<IMorphCapability> cap = Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayerUUID()).getCapability(MorphCapabilityAttacher.MORPH_CAP);
 				
-				resolved.addToMorphList(packet.getAddedMorph());
+				if(cap.isPresent())
+				{
+					IMorphCapability resolved = cap.resolve().get();
+					
+					resolved.addToMorphList(packet.getAddedMorph());
+				}
 			}
 		});
 	}
