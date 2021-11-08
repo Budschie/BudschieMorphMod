@@ -18,8 +18,6 @@ public abstract class MotionMultiplierMixin
 	@Shadow
 	private Vector3d motionMultiplier;
 	
-	@Shadow 
-	
 	@Inject(at = @At("HEAD"), method = "setMotionMultiplier(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/vector/Vector3d;)V", cancellable = true)
 	private void onSetMotionMultiplier(BlockState blockState, Vector3d vector3d, CallbackInfo info)
 	{
