@@ -26,6 +26,7 @@ import de.budschie.bmorph.morph.functionality.configurable.PassiveEffectAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PassiveTickCommandAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ProjectileShootingAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PufferfishAbility;
+import de.budschie.bmorph.morph.functionality.configurable.RandomDelegatingOnUseAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SoundOnUseAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SquidBoostAbility;
 import de.budschie.bmorph.morph.functionality.configurable.TeleportAbility;
@@ -91,6 +92,8 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<PufferfishAbility>> PUFFERFISH_ABILITY = ABILITY_REGISTRY.register("pufferfish", () -> new ConfigurableAbility<>(PufferfishAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<GuardianAbility>> GUARDIAN_ABILITY = ABILITY_REGISTRY.register("guardian_laser", () -> new ConfigurableAbility<>(GuardianAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<ElderGuardianJumpscareAbility>> ELDER_GUARDIAN_JUMPSCARE_ABILITY = ABILITY_REGISTRY.register("elder_guardian_jumpscare", () -> new ConfigurableAbility<>(ElderGuardianJumpscareAbility.CODEC));
+	
+	public static RegistryObject<ConfigurableAbility<RandomDelegatingOnUseAbility>> RANDOM_DELEGATING_ON_USE_ABILITY = ABILITY_REGISTRY.register("random_delegation_on_use", () -> new ConfigurableAbility<>(RandomDelegatingOnUseAbility.CODEC));
 
 //	public static RegistryObject<Ability> FLY_ABILITY = ABILITY_REGISTRY.register("flying", () -> new FlyAbility());
 //	public static RegistryObject<Ability> MOB_ATTACK_ABILITY = ABILITY_REGISTRY.register("mob_attack", () -> new MobAttackAbility());
