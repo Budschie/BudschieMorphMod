@@ -23,7 +23,6 @@ import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class MorphNBTHandler extends JsonReloadListener
@@ -48,41 +47,38 @@ public class MorphNBTHandler extends JsonReloadListener
 		{
 			try
 			{
-				if (ModList.get().isLoaded(resourceLocation.getNamespace()))
+				JsonObject jsonObject = json.getAsJsonObject();
+
+				String entityTypeString = jsonObject.get("entity_type").getAsString();
+
+				// Load in the entity type
+				final EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(entityTypeString));
+
+				if (entityType == null)
+					LOGGER.warn("The entity ", entityTypeString,
+							" doesn't exist. Please make sure to only load this when the mod for the entity is present. You can do this by putting this JSON file in \"data/<modname>/morph_nbt\".");
+
+				// Load in the tracked nbt keys as a NBTPath array
+				JsonElement tracked = jsonObject.get("tracked_nbt_keys");
+				final NBTPath[] trackedNbtKeys = new NBTPath[tracked == null ? 1 : tracked.getAsJsonArray().size() + 1];
+
+				if (tracked != null)
 				{
-					JsonObject jsonObject = json.getAsJsonObject();
-
-					String entityTypeString = jsonObject.get("entity_type").getAsString();
-					
-					// Load in the entity type
-					final EntityType<?> entityType = ForgeRegistries.ENTITIES
-							.getValue(new ResourceLocation(entityTypeString));
-					
-					if(entityType == null)
-						LOGGER.warn("The entity ", entityTypeString, " doesn't exist. Please make sure to only load this when the mod for the entity is present. You can do this by putting this JSON file in \"data/<modname>/morph_nbt\".");
-
-					// Load in the tracked nbt keys as a NBTPath array
-					JsonElement tracked = jsonObject.get("tracked_nbt_keys");
-					final NBTPath[] trackedNbtKeys = new NBTPath[tracked == null ? 1 : tracked.getAsJsonArray().size() + 1];
-
-					if(tracked != null)
-					{
-						for (int i = 0; i < tracked.getAsJsonArray().size(); i++)
-							trackedNbtKeys[i] = NBTPath.valueOf(tracked.getAsJsonArray().get(i).getAsString());
-					}
-					
-					trackedNbtKeys[trackedNbtKeys.length - 1] = new NBTPath("CustomName");
-					
-					JsonElement defaultNBTObject = jsonObject.get("default_nbt");
-					
-					final CompoundNBT defaultNBT = defaultNBTObject == null ? new CompoundNBT() : new JsonToNBT(new StringReader(defaultNBTObject.getAsString())).readStruct();
-					
-					// Build SpecialDataHandler
-					JsonMorphNBTHandler nbtHandler = new JsonMorphNBTHandler(defaultNBT, trackedNbtKeys);
-					
-					nbtDataHandlers.put(entityType, nbtHandler);
+					for (int i = 0; i < tracked.getAsJsonArray().size(); i++)
+						trackedNbtKeys[i] = NBTPath.valueOf(tracked.getAsJsonArray().get(i).getAsString());
 				}
 
+				trackedNbtKeys[trackedNbtKeys.length - 1] = new NBTPath("CustomName");
+
+				JsonElement defaultNBTObject = jsonObject.get("default_nbt");
+
+				final CompoundNBT defaultNBT = defaultNBTObject == null ? new CompoundNBT()
+						: new JsonToNBT(new StringReader(defaultNBTObject.getAsString())).readStruct();
+
+				// Build SpecialDataHandler
+				JsonMorphNBTHandler nbtHandler = new JsonMorphNBTHandler(defaultNBT, trackedNbtKeys);
+
+				nbtDataHandlers.put(entityType, nbtHandler);
 			} 
 			catch (CommandSyntaxException e)
 			{
