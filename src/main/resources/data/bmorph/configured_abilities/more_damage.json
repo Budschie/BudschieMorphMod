@@ -1,0 +1,10 @@
+{
+    "ability": "bmorph:attribute_modifier",
+    "config":
+    {
+        "attribute": "minecraft:generic.attack_damage",
+        "operation": "addition",
+        "name": "More Iron Golem Damage",
+        "amount": 8
+    }
+}
