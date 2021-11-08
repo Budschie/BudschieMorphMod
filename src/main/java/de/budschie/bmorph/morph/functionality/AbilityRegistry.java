@@ -43,9 +43,9 @@ import net.minecraftforge.registries.RegistryBuilder;
 public class AbilityRegistry
 {	
 	@SuppressWarnings("unchecked")
-	public static DeferredRegister<ConfigurableAbility<? extends Ability>> ABILITY_REGISTRY = DeferredRegister.create(ConfigurableAbility.class, References.MODID); 
+	public static DeferredRegister<ConfigurableAbility<? extends Ability>> ABILITY_REGISTRY = DeferredRegister.<ConfigurableAbility<? extends Ability>>create((Class<ConfigurableAbility<?>>)((Class<?>)ConfigurableAbility.class), References.MODID); 
 	
-	public static Supplier<IForgeRegistry<ConfigurableAbility<?>>> REGISTRY = ABILITY_REGISTRY.makeRegistry("abilities", () -> new RegistryBuilder<ConfigurableAbility<?>>().disableSaving());
+	public static Supplier<IForgeRegistry<ConfigurableAbility<? extends Ability>>> REGISTRY = ABILITY_REGISTRY.makeRegistry("abilities", () -> new RegistryBuilder<ConfigurableAbility<?>>().disableSaving());
 	
 	public static RegistryObject<ConfigurableAbility<Boom>> BOOM = ABILITY_REGISTRY.register("boom", () -> new ConfigurableAbility<>(Boom.CODEC));
 	public static RegistryObject<ConfigurableAbility<AttackYeetAbility>> ATTACK_YEET = ABILITY_REGISTRY.register("yeet", () -> new ConfigurableAbility<>(AttackYeetAbility.CODEC));
