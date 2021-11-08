@@ -1,0 +1,7 @@
+{
+    "ability": "bmorph:no_knockback",
+    "config":
+    {
+        "chance": 1.0
+    }
+}
