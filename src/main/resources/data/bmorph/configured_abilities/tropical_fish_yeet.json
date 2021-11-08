@@ -1,0 +1,14 @@
+{
+    "ability": "bmorph:shoot_projectile",
+    "config":
+    {
+        "projectile_entity": "minecraft:tropical_fish",
+        "stun": 0,
+        "motion": 1,
+        "sound":
+        {
+            "sound": "minecraft:entity.llama.spit",
+            "pitch": 0.9
+        }
+    }
+}
