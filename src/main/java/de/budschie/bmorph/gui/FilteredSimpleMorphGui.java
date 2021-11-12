@@ -110,6 +110,8 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 				widget.depth = currentWidgetHead.getB();
 			}			
 		}
+		
+		this.checkScroll();
 	}
 	
 	@Override

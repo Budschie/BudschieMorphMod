@@ -41,6 +41,7 @@ public class MainNetworkChannel
 		registerSimpleImplPacket(PufferfishPuffPacket.class, new PufferfishPuff());
 		registerSimpleImplPacket(GuardianBeamAttack.GuardianBeamAttackPacket.class, new GuardianBeamAttack());
 		registerSimpleImplPacket(DisposePlayerMorphData.DisposePlayerMorphDataPacket.class, new DisposePlayerMorphData());
+		registerSimpleImplPacket(DeleteOrDropMorph.DeleteOrDropMorphPacket.class, new DeleteOrDropMorph());
 	}
 	
 	public static <T> void registerSimpleImplPacket(Class<T> packetClass, ISimpleImplPacket<T> packet)
