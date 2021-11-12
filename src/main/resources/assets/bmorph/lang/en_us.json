@@ -15,5 +15,7 @@
     "gamerule.keepMorphInventory": "Keep Morph Inventory",
     "gamerule.morphAggroDuration": "Aggro Time of nearby mobs when morphed (in ticks)",
     "gamerule.preventLookat": "Prevents entities from looking at morphed players.",
-    "gamerule.doMorphDrops": "Allows entities to drop their morph upon death."
+    "gamerule.doMorphDrops": "Allows entities to drop their morph upon death.",
+    "gamerule.allowMorphDeletion": "Controls whether to allow players to delete morphs.",
+    "gamerule.allowMorphDropping": "Controls whether to allow players to drop morphs."
 }

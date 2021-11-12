@@ -37,6 +37,8 @@ public class BMorphMod
 	public static Key<BooleanValue> KEEP_MORPH_INVENTORY;
 	public static Key<BooleanValue> PREVENT_LOOKAT;
 	public static Key<BooleanValue> DO_MORPH_DROPS;
+	public static Key<BooleanValue> ALLOW_MORPH_DELETION;
+	public static Key<BooleanValue> ALLOW_MORPH_DROPPING;
 
 	public static Key<IntegerValue> MORPH_AGGRO_DURATION;
 	
@@ -63,6 +65,8 @@ public class BMorphMod
 		PREVENT_LOOKAT = GameRules.register("preventLookat", Category.PLAYER, BooleanValue.create(false));
 		DO_MORPH_DROPS = GameRules.register("doMorphDrops", Category.DROPS, BooleanValue.create(true));
 		MORPH_AGGRO_DURATION = GameRules.register("morphAggroDuration", Category.PLAYER, IntegerValue.create(200));
+		ALLOW_MORPH_DELETION = GameRules.register("allowMorphDeletion", Category.PLAYER, BooleanValue.create(true));
+		ALLOW_MORPH_DROPPING = GameRules.register("allowMorphDropping", Category.PLAYER, BooleanValue.create(true));
 		
 		MainNetworkChannel.registerMainNetworkChannels();
 		

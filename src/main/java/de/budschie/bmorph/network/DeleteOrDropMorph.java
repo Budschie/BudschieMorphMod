@@ -7,6 +7,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.budschie.bmorph.entity.MorphEntity;
+import de.budschie.bmorph.main.BMorphMod;
+import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.network.DeleteOrDropMorph.DeleteOrDropMorphPacket;
@@ -34,6 +36,10 @@ public class DeleteOrDropMorph implements ISimpleImplPacket<DeleteOrDropMorphPac
 	@Override
 	public void handle(DeleteOrDropMorphPacket packet, Supplier<Context> ctx)
 	{
+		// Just do nothing if we don't allow dropping or deleting morph items
+		if((packet.drop && !ServerSetup.server.getGameRules().getBoolean(BMorphMod.ALLOW_MORPH_DROPPING)) || (!packet.drop && !ServerSetup.server.getGameRules().getBoolean(BMorphMod.ALLOW_MORPH_DELETION)))
+			return;
+		
 		ctx.get().enqueueWork(() ->
 		{
 			MorphUtil.processCap(ctx.get().getSender(), cap ->
