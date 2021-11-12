@@ -1,7 +1,7 @@
 package de.budschie.bmorph.json_integration;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 
 public class NBTPath
 {
@@ -22,9 +22,9 @@ public class NBTPath
 		return nodes;
 	}
 	
-	public INBT resolve(CompoundNBT compoundNBT)
+	public Tag resolve(CompoundTag compoundNBT)
 	{
-		CompoundNBT currentCompound = compoundNBT;
+		CompoundTag currentCompound = compoundNBT;
 		
 		for(int i = 0; i < nodes.length - 1; i++)
 			currentCompound = currentCompound.getCompound(nodes[i]);
@@ -32,18 +32,18 @@ public class NBTPath
 		return currentCompound.get(nodes[nodes.length - 1]);
 	}
 	
-	public void copyTo(CompoundNBT from, CompoundNBT to)
+	public void copyTo(CompoundTag from, CompoundTag to)
 	{
-		INBT fromNBT = resolve(from);
+		Tag fromNBT = resolve(from);
 		
 		if(fromNBT == null)
 			return;
 		
-		CompoundNBT currentCompound = to;
+		CompoundTag currentCompound = to;
 		
 		for(int i = 0; i < nodes.length - 1; i++)
 		{
-			CompoundNBT newCompound = currentCompound.getCompound(nodes[i]);
+			CompoundTag newCompound = currentCompound.getCompound(nodes[i]);
 			currentCompound.put(nodes[i], newCompound);
 			currentCompound = newCompound;
 		}

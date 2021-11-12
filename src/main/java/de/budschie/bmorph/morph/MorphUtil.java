@@ -14,8 +14,8 @@ import de.budschie.bmorph.events.PlayerMorphEvent;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.render_handler.RenderHandler;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
@@ -26,12 +26,12 @@ public class MorphUtil
 {
 	private static Logger LOGGER = LogManager.getLogger();
 	
-	public static void morphToServer(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, PlayerEntity player)
+	public static void morphToServer(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, Player player)
 	{
 		morphToServer(morphItem, morphIndex, player, false);
 	}
 	
-	public static void processCap(PlayerEntity player, Consumer<IMorphCapability> capConsumer)
+	public static void processCap(Player player, Consumer<IMorphCapability> capConsumer)
 	{
 		LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 		
@@ -42,7 +42,7 @@ public class MorphUtil
 		}
 	}
 	
-	public static IMorphCapability getCapOrNull(PlayerEntity playerEntity)
+	public static IMorphCapability getCapOrNull(Player playerEntity)
 	{
 		LazyOptional<IMorphCapability> cap = playerEntity.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 		
@@ -53,7 +53,7 @@ public class MorphUtil
 	}
 	
 	/** Method to invoke a morph operation on the server. This will be synced to every player on the server. TODO: Only sync change to players that are being tracked.  **/
-	public static void morphToServer(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, PlayerEntity player, boolean force)
+	public static void morphToServer(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, Player player, boolean force)
 	{
 		LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 		
@@ -97,7 +97,7 @@ public class MorphUtil
 	}
 	
 	/** This method is used to invoke functions required for handling a sync on the server on the client side. **/
-	public static void morphToClient(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, ArrayList<String> abilities, PlayerEntity player)
+	public static void morphToClient(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, ArrayList<String> abilities, Player player)
 	{
 		if(player != null)
 		{

@@ -14,34 +14,34 @@ import de.budschie.bmorph.morph.MorphList;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.network.MorphCapabilityFullSynchronizer.MorphPacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphPacket>
 {
 	@Override
-	public void encode(MorphPacket packet, PacketBuffer buffer)
+	public void encode(MorphPacket packet, FriendlyByteBuf buffer)
 	{		
-		buffer.writeUniqueId(packet.player);
+		buffer.writeUUID(packet.player);
 		packet.morphList.serializePacket(buffer);
 		packet.favouriteList.serializePacket(buffer);
 		buffer.writeBoolean(packet.entityData.isPresent());
 		buffer.writeBoolean(packet.entityIndex.isPresent());
-		packet.getEntityData().ifPresent(data -> buffer.writeCompoundTag(data.serialize()));
+		packet.getEntityData().ifPresent(data -> buffer.writeNbt(data.serialize()));
 		packet.getEntityIndex().ifPresent(data -> buffer.writeInt(data));
 		
 		buffer.writeInt(packet.getAbilities().size());
 		
 		for(String str : packet.getAbilities())
-			buffer.writeString(str);
+			buffer.writeUtf(str);
 	}
 	
 	@Override
-	public MorphPacket decode(PacketBuffer buffer)
+	public MorphPacket decode(FriendlyByteBuf buffer)
 	{
-		UUID playerUUID = buffer.readUniqueId();
+		UUID playerUUID = buffer.readUUID();
 		
 		// Hmmm yeah the floor is made out of floor
 		MorphList morphList = new MorphList();
@@ -56,7 +56,7 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 		boolean hasMorph = buffer.readBoolean(), hasIndex = buffer.readBoolean();
 		
 		if(hasMorph)
-			toMorph = Optional.of(MorphHandler.deserializeMorphItem(buffer.readCompoundTag()));
+			toMorph = Optional.of(MorphHandler.deserializeMorphItem(buffer.readNbt()));
 		
 		if(hasIndex)
 			entityIndex = Optional.of(buffer.readInt());
@@ -66,7 +66,7 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 		ArrayList<String> abilities = new ArrayList<>(amountOfAbilities);
 		
 		for(int i = 0; i < amountOfAbilities; i++)
-			abilities.add(buffer.readString());
+			abilities.add(buffer.readUtf());
 		
 		return new MorphPacket(toMorph, entityIndex, morphList, favouriteList, abilities, playerUUID);
 	}
@@ -76,9 +76,9 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 	{
 		ctx.get().enqueueWork(() ->
 		{
-			if(Minecraft.getInstance().world != null)
+			if(Minecraft.getInstance().level != null)
 			{
-				PlayerEntity player = Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayer());
+				Player player = Minecraft.getInstance().level.getPlayerByUUID(packet.getPlayer());
 				
 				if(player != null)
 				{

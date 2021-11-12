@@ -12,20 +12,20 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.resources.ResourceLocation;
 
-public class RemovableSuggestionProvider implements SuggestionProvider<CommandSource>
+public class RemovableSuggestionProvider implements SuggestionProvider<CommandSourceStack>
 {
 	public static final RemovableSuggestionProvider INSTANCE = new RemovableSuggestionProvider();
 	
 	@Override
-	public CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSource> context,
+	public CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSourceStack> context,
 			SuggestionsBuilder builder) throws CommandSyntaxException
 	{
 		HashSet<ResourceLocation> suggestions = ConfigManager.INSTANCE.get(BlacklistData.class).getBlacklist();
-		CompletableFuture<Suggestions> completableSuggestions = ISuggestionProvider.suggest(suggestions.stream().map(rs -> rs.toString()).collect(Collectors.toList()), builder);
+		CompletableFuture<Suggestions> completableSuggestions = SharedSuggestionProvider.suggest(suggestions.stream().map(rs -> rs.toString()).collect(Collectors.toList()), builder);
 		return completableSuggestions;
 	}
 }

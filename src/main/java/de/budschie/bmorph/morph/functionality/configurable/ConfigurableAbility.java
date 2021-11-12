@@ -12,9 +12,9 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 
 import de.budschie.bmorph.morph.functionality.Ability;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.NBTDynamicOps;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 public class ConfigurableAbility<A extends Ability> extends ForgeRegistryEntry<ConfigurableAbility<? extends Ability>>
@@ -40,23 +40,23 @@ public class ConfigurableAbility<A extends Ability> extends ForgeRegistryEntry<C
 		return optAbility.isPresent() ? Optional.of(optAbility.get().getFirst()) : Optional.empty();
 	}
 	
-	public Optional<Ability> deserializeNBT(CompoundNBT nbt)
+	public Optional<Ability> deserializeNBT(CompoundTag nbt)
 	{
-		Optional<Pair<A, INBT>> optAbility = this.codec.decode(NBTDynamicOps.INSTANCE, nbt).resultOrPartial(err -> LOGGER.warn("Could not parse ability data from NBT: " + err));
+		Optional<Pair<A, Tag>> optAbility = this.codec.decode(NbtOps.INSTANCE, nbt).resultOrPartial(err -> LOGGER.warn("Could not parse ability data from NBT: " + err));
 		optAbility.ifPresent(p -> p.getFirst().setConfigurableAbility(this));
 		return optAbility.isPresent() ? Optional.of(optAbility.get().getFirst()) : Optional.empty();
 	}
 	
-	public Optional<CompoundNBT> serializeNBT(A ability)
+	public Optional<CompoundTag> serializeNBT(A ability)
 	{
-		DataResult<INBT> nbt = getCodec().encodeStart(NBTDynamicOps.INSTANCE, ability);
+		DataResult<Tag> nbt = getCodec().encodeStart(NbtOps.INSTANCE, ability);
 		
 		if(nbt.get().left().isPresent())
 		{
-			if(nbt.get().left().get() instanceof CompoundNBT)
-				return Optional.of((CompoundNBT)nbt.get().left().get());
+			if(nbt.get().left().get() instanceof CompoundTag)
+				return Optional.of((CompoundTag)nbt.get().left().get());
 			else
-				return Optional.of(new CompoundNBT());
+				return Optional.of(new CompoundTag());
 		}
 		else
 			LOGGER.warn("There was an error serializing the ability %s with its codec %s: %s", ability.getResourceLocation(), this.getRegistryName(), nbt.get().right().get().message());
@@ -65,7 +65,7 @@ public class ConfigurableAbility<A extends Ability> extends ForgeRegistryEntry<C
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Optional<CompoundNBT> serializeNBTIAmTooDumbForJava(Ability ability)
+	public Optional<CompoundTag> serializeNBTIAmTooDumbForJava(Ability ability)
 	{
 		if(ability.getConfigurableAbility() == this)
 			return serializeNBT((A) ability);

@@ -3,7 +3,7 @@ package de.budschie.bmorph.morph;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 public class MorphHandler
 {
@@ -14,7 +14,7 @@ public class MorphHandler
 		morphItems.put(id, morphItem);
 	}
 	
-	public static MorphItem deserializeMorphItem(CompoundNBT morphItem)
+	public static MorphItem deserializeMorphItem(CompoundTag morphItem)
 	{
 		Supplier<MorphItem> supplier = morphItems.get(morphItem.getString("id"));
 		

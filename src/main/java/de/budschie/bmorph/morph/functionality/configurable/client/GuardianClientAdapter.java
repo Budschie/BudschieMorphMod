@@ -2,8 +2,8 @@ package de.budschie.bmorph.morph.functionality.configurable.client;
 
 import java.util.function.Predicate;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 public abstract class GuardianClientAdapter
 {
@@ -23,5 +23,5 @@ public abstract class GuardianClientAdapter
 	
 	public abstract void disableAdapter();
 	
-	public abstract void playGuardianSound(PlayerEntity player);
+	public abstract void playGuardianSound(Player player);
 }

@@ -10,9 +10,9 @@ import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.StunAbility;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.WeightedList;
+import de.budschie.bmorph.util.WeightedList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
 /** perfect name i really nailed it and its so short -nobody **/
 public class RandomDelegatingOnUseAbility extends StunAbility
@@ -21,7 +21,7 @@ public class RandomDelegatingOnUseAbility extends StunAbility
 	
 	public static final Codec<RandomDelegatingOnUseAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.INT.fieldOf("stun").forGetter(RandomDelegatingOnUseAbility::getStun),
-			WeightedList.getCodec(ResourceLocation.CODEC).fieldOf("abilities").forGetter(RandomDelegatingOnUseAbility::getWeightedList))
+			WeightedList.codecOf(ResourceLocation.CODEC).fieldOf("abilities").forGetter(RandomDelegatingOnUseAbility::getWeightedList))
 			.apply(instance, RandomDelegatingOnUseAbility::new));
 	
 	private WeightedList<ResourceLocation> weightedList;
@@ -39,13 +39,13 @@ public class RandomDelegatingOnUseAbility extends StunAbility
 	}
 	
 	@Override
-	public void onUsedAbility(PlayerEntity player, MorphItem currentMorph)
+	public void onUsedAbility(Player player, MorphItem currentMorph)
 	{
-		if(!isCurrentlyStunned(player.getUniqueID()))
+		if(!isCurrentlyStunned(player.getUUID()))
 		{
-			stun(player.getUniqueID());
+			stun(player.getUUID());
 			
-			ResourceLocation randomRL = weightedList.getRandomValue(player.getEntityWorld().getRandom());
+			ResourceLocation randomRL = weightedList.getRandom(player.getCommandSenderWorld().getRandom());
 			
 			Ability ability = BMorphMod.DYNAMIC_ABILITY_REGISTRY.getAbility(randomRL);
 			

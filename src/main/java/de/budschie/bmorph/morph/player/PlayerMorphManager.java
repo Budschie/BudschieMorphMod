@@ -3,10 +3,10 @@ package de.budschie.bmorph.morph.player;
 import com.mojang.authlib.GameProfile;
 
 import de.budschie.bmorph.morph.IMorphManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
 
 public class PlayerMorphManager implements IMorphManager<PlayerMorphItem, GameProfile>
 {
@@ -22,14 +22,14 @@ public class PlayerMorphManager implements IMorphManager<PlayerMorphItem, GamePr
 		if(entity.getType() != EntityType.PLAYER)
 			throw new IllegalAccessError("Please only call this method for dead players.");
 		
-		return createMorph(entity.getType(), ((PlayerEntity)entity).getGameProfile());
+		return createMorph(entity.getType(), ((Player)entity).getGameProfile());
 	}
 
 	// Sadly I can't remove this :(
 	//@Deprecated(since = "The beginning lol", forRemoval = false)
 	@Deprecated
 	@Override
-	public PlayerMorphItem createMorph(EntityType<?> entity, CompoundNBT nbt, GameProfile data, boolean forceNBT)
+	public PlayerMorphItem createMorph(EntityType<?> entity, CompoundTag nbt, GameProfile data, boolean forceNBT)
 	{
 		if(entity != EntityType.PLAYER)
 			throw new IllegalAccessError("Please only call this method for player morphs.");

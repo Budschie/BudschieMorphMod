@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class MorphList
 {
 	private HashSet<MorphItem> playerMorphItems = new HashSet<>();
 	private ArrayList<MorphItem> morphArrayList = new ArrayList<>();
 	
-	public CompoundNBT serializeNBT()
+	public CompoundTag serializeNBT()
 	{
-		CompoundNBT rootTag = new CompoundNBT();
+		CompoundTag rootTag = new CompoundTag();
 				
 		for(int i = 0; i < morphArrayList.size(); i++)
 		{
@@ -24,13 +24,13 @@ public class MorphList
 		return rootTag;
 	}
 	
-	public void deserializeNBT(CompoundNBT tag)
+	public void deserializeNBT(CompoundTag tag)
 	{
-		Set<String> keys = tag.keySet();
+		Set<String> keys = tag.getAllKeys();
 		
 		for(int i = 0; i < keys.size(); i++)
 		{
-			CompoundNBT morphTag = tag.getCompound(String.valueOf(i));
+			CompoundTag morphTag = tag.getCompound(String.valueOf(i));
 			
 			MorphItem item = MorphHandler.deserializeMorphItem(morphTag);
 			playerMorphItems.add(item);
@@ -38,17 +38,17 @@ public class MorphList
 		}
 	}
 	
-	public void serializePacket(PacketBuffer packet)
+	public void serializePacket(FriendlyByteBuf packet)
 	{
 		packet.writeInt(morphArrayList.size());
 		
 		for(MorphItem item : morphArrayList)
 		{
-			packet.writeCompoundTag(item.serialize());
+			packet.writeNbt(item.serialize());
 		}
 	}
 	
-	public void deserializePacket(PacketBuffer packet)
+	public void deserializePacket(FriendlyByteBuf packet)
 	{
 		int amount = packet.readInt();
 		
@@ -56,7 +56,7 @@ public class MorphList
 		
 		for(int i = 0; i < amount; i++)
 		{
-			morphArrayList.add(MorphHandler.deserializeMorphItem(packet.readCompoundTag()));
+			morphArrayList.add(MorphHandler.deserializeMorphItem(packet.readNbt()));
 		}
 	}
 	

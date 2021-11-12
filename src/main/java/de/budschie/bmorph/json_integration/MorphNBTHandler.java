@@ -15,17 +15,17 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.fallback.IMorphNBTHandler;
-import net.minecraft.client.resources.JsonReloadListener;
-import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class MorphNBTHandler extends JsonReloadListener
+public class MorphNBTHandler extends SimpleJsonResourceReloadListener
 {
 	private static final Gson GSON = (new GsonBuilder()).create();
 	private static final Logger LOGGER = LogManager.getLogger();
@@ -36,8 +36,8 @@ public class MorphNBTHandler extends JsonReloadListener
 	}
 	
 	@Override
-	protected void apply(Map<ResourceLocation, JsonElement> objectIn, IResourceManager resourceManagerIn,
-			IProfiler profilerIn)
+	protected void apply(Map<ResourceLocation, JsonElement> objectIn, ResourceManager resourceManagerIn,
+			ProfilerFiller profilerIn)
 	{
 		HashMap<EntityType<?>, IMorphNBTHandler> nbtDataHandlers = new HashMap<>();
 		
@@ -72,8 +72,8 @@ public class MorphNBTHandler extends JsonReloadListener
 
 				JsonElement defaultNBTObject = jsonObject.get("default_nbt");
 
-				final CompoundNBT defaultNBT = defaultNBTObject == null ? new CompoundNBT()
-						: new JsonToNBT(new StringReader(defaultNBTObject.getAsString())).readStruct();
+				final CompoundTag defaultNBT = defaultNBTObject == null ? new CompoundTag()
+						: new TagParser(new StringReader(defaultNBTObject.getAsString())).readStruct();
 
 				// Build SpecialDataHandler
 				JsonMorphNBTHandler nbtHandler = new JsonMorphNBTHandler(defaultNBT, trackedNbtKeys);

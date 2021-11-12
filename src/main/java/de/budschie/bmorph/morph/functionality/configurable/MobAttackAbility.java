@@ -6,7 +6,7 @@ import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 public class MobAttackAbility extends Ability
 {
@@ -17,13 +17,13 @@ public class MobAttackAbility extends Ability
 	**/
 	
 	@Override
-	public void enableAbility(PlayerEntity player, MorphItem enabledItem)
+	public void enableAbility(Player player, MorphItem enabledItem)
 	{
 		MorphUtil.processCap(player, cap -> cap.setMobAttack(true));
 	}
 
 	@Override
-	public void disableAbility(PlayerEntity player, MorphItem disabledItem)
+	public void disableAbility(Player player, MorphItem disabledItem)
 	{
 		MorphUtil.processCap(player, cap -> cap.setMobAttack(false));
 	}

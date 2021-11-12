@@ -3,7 +3,7 @@ package de.budschie.bmorph.capabilities.guardian;
 import java.util.Optional;
 import java.util.UUID;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 
 public interface IGuardianBeamCapability
 {

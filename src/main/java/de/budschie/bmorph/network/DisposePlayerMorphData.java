@@ -4,24 +4,24 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import de.budschie.bmorph.network.DisposePlayerMorphData.DisposePlayerMorphDataPacket;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
 
 public class DisposePlayerMorphData implements ISimpleImplPacket<DisposePlayerMorphDataPacket>
 {
 
 	@Override
-	public void encode(DisposePlayerMorphDataPacket packet, PacketBuffer buffer)
+	public void encode(DisposePlayerMorphDataPacket packet, FriendlyByteBuf buffer)
 	{
-		buffer.writeUniqueId(packet.getToDispose());
+		buffer.writeUUID(packet.getToDispose());
 	}
 
 	@Override
-	public DisposePlayerMorphDataPacket decode(PacketBuffer buffer)
+	public DisposePlayerMorphDataPacket decode(FriendlyByteBuf buffer)
 	{
-		return new DisposePlayerMorphDataPacket(buffer.readUniqueId());
+		return new DisposePlayerMorphDataPacket(buffer.readUUID());
 	}
 
 	@Override

@@ -1,21 +1,21 @@
 package de.budschie.bmorph.render_handler;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.eventbus.api.Event;
 
 public class InitializeMorphEntityEvent extends Event
 {
-	private PlayerEntity player;
+	private Player player;
 	private Entity morphEntity;
 	
-	public InitializeMorphEntityEvent(PlayerEntity player, Entity morphEntity)
+	public InitializeMorphEntityEvent(Player player, Entity morphEntity)
 	{
 		this.player = player;
 		this.morphEntity = morphEntity;
 	}
 	
-	public PlayerEntity getPlayer()
+	public Player getPlayer()
 	{
 		return player;
 	}

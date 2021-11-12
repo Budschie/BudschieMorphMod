@@ -1,6 +1,6 @@
 package de.budschie.bmorph.morph.fallback;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 public interface IMorphNBTHandler
 {
@@ -11,5 +11,5 @@ public interface IMorphNBTHandler
 	int getHashCodeFor(FallbackMorphItem item);
 	
 	/** This method shall return the NBT data for a morph based on the input, which is the entity that was killed for the morph. **/
-	CompoundNBT applyDefaultNBTData(CompoundNBT in);
+	CompoundTag applyDefaultNBTData(CompoundTag in);
 }

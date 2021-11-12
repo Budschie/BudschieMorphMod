@@ -8,8 +8,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.budschie.bmorph.morph.LazyTag;
 import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -48,9 +48,9 @@ public class InstaRegenAbility extends AbstractEventAbility
 	{
 		if(isTracked(event.getEntity()))
 		{
-			PlayerEntity player = (PlayerEntity) event.getEntityLiving();
+			Player player = (Player) event.getEntityLiving();
 			
-			if(itemTag.isPresent() ? itemTag.get().test(event.getItem().getItem()) : event.getItem().isFood())
+			if(itemTag.isPresent() ? itemTag.get().test(event.getItem().getItem()) : event.getItem().isEdible())
 			{
 				player.setHealth(Math.min(player.getMaxHealth(), player.getHealth() + healthRegenerated));
 			}

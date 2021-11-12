@@ -9,23 +9,23 @@ import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.network.MorphAddedSynchronizer.MorphAddedPacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
 
 public class MorphAddedSynchronizer implements ISimpleImplPacket<MorphAddedPacket>
 {
 	@Override
-	public void encode(MorphAddedPacket packet, PacketBuffer buffer)
+	public void encode(MorphAddedPacket packet, FriendlyByteBuf buffer)
 	{
-		buffer.writeUniqueId(packet.getPlayerUUID());
-		buffer.writeCompoundTag(packet.getAddedMorph().serialize());
+		buffer.writeUUID(packet.getPlayerUUID());
+		buffer.writeNbt(packet.getAddedMorph().serialize());
 	}
 
 	@Override
-	public MorphAddedPacket decode(PacketBuffer buffer)
+	public MorphAddedPacket decode(FriendlyByteBuf buffer)
 	{
-		return new MorphAddedPacket(buffer.readUniqueId(), MorphHandler.deserializeMorphItem(buffer.readCompoundTag()));
+		return new MorphAddedPacket(buffer.readUUID(), MorphHandler.deserializeMorphItem(buffer.readNbt()));
 	}
 
 	@Override
@@ -33,9 +33,9 @@ public class MorphAddedSynchronizer implements ISimpleImplPacket<MorphAddedPacke
 	{
 		ctx.get().enqueueWork(() ->
 		{
-			if(Minecraft.getInstance().world != null)
+			if(Minecraft.getInstance().level != null)
 			{
-					LazyOptional<IMorphCapability> cap = Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayerUUID()).getCapability(MorphCapabilityAttacher.MORPH_CAP);
+					LazyOptional<IMorphCapability> cap = Minecraft.getInstance().level.getPlayerByUUID(packet.getPlayerUUID()).getCapability(MorphCapabilityAttacher.MORPH_CAP);
 				
 				if(cap.isPresent())
 				{

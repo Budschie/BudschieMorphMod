@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class FavouriteList
 {
@@ -18,16 +18,16 @@ public class FavouriteList
 		this.morphList = morphList;
 	}
 	
-	public CompoundNBT serialize()
+	public CompoundTag serialize()
 	{
-		CompoundNBT nbt = new CompoundNBT();
+		CompoundTag nbt = new CompoundTag();
 		
 		nbt.putIntArray("favouriteIndices", favourites.stream().map(item -> item.morphListIndex).collect(Collectors.toList()));
 		
 		return nbt;
 	}
 	
-	public void deserialize(CompoundNBT nbt)
+	public void deserialize(CompoundTag nbt)
 	{
 		int[] favouriteIndices = nbt.getIntArray("favouriteIndices");
 		
@@ -41,7 +41,7 @@ public class FavouriteList
 	}
 	
 	/** Serialized on server **/
-	public void serializePacket(PacketBuffer buffer)
+	public void serializePacket(FriendlyByteBuf buffer)
 	{
 		int[] favouriteIndices = new int[favourites.size()];
 		int i = 0;
@@ -55,7 +55,7 @@ public class FavouriteList
 	}
 	
 	/** Deserialized on client. **/
-	public void deserializePacket(PacketBuffer buffer)
+	public void deserializePacket(FriendlyByteBuf buffer)
 	{
 		int[] favouriteIndices = buffer.readVarIntArray();
 		

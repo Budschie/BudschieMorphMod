@@ -1,108 +1,118 @@
 package de.budschie.bmorph.entity.rendering;
 
-import java.util.Optional;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Vector3f;
 
 import de.budschie.bmorph.entity.MorphEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 
 public class MorphEntityRenderer extends EntityRenderer<MorphEntity>
 {
 	WeakHashMap<UUID, Entity> entityCache = new WeakHashMap<>();
 	
-	public MorphEntityRenderer(EntityRendererManager renderManager)
+	public MorphEntityRenderer(EntityRendererProvider.Context renderManager)
 	{
 		super(renderManager);
 	}
 
 	@Override
-	public ResourceLocation getEntityTexture(MorphEntity entity)
+	public ResourceLocation getTextureLocation(MorphEntity entity)
 	{
 		return null;
 	}
 	
 	@Override
-	public void render(MorphEntity entity, float something, float partialTicks, MatrixStack matrixStack,
-			IRenderTypeBuffer buffer, int light)
+	public void render(MorphEntity entity, float something, float partialTicks, PoseStack matrixStack,
+			MultiBufferSource buffer, int light)
 	{
-		Entity toRender = entityCache.get(entity.getUniqueID());
+		Entity toRender = entityCache.get(entity.getUUID());
 		
 		if(toRender == null)
 		{
 			// Check if the entity was not loaded in successfull
-			if(entityCache.containsKey(entity.getUniqueID()))
+			if(entityCache.containsKey(entity.getUUID()))
 			{
 				return;
 			}
 			else
 			{
-				toRender = entity.getMorphItem().createEntity(entity.world);
+				toRender = entity.getMorphItem().createEntity(entity.level);
 				
 				// If we did not succeed, set entityCache value to null!
 				if(toRender == null)
 				{
-					entityCache.put(entity.getUniqueID(), null);
+					entityCache.put(entity.getUUID(), null);
 					return;
 				}
 				
-				if(toRender instanceof LivingEntity)
+				if(toRender instanceof LivingEntity entityLiving)
 				{
-					LivingEntity entityLiving = (LivingEntity) toRender;
 					entityLiving.deathTime = 0;
 					entityLiving.hurtTime = 0;
 				}
 				
-				entityCache.put(entity.getUniqueID(), toRender);
+				entityCache.put(entity.getUUID(), toRender);
 			}
 		}
 		
-		toRender.ticksExisted = entity.ticksExisted;
+		toRender.tickCount = entity.tickCount;
 		
-		EntityRenderer<? super Entity> manager = Minecraft.getInstance().getRenderManager().getRenderer(toRender);
+		EntityRenderer<? super Entity> manager = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(toRender);
 		
-		toRender.prevPosX = entity.prevPosX;
-		toRender.prevPosY = entity.prevPosY;
-		toRender.prevPosZ = entity.prevPosZ;
+		toRender.xo = entity.xo;
+		toRender.yo = entity.yo;
+		toRender.zo = entity.zo;
 		
-		toRender.setPosition(entity.getPosX(), entity.getPosY(), entity.getPosZ());
+		toRender.setPos(entity.getX(), entity.getY(), entity.getZ());
 		
-		matrixStack.rotate(Vector3f.YP.rotationDegrees(((toRender.ticksExisted + partialTicks) * 5f) % 360));
-		matrixStack.translate(0, Math.sin((toRender.ticksExisted + partialTicks) * 0.25f) * 0.15f + 0.15f, 0);
+		matrixStack.mulPose(Vector3f.YP.rotationDegrees(((toRender.tickCount + partialTicks) * 5f) % 360));
+		matrixStack.translate(0, Math.sin((toRender.tickCount + partialTicks) * 0.25f) * 0.15f + 0.15f, 0);
 		
 		manager.render(toRender, 0, partialTicks, matrixStack, renderType ->
 		{								
-			final IVertexBuilder builder;
+			final VertexConsumer builder;
 			
-			if(renderType instanceof RenderType.Type)
+			if(renderType instanceof RenderType.CompositeRenderType)
 			{
-				Optional<ResourceLocation> rs = ((RenderType.Type)renderType).renderState.texture.texture;
-				
-				if(rs.isPresent())
-				{
-					RenderType newType = RenderType.getEntityTranslucent(rs.get());
-					
-					if(!newType.getVertexFormat().equals(renderType.getVertexFormat()))
-						return buffer.getBuffer(renderType); 
-					
-					builder = buffer.getBuffer(newType);
-				}
-				else
+				if(((RenderType.CompositeRenderType)renderType).state.textureState.cutoutTexture().isEmpty())
 				{
 					System.out.println("If you see this, then there is an error with rendering that you should report as a bug.");
 					return buffer.getBuffer(renderType);
 				}
+				else
+				{
+					RenderType newType = RenderType.entityTranslucent(((RenderType.CompositeRenderType)renderType).state.textureState.cutoutTexture().get());
+					
+					if(!newType.format().equals(renderType.format()))
+						return buffer.getBuffer(renderType); 
+					
+					builder = buffer.getBuffer(newType);
+				}
+//				builder = buffer.getBuffer(renderType);
+				
+//				if(rs.isPresent())
+//				{
+//					RenderType newType = RenderType.entityTranslucent(rs.get());
+//					
+//					if(!newType.format().equals(renderType.format()))
+//						return buffer.getBuffer(renderType); 
+//					
+//					builder = buffer.getBuffer(newType);
+//				}
+//				else
+//				{
+//				}
 			}
 			else
 			{
@@ -111,45 +121,45 @@ public class MorphEntityRenderer extends EntityRenderer<MorphEntity>
 			}
 			
 //				IVertexBuilder builder = (p_getBuffer_1_ instanceof RenderType.Type) ? buffer.getBuffer(RenderType.getEntityTranslucent(((RenderType.Type)p_getBuffer_1_).renderState.texture) : buffer.getBuffer(p_getBuffer_1_);
-			return new IVertexBuilder()
+			return new VertexConsumer()
 			{
 				@Override
-				public void addVertex(float x, float y, float z, float red, float green, float blue, float alpha,
+				public void vertex(float x, float y, float z, float red, float green, float blue, float alpha,
 						float texU, float texV, int overlayUV, int lightmapUV, float normalX, float normalY,
 						float normalZ)
 				{
-					IVertexBuilder.super.addVertex(x, y, z, 255, 255, 255, 255, texU, texV, overlayUV, lightmapUV, normalX, normalY,
+					VertexConsumer.super.vertex(x, y, z, 255, 255, 255, 255, texU, texV, overlayUV, lightmapUV, normalX, normalY,
 							normalZ);
 				}
 				
 				@Override
-				public IVertexBuilder tex(float u, float v)
+				public VertexConsumer uv(float u, float v)
 				{
-					return builder.tex(u, v);
+					return builder.uv(u, v);
 				}
 				
 				@Override
-				public IVertexBuilder pos(double x, double y, double z)
+				public VertexConsumer vertex(double x, double y, double z)
 				{
-					return builder.pos(x, y, z);
+					return builder.vertex(x, y, z);
 				}
 				
 				@Override
-				public IVertexBuilder overlay(int u, int v)
+				public VertexConsumer overlayCoords(int u, int v)
 				{
-					return builder.overlay(u, v);
+					return builder.overlayCoords(u, v);
 				}
 				
 				@Override
-				public IVertexBuilder normal(float x, float y, float z)
+				public VertexConsumer normal(float x, float y, float z)
 				{
 					return builder.normal(x, y, z);
 				}
 				
 				@Override
-				public IVertexBuilder lightmap(int u, int v)
+				public VertexConsumer uv2(int u, int v)
 				{
-					return builder.lightmap(u, v);
+					return builder.uv2(u, v);
 				}
 				
 				@Override
@@ -159,9 +169,21 @@ public class MorphEntityRenderer extends EntityRenderer<MorphEntity>
 				}
 				
 				@Override
-				public IVertexBuilder color(int red, int green, int blue, int alpha)
+				public VertexConsumer color(int red, int green, int blue, int alpha)
 				{
 					return builder.color(0, 150, 255, 135);
+				}
+
+				@Override
+				public void defaultColor(int p_166901_, int p_166902_, int p_166903_, int p_166904_)
+				{
+					builder.defaultColor(p_166901_, p_166902_, p_166903_, p_166904_);
+				}
+
+				@Override
+				public void unsetDefaultColor()
+				{
+					builder.unsetDefaultColor();
 				}
 			};
 		}, light);	}

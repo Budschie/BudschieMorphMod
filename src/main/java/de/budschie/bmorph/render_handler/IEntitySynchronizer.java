@@ -1,7 +1,7 @@
 package de.budschie.bmorph.render_handler;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 public interface IEntitySynchronizer
 {
@@ -11,5 +11,5 @@ public interface IEntitySynchronizer
 	/** This method will be called when {@link IEntitySynchronizer#appliesToMorph(Entity)} returns {@code true}. 
 	 * <br><br> It should read attributes from the player and set them properly in the entity, e. g. if you are morphed into a skeleton, and the player holds a bow, this very bow should then be transferred into the skeletons inventory.
 	 **/
-	void applyToMorphEntity(Entity morphEntity, PlayerEntity player);
+	void applyToMorphEntity(Entity morphEntity, Player player);
 }

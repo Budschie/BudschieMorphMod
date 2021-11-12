@@ -7,13 +7,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.world.EntityExplosionContext;
-import net.minecraft.world.Explosion.Mode;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.EntityBasedExplosionDamageCalculator;
+import net.minecraft.world.level.Explosion.BlockInteraction;
+import net.minecraft.world.level.Level;
 
 public class Boom extends Ability
 {
@@ -50,24 +50,24 @@ public class Boom extends Ability
 	}
 
 	@Override
-	public void onUsedAbility(PlayerEntity player, MorphItem currentMorph)
+	public void onUsedAbility(Player player, MorphItem currentMorph)
 	{
-		if(!player.isCreative() && player.ticksExisted > 80)
+		if(!player.isCreative() && player.tickCount > 80)
 		{
 			if(isInstantKill())
 			{
-				player.attackEntityFrom(DamageSource.causeExplosionDamage(player), 69420);
+				player.hurt(DamageSource.explosion(player), 69420);
 			}
 			
-			player.world.createExplosion(player, DamageSource.causeExplosionDamage(player), new EntityExplosionContext(player), player.getPosX(), player.getPosY(), player.getPosZ(), explosionSize, causesFire, Mode.BREAK);
+			player.level.explode(player, DamageSource.explosion(player), new EntityBasedExplosionDamageCalculator(player), player.getX(), player.getY(), player.getZ(), explosionSize, causesFire, BlockInteraction.BREAK);
 			
 			Random rand = new Random();
 			
-			World playerWorld = player.world;
+			Level playerWorld = player.level;
 			
 			for(int i = 0; i < 2; i++)
 			{
-				playerWorld.playSound(null, player.getPosition().add(rand.nextInt(21) - 10, rand.nextInt(21) - 10, rand.nextInt(21) - 10), rand.nextBoolean() ? SoundEvents.ENTITY_DRAGON_FIREBALL_EXPLODE : SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.MASTER, 20, (rand.nextFloat() - .6f) + 1);
+				playerWorld.playSound(null, player.blockPosition().offset(rand.nextInt(21) - 10, rand.nextInt(21) - 10, rand.nextInt(21) - 10), rand.nextBoolean() ? SoundEvents.DRAGON_FIREBALL_EXPLODE : SoundEvents.GENERIC_EXPLODE, SoundSource.MASTER, 20, (rand.nextFloat() - .6f) + 1);
 			}
 		}
 	}

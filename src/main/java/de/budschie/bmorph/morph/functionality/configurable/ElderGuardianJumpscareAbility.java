@@ -7,9 +7,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.functionality.PassiveTickAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.play.server.SChangeGameStatePacket;
-import net.minecraft.potion.EffectInstance;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+import net.minecraft.world.effect.MobEffectInstance;
 
 public class ElderGuardianJumpscareAbility extends PassiveTickAbility
 {
@@ -19,26 +19,26 @@ public class ElderGuardianJumpscareAbility extends PassiveTickAbility
 					Codec.DOUBLE.fieldOf("distance").forGetter(ElderGuardianJumpscareAbility::getDistance))
 			.apply(instance, ElderGuardianJumpscareAbility::new));
 	
-	private List<EffectInstance> effectInstances;
+	private List<MobEffectInstance> effectInstances;
 	
 	private double distance;
 	
-	public ElderGuardianJumpscareAbility(int updateDuration, List<EffectInstance> effectInstances, double distance)
+	public ElderGuardianJumpscareAbility(int updateDuration, List<MobEffectInstance> effectInstances, double distance)
 	{
 		super(updateDuration, (player, cap) ->
 		{			
-            if(!player.getEntityWorld().isRemote)
+            if(!player.getCommandSenderWorld().isClientSide)
             {
             	double distanceSquared = distance * distance;
             	
-            	player.getEntityWorld().getPlayers().stream()
-            	.filter(playerToFilter -> playerToFilter.getPositionVec().squareDistanceTo(player.getPositionVec()) < distanceSquared)
+            	player.getCommandSenderWorld().players().stream()
+            	.filter(playerToFilter -> playerToFilter.position().distanceToSqr(player.position()) < distanceSquared)
             	.forEach(playerToJumpscare ->
             	{
             		if(playerToJumpscare != player)
             		{
-	            		((ServerPlayerEntity)playerToJumpscare).connection.sendPacket(new SChangeGameStatePacket(SChangeGameStatePacket.CURSE_PLAYER_ELDER_GUARDIAN, 1.0F));
-	            		effectInstances.forEach(effect -> playerToJumpscare.addPotionEffect(new EffectInstance(effect)));
+	            		((ServerPlayer)playerToJumpscare).connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.GUARDIAN_ELDER_EFFECT, 1.0F));
+	            		effectInstances.forEach(effect -> playerToJumpscare.addEffect(new MobEffectInstance(effect)));
             		}
             	});
             }
@@ -48,7 +48,7 @@ public class ElderGuardianJumpscareAbility extends PassiveTickAbility
 		this.effectInstances = effectInstances;
 	}
 	
-	public List<EffectInstance> getEffectInstances()
+	public List<MobEffectInstance> getEffectInstances()
 	{
 		return effectInstances;
 	}

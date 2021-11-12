@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import de.budschie.bmorph.api_interact.ShrinkAPIInteractor;
 import de.budschie.bmorph.capabilities.IMorphCapability;
@@ -13,14 +13,15 @@ import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.player.AdvancedAbstractClientPlayerEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.monster.AbstractSkeletonEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.HandSide;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Entity.RemovalReason;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -34,9 +35,9 @@ public class RenderHandler
 {		
 	private static HashMap<UUID, Entity> cachedEntities = new HashMap<>();
 	
-	public static Entity getCachedEntity(PlayerEntity player)
+	public static Entity getCachedEntity(Player player)
 	{
-		return getCachedEntity(player.getUniqueID());
+		return getCachedEntity(player.getUUID());
 	}
 	
 	public static Entity getCachedEntity(UUID player)
@@ -50,12 +51,12 @@ public class RenderHandler
 		if(event.getPlayer() == Minecraft.getInstance().player)
 			event.getMorphEntity().setCustomNameVisible(false);
 		
-		if(event.getMorphEntity() instanceof AbstractClientPlayerEntity)
+		if(event.getMorphEntity() instanceof AbstractClientPlayer)
 		{
-			AbstractClientPlayerEntity entity = (AbstractClientPlayerEntity) event.getMorphEntity();
+			AbstractClientPlayer entity = (AbstractClientPlayer) event.getMorphEntity();
 			
 			// WTF?!?
-			entity.setPrimaryHand(event.getPlayer().getPrimaryHand() == HandSide.LEFT ? HandSide.RIGHT : HandSide.LEFT);
+			entity.setMainArm(event.getPlayer().getMainArm() == HumanoidArm.LEFT ? HumanoidArm.RIGHT : HumanoidArm.LEFT);
 		}
 		
 		if(event.getMorphEntity() instanceof AdvancedAbstractClientPlayerEntity)
@@ -63,15 +64,15 @@ public class RenderHandler
 			AdvancedAbstractClientPlayerEntity advanced = (AdvancedAbstractClientPlayerEntity) event.getMorphEntity();
 			
 			// I LOVE lambdas!
-			advanced.setIsWearing(part -> event.getPlayer().isWearing(part));
+			advanced.setIsWearing(part -> event.getPlayer().isModelPartShown(part));
 		}
 		
-		if(event.getMorphEntity() instanceof MobEntity)
+		if(event.getMorphEntity() instanceof Mob)
 		{
-			if(event.getMorphEntity() instanceof AbstractSkeletonEntity)
-				((MobEntity)event.getMorphEntity()).setLeftHanded(event.getPlayer().getPrimaryHand() == HandSide.RIGHT);
+			if(event.getMorphEntity() instanceof AbstractSkeleton)
+				((Mob)event.getMorphEntity()).setLeftHanded(event.getPlayer().getMainArm() == HumanoidArm.RIGHT);
 			else
-				((MobEntity)event.getMorphEntity()).setLeftHanded(event.getPlayer().getPrimaryHand() == HandSide.LEFT);
+				((Mob)event.getMorphEntity()).setLeftHanded(event.getPlayer().getMainArm() == HumanoidArm.LEFT);
 		}
 	}
 	
@@ -81,17 +82,17 @@ public class RenderHandler
 		cachedEntities.remove(player);
 	}
 	
-	public static void onBuildNewEntity(PlayerEntity player, IMorphCapability capability, MorphItem aboutToMorphTo)
+	public static void onBuildNewEntity(Player player, IMorphCapability capability, MorphItem aboutToMorphTo)
 	{
 		if(aboutToMorphTo == null)
-			handleCacheRemoval(cachedEntities.remove(player.getUniqueID()));
+			handleCacheRemoval(cachedEntities.remove(player.getUUID()));
 		else
 		{
-			Entity toCreate = aboutToMorphTo.createEntity(player.world);
+			Entity toCreate = aboutToMorphTo.createEntity(player.level);
 			
 			// Remove the previous entity
-			handleCacheRemoval(cachedEntities.get(player.getUniqueID()));
-			cachedEntities.put(player.getUniqueID(), toCreate);
+			handleCacheRemoval(cachedEntities.get(player.getUUID()));
+			cachedEntities.put(player.getUUID(), toCreate);
 			
 			MinecraftForge.EVENT_BUS.post(new InitializeMorphEntityEvent(player, toCreate));
 		}
@@ -102,7 +103,7 @@ public class RenderHandler
 	private static void handleCacheRemoval(Entity entity)
 	{
 		if(entity != null)
-			entity.remove();
+			entity.remove(RemovalReason.DISCARDED);
 	}
 	
 	@SubscribeEvent(priority = EventPriority.HIGH)
@@ -118,20 +119,20 @@ public class RenderHandler
 			{
 				event.setCanceled(true);
 
-				PlayerEntity player = event.getPlayer();
+				Player player = event.getPlayer();
 				
-				Entity toRender = cachedEntities.get(player.getUniqueID());
+				Entity toRender = cachedEntities.get(player.getUUID());
 				
 				renderMorph(player, toRender, event.getMatrixStack(), event.getPartialRenderTick(), event.getBuffers(), event.getLight());
 			}
 		}
 	}
 	
-	public static void renderMorph(PlayerEntity player, Entity toRender, MatrixStack matrixStack, float partialRenderTicks, IRenderTypeBuffer buffers, int light)
+	public static void renderMorph(Player player, Entity toRender, PoseStack matrixStack, float partialRenderTicks, MultiBufferSource buffers, int light)
 	{
-		if(toRender.world != player.world)
+		if(toRender.level != player.level)
 		{
-			toRender.setWorld(toRender.world);
+			toRender.level = player.level;
 		}
 		
 		// Holy shit that's unperformant... I'll maybe change this later
@@ -143,31 +144,29 @@ public class RenderHandler
 				sync.applyToMorphEntity(toRender, player);
 		}
 		
-		toRender.ticksExisted = player.ticksExisted;
+		toRender.tickCount = player.tickCount;
 		
-		toRender.setPosition(player.getPosX(), player.getPosY(), player.getPosZ());
+		toRender.setPos(player.getX(), player.getY(), player.getZ());
 		
-		toRender.prevPosX = player.prevPosX;
-		toRender.prevPosY = player.prevPosY;
-		toRender.prevPosZ = player.prevPosZ;
+		toRender.xo = player.xo;
+		toRender.yo = player.yo;
+		toRender.zo = player.zo;
 		
-		toRender.rotationPitch = player.rotationPitch;
-		toRender.rotationYaw = player.rotationYaw;
-		toRender.rotationPitch = player.rotationPitch;
-		toRender.prevRotationPitch = player.prevRotationPitch;
+		toRender.setXRot(player.getXRot());
+		toRender.setYRot(player.getYRot());
 		
-		toRender.lastTickPosX = player.lastTickPosX;
-		toRender.lastTickPosY = player.lastTickPosY;
-		toRender.lastTickPosZ = player.lastTickPosZ;
+		toRender.xOld = player.xOld;
+		toRender.yOld = player.yOld;
+		toRender.zOld = player.zOld;
 		
-		toRender.rotationYaw = player.rotationYaw;
-		toRender.prevRotationYaw = player.prevRotationYaw;
+		toRender.xRotO = player.xRotO;
+		toRender.yRotO = player.yRotO;
 		
-		toRender.inWater = player.isInWater();
+		toRender.wasTouchingWater = player.isInWater();
 		
 		float divisor = ShrinkAPIInteractor.getInteractor().getShrinkingValue(player);
 		
-		matrixStack.push();
+		matrixStack.pushPose();
 		
 		if(ShrinkAPIInteractor.getInteractor().isShrunk(player))
 			matrixStack.scale(0.81f / divisor, 0.81f / divisor, 0.81f / divisor);
@@ -178,10 +177,10 @@ public class RenderHandler
 		
 		// info: We are getting NOTEX when displaying tVariant render thingys by better animals plus https://github.com/itsmeow/betteranimalsplus/blob/1.16/src/main/java/its_meow/betteranimalsplus/client/ClientLifecycleHandler.java
 		// NOTE: This does not occur when using tSingle...
-		EntityRenderer<? super Entity> manager = Minecraft.getInstance().getRenderManager().getRenderer(toRender);
+		EntityRenderer<? super Entity> manager = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(toRender);
 		//System.out.println(texture);
 		manager.render(toRender, 0, partialRenderTicks, matrixStack, buffers, light);
 		
-		matrixStack.pop();
+		matrixStack.popPose();
 	}
 }

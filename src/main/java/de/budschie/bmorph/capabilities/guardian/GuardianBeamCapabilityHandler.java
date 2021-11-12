@@ -5,17 +5,17 @@ import java.util.Optional;
 import de.budschie.bmorph.events.GuardianAbilityStatusUpdateEvent;
 import de.budschie.bmorph.network.GuardianBeamAttack;
 import de.budschie.bmorph.network.MainNetworkChannel;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 @EventBusSubscriber
 public class GuardianBeamCapabilityHandler
@@ -37,60 +37,60 @@ public class GuardianBeamCapabilityHandler
 		}
 	}
 	
-	public static void attackServer(PlayerEntity player, Entity toAttack, int maxAttackDuration)
+	public static void attackServer(Player player, Entity toAttack, int maxAttackDuration)
 	{
 		player.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).ifPresent(cap ->
 		{
 			cap.attackServer(Optional.of(toAttack), maxAttackDuration);
 			
 			synchronizeWithClients(player);
-			synchronizeWithClient(player, (ServerPlayerEntity) player);
+			synchronizeWithClient(player, (ServerPlayer) player);
 		});	
 	}
 	
-	public static void unattackServer(PlayerEntity player)
+	public static void unattackServer(Player player)
 	{
 		player.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).ifPresent(cap ->
 		{
 			cap.attackServer(Optional.empty(), 0);
 			
 			synchronizeWithClients(player);
-			synchronizeWithClient(player, (ServerPlayerEntity) player);
+			synchronizeWithClient(player, (ServerPlayer) player);
 		});
 	}
 	
-	public static void synchronizeWithClient(PlayerEntity toSynchronize, ServerPlayerEntity with)
+	public static void synchronizeWithClient(Player toSynchronize, ServerPlayer with)
 	{
 		toSynchronize.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).ifPresent(cap ->
 		{
-			validateEntity(toSynchronize.getEntityWorld(), cap);
+			validateEntity(toSynchronize.getCommandSenderWorld(), cap);
 
 			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> with),
-					new GuardianBeamAttack.GuardianBeamAttackPacket(toSynchronize.getUniqueID(), cap.getAttackedEntity(), cap.getAttackProgression(), cap.getMaxAttackProgression()));
+					new GuardianBeamAttack.GuardianBeamAttackPacket(toSynchronize.getUUID(), cap.getAttackedEntity(), cap.getAttackProgression(), cap.getMaxAttackProgression()));
 		});
 	}
 	
-	public static void synchronizeWithClients(PlayerEntity toSynchronize)
+	public static void synchronizeWithClients(Player toSynchronize)
 	{		
 		toSynchronize.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).ifPresent(cap ->
 		{
-			validateEntity(toSynchronize.getEntityWorld(), cap);
+			validateEntity(toSynchronize.getCommandSenderWorld(), cap);
 			
 			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> toSynchronize),
-					new GuardianBeamAttack.GuardianBeamAttackPacket(toSynchronize.getUniqueID(), cap.getAttackedEntity(), cap.getAttackProgression(), cap.getMaxAttackProgression()));
+					new GuardianBeamAttack.GuardianBeamAttackPacket(toSynchronize.getUUID(), cap.getAttackedEntity(), cap.getAttackProgression(), cap.getMaxAttackProgression()));
 		});
 	}
 	
-	private static void validateEntity(World currentWorld, IGuardianBeamCapability cap)
+	private static void validateEntity(Level currentWorld, IGuardianBeamCapability cap)
 	{
 		if(cap.shouldRecalculateEntityId())
 		{
-			Entity entity = ((ServerWorld)currentWorld).getEntityByUuid(cap.getAttackedEntityServer().get());
+			Entity entity = ((ServerLevel)currentWorld).getEntity(cap.getAttackedEntityServer().get());
 			
 			if(entity == null)
 				cap.attackServer(Optional.empty(), 0);
 			else
-				cap.setAttackedEntity(Optional.of(entity.getEntityId()));
+				cap.setAttackedEntity(Optional.of(entity.getId()));
 		}
 	}
 }

@@ -5,20 +5,20 @@ import java.util.function.Supplier;
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.network.MorphRequestAbilityUsage.MorphRequestAbilityUsagePacket;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
 
 public class MorphRequestAbilityUsage implements ISimpleImplPacket<MorphRequestAbilityUsagePacket>
 {
 	@Override
-	public void encode(MorphRequestAbilityUsagePacket packet, PacketBuffer buffer)
+	public void encode(MorphRequestAbilityUsagePacket packet, FriendlyByteBuf buffer)
 	{
 		
 	}
 
 	@Override
-	public MorphRequestAbilityUsagePacket decode(PacketBuffer buffer)
+	public MorphRequestAbilityUsagePacket decode(FriendlyByteBuf buffer)
 	{
 		return new MorphRequestAbilityUsagePacket();
 	}

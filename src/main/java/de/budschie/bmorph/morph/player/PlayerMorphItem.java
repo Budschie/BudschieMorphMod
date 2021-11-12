@@ -5,12 +5,12 @@ import com.mojang.authlib.GameProfile;
 
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 public class PlayerMorphItem extends MorphItem
 {
@@ -34,10 +34,10 @@ public class PlayerMorphItem extends MorphItem
 	}
 
 	@Override
-	public Entity createEntity(World world)
+	public Entity createEntity(Level world)
 	{		
 		// -69420 points for code style... TODO: This is f****** stupid...
-		return world.isRemote ? UglyHackThatDoesntWork.thisisstupid.apply(gameProfile, world) : new PlayerEntity(world, new BlockPos(0, 0, 0), 0, gameProfile)
+		return world.isClientSide ? UglyHackThatDoesntWork.thisisstupid.apply(gameProfile, world) : new Player(world, new BlockPos(0, 0, 0), 0, gameProfile)
 		{
 			@Override
 			public boolean isSpectator()
@@ -54,22 +54,22 @@ public class PlayerMorphItem extends MorphItem
 	}
 	
 	@Override
-	public boolean isAllowedToPickUp(PlayerEntity picker)
+	public boolean isAllowedToPickUp(Player picker)
 	{
 		return picker != null && !Objects.equal(gameProfile, picker.getGameProfile());
 	}
 
 	@Override
-	public void deserializeAdditional(CompoundNBT nbt)
+	public void deserializeAdditional(CompoundTag nbt)
 	{
-		gameProfile = new GameProfile(nbt.getUniqueId("UUID"), nbt.getString("Name"));
+		gameProfile = new GameProfile(nbt.getUUID("UUID"), nbt.getString("Name"));
 	}
 
 	@Override
-	public CompoundNBT serializeAdditional()
+	public CompoundTag serializeAdditional()
 	{
-		CompoundNBT nbt = new CompoundNBT();
-		nbt.putUniqueId("UUID", gameProfile.getId());
+		CompoundTag nbt = new CompoundTag();
+		nbt.putUUID("UUID", gameProfile.getId());
 		nbt.putString("Name", gameProfile.getName());
 		return nbt;
 	}

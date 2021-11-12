@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.UUID;
 
 import de.budschie.bmorph.morph.MorphItem;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 
 public abstract class AbstractEventAbility extends Ability 
@@ -18,15 +18,15 @@ public abstract class AbstractEventAbility extends Ability
 	}
 	
 	@Override
-	public void enableAbility(PlayerEntity player, MorphItem enabledItem)
+	public void enableAbility(Player player, MorphItem enabledItem)
 	{
-		trackedPlayers.add(player.getUniqueID());
+		trackedPlayers.add(player.getUUID());
 	}
 	
 	@Override
-	public void disableAbility(PlayerEntity player, MorphItem disabledItem)
+	public void disableAbility(Player player, MorphItem disabledItem)
 	{
-		trackedPlayers.remove(player.getUniqueID());
+		trackedPlayers.remove(player.getUUID());
 	}
 	
 	@Override
@@ -43,6 +43,6 @@ public abstract class AbstractEventAbility extends Ability
 	
 	public boolean isTracked(Entity entity)
 	{
-		return trackedPlayers.contains(entity.getUniqueID());
+		return trackedPlayers.contains(entity.getUUID());
 	}
 }

@@ -9,24 +9,24 @@ import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.network.MorphRequestMorphIndexChange.RequestMorphIndexChangePacket;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
 
 public class MorphRequestMorphIndexChange implements ISimpleImplPacket<RequestMorphIndexChangePacket>
 {
 	@Override
-	public void encode(RequestMorphIndexChangePacket packet, PacketBuffer buffer)
+	public void encode(RequestMorphIndexChangePacket packet, FriendlyByteBuf buffer)
 	{
 		buffer.writeInt(packet.requestedIndex);
 	}
 
 	@Override
-	public RequestMorphIndexChangePacket decode(PacketBuffer buffer)
+	public RequestMorphIndexChangePacket decode(FriendlyByteBuf buffer)
 	{
 		return new RequestMorphIndexChangePacket(buffer.readInt());
 	}
@@ -48,7 +48,7 @@ public class MorphRequestMorphIndexChange implements ISimpleImplPacket<RequestMo
 				}
 				else if(packet.getRequestedIndex() >= resolved.getMorphList().getMorphArrayList().size() || packet.getRequestedIndex() < 0)
 				{
-					System.out.println("Player " + ctx.get().getSender().getName().getString() + " with UUID " + ctx.get().getSender().getUniqueID() + " has tried to send invalid data!");
+					System.out.println("Player " + ctx.get().getSender().getName().getString() + " with UUID " + ctx.get().getSender().getUUID() + " has tried to send invalid data!");
 				}
 				else
 				{
@@ -58,7 +58,7 @@ public class MorphRequestMorphIndexChange implements ISimpleImplPacket<RequestMo
 					if(shouldMorph)
 						MorphUtil.morphToServer(Optional.empty(), Optional.of(packet.getRequestedIndex()), ctx.get().getSender());
 					else
-						ctx.get().getSender().sendMessage(new StringTextComponent(TextFormatting.RED + "I'm sorry but you can't morph into " + morphToRS.toString() + " as this entity is currently blacklisted."), Util.DUMMY_UUID);
+						ctx.get().getSender().sendMessage(new TextComponent(ChatFormatting.RED + "I'm sorry but you can't morph into " + morphToRS.toString() + " as this entity is currently blacklisted."), Util.NIL_UUID);
 				}
 			}
 		});

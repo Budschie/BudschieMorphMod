@@ -21,7 +21,7 @@ public class NoKnockbackAbility extends AbstractEventAbility
 	@SubscribeEvent
 	public void onLivingKnockbackEvent(LivingKnockBackEvent event)
 	{
-		if(isTracked(event.getEntity()) && event.getEntityLiving().world.getRandom().nextFloat() < chance)
+		if(isTracked(event.getEntity()) && event.getEntityLiving().level.getRandom().nextFloat() < chance)
 				event.setCanceled(true);
 	}
 	

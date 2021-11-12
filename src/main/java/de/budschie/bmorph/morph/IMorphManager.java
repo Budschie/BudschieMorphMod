@@ -1,8 +1,8 @@
 package de.budschie.bmorph.morph;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.nbt.CompoundTag;
 
 public interface IMorphManager<T extends MorphItem, D>
 {
@@ -10,9 +10,9 @@ public interface IMorphManager<T extends MorphItem, D>
 	
 	T createMorphFromEntity(Entity entity);
 	
-	T createMorph(EntityType<?> entity, CompoundNBT nbt, D data, boolean forceNBT);
+	T createMorph(EntityType<?> entity, CompoundTag nbt, D data, boolean forceNBT);
 	
-	default T createMorph(EntityType<?> entity, CompoundNBT nbt, D data)
+	default T createMorph(EntityType<?> entity, CompoundTag nbt, D data)
 	{
 		return createMorph(entity, nbt, data, false);
 	}

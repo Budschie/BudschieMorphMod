@@ -13,6 +13,8 @@ import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityAttacher;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityHandler;
+import de.budschie.bmorph.capabilities.guardian.IGuardianBeamCapability;
+import de.budschie.bmorph.capabilities.pufferfish.IPufferfishCapability;
 import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityHandler;
 import de.budschie.bmorph.entity.MorphEntity;
 import de.budschie.bmorph.json_integration.AbilityConfigurationHandler;
@@ -25,16 +27,17 @@ import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.network.DisposePlayerMorphData;
 import de.budschie.bmorph.network.MainNetworkChannel;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -52,7 +55,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 @EventBusSubscriber
 public class Events
@@ -66,11 +69,19 @@ public class Events
 	public static final AbilityConfigurationHandler ABILITY_CONFIG_HANDLER = new AbilityConfigurationHandler();
 	
 	@SubscribeEvent
+	public static void onRegisterCapabilities(RegisterCapabilitiesEvent event)
+	{
+		event.register(IMorphCapability.class);
+		event.register(IPufferfishCapability.class);
+		event.register(IGuardianBeamCapability.class);
+	}
+	
+	@SubscribeEvent
 	public static void onPlayerJoined(PlayerLoggedInEvent event)
 	{	
-		if(!event.getEntity().world.isRemote)
+		if(!event.getEntity().level.isClientSide)
 		{
-			PlayerEntity player = event.getPlayer();
+			Player player = event.getPlayer();
 			
 			LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			
@@ -89,10 +100,10 @@ public class Events
 				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Post(player, cap.resolve().get(), cap.resolve().get().getCurrentMorph().orElse(null)));
 				
 				PufferfishCapabilityHandler.synchronizeWithClients(player);
-				PufferfishCapabilityHandler.synchronizeWithClient(player, (ServerPlayerEntity) player);
+				PufferfishCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) player);
 				
 				GuardianBeamCapabilityHandler.synchronizeWithClients(player);
-				GuardianBeamCapabilityHandler.synchronizeWithClient(player, (ServerPlayerEntity) player);
+				GuardianBeamCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) player);
 			}
 		}
 	}
@@ -121,13 +132,13 @@ public class Events
 	@SubscribeEvent
 	public static void onPlayerIsBeingLoaded(PlayerEvent.StartTracking event)
 	{
-		if(event.getTarget() instanceof PlayerEntity)
+		if(event.getTarget() instanceof Player)
 		{
-			PlayerEntity player = (PlayerEntity) event.getTarget();
-			MorphUtil.processCap(player, resolved -> resolved.syncWithClient(player, (ServerPlayerEntity) event.getPlayer()));
+			Player player = (Player) event.getTarget();
+			MorphUtil.processCap(player, resolved -> resolved.syncWithClient(player, (ServerPlayer) event.getPlayer()));
 			
-			PufferfishCapabilityHandler.synchronizeWithClient(player, (ServerPlayerEntity) event.getPlayer());
-			GuardianBeamCapabilityHandler.synchronizeWithClient(player, (ServerPlayerEntity) event.getPlayer());
+			PufferfishCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
+			GuardianBeamCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
 		}
 	}
 	
@@ -144,27 +155,27 @@ public class Events
 	{
 		event.getPlayer().getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).ifPresent(cap ->
 		{
-			if(cap.getAttackedEntity().isPresent() && cap.getAttackedEntity().get() == event.getTarget().getEntityId())
+			if(cap.getAttackedEntity().isPresent() && cap.getAttackedEntity().get() == event.getTarget().getId())
 			{
 				GuardianBeamCapabilityHandler.unattackServer(event.getPlayer());
 			}
 		});
 		
-		if(event.getTarget() instanceof PlayerEntity)
+		if(event.getTarget() instanceof Player)
 		{
 			// Tell the client to demorph the given player that is now not tracked.
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()), new DisposePlayerMorphData.DisposePlayerMorphDataPacket(event.getTarget().getUniqueID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getPlayer()), new DisposePlayerMorphData.DisposePlayerMorphDataPacket(event.getTarget().getUUID()));
 		}
 	}
 	
 	@SubscribeEvent
 	public static void onPlayerKilledLivingEntity(LivingDeathEvent event)
 	{		
-		if(!event.getEntity().world.isRemote && ServerSetup.server.getGameRules().getBoolean(BMorphMod.DO_MORPH_DROPS))
+		if(!event.getEntity().level.isClientSide && ServerSetup.server.getGameRules().getBoolean(BMorphMod.DO_MORPH_DROPS))
 		{
-			if(event.getSource().getTrueSource() instanceof PlayerEntity)
+			if(event.getSource().getEntity() instanceof Player)
 			{
-				PlayerEntity player = (PlayerEntity) event.getSource().getTrueSource();
+				Player player = (Player) event.getSource().getEntity();
 				
 				if(!(player instanceof FakePlayer))
 				{
@@ -181,9 +192,9 @@ public class Events
 							
 							if(!resolved.getMorphList().contains(morphItem) && shouldMorph)
 							{
-								MorphEntity morphEntity = new MorphEntity(event.getEntity().world, morphItem);
-								morphEntity.setPosition(event.getEntity().getPosX(), event.getEntity().getPosY(), event.getEntity().getPosZ());
-								event.getEntity().world.addEntity(morphEntity);
+								MorphEntity morphEntity = new MorphEntity(event.getEntity().level, morphItem);
+								morphEntity.setPos(event.getEntity().getX(), event.getEntity().getY(), event.getEntity().getZ());
+								event.getEntity().level.addFreshEntity(morphEntity);
 							}
 						}
 					}
@@ -195,7 +206,7 @@ public class Events
 	@SubscribeEvent
 	public static void onPlayerChangedDimension(PlayerChangedDimensionEvent event)
 	{
-		if(!event.getEntity().world.isRemote)
+		if(!event.getEntity().level.isClientSide)
 		{
 			MorphUtil.processCap(event.getPlayer(), resolved ->
 			{
@@ -235,7 +246,7 @@ public class Events
 	@SubscribeEvent
 	public static void onPlayerRespawnedEvent(PlayerRespawnEvent event)
 	{
-		if(!event.getPlayer().world.isRemote && ServerSetup.server.getGameRules().getBoolean(BMorphMod.KEEP_MORPH_INVENTORY))
+		if(!event.getPlayer().level.isClientSide && ServerSetup.server.getGameRules().getBoolean(BMorphMod.KEEP_MORPH_INVENTORY))
 		{
 			LazyOptional<IMorphCapability> cap = event.getPlayer().getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			
@@ -253,9 +264,9 @@ public class Events
 	@SubscribeEvent
 	public static void onPlayerDeathEvent(LivingDeathEvent event)
 	{
-		if(event.getEntityLiving() instanceof PlayerEntity && !event.getEntity().world.isRemote)
+		if(event.getEntityLiving() instanceof Player && !event.getEntity().level.isClientSide)
 		{
-			PlayerEntity player = (PlayerEntity) event.getEntityLiving();
+			Player player = (Player) event.getEntityLiving();
 			
 			LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			
@@ -269,9 +280,9 @@ public class Events
 				{
 					for(MorphItem item : resolved.getMorphList().getMorphArrayList())
 					{
-						MorphEntity morphEntity = new MorphEntity(player.world, item);
-						morphEntity.setPosition(player.getPosX(), player.getPosY(), player.getPosZ());
-						player.world.addEntity(morphEntity);
+						MorphEntity morphEntity = new MorphEntity(player.level, item);
+						morphEntity.setPos(player.getX(), player.getY(), player.getZ());
+						player.level.addFreshEntity(morphEntity);
 					}
 				}
 			}
@@ -281,9 +292,9 @@ public class Events
 	@SubscribeEvent
 	public static void onPlayerTakingDamage(LivingDamageEvent event)
 	{
-		if(event.getEntityLiving() instanceof PlayerEntity)
+		if(event.getEntityLiving() instanceof Player)
 		{
-			PlayerEntity player = (PlayerEntity)event.getEntityLiving();
+			Player player = (Player)event.getEntityLiving();
 			
 			LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			
@@ -293,9 +304,9 @@ public class Events
 			}
 		}
 		// Check if living is a Mob and therefore "evil"
-		else if(event.getSource().getTrueSource() instanceof PlayerEntity && event.getEntityLiving() instanceof IMob && !event.getEntity().world.isRemote)
+		else if(event.getSource().getEntity() instanceof Player && event.getEntityLiving() instanceof Enemy && !event.getEntity().level.isClientSide)
 		{
-			PlayerEntity source = (PlayerEntity) event.getSource().getTrueSource();
+			Player source = (Player) event.getSource().getEntity();
 			
 			LazyOptional<IMorphCapability> cap = source.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			aggro(cap.resolve().get(), ServerSetup.server.getGameRules().getInt(BMorphMod.MORPH_AGGRO_DURATION));
@@ -327,28 +338,28 @@ public class Events
 	@SubscribeEvent
 	public static void onMorphedClient(PlayerMorphEvent.Client.Post event)
 	{
-		event.getPlayer().recalculateSize();
+		event.getPlayer().refreshDimensions();
 	}
 	
 	@SubscribeEvent
 	public static void onMorphedServer(PlayerMorphEvent.Server.Post event)
 	{
-		event.getPlayer().recalculateSize();
+		event.getPlayer().refreshDimensions();
 	}
 	
 	private static void aggro(IMorphCapability capability, int aggroDuration)
 	{
-		capability.setLastAggroTimestamp(ServerSetup.server.getTickCounter());
+		capability.setLastAggroTimestamp(ServerSetup.server.getTickCount());
 		capability.setLastAggroDuration(aggroDuration);
 	}
 	
 	@SubscribeEvent
 	public static void onTargetBeingSet(LivingSetAttackTargetEvent event)
 	{
-		if(event.getEntityLiving() instanceof MobEntity && event.getTarget() instanceof PlayerEntity && event.getTarget() != event.getEntityLiving().getRevengeTarget())
+		if(event.getEntityLiving() instanceof Mob && event.getTarget() instanceof Player && event.getTarget() != event.getEntityLiving().getLastHurtByMob())
 		{
-			PlayerEntity player = (PlayerEntity) event.getTarget();
-			MobEntity aggressor = (MobEntity) event.getEntityLiving();
+			Player player = (Player) event.getTarget();
+			Mob aggressor = (Mob) event.getEntityLiving();
 			
 			LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			
@@ -358,8 +369,8 @@ public class Events
 				
 				if(resolved.getCurrentMorph().isPresent())
 				{
-					if(!resolved.shouldMobsAttack() && (ServerSetup.server.getTickCounter() - resolved.getLastAggroTimestamp()) > resolved.getLastAggroDuration())
-						aggressor.setAttackTarget(null);
+					if(!resolved.shouldMobsAttack() && (ServerSetup.server.getTickCount() - resolved.getLastAggroTimestamp()) > resolved.getLastAggroDuration())
+						aggressor.setTarget(null);
 					else
 					{
 						aggro(resolved, ServerSetup.server.getGameRules().getInt(BMorphMod.MORPH_AGGRO_DURATION));
@@ -375,9 +386,9 @@ public class Events
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public static void onCalculatingAABB(EntityEvent.Size event)
 	{
-		if(event.getEntity() instanceof PlayerEntity)
+		if(event.getEntity() instanceof Player)
 		{
-			PlayerEntity player = (PlayerEntity) event.getEntity();
+			Player player = (Player) event.getEntity();
 			LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			
 			if(cap.isPresent())
@@ -389,11 +400,11 @@ public class Events
 				{					
 					try
 					{
-						Entity createdEntity = item.createEntity(event.getEntity().world);
+						Entity createdEntity = item.createEntity(event.getEntity().level);
 						createdEntity.setPose(event.getPose());
 						
 						// We do this as we apply our own sneaking logic as I couldn't figure out how to get the multiplier for the eye height... F in the chat plz
-						EntitySize newSize = createdEntity.getSize(Pose.STANDING);
+						EntityDimensions newSize = createdEntity.getDimensions(Pose.STANDING);
 						
 						if(ShrinkAPIInteractor.getInteractor().isShrunk(player))
 						{
@@ -412,12 +423,12 @@ public class Events
 					{
 						LOGGER.catching(ex);
 						
-						if(!player.world.isRemote)
+						if(!player.level.isClientSide)
 							MorphUtil.morphToServer(Optional.empty(), Optional.empty(), player);
 						else
 						{
 							resolved.demorph();
-							player.sendMessage(new StringTextComponent(TextFormatting.RED + "Couldn't morph to " + item.getEntityType().getRegistryName().toString() + ". This is a compatability issue. If possible, report this to the mod author on GitHub."), new UUID(0, 0));
+							player.sendMessage(new TextComponent(ChatFormatting.RED + "Couldn't morph to " + item.getEntityType().getRegistryName().toString() + ". This is a compatability issue. If possible, report this to the mod author on GitHub."), new UUID(0, 0));
 						}
 					}
 				});

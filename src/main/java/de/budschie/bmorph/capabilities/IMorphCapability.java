@@ -9,9 +9,9 @@ import de.budschie.bmorph.morph.FavouriteList;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
 import de.budschie.bmorph.morph.functionality.Ability;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.NetworkManager;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.Connection;
 
 public interface IMorphCapability
 {
@@ -43,7 +43,7 @@ public interface IMorphCapability
 	**/
 	public void demorph();
 	
-	public void applyHealthOnPlayer(PlayerEntity player);
+	public void applyHealthOnPlayer(Player player);
 	
 	/**
 	 * By calling this method, you sync the capability data with every player.
@@ -52,20 +52,20 @@ public interface IMorphCapability
 	 * {@link IMorphCapability#syncMorphChange(PlayerEntity)} to do this.
 	 **/
 	@Deprecated
-	public void syncWithClients(PlayerEntity player);
+	public void syncWithClients(Player player);
 	
 	/** This method is used to synchronize this capability with a specific target. **/
-	public void syncWithClient(PlayerEntity player, ServerPlayerEntity syncTo);
+	public void syncWithClient(Player player, ServerPlayer syncTo);
 	
 	/** This method is much like the method described above, just with an network manager as a target instead of a player as a target. **/
-	public void syncWithConnection(PlayerEntity player, NetworkManager connection);
+	public void syncWithConnection(Player player, Connection connection);
 	
 	/** This method synchronizes a morph change to all players. **/
-	public void syncMorphChange(PlayerEntity player);
+	public void syncMorphChange(Player player);
 	/** This method synchronizes the acquisition of a morph to all players. **/
-	public void syncMorphAcquisition(PlayerEntity player, MorphItem item);
+	public void syncMorphAcquisition(Player player, MorphItem item);
 	/** This method synchronizes the removal of a morph to all players. **/
-	public void syncMorphRemoval(PlayerEntity player, int index);
+	public void syncMorphRemoval(Player player, int index);
 	
 	/** Returns the value of the flag mentioned in {@link IMorphCapability#setMobAttack(boolean)}. **/
 	public boolean shouldMobsAttack();
@@ -81,12 +81,12 @@ public interface IMorphCapability
 	public void setCurrentAbilities(List<Ability> abilities);
 	
 	/** This applies abilities, meaning that we iterate over the list of abilities and call the apply method on them. **/
-	public void applyAbilities(PlayerEntity player);
+	public void applyAbilities(Player player);
 	/** This method deapplies all abilities by once again iterating over every old ability and deapplying it. **/
-	public void deapplyAbilities(PlayerEntity player);
+	public void deapplyAbilities(Player player);
 	
 	/** This will iterate over every ability and signal them that the button to use an ability has been pressed. **/
-	public void useAbility(PlayerEntity player);
+	public void useAbility(Player player);
 	
 	// Aggro timestamps are measured in ints. Aggro timestamp => not saved, aggro duration => saved (indicates how long mobs will be aggro)
 	public int getLastAggroTimestamp();

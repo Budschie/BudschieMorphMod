@@ -15,13 +15,13 @@ import de.budschie.bmorph.network.MorphAddedSynchronizer;
 import de.budschie.bmorph.network.MorphCapabilityFullSynchronizer;
 import de.budschie.bmorph.network.MorphChangedSynchronizer;
 import de.budschie.bmorph.network.MorphRemovedSynchronizer.MorphRemovedPacket;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.NetworkManager;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.network.Connection;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class DefaultMorphCapability implements IMorphCapability
 {
@@ -39,63 +39,63 @@ public class DefaultMorphCapability implements IMorphCapability
 	List<Ability> currentAbilities = new ArrayList<>();
 	
 	@Override
-	public void syncWithClients(PlayerEntity player)
+	public void syncWithClients(Player player)
 	{
-		if(player.world.isRemote)
+		if(player.level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, favouriteList, serializeAbilities(), player.getUniqueID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, favouriteList, serializeAbilities(), player.getUUID()));
 		}
 	}
 	
 	@Override
-	public void syncWithClient(PlayerEntity player, ServerPlayerEntity syncTo)
+	public void syncWithClient(Player player, ServerPlayer syncTo)
 	{
-		if(player.world.isRemote)
+		if(player.level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTo), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, favouriteList, serializeAbilities(), player.getUniqueID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTo), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, favouriteList, serializeAbilities(), player.getUUID()));
 		}
 	}
 	
 	@Override
-	public void syncWithConnection(PlayerEntity player, NetworkManager connection)
+	public void syncWithConnection(Player player, Connection connection)
 	{
-		if(player.world.isRemote)
+		if(player.level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.NMLIST.with(() -> Lists.newArrayList(connection)), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, favouriteList, serializeAbilities(), player.getUniqueID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.NMLIST.with(() -> Lists.newArrayList(connection)), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, favouriteList, serializeAbilities(), player.getUUID()));
 		}
 	}
 	
 	@Override
-	public void syncMorphChange(PlayerEntity player)
+	public void syncMorphChange(Player player)
 	{
-		if(player.world.isRemote)
+		if(player.level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphChangedSynchronizer.MorphChangedPacket(player.getUniqueID(), currentMorphIndex, morph, serializeAbilities()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphChangedSynchronizer.MorphChangedPacket(player.getUUID(), currentMorphIndex, morph, serializeAbilities()));
 	}
 
 	@Override
-	public void syncMorphAcquisition(PlayerEntity player, MorphItem item)
+	public void syncMorphAcquisition(Player player, MorphItem item)
 	{
-		if(player.world.isRemote)
+		if(player.level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphAddedSynchronizer.MorphAddedPacket(player.getUniqueID(), item));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphAddedSynchronizer.MorphAddedPacket(player.getUUID(), item));
 	}
 
 	@Override
-	public void syncMorphRemoval(PlayerEntity player, int index)
+	public void syncMorphRemoval(Player player, int index)
 	{
-		if(player.world.isRemote)
+		if(player.level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphRemovedPacket(player.getUniqueID(), index));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphRemovedPacket(player.getUUID(), index));
 	}
 	
 	private ArrayList<String> serializeAbilities()
@@ -144,7 +144,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	}
 
 	@Override
-	public void applyHealthOnPlayer(PlayerEntity player)
+	public void applyHealthOnPlayer(Player player)
 	{
 		// Not really implemented yet...
 		float playerHealthPercentage = player.getHealth() / player.getMaxHealth();
@@ -157,7 +157,7 @@ public class DefaultMorphCapability implements IMorphCapability
 		else
 		{
 			// xD why is this a legal identifier
-			Entity thisisnotveryperformantoranythinglikethisbutidontcarealsothisnameisverystupidsoidkmaybeishouldhchangethislaterbutontheotherhandthisisalsobtwyouhavejustfoundaneasteregginmycode = getCurrentMorph().get().createEntity(player.world);
+			Entity thisisnotveryperformantoranythinglikethisbutidontcarealsothisnameisverystupidsoidkmaybeishouldhchangethislaterbutontheotherhandthisisalsobtwyouhavejustfoundaneasteregginmycode = getCurrentMorph().get().createEntity(player.level);
 			
 			if(thisisnotveryperformantoranythinglikethisbutidontcarealsothisnameisverystupidsoidkmaybeishouldhchangethislaterbutontheotherhandthisisalsobtwyouhavejustfoundaneasteregginmycode instanceof LivingEntity)
 			{
@@ -236,21 +236,21 @@ public class DefaultMorphCapability implements IMorphCapability
 	}
 
 	@Override
-	public void applyAbilities(PlayerEntity player)
+	public void applyAbilities(Player player)
 	{
 		if(getCurrentAbilities() != null && getCurrentMorph().isPresent())
 			getCurrentAbilities().forEach(ability -> ability.enableAbility(player, getCurrentMorph().get()));
 	}
 
 	@Override
-	public void deapplyAbilities(PlayerEntity player)
+	public void deapplyAbilities(Player player)
 	{
 		if(getCurrentAbilities() != null)
 			getCurrentAbilities().forEach(ability -> ability.disableAbility(player, getCurrentMorph().get()));
 	}
 
 	@Override
-	public void useAbility(PlayerEntity player)
+	public void useAbility(Player player)
 	{
 		if(getCurrentAbilities() != null)
 			getCurrentAbilities().forEach(ability -> ability.onUsedAbility(player, getCurrentMorph().get()));

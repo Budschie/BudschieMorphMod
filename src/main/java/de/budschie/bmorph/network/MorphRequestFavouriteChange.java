@@ -6,21 +6,21 @@ import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.morph.FavouriteList;
 import de.budschie.bmorph.network.MorphRequestFavouriteChange.MorphRequestFavouriteChangePacket;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
 
 public class MorphRequestFavouriteChange implements ISimpleImplPacket<MorphRequestFavouriteChangePacket>
 {
 	@Override
-	public void encode(MorphRequestFavouriteChangePacket packet, PacketBuffer buffer)
+	public void encode(MorphRequestFavouriteChangePacket packet, FriendlyByteBuf buffer)
 	{
 		buffer.writeBoolean(packet.shouldAdd());
 		buffer.writeInt(packet.getIndexInMorphArray());
 	}
 
 	@Override
-	public MorphRequestFavouriteChangePacket decode(PacketBuffer buffer)
+	public MorphRequestFavouriteChangePacket decode(FriendlyByteBuf buffer)
 	{
 		return new MorphRequestFavouriteChangePacket(buffer.readBoolean(), buffer.readInt());
 	}
@@ -37,7 +37,7 @@ public class MorphRequestFavouriteChange implements ISimpleImplPacket<MorphReque
 				IMorphCapability resolved = cap.resolve().get();
 								
 				if(resolved.getMorphList().getMorphArrayList().size() < packet.getIndexInMorphArray() || packet.getIndexInMorphArray() < 0)
-					System.out.println("Player " + ctx.get().getSender().getName().getString() + " with UUID " + ctx.get().getSender().getUniqueID() + " has tried to cause an ArrayIndexOutOfBoundsException! Shame on you!");
+					System.out.println("Player " + ctx.get().getSender().getName().getString() + " with UUID " + ctx.get().getSender().getUUID() + " has tried to cause an ArrayIndexOutOfBoundsException! Shame on you!");
 				else
 				{
 					FavouriteList favouriteList = resolved.getFavouriteList();

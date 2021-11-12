@@ -19,7 +19,7 @@ public class WaterBreathingAbility extends AbstractEventAbility
 		{
 			if(isTracked(event.player) && event.player.isInWater())
 			{
-				event.player.setAir(14 * 20);
+				event.player.setAirSupply(14 * 20);
 			}
 		}
 	}

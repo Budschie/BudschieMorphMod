@@ -6,9 +6,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
@@ -39,20 +39,20 @@ public class AttackYeetAbility extends AbstractEventAbility
 	@SubscribeEvent
 	public void onPlayerAttack(LivingDamageEvent event)
 	{		
-		if (event.getSource() != null && event.getSource().getTrueSource() instanceof PlayerEntity && !(event.getEntityLiving() instanceof PlayerEntity))
+		if (event.getSource() != null && event.getSource().getEntity() instanceof Player && !(event.getEntityLiving() instanceof Player))
 		{
-			PlayerEntity attacker = (PlayerEntity) event.getSource().getTrueSource();
+			Player attacker = (Player) event.getSource().getEntity();
 
-			if (trackedPlayers.contains(attacker.getUniqueID()))
+			if (trackedPlayers.contains(attacker.getUUID()))
 			{
 				while (lock);
 				lock = true;
 				
 				delayedAttacks.add(() ->
 				{
-					event.getEntityLiving().setMotion(event.getEntityLiving().getMotion().add(0, yeetAmount, 0));
-					event.getEntityLiving().world.playSound(null, attacker.getPosition(),
-							SoundEvents.ENTITY_IRON_GOLEM_ATTACK, SoundCategory.MASTER, 10, 1);
+					event.getEntityLiving().setDeltaMovement(event.getEntityLiving().getDeltaMovement().add(0, yeetAmount, 0));
+					event.getEntityLiving().level.playSound(null, attacker.blockPosition(),
+							SoundEvents.IRON_GOLEM_ATTACK, SoundSource.MASTER, 10, 1);
 				});
 
 				lock = false;

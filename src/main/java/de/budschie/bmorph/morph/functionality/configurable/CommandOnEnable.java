@@ -7,7 +7,7 @@ import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.codec_addition.CommandProvider;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 public class CommandOnEnable extends Ability
 {
@@ -22,9 +22,9 @@ public class CommandOnEnable extends Ability
 	}
 	
 	@Override
-	public void enableAbility(PlayerEntity player, MorphItem disabledItem)
+	public void enableAbility(Player player, MorphItem disabledItem)
 	{
-		if(!player.world.isRemote)
+		if(!player.level.isClientSide)
 			commandProvider.executeAsPlayer(player);
 	}
 	

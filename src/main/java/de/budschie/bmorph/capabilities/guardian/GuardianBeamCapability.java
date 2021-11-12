@@ -3,7 +3,7 @@ package de.budschie.bmorph.capabilities.guardian;
 import java.util.Optional;
 import java.util.UUID;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 
 public class GuardianBeamCapability implements IGuardianBeamCapability
 {
@@ -39,8 +39,8 @@ public class GuardianBeamCapability implements IGuardianBeamCapability
 	@Override
 	public void attackServer(Optional<Entity> entity, int maxAttackDuration)
 	{
-		setAttackedEntityServer(entity.map(entityInstance -> entityInstance.getUniqueID()));
-		attack(entity.map(entityInstance -> entityInstance.getEntityId()), maxAttackDuration);
+		setAttackedEntityServer(entity.map(entityInstance -> entityInstance.getUUID()));
+		attack(entity.map(entityInstance -> entityInstance.getId()), maxAttackDuration);
 	}
 
 	@Override

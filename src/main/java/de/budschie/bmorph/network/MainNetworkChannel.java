@@ -11,9 +11,9 @@ import de.budschie.bmorph.network.MorphRequestFavouriteChange.MorphRequestFavour
 import de.budschie.bmorph.network.MorphRequestMorphIndexChange.RequestMorphIndexChangePacket;
 import de.budschie.bmorph.network.PufferfishPuff.PufferfishPuffPacket;
 import de.budschie.bmorph.network.SquidBoost.SquidBoostPacket;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fmllegacy.network.NetworkRegistry;
+import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 
 public class MainNetworkChannel
 {

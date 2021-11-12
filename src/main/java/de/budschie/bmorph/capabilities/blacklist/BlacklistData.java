@@ -2,8 +2,8 @@ package de.budschie.bmorph.capabilities.blacklist;
 
 import java.util.HashSet;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 
 public class BlacklistData extends WorldConfigHandler
 {
@@ -36,9 +36,9 @@ public class BlacklistData extends WorldConfigHandler
 	}
 
 	@Override
-	public CompoundNBT write()
+	public CompoundTag write()
 	{
-		CompoundNBT tag = new CompoundNBT();
+		CompoundTag tag = new CompoundTag();
 		
 		HashSet<ResourceLocation> entries = getBlacklist();
 		
@@ -54,7 +54,7 @@ public class BlacklistData extends WorldConfigHandler
 	}
 
 	@Override
-	public void read(CompoundNBT tag)
+	public void read(CompoundTag tag)
 	{		
 		int size = tag.getInt("size");
 		

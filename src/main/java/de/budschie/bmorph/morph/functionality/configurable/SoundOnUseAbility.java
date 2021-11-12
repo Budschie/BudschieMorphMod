@@ -6,7 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.StunAbility;
 import de.budschie.bmorph.util.SoundInstance;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 public class SoundOnUseAbility extends StunAbility
 {
@@ -30,11 +30,11 @@ public class SoundOnUseAbility extends StunAbility
 	}
 	
 	@Override
-	public void onUsedAbility(PlayerEntity player, MorphItem currentMorph)
+	public void onUsedAbility(Player player, MorphItem currentMorph)
 	{
-		if(!isCurrentlyStunned(player.getUniqueID()))
+		if(!isCurrentlyStunned(player.getUUID()))
 		{
-			stun(player.getUniqueID());
+			stun(player.getUUID());
 			soundInstance.playSoundAt(player);
 		}
 	}

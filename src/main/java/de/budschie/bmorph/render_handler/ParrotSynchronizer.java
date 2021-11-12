@@ -1,20 +1,20 @@
 package de.budschie.bmorph.render_handler;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.ParrotEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.animal.Parrot;
+import net.minecraft.world.entity.player.Player;
 
 public class ParrotSynchronizer implements IEntitySynchronizer
 {
 	@Override
 	public boolean appliesToMorph(Entity morphEntity)
 	{
-		return morphEntity instanceof ParrotEntity;
+		return morphEntity instanceof Parrot;
 	}
 
 	@Override
-	public void applyToMorphEntity(Entity morphEntity, PlayerEntity player)
+	public void applyToMorphEntity(Entity morphEntity, Player player)
 	{
-		ParrotEntity parrot = (ParrotEntity) morphEntity;
+		Parrot parrot = (Parrot) morphEntity;
 	}
 }

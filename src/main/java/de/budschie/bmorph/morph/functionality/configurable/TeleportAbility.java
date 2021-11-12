@@ -5,17 +5,17 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.StunAbility;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceContext.BlockMode;
-import net.minecraft.util.math.RayTraceContext.FluidMode;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.ClipContext.Block;
+import net.minecraft.world.level.ClipContext.Fluid;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.server.level.ServerLevel;
 
 public class TeleportAbility extends StunAbility
 {
@@ -28,29 +28,29 @@ public class TeleportAbility extends StunAbility
 	}
 	
 	@Override
-	public void onUsedAbility(PlayerEntity player, MorphItem currentMorph)
+	public void onUsedAbility(Player player, MorphItem currentMorph)
 	{
-		if(!isCurrentlyStunned(player.getUniqueID()))
+		if(!isCurrentlyStunned(player.getUUID()))
 		{
-			Vector3d from = player.getPositionVec().add(Vector3d.fromPitchYaw(player.getPitchYaw())).add(0, player.getEyeHeight(), 0);
-			Vector3d to = Vector3d.fromPitchYaw(player.getPitchYaw()).mul(50, 50, 50).add(from);
+			Vec3 from = player.position().add(Vec3.directionFromRotation(player.getRotationVector())).add(0, player.getEyeHeight(), 0);
+			Vec3 to = Vec3.directionFromRotation(player.getRotationVector()).multiply(50, 50, 50).add(from);
 			
-			RayTraceContext context = new RayTraceContext(from, to, BlockMode.VISUAL, FluidMode.SOURCE_ONLY, null);
+			ClipContext context = new ClipContext(from, to, Block.VISUAL, Fluid.SOURCE_ONLY, null);
 			
-			BlockRayTraceResult result = player.world.rayTraceBlocks(context);
+			BlockHitResult result = player.level.clip(context);
 			
 			// We are looking for a length of 25 (25^2=625)
-			if(result.getType() == RayTraceResult.Type.BLOCK)
+			if(result.getType() == HitResult.Type.BLOCK)
 			{
-				player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.NEUTRAL, 10, .7f);
-				((ServerWorld)player.world).spawnParticle(ParticleTypes.PORTAL, player.getPosX(), player.getPosY(), player.getPosZ(), 300, 1, 1, 1, 0);
-				player.teleportKeepLoaded(result.getHitVec().getX(), result.getHitVec().getY() + 1, result.getHitVec().getZ());
-				player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.NEUTRAL, 10, 2f);
+				player.level.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 10, .7f);
+				((ServerLevel)player.level).sendParticles(ParticleTypes.PORTAL, player.getX(), player.getY(), player.getZ(), 300, 1, 1, 1, 0);
+				player.teleportToWithTicket(result.getLocation().x(), result.getLocation().y() + 1, result.getLocation().z());
+				player.level.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 10, 2f);
 				
 				// Reset the fall distance to negate all fall damage
 				player.fallDistance = 0;
 				
-				stun(player.getUniqueID());
+				stun(player.getUUID());
 			}
 		}
 	}

@@ -10,47 +10,47 @@ import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import de.budschie.bmorph.morph.functionality.configurable.ConfigurableAbility;
 import de.budschie.bmorph.network.ConfiguredAbilitySynchronizer.ConfiguredAbilityPacket;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
 
 public class ConfiguredAbilitySynchronizer implements ISimpleImplPacket<ConfiguredAbilityPacket>
 {
 	@Override
-	public void encode(ConfiguredAbilityPacket packet, PacketBuffer buffer)
+	public void encode(ConfiguredAbilityPacket packet, FriendlyByteBuf buffer)
 	{
 		for(Ability ability : packet.getAbilities())
 		{
-			Optional<CompoundNBT> serialized = ability.getConfigurableAbility().serializeNBTIAmTooDumbForJava(ability);
+			Optional<CompoundTag> serialized = ability.getConfigurableAbility().serializeNBTIAmTooDumbForJava(ability);
 			
 			if(serialized.isPresent())
 			{
-				buffer.writeString(ability.getResourceLocation().toString());
-				buffer.writeString(ability.getConfigurableAbility().getRegistryName().toString());
-				buffer.writeCompoundTag(serialized.get());
+				buffer.writeUtf(ability.getResourceLocation().toString());
+				buffer.writeUtf(ability.getConfigurableAbility().getRegistryName().toString());
+				buffer.writeNbt(serialized.get());
 			}
 		}
 		
-		buffer.writeString("");
+		buffer.writeUtf("");
 	}
 
 	@Override
-	public ConfiguredAbilityPacket decode(PacketBuffer buffer)
+	public ConfiguredAbilityPacket decode(FriendlyByteBuf buffer)
 	{
-		ArrayList<Ability> abilities = new ArrayList<Ability>();
+		ArrayList<Ability> abilities = new ArrayList<>();
 		
 		readAbilityLoop:
 		while(true)
 		{
-			String abilityName = buffer.readString();
+			String abilityName = buffer.readUtf();
 			
 			if(abilityName.isEmpty())
 				break readAbilityLoop;
 			else
 			{
-				String configurableAbilityName = buffer.readString();
-				CompoundNBT nbt = buffer.readCompoundTag();
+				String configurableAbilityName = buffer.readUtf();
+				CompoundTag nbt = buffer.readNbt();
 				
 				ConfigurableAbility<?> configurableAbility = AbilityRegistry.REGISTRY.get().getValue(new ResourceLocation(configurableAbilityName));
 				

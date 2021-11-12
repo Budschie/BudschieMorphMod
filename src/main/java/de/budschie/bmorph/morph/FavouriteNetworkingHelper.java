@@ -8,7 +8,7 @@ import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.network.MorphRequestFavouriteChange.MorphRequestFavouriteChangePacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.LazyOptional;
 
 public class FavouriteNetworkingHelper
@@ -18,7 +18,7 @@ public class FavouriteNetworkingHelper
 	// DRY CODE
 	private static void internalAddFavouriteMorph(boolean add, int indexInMorphArray)
 	{
-		PlayerEntity player = Minecraft.getInstance().player;
+		Player player = Minecraft.getInstance().player;
 		
 		LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 		

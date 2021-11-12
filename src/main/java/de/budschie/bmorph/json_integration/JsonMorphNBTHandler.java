@@ -7,10 +7,10 @@ import org.apache.logging.log4j.Logger;
 
 import de.budschie.bmorph.morph.fallback.FallbackMorphItem;
 import de.budschie.bmorph.morph.fallback.IMorphNBTHandler;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.NumberNBT;
-import net.minecraft.nbt.StringNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NumericTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraftforge.common.util.Constants.NBT;
 
 public class JsonMorphNBTHandler implements IMorphNBTHandler
@@ -18,9 +18,9 @@ public class JsonMorphNBTHandler implements IMorphNBTHandler
 	private static final Logger LOGGER = LogManager.getLogger();
 	
 	private NBTPath[] trackedNbt;
-	private CompoundNBT defaultNbt;
+	private CompoundTag defaultNbt;
 	
-	public JsonMorphNBTHandler(CompoundNBT defaultNbt, NBTPath... trackedNbt)
+	public JsonMorphNBTHandler(CompoundTag defaultNbt, NBTPath... trackedNbt)
 	{
 		this.trackedNbt = trackedNbt;
 		this.defaultNbt = defaultNbt;
@@ -29,8 +29,8 @@ public class JsonMorphNBTHandler implements IMorphNBTHandler
 	@Override
 	public boolean areEquals(FallbackMorphItem item1, FallbackMorphItem item2)
 	{
-		CompoundNBT fallback1Serialized = item1.serializeAdditional();
-		CompoundNBT fallback2Serialized = item2.serializeAdditional();
+		CompoundTag fallback1Serialized = item1.serializeAdditional();
+		CompoundTag fallback2Serialized = item2.serializeAdditional();
 		
 		for(NBTPath path : trackedNbt)
 		{
@@ -45,7 +45,7 @@ public class JsonMorphNBTHandler implements IMorphNBTHandler
 	public int getHashCodeFor(FallbackMorphItem item)
 	{
 		int hashCode = item.getEntityType().getRegistryName().toString().hashCode();
-		CompoundNBT nbt = item.serializeAdditional();
+		CompoundTag nbt = item.serializeAdditional();
 		
 		// Generate a hash code for every nbt element 
 		for(NBTPath path : trackedNbt)
@@ -59,9 +59,9 @@ public class JsonMorphNBTHandler implements IMorphNBTHandler
 	}
 
 	@Override
-	public CompoundNBT applyDefaultNBTData(CompoundNBT in)
+	public CompoundTag applyDefaultNBTData(CompoundTag in)
 	{
-		CompoundNBT out = defaultNbt.copy();
+		CompoundTag out = defaultNbt.copy();
 		
 		// Copy every path from the in compound nbt to the out compound nbt
 		for(NBTPath nbtPath : trackedNbt)
@@ -70,7 +70,7 @@ public class JsonMorphNBTHandler implements IMorphNBTHandler
 		return out;
 	}
 	
-	public CompoundNBT getDefaultNbt()
+	public CompoundTag getDefaultNbt()
 	{
 		return defaultNbt;
 	}
@@ -80,33 +80,33 @@ public class JsonMorphNBTHandler implements IMorphNBTHandler
 		return trackedNbt;
 	}
 	
-	private static Object getNBTObject(INBT nbt)
+	private static Object getNBTObject(Tag nbt)
 	{
 		if(nbt == null)
 			return null;
 		
 		if(nbt.getId() == NBT.TAG_INT)
-			return Integer.valueOf(((NumberNBT)nbt).getInt());
+			return Integer.valueOf(((NumericTag)nbt).getAsInt());
 		else if(nbt.getId() == NBT.TAG_STRING)
-			return ((StringNBT)nbt).getString();
+			return ((StringTag)nbt).getAsString();
 		else if(nbt.getId() == NBT.TAG_BYTE)
-			return Byte.valueOf(((NumberNBT)nbt).getByte());
+			return Byte.valueOf(((NumericTag)nbt).getAsByte());
 		else if(nbt.getId() == NBT.TAG_LONG)
-			return Long.valueOf(((NumberNBT)nbt).getLong());
+			return Long.valueOf(((NumericTag)nbt).getAsLong());
 		else
 		{
 			LOGGER.debug("Encountered rare tag with no value handling. Converting tag to string...");
-			return nbt.getString();
+			return nbt.getAsString();
 		}
 	}
 	
-	private static boolean isINBTDataEqual(INBT nbt1, INBT nbt2)
+	private static boolean isINBTDataEqual(Tag nbt1, Tag nbt2)
 	{
 		Object nbtObject1 = getNBTObject(nbt1);
 		return nbtObject1 == null ? (nbt2 == null ? true : false) : nbtObject1.equals(getNBTObject(nbt2));
 	}
 	
-	private static Optional<Integer> getNBTHashCode(INBT nbt)
+	private static Optional<Integer> getNBTHashCode(Tag nbt)
 	{
 		Object nbtObject = getNBTObject(nbt);
 		return nbtObject == null ? Optional.empty() : Optional.of(nbtObject.hashCode());

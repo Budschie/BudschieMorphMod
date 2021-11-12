@@ -1,14 +1,16 @@
 package de.budschie.bmorph.capabilities;
 
 import de.budschie.bmorph.main.References;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import de.budschie.bmorph.main.ServerSetup;
+import de.budschie.bmorph.morph.MorphHandler;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -16,32 +18,25 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber
-public class MorphCapabilityAttacher implements ICapabilitySerializable<CompoundNBT>
+public class MorphCapabilityAttacher implements ICapabilitySerializable<CompoundTag>
 {
 	public static final ResourceLocation CAPABILITY_NAME = new ResourceLocation(References.MODID, "morph_cap");
 	
-	@CapabilityInject(IMorphCapability.class)
-	public static final Capability<IMorphCapability> MORPH_CAP = null;
+	public static final Capability<IMorphCapability> MORPH_CAP = CapabilityManager.get(new CapabilityToken<>(){});
 	
 	@SubscribeEvent
 	public static void onAttachCapsOnPlayer(AttachCapabilitiesEvent<Entity> event)
 	{
-		if(event.getObject() instanceof PlayerEntity)
+		if(event.getObject() instanceof Player)
 			event.addCapability(CAPABILITY_NAME, new MorphCapabilityAttacher());
 	}
 	
 	public MorphCapabilityAttacher()
 	{
-		if(MORPH_CAP == null)
-			throw new IllegalStateException("Why was the cap not injected?");
+		
 	}
 		
-	LazyOptional<IMorphCapability> cap = LazyOptional.of(MORPH_CAP::getDefaultInstance);
-	
-	public static void register()
-	{
-		CapabilityManager.INSTANCE.register(IMorphCapability.class, new MorphCapabilityStorage(), new MorphCapabilityFactory());
-	}
+	LazyOptional<IMorphCapability> cap = LazyOptional.of(() -> new DefaultMorphCapability());
 	
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side)
@@ -50,14 +45,50 @@ public class MorphCapabilityAttacher implements ICapabilitySerializable<Compound
 	}
 
 	@Override
-	public CompoundNBT serializeNBT()
+	public CompoundTag serializeNBT()
 	{
-		return (CompoundNBT) MORPH_CAP.getStorage().writeNBT(MORPH_CAP, cap.resolve().get(), null);
+		CompoundTag capTag = new CompoundTag();
+		
+		IMorphCapability instance = cap.resolve().get();
+		
+		if(instance.getCurrentMorphItem().isPresent())
+			capTag.put("currentMorphItem", instance.getCurrentMorphItem().get().serialize());
+		
+		if(instance.getCurrentMorphIndex().isPresent())
+			capTag.putInt("currentMorphIndex", instance.getCurrentMorphIndex().get());
+		
+		capTag.put("morphList", instance.getMorphList().serializeNBT());
+		
+		capTag.put("favouriteList", instance.getFavouriteList().serialize());
+		
+		capTag.putInt("aggroDuration", Math.max(0, instance.getLastAggroDuration() - (ServerSetup.server.getTickCount() - instance.getLastAggroTimestamp())));
+		
+		return capTag;
 	}
 
 	@Override
-	public void deserializeNBT(CompoundNBT nbt)
+	public void deserializeNBT(CompoundTag nbt)
 	{
-		MORPH_CAP.getStorage().readNBT(MORPH_CAP, cap.resolve().get(), null, nbt);
+		CompoundTag capTag = nbt;
+		
+		IMorphCapability instance = cap.resolve().get();
+		
+		boolean hasItem = capTag.contains("currentMorphItem");
+		boolean hasIndex = capTag.contains("currentMorphIndex");
+		
+		if(hasItem)
+		{
+			instance.setMorph(MorphHandler.deserializeMorphItem(capTag.getCompound("currentMorphItem")));
+		}
+		else if(hasIndex)
+		{
+			instance.setMorph(capTag.getInt("currentMorphIndex"));
+		}
+		
+		instance.getMorphList().deserializeNBT(capTag.getCompound("morphList"));
+		
+		instance.getFavouriteList().deserialize(capTag.getCompound("favouriteList"));
+		
+		instance.setLastAggroDuration(capTag.getInt("aggroDuration"));
 	}
 }

@@ -1,14 +1,14 @@
 package de.budschie.bmorph.capabilities.pufferfish;
 
 import de.budschie.bmorph.main.References;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -17,47 +17,45 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @EventBusSubscriber(bus = Bus.FORGE)
-public class PufferfishCapabilityAttacher implements ICapabilitySerializable<CompoundNBT>
+public class PufferfishCapabilityAttacher implements ICapabilitySerializable<CompoundTag>
 {
 	public static final ResourceLocation CAPABILITY_NAME = new ResourceLocation(References.MODID, "puffer_cap");
 	
-	@CapabilityInject(IPufferfishCapability.class)
-	public static final Capability<IPufferfishCapability> PUFFER_CAP = null;
+	public static final Capability<IPufferfishCapability> PUFFER_CAP = CapabilityManager.get(new CapabilityToken<>(){});
 	
-	private LazyOptional<IPufferfishCapability> capability = LazyOptional.of(PUFFER_CAP::getDefaultInstance);
+	private LazyOptional<IPufferfishCapability> capability = LazyOptional.of(() -> new PufferfishCapability());
 	
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side)
 	{
-		if(cap == PUFFER_CAP)
-		{
-			return this.capability.cast();
-		}
-		
-		return LazyOptional.empty();
+		return PUFFER_CAP.orEmpty(cap, capability);
 	}
 	
 	@SubscribeEvent
 	public static void onAttachCapsOnPlayer(AttachCapabilitiesEvent<Entity> event)
 	{
-		if(event.getObject() instanceof PlayerEntity)
+		if(event.getObject() instanceof Player)
 			event.addCapability(CAPABILITY_NAME, new PufferfishCapabilityAttacher());
 	}
-	
-	public static void register()
+
+	@Override
+	public CompoundTag serializeNBT()
 	{
-		CapabilityManager.INSTANCE.register(IPufferfishCapability.class, new PufferfishCapabilityStorage(), () -> new PufferfishCapability());
+		IPufferfishCapability instance = capability.resolve().get();
+		
+		CompoundTag nbt = new CompoundTag();
+		nbt.putInt("originalPuffTime", instance.getOriginalPuffTime());
+		nbt.putInt("puffTime", instance.getPuffTime());
+		
+		return nbt;
 	}
 
 	@Override
-	public CompoundNBT serializeNBT()
+	public void deserializeNBT(CompoundTag nbt)
 	{
-		return (CompoundNBT) PUFFER_CAP.getStorage().writeNBT(PUFFER_CAP, capability.resolve().get(), null);
-	}
-
-	@Override
-	public void deserializeNBT(CompoundNBT nbt)
-	{
-		PUFFER_CAP.getStorage().readNBT(PUFFER_CAP, capability.resolve().get(), null, nbt);
+		IPufferfishCapability instance = capability.resolve().get();
+		
+		instance.setOriginalPuffTime(nbt.getInt("originalPuffTime"));
+		instance.setPuffTime(nbt.getInt("puffTime"));
 	}
 }

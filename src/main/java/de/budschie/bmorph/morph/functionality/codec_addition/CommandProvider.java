@@ -3,8 +3,8 @@ package de.budschie.bmorph.morph.functionality.codec_addition;
 import java.util.function.Function;
 
 import de.budschie.bmorph.main.ServerSetup;
-import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.world.entity.player.Player;
 
 public class CommandProvider
 {
@@ -30,18 +30,18 @@ public class CommandProvider
 	}
 	
 	/** Executes the given command as the given command source. **/
-	public void executeAs(CommandSource commandSource)
+	public void executeAs(CommandSourceStack commandSource)
 	{
-		ServerSetup.server.getCommandManager().handleCommand(commandSource, command);
+		ServerSetup.server.getCommands().performCommand(commandSource, command);
 	}
 	
 	/** Executes the stored command as the given player. **/
-	public void executeAsPlayer(PlayerEntity player)
+	public void executeAsPlayer(Player player)
 	{
-		CommandSource source = this.selector.getCommandSource(player);
+		CommandSourceStack source = this.selector.getCommandSource(player);
 		
 		if(source != null)
-			executeAs(source.withPermissionLevel(ServerSetup.server.getOpPermissionLevel()).withFeedbackDisabled());
+			executeAs(source.withPermission(ServerSetup.server.getOperatorUserPermissionLevel()).withSuppressedOutput());
 	}
 	
 	public Selector getSelector()
@@ -61,18 +61,18 @@ public class CommandProvider
 	 **/
 	public static enum Selector
 	{
-		SELF(playerIn -> playerIn.getCommandSource()), 
-		REVENGE_TARGET(playerIn -> playerIn.getLastDamageSource() == null ? null : (playerIn.getLastDamageSource().getTrueSource() == null ? null : playerIn.getLastDamageSource().getTrueSource().getCommandSource())), 
-		LAST_ATTACKED(playerIn -> playerIn.getLastAttackedEntity() == null ? null : playerIn.getLastAttackedEntity().getCommandSource());
+		SELF(playerIn -> playerIn.createCommandSourceStack()), 
+		REVENGE_TARGET(playerIn -> playerIn.getLastDamageSource() == null ? null : (playerIn.getLastDamageSource().getEntity() == null ? null : playerIn.getLastDamageSource().getEntity().createCommandSourceStack())), 
+		LAST_ATTACKED(playerIn -> playerIn.getLastHurtMob() == null ? null : playerIn.getLastHurtMob().createCommandSourceStack());
 		
-		private Function<PlayerEntity, CommandSource> sourceFunction;
+		private Function<Player, CommandSourceStack> sourceFunction;
 		
-		private Selector(Function<PlayerEntity, CommandSource> sourceFunction)
+		private Selector(Function<Player, CommandSourceStack> sourceFunction)
 		{
 			this.sourceFunction = sourceFunction;
 		}
 		
-		public CommandSource getCommandSource(PlayerEntity playerIn)
+		public CommandSourceStack getCommandSource(Player playerIn)
 		{
 			return sourceFunction.apply(playerIn);
 		}

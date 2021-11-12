@@ -7,7 +7,7 @@ import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.StunAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.CommandProvider;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 public class CommandOnUseAbility extends StunAbility
 {
@@ -30,11 +30,11 @@ public class CommandOnUseAbility extends StunAbility
 	}
 
 	@Override
-	public void onUsedAbility(PlayerEntity player, MorphItem currentMorph)
+	public void onUsedAbility(Player player, MorphItem currentMorph)
 	{
-		if(!player.world.isRemote && !isCurrentlyStunned(player.getUniqueID()))
+		if(!player.level.isClientSide && !isCurrentlyStunned(player.getUUID()))
 		{
-			stun(player.getUniqueID());
+			stun(player.getUUID());
 			
 			this.commandProvider.executeAsPlayer(player);
 		}

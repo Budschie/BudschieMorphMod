@@ -5,11 +5,11 @@ import java.util.HashMap;
 import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.network.ConfiguredAbilitySynchronizer;
 import de.budschie.bmorph.network.MainNetworkChannel;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class DynamicAbilityRegistry
 {
@@ -56,7 +56,7 @@ public class DynamicAbilityRegistry
 			System.out.println("Skipping registry sync as world is local.");
 	}
 	
-	public void syncWithClient(ServerPlayerEntity player)
+	public void syncWithClient(ServerPlayer player)
 	{
 		if(!abilities.isEmpty() && !isLocalWorld())
 			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new ConfiguredAbilitySynchronizer.ConfiguredAbilityPacket(abilities.values()));

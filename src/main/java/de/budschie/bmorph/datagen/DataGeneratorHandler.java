@@ -7,12 +7,12 @@ import de.budschie.bmorph.datagen.nbt_handlers.NBTHandlerProvider;
 import de.budschie.bmorph.json_integration.JsonMorphNBTHandler;
 import de.budschie.bmorph.json_integration.NBTPath;
 import de.budschie.bmorph.main.References;
-import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 @EventBusSubscriber(bus = Bus.MOD, modid = References.MODID)
@@ -44,7 +44,7 @@ public class DataGeneratorHandler
 		
 		for(EntityType<?> entityType : entityTypes)
 		{
-			provider.addData(entityType, new JsonMorphNBTHandler(new CompoundNBT(), new NBTPath("VariantId")));
+			provider.addData(entityType, new JsonMorphNBTHandler(new CompoundTag(), new NBTPath("VariantId")));
 		}
 	}
 }

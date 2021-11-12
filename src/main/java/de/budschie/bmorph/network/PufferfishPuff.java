@@ -4,25 +4,25 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import de.budschie.bmorph.network.PufferfishPuff.PufferfishPuffPacket;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
 
 public class PufferfishPuff implements ISimpleImplPacket<PufferfishPuffPacket>
 {
 	@Override
-	public void encode(PufferfishPuffPacket packet, PacketBuffer buffer)
+	public void encode(PufferfishPuffPacket packet, FriendlyByteBuf buffer)
 	{
 		buffer.writeInt(packet.getOriginalDuration());
 		buffer.writeInt(packet.getDuration());
-		buffer.writeUniqueId(packet.getPlayer());
+		buffer.writeUUID(packet.getPlayer());
 	}
 
 	@Override
-	public PufferfishPuffPacket decode(PacketBuffer buffer)
+	public PufferfishPuffPacket decode(FriendlyByteBuf buffer)
 	{
-		return new PufferfishPuffPacket(buffer.readInt(), buffer.readInt(), buffer.readUniqueId());
+		return new PufferfishPuffPacket(buffer.readInt(), buffer.readInt(), buffer.readUUID());
 	}
 
 	@Override

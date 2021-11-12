@@ -4,45 +4,45 @@ import java.util.function.Predicate;
 
 import com.mojang.authlib.GameProfile;
 
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.player.PlayerModelPart;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.player.PlayerModelPart;
+import net.minecraft.resources.ResourceLocation;
 
-public class AdvancedAbstractClientPlayerEntity extends AbstractClientPlayerEntity
+public class AdvancedAbstractClientPlayerEntity extends AbstractClientPlayer
 {
-	public ResourceLocation skinResourceLocation = DefaultPlayerSkin.getDefaultSkin(getUniqueID());
+	public ResourceLocation skinResourceLocation = DefaultPlayerSkin.getDefaultSkin(getUUID());
 	public ResourceLocation elytraResourceLocation = null;
 	public ResourceLocation capeResourceLocation = null;
 	
 	private Predicate<PlayerModelPart> isWearing = null;
 	
-	public AdvancedAbstractClientPlayerEntity(ClientWorld world, GameProfile profile)
+	public AdvancedAbstractClientPlayerEntity(ClientLevel world, GameProfile profile)
 	{
 		super(world, profile);
 	}
 	
 	@Override
-	public ResourceLocation getLocationSkin()
+	public ResourceLocation getSkinTextureLocation()
 	{
 		return skinResourceLocation;
 	}
 	
 	@Override
-	public boolean hasPlayerInfo()
+	public boolean isCapeLoaded()
 	{
 		return capeResourceLocation != null;
 	}
 	
 	@Override
-	public boolean isPlayerInfoSet()
+	public boolean isElytraLoaded()
 	{
 		return elytraResourceLocation != null;
 	}
 	
 	@Override
-	public boolean isWearing(PlayerModelPart part)
+	public boolean isModelPartShown(PlayerModelPart part)
 	{
 		return this.isWearing == null ? true : isWearing.test(part);
 	}
@@ -53,13 +53,13 @@ public class AdvancedAbstractClientPlayerEntity extends AbstractClientPlayerEnti
 	}
 	
 	@Override
-	public ResourceLocation getLocationElytra()
+	public ResourceLocation getElytraTextureLocation()
 	{
 		return elytraResourceLocation;
 	}
 	
 	@Override
-	public ResourceLocation getLocationCape()
+	public ResourceLocation getCloakTextureLocation()
 	{
 		return capeResourceLocation;
 	}

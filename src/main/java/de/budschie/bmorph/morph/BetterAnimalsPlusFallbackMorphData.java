@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.util.Strings;
 
-import net.minecraft.entity.EntityType;
+import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class BetterAnimalsPlusFallbackMorphData implements Runnable

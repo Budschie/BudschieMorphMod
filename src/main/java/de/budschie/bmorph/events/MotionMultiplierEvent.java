@@ -1,22 +1,22 @@
 package de.budschie.bmorph.events;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.Event;
 
 public class MotionMultiplierEvent extends Event
 {
-	private final Vector3d oldMotionMultiplier;
-	private Vector3d newMotionMultiplier;
+	private final Vec3 oldMotionMultiplier;
+	private Vec3 newMotionMultiplier;
 	private final Entity entity;
 	private final BlockState blockState;
-	private final World world;
+	private final Level world;
 	private boolean dirty = false;
 	
 	/** This event is being fired when {@link Entity#setMotionMultiplier(net.minecraft.block.BlockState, Vector3d)} is called. **/
-	public MotionMultiplierEvent(Vector3d oldMotionMultiplier, Entity entity, BlockState blockState, World world)
+	public MotionMultiplierEvent(Vec3 oldMotionMultiplier, Entity entity, BlockState blockState, Level world)
 	{
 		this.oldMotionMultiplier = oldMotionMultiplier;
 		this.newMotionMultiplier = oldMotionMultiplier;
@@ -42,7 +42,7 @@ public class MotionMultiplierEvent extends Event
 	}
 	
 	/** Returns the world in which the collision happened. **/
-	public World getWorld()
+	public Level getWorld()
 	{
 		return world;
 	}
@@ -51,7 +51,7 @@ public class MotionMultiplierEvent extends Event
 	 * Returns the original motion multiplier that would be used if nothing would be
 	 * modified.
 	 **/
-	public final Vector3d getOriginalMotionMultiplier()
+	public final Vec3 getOriginalMotionMultiplier()
 	{
 		return oldMotionMultiplier;
 	}
@@ -60,13 +60,13 @@ public class MotionMultiplierEvent extends Event
 	 * Returns the currently used motion multiplier. Note that this is only a copy, use
 	 * {@link MotionMultiplierEvent#setNewMotionMultiplier(Vector3d)} to set the new web speed.
 	 **/
-	public Vector3d getNewMotionMultiplier()
+	public Vec3 getNewMotionMultiplier()
 	{
-		return new Vector3d(newMotionMultiplier.x, newMotionMultiplier.y, newMotionMultiplier.z);
+		return new Vec3(newMotionMultiplier.x, newMotionMultiplier.y, newMotionMultiplier.z);
 	}
 	
 	/** Sets the new motion multiplier and marks this motion multiplier event as dirty. **/
-	public void setNewMotionMultiplier(Vector3d newWebSpeed)
+	public void setNewMotionMultiplier(Vec3 newWebSpeed)
 	{
 		this.newMotionMultiplier = newWebSpeed;
 		this.dirty = true;

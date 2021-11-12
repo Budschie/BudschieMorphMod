@@ -10,32 +10,32 @@ import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.network.MorphChangedSynchronizer.MorphChangedPacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
 
 public class MorphChangedSynchronizer implements ISimpleImplPacket<MorphChangedPacket>
 {
 	@Override
-	public void encode(MorphChangedPacket packet, PacketBuffer buffer)
+	public void encode(MorphChangedPacket packet, FriendlyByteBuf buffer)
 	{
-		buffer.writeUniqueId(packet.getPlayerUUID());
+		buffer.writeUUID(packet.getPlayerUUID());
 		
 		buffer.writeBoolean(packet.getMorphIndex().isPresent());
 		buffer.writeBoolean(packet.getMorphItem().isPresent());
 		
 		packet.getMorphIndex().ifPresent(index -> buffer.writeInt(index));
-		packet.getMorphItem().ifPresent(item -> buffer.writeCompoundTag(item.serialize()));
+		packet.getMorphItem().ifPresent(item -> buffer.writeNbt(item.serialize()));
 		
 		buffer.writeInt(packet.getAbilities().size());
 		
 		for(String str : packet.getAbilities())
-			buffer.writeString(str);
+			buffer.writeUtf(str);
 	}
 
 	@Override
-	public MorphChangedPacket decode(PacketBuffer buffer)
+	public MorphChangedPacket decode(FriendlyByteBuf buffer)
 	{
-		UUID playerUUID = buffer.readUniqueId();
+		UUID playerUUID = buffer.readUUID();
 		boolean hasIndex = buffer.readBoolean(), hasItem = buffer.readBoolean();
 		
 		Optional<Integer> morphIndex = Optional.empty();
@@ -45,14 +45,14 @@ public class MorphChangedSynchronizer implements ISimpleImplPacket<MorphChangedP
 			morphIndex = Optional.of(buffer.readInt());
 		
 		if(hasItem)
-			morphItem = Optional.of(MorphHandler.deserializeMorphItem(buffer.readCompoundTag()));
+			morphItem = Optional.of(MorphHandler.deserializeMorphItem(buffer.readNbt()));
 		
 		int amountOfAbilities = buffer.readInt();
 		
 		ArrayList<String> abilities = new ArrayList<>(amountOfAbilities);
 		
 		for(int i = 0; i < amountOfAbilities; i++)
-			abilities.add(buffer.readString());
+			abilities.add(buffer.readUtf());
 		
 		return new MorphChangedPacket(playerUUID, morphIndex, morphItem, abilities);
 	}
@@ -62,8 +62,8 @@ public class MorphChangedSynchronizer implements ISimpleImplPacket<MorphChangedP
 	{
 		ctx.get().enqueueWork(() ->
 		{
-			if(Minecraft.getInstance().world != null)
-				MorphUtil.morphToClient(packet.getMorphItem(), packet.getMorphIndex(), packet.getAbilities(), Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayerUUID()));
+			if(Minecraft.getInstance().level != null)
+				MorphUtil.morphToClient(packet.getMorphItem(), packet.getMorphIndex(), packet.getAbilities(), Minecraft.getInstance().level.getPlayerByUUID(packet.getPlayerUUID()));
 		});
 	}
 	

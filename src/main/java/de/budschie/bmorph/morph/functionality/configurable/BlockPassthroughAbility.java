@@ -12,12 +12,12 @@ import de.budschie.bmorph.morph.LazyTag;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
-import net.minecraft.block.Block;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -70,7 +70,7 @@ public class BlockPassthroughAbility extends AbstractEventAbility
 				// This is not particularly efficient.
 				if(!wasInWeb.contains(uuid))
 				{
-					PlayerEntity player = ServerSetup.server.getPlayerList().getPlayerByUUID(uuid);
+					Player player = ServerSetup.server.getPlayerList().getPlayer(uuid);
 					player.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(am);
 				}
 				
@@ -86,23 +86,23 @@ public class BlockPassthroughAbility extends AbstractEventAbility
 		{
 			event.setCanceled(true);
 			
-			PlayerEntity player = (PlayerEntity) event.getEntity();
+			Player player = (Player) event.getEntity();
 
-			ModifiableAttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
+			AttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
 
 			if (!attributeInstance.hasModifier(am))
-				attributeInstance.applyNonPersistentModifier(am);
+				attributeInstance.addTransientModifier(am);
 			
-			wasInWeb.add(player.getUniqueID());
+			wasInWeb.add(player.getUUID());
 		}
 	}
 	
 	// We need this since this may cause issues like permanent speed boost (until world is loaded again) otherwise
 	@Override
-	public void disableAbility(PlayerEntity player, MorphItem disabledItem)
+	public void disableAbility(Player player, MorphItem disabledItem)
 	{
 		super.disableAbility(player, disabledItem);
-		ModifiableAttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
+		AttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
 		
 		if(attributeInstance.hasModifier(am))
 			attributeInstance.removeModifier(am);

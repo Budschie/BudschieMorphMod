@@ -6,43 +6,43 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.render_handler.RenderHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.model.QuadrupedModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.BipedRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.LivingRenderer;
-import net.minecraft.client.renderer.entity.PlayerRenderer;
-import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.client.renderer.entity.model.PlayerModel;
-import net.minecraft.client.renderer.entity.model.QuadrupedModel;
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.HandSide;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 
 @Mixin(value = PlayerRenderer.class)
-public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>>
+public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>>
 {
-	public PlayerRendererMixin(EntityRendererManager rendererManager,
-			PlayerModel<AbstractClientPlayerEntity> entityModelIn, float shadowSizeIn)
+	public PlayerRendererMixin(EntityRendererProvider.Context rendererManager,
+			PlayerModel<AbstractClientPlayer> entityModelIn, float shadowSizeIn)
 	{
 		super(rendererManager, entityModelIn, shadowSizeIn);
 	}
 	
-	@Inject(at = @At("HEAD"), method = "renderRightArm(Lcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;ILnet/minecraft/client/entity/player/AbstractClientPlayerEntity;)V", cancellable = true)
-	private void renderRightArm(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn,
-			AbstractClientPlayerEntity playerIn, CallbackInfo info)
+	@Inject(at = @At("HEAD"), method = "renderRightHand(Lcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;ILnet/minecraft/client/entity/player/AbstractClientPlayerEntity;)V", cancellable = true)
+	private void renderRightHand(PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn,
+			AbstractClientPlayer playerIn, CallbackInfo info)
 	{
 		if(checkMorphPresent(playerIn))
 		{
@@ -50,19 +50,19 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 			info.cancel();
 			
 			Entity cachedEntity = RenderHandler.getCachedEntity(playerIn); 
-			EntityRenderer<?> renderer = Minecraft.getInstance().getRenderManager().getRenderer(cachedEntity);
+			EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(cachedEntity);
 			
-			if(renderer instanceof LivingRenderer<?, ?>)
+			if(renderer instanceof LivingEntityRenderer<?, ?>)
 			{
-				ModelRenderer armRenderer = null;
+				ModelPart armRenderer = null;
 
-				LivingRenderer<? super LivingEntity, ?> living = (LivingRenderer<? super LivingEntity, ?>) renderer;
+				LivingEntityRenderer<? super LivingEntity, ?> living = (LivingEntityRenderer<? super LivingEntity, ?>) renderer;
 				
-				if(living.entityModel instanceof BipedModel<?>)
-					armRenderer = ((BipedModel<?>)living.entityModel).bipedRightArm;
+				if(living.model instanceof HumanoidModel<?>)
+					armRenderer = ((HumanoidModel<?>)living.model).rightArm;
 				
-				if(living.entityModel instanceof QuadrupedModel<?>)
-					armRenderer = ((QuadrupedModel<?>)living.entityModel).legFrontRight;
+				if(living.model instanceof QuadrupedModel<?>)
+					armRenderer = ((QuadrupedModel<?>)living.model).leftHindLeg;
 				
 				if(armRenderer != null)
 					renderArm(false, playerIn, armRenderer, matrixStackIn, combinedLightIn, bufferIn, living, (LivingEntity)cachedEntity, combinedLightIn);
@@ -70,9 +70,9 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 		}
 	}
 	
-	@Inject(at = @At("HEAD"), method = "renderLeftArm(Lcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;ILnet/minecraft/client/entity/player/AbstractClientPlayerEntity;)V", cancellable = true)
-	private void renderLeftArm(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn,
-			AbstractClientPlayerEntity playerIn, CallbackInfo info)
+	@Inject(at = @At("HEAD"), method = "renderLeftHand(Lcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;ILnet/minecraft/client/entity/player/AbstractClientPlayerEntity;)V", cancellable = true)
+	private void renderLeftHand(PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn,
+			AbstractClientPlayer playerIn, CallbackInfo info)
 	{		
 		if(checkMorphPresent(playerIn))
 		{
@@ -80,19 +80,19 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 			info.cancel();
 			
 			Entity cachedEntity = RenderHandler.getCachedEntity(playerIn); 
-			EntityRenderer<?> renderer = Minecraft.getInstance().getRenderManager().getRenderer(cachedEntity);
+			EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(cachedEntity);
 			
-			if(renderer instanceof LivingRenderer<?, ?>)
+			if(renderer instanceof LivingEntityRenderer<?, ?>)
 			{
-				ModelRenderer armRenderer = null;
+				ModelPart armRenderer = null;
 
-				LivingRenderer<? super LivingEntity, ?> living = (LivingRenderer<? super LivingEntity, ?>) renderer;
+				LivingEntityRenderer<? super LivingEntity, ?> living = (LivingEntityRenderer<? super LivingEntity, ?>) renderer;
 				
-				if(living.entityModel instanceof BipedModel<?>)
-					armRenderer = ((BipedModel<?>)living.entityModel).bipedRightArm;
+				if(living.model instanceof HumanoidModel<?>)
+					armRenderer = ((HumanoidModel<?>)living.model).rightArm;
 				
-				if(living.entityModel instanceof QuadrupedModel<?>)
-					armRenderer = ((QuadrupedModel<?>)living.entityModel).legFrontLeft;
+				if(living.model instanceof QuadrupedModel<?>)
+					armRenderer = ((QuadrupedModel<?>)living.model).rightFrontLeg;
 				
 				if(armRenderer != null)
 					renderArm(true, playerIn, armRenderer, matrixStackIn, combinedLightIn, bufferIn, living, (LivingEntity)cachedEntity, combinedLightIn);
@@ -101,45 +101,45 @@ public abstract class PlayerRendererMixin extends LivingRenderer<AbstractClientP
 	}
 	
 	@Shadow
-	private void setModelVisibilities(AbstractClientPlayerEntity clientPlayer)
+	private void setModelProperties(AbstractClientPlayer clientPlayer)
 	{
 	}
 	
-	private void renderArm(boolean isLeft, AbstractClientPlayerEntity player, ModelRenderer arm, MatrixStack matrixStack, int combinedLightIn, IRenderTypeBuffer buffer, LivingRenderer<? super LivingEntity, ?> renderer, LivingEntity entity, int light)
+	private void renderArm(boolean isLeft, AbstractClientPlayer player, ModelPart arm, PoseStack matrixStack, int combinedLightIn, MultiBufferSource buffer, LivingEntityRenderer<? super LivingEntity, ?> renderer, LivingEntity entity, int light)
 	{
-		matrixStack.push();
+		matrixStack.pushPose();
 
 		// Fix for sheep and stuff like that
-		if(renderer.entityModel instanceof QuadrupedModel<?>)
+		if(renderer.model instanceof QuadrupedModel<?>)
 			matrixStack.translate(isLeft ? .1 : -.1, -.6, .5);
 
-		setModelVisibilities(player);
+		setModelProperties(player);
 		
-		renderer.entityModel.swingProgress = 0.0f;
+		renderer.model.attackTime = 0.0f;
 		
-		if(renderer instanceof BipedRenderer<?, ?>)
+		if(renderer instanceof HumanoidMobRenderer<?, ?>)
 		{
-			BipedRenderer<? super MobEntity, ?> casted = (BipedRenderer<? super MobEntity, ?>) renderer;
-			casted.entityModel.swimAnimation = 0.0f;
-			casted.entityModel.isSneak = false;
+			HumanoidMobRenderer<? super Mob, ?> casted = (HumanoidMobRenderer<? super Mob, ?>) renderer;
+			casted.model.swimAmount = 0.0f;
+			casted.model.crouching = false;
 						
 			//Temp.translateShitAndStuff(isLeft ? , matrixStack);
 		}
 		
 		// DAMN IT JAVA
 		// This is utterly fucking retarded
-		if((renderer instanceof BipedRenderer<?, ?> || renderer.getEntityModel() instanceof PlayerModel<?>) && isLeft && player.getPrimaryHand() == HandSide.LEFT && player.getHeldItem(Hand.MAIN_HAND).isEmpty())
+		if((renderer instanceof HumanoidMobRenderer<?, ?> || renderer.getModel() instanceof PlayerModel<?>) && isLeft && player.getMainArm() == HumanoidArm.LEFT && player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty())
 			matrixStack.translate(.65, 0, 0);
 
 		
-		renderer.entityModel.setRotationAngles(entity, 0, 0, 0, 0, 0);
+		renderer.model.setupAnim(entity, 0, 0, 0, 0, 0);
 		
-		arm.rotateAngleX = 0;
-		arm.render(matrixStack, buffer.getBuffer(RenderType.getEntityCutout(renderer.getEntityTexture(entity))), combinedLightIn, OverlayTexture.NO_OVERLAY);
-		matrixStack.pop();
+		arm.xRot = 0;
+		arm.render(matrixStack, buffer.getBuffer(RenderType.entityCutout(renderer.getTextureLocation(entity))), combinedLightIn, OverlayTexture.NO_OVERLAY);
+		matrixStack.popPose();
 	}
 	
-	private boolean checkMorphPresent(PlayerEntity player)
+	private boolean checkMorphPresent(Player player)
 	{
 		return player != null && player.getCapability(MorphCapabilityAttacher.MORPH_CAP).isPresent() && player.getCapability(MorphCapabilityAttacher.MORPH_CAP).resolve().get().getCurrentMorph().isPresent();
 	}

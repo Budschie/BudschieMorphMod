@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.functionality.PassiveTickAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
-import net.minecraft.potion.EffectInstance;
+import net.minecraft.world.effect.MobEffectInstance;
 
 public class PassiveEffectAbility extends PassiveTickAbility
 {
@@ -17,16 +17,16 @@ public class PassiveEffectAbility extends PassiveTickAbility
 			.apply(instance, PassiveEffectAbility::new));
 	
 	// This is the variable controlling how often the effect shall be given to the player.
-	private EffectInstance effectInstance;
+	private MobEffectInstance effectInstance;
 	
-	public PassiveEffectAbility(int effectFrequency, EffectInstance effectInstance)
+	public PassiveEffectAbility(int effectFrequency, MobEffectInstance effectInstance)
 	{
 		// I am not sure how performant this is...
-		super(effectFrequency, (player, cap) -> player.addPotionEffect(new EffectInstance(effectInstance)));
+		super(effectFrequency, (player, cap) -> player.addEffect(new MobEffectInstance(effectInstance)));
 		this.effectInstance = effectInstance;
 	}	
 	
-	public EffectInstance getEffectInstance()
+	public MobEffectInstance getEffectInstance()
 	{
 		return effectInstance;
 	}

@@ -4,12 +4,12 @@ import java.util.Optional;
 
 import net.gigabit101.shrink.api.IShrinkProvider;
 import net.gigabit101.shrink.api.ShrinkAPI;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 public class ShrinkAPIInteract implements IShrinkAPIInteract
 {
 	@Override
-	public float getShrinkingValue(PlayerEntity player)
+	public float getShrinkingValue(Player player)
 	{
 		Optional<IShrinkProvider> provider = player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).resolve();
 		
@@ -23,7 +23,7 @@ public class ShrinkAPIInteract implements IShrinkAPIInteract
 	}
 
 	@Override
-	public boolean isShrunk(PlayerEntity player)
+	public boolean isShrunk(Player player)
 	{
 		Optional<IShrinkProvider> provider = player.getCapability(ShrinkAPI.SHRINK_CAPABILITY).resolve();
 		

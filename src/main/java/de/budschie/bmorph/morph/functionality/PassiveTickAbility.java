@@ -6,7 +6,7 @@ import java.util.function.BiConsumer;
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.main.ServerSetup;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
@@ -16,9 +16,9 @@ public class PassiveTickAbility extends AbstractEventAbility
 {
 	private int updateDuration = 0;
 	private int lastUpdate = 0;
-	private BiConsumer<PlayerEntity, IMorphCapability> handleUpdate;
+	private BiConsumer<Player, IMorphCapability> handleUpdate;
 	
-	public PassiveTickAbility(int updateDuration, BiConsumer<PlayerEntity, IMorphCapability> handleUpdate)
+	public PassiveTickAbility(int updateDuration, BiConsumer<Player, IMorphCapability> handleUpdate)
 	{
 		this.updateDuration = updateDuration;
 		this.handleUpdate = handleUpdate;
@@ -34,7 +34,7 @@ public class PassiveTickAbility extends AbstractEventAbility
 	{
 		if(event.phase == Phase.START)
 		{
-			int tickCounter = ServerSetup.server.getTickCounter();
+			int tickCounter = ServerSetup.server.getTickCount();
 			
 			if(tickCounter >= (lastUpdate + updateDuration))
 			{
@@ -42,7 +42,7 @@ public class PassiveTickAbility extends AbstractEventAbility
 				
 				for(UUID uuid : trackedPlayers)
 				{
-					PlayerEntity player = ServerSetup.server.getPlayerList().getPlayerByUUID(uuid);
+					Player player = ServerSetup.server.getPlayerList().getPlayer(uuid);
 					
 					if(player != null)
 					{

@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 public class InstaJumpAbility extends Ability
 {
@@ -24,20 +24,20 @@ public class InstaJumpAbility extends Ability
 	}
 	
 	@Override
-	public void enableAbility(PlayerEntity player, MorphItem enabledItem)
+	public void enableAbility(Player player, MorphItem enabledItem)
 	{
 //		player.stepHeight = 1.45f;
-		player.stepHeight = this.stepHeight;
+		player.maxUpStep = this.stepHeight;
 	}
 
 	@Override
-	public void disableAbility(PlayerEntity player, MorphItem disabledItem)
+	public void disableAbility(Player player, MorphItem disabledItem)
 	{
-		player.stepHeight = 0.6f;
+		player.maxUpStep = 0.6f;
 	}
 
 	@Override
-	public void onUsedAbility(PlayerEntity player, MorphItem currentMorph)
+	public void onUsedAbility(Player player, MorphItem currentMorph)
 	{
 		
 	}

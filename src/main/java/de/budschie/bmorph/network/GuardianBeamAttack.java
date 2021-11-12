@@ -5,18 +5,18 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 import de.budschie.bmorph.network.GuardianBeamAttack.GuardianBeamAttackPacket;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
 
 public class GuardianBeamAttack implements ISimpleImplPacket<GuardianBeamAttackPacket>
 {
 
 	@Override
-	public void encode(GuardianBeamAttackPacket packet, PacketBuffer buffer)
+	public void encode(GuardianBeamAttackPacket packet, FriendlyByteBuf buffer)
 	{
-		buffer.writeUniqueId(packet.getPlayer());
+		buffer.writeUUID(packet.getPlayer());
 		buffer.writeBoolean(packet.getEntity().isPresent());
 		
 		if(packet.getEntity().isPresent())
@@ -28,9 +28,9 @@ public class GuardianBeamAttack implements ISimpleImplPacket<GuardianBeamAttackP
 	}
 
 	@Override
-	public GuardianBeamAttackPacket decode(PacketBuffer buffer)
+	public GuardianBeamAttackPacket decode(FriendlyByteBuf buffer)
 	{
-		UUID player = buffer.readUniqueId();
+		UUID player = buffer.readUUID();
 		Optional<Integer> entity = Optional.empty();
 		int attackProgression = 0;
 		int maxAttackProgression = 0;

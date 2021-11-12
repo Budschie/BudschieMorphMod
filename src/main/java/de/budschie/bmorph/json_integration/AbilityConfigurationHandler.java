@@ -15,12 +15,12 @@ import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import de.budschie.bmorph.morph.functionality.configurable.ConfigurableAbility;
-import net.minecraft.client.resources.JsonReloadListener;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.ResourceLocation;
 
-public class AbilityConfigurationHandler extends JsonReloadListener
+public class AbilityConfigurationHandler extends SimpleJsonResourceReloadListener
 {
 	private static final Gson GSON = (new GsonBuilder()).create();
 	private static final Logger LOGGER = LogManager.getLogger();
@@ -31,7 +31,7 @@ public class AbilityConfigurationHandler extends JsonReloadListener
 	}
 
 	@Override
-	protected void apply(Map<ResourceLocation, JsonElement> objectIn, IResourceManager resourceManagerIn, IProfiler profilerIn)
+	protected void apply(Map<ResourceLocation, JsonElement> objectIn, ResourceManager resourceManagerIn, ProfilerFiller profilerIn)
 	{
 		BMorphMod.DYNAMIC_ABILITY_REGISTRY.unregisterAll();
 		

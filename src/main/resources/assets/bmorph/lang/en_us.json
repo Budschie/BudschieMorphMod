@@ -9,6 +9,8 @@
     "key.bmorph.next": "Switch to next Morph UI",
     "key.bmorph.previous": "Switch to previous Morph UI",
     "key.bmorph.morph": "Morph",
+    "key.bmorph.delete_current": "Delete selected morph",
+    "key.bmorph.drop_current": "Drops selected morph",
     "key.bmorph.bmorph_category": "Budschie's Morph Mod Controls",
     "gamerule.keepMorphInventory": "Keep Morph Inventory",
     "gamerule.morphAggroDuration": "Aggro Time of nearby mobs when morphed (in ticks)",

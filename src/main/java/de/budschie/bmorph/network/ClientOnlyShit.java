@@ -8,15 +8,15 @@ import de.budschie.bmorph.network.GuardianBeamAttack.GuardianBeamAttackPacket;
 import de.budschie.bmorph.network.PufferfishPuff.PufferfishPuffPacket;
 import de.budschie.bmorph.render_handler.RenderHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 public class ClientOnlyShit
 {
 	public static void handlePufferfishPacketClient(PufferfishPuffPacket packet)
 	{
-		if(Minecraft.getInstance().world != null)
+		if(Minecraft.getInstance().level != null)
 		{
-			PlayerEntity player = Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayer());
+			Player player = Minecraft.getInstance().level.getPlayerByUUID(packet.getPlayer());
 	
 			if (player != null)
 			{
@@ -31,9 +31,9 @@ public class ClientOnlyShit
 	
 	public static void handleGuardianPacketClient(GuardianBeamAttackPacket packet)
 	{
-		if(Minecraft.getInstance().world != null)
+		if(Minecraft.getInstance().level != null)
 		{
-			PlayerEntity player = Minecraft.getInstance().world.getPlayerByUuid(packet.getPlayer());
+			Player player = Minecraft.getInstance().level.getPlayerByUUID(packet.getPlayer());
 	
 			if (player != null)
 			{

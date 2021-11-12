@@ -3,8 +3,8 @@ package de.budschie.bmorph.morph;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import net.minecraft.tags.ITag;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.tags.Tag;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * The aim of this class is to provide a way of easily loading and later
@@ -13,9 +13,9 @@ import net.minecraft.util.ResourceLocation;
 public class LazyTag<T> implements Predicate<T>
 {
 	private ResourceLocation tagName;
-	private Function<ResourceLocation, ITag<T>> tagSupplier;
+	private Function<ResourceLocation, Tag<T>> tagSupplier;
 	private boolean hasTag = true;
-	private ITag<T> cachedTag;
+	private Tag<T> cachedTag;
 	
 	/**
 	 * This is the constructor of the lazy tag.
@@ -27,7 +27,7 @@ public class LazyTag<T> implements Predicate<T>
 	 *                    lazy tag instance with a way of resolving resource
 	 *                    locations to tag names.
 	 **/
-	public LazyTag(ResourceLocation tagName, Function<ResourceLocation, ITag<T>> tagSupplier)
+	public LazyTag(ResourceLocation tagName, Function<ResourceLocation, Tag<T>> tagSupplier)
 	{
 		this.tagName = tagName;
 		this.tagSupplier = tagSupplier;

@@ -14,11 +14,11 @@ import com.google.gson.JsonObject;
 import de.budschie.bmorph.json_integration.JsonMorphNBTHandler;
 import de.budschie.bmorph.json_integration.NBTPath;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.entity.EntityType;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.DataProvider;
+import net.minecraft.world.entity.EntityType;
 
-public class NBTHandlerProvider implements IDataProvider
+public class NBTHandlerProvider implements DataProvider
 {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private HashMap<EntityType<?>, JsonMorphNBTHandler> data = new HashMap<>();
@@ -30,10 +30,10 @@ public class NBTHandlerProvider implements IDataProvider
 	}
 	
 	@Override
-	public void act(DirectoryCache cache) throws IOException
+	public void run(HashCache cache) throws IOException
 	{
 		for(Map.Entry<EntityType<?>, JsonMorphNBTHandler> entry : data.entrySet())
-			IDataProvider.save(GSON, cache, serializeJsonMorphNBTHandler(entry.getKey(), entry.getValue()), generator.getOutputFolder().resolve(FileSystems.getDefault().getPath("data", entry.getKey().getRegistryName().getNamespace(), "morph_nbt", entry.getKey().getRegistryName().getPath() + ".json")));
+			DataProvider.save(GSON, cache, serializeJsonMorphNBTHandler(entry.getKey(), entry.getValue()), generator.getOutputFolder().resolve(FileSystems.getDefault().getPath("data", entry.getKey().getRegistryName().getNamespace(), "morph_nbt", entry.getKey().getRegistryName().getPath() + ".json")));
 	}
 	
 	private JsonElement serializeJsonMorphNBTHandler(EntityType<?> type, JsonMorphNBTHandler nbtHandler)
@@ -52,7 +52,7 @@ public class NBTHandlerProvider implements IDataProvider
 		root.add("tracked_nbt_keys", trackedNbtJSON);
 		
 		// Set default nbt data
-		root.addProperty("default_nbt", nbtHandler.getDefaultNbt().getString());
+		root.addProperty("default_nbt", nbtHandler.getDefaultNbt().getAsString());
 		
 		return root;
 	}

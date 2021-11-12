@@ -1,11 +1,8 @@
 package de.budschie.bmorph.main;
 
 import de.budschie.bmorph.api_interact.ShrinkAPIInteractor;
-import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
-import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityAttacher;
-import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityAttacher;
 import de.budschie.bmorph.entity.EntityRegistry;
 import de.budschie.bmorph.gui.MorphGuiRegistry;
 import de.budschie.bmorph.morph.MorphHandler;
@@ -21,11 +18,11 @@ import de.budschie.bmorph.render_handler.LivingEntitySynchronzier;
 import de.budschie.bmorph.render_handler.ParrotSynchronizer;
 import de.budschie.bmorph.render_handler.PufferfishSynchronizer;
 import de.budschie.bmorph.render_handler.SquidSynchronizer;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.GameRules.BooleanValue;
-import net.minecraft.world.GameRules.Category;
-import net.minecraft.world.GameRules.IntegerValue;
-import net.minecraft.world.GameRules.RuleKey;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.GameRules.BooleanValue;
+import net.minecraft.world.level.GameRules.Category;
+import net.minecraft.world.level.GameRules.IntegerValue;
+import net.minecraft.world.level.GameRules.Key;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -37,11 +34,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @EventBusSubscriber(bus = Bus.MOD)
 public class BMorphMod
 {
-	public static RuleKey<BooleanValue> KEEP_MORPH_INVENTORY;
-	public static RuleKey<BooleanValue> PREVENT_LOOKAT;
-	public static RuleKey<BooleanValue> DO_MORPH_DROPS;
+	public static Key<BooleanValue> KEEP_MORPH_INVENTORY;
+	public static Key<BooleanValue> PREVENT_LOOKAT;
+	public static Key<BooleanValue> DO_MORPH_DROPS;
 
-	public static RuleKey<IntegerValue> MORPH_AGGRO_DURATION;
+	public static Key<IntegerValue> MORPH_AGGRO_DURATION;
 	
 	public static DynamicAbilityRegistry DYNAMIC_ABILITY_REGISTRY;
 	
@@ -57,10 +54,6 @@ public class BMorphMod
 	public static void onCommonSetup(final FMLCommonSetupEvent event)
 	{
 		ShrinkAPIInteractor.init();
-		
-		MorphCapabilityAttacher.register();
-		PufferfishCapabilityAttacher.register();
-		GuardianBeamCapabilityAttacher.register();
 		
 		ConfigManager.INSTANCE.register(BlacklistData.class, BlacklistData::new);
 		

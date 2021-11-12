@@ -5,8 +5,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.potion.EffectInstance;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -16,14 +16,14 @@ public class EffectOnAttackEntity extends AbstractEventAbility
 	public static final Codec<EffectOnAttackEntity> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(ModCodecs.EFFECT_INSTANCE.fieldOf("effect_instance").forGetter(EffectOnAttackEntity::getEffectInstance)).apply(instance, EffectOnAttackEntity::new));
 	
-	private EffectInstance effectInstance;
+	private MobEffectInstance effectInstance;
 	
-	public EffectOnAttackEntity(EffectInstance effectInstance)
+	public EffectOnAttackEntity(MobEffectInstance effectInstance)
 	{
 		this.effectInstance = effectInstance;
 	}
 	
-	public EffectInstance getEffectInstance()
+	public MobEffectInstance getEffectInstance()
 	{
 		return effectInstance;
 	}
@@ -31,13 +31,13 @@ public class EffectOnAttackEntity extends AbstractEventAbility
 	@SubscribeEvent
 	public void onEntityDamaged(LivingDamageEvent event)
 	{
-		if(event.getSource().getTrueSource() instanceof PlayerEntity)
+		if(event.getSource().getEntity() instanceof Player)
 		{
-			PlayerEntity player = (PlayerEntity) event.getSource().getTrueSource();
+			Player player = (Player) event.getSource().getEntity();
 			
 			if(isTracked(player))
 			{
-				event.getEntityLiving().addPotionEffect(new EffectInstance(this.effectInstance));
+				event.getEntityLiving().addEffect(new MobEffectInstance(this.effectInstance));
 			}
 		}
 	}

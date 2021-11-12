@@ -1,32 +1,32 @@
 package de.budschie.bmorph.render_handler;
 
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 public class AbstractPlayerSynchronizer implements IEntitySynchronizer
 {
 	@Override
 	public boolean appliesToMorph(Entity morphEntity)
 	{
-		return morphEntity instanceof AbstractClientPlayerEntity;
+		return morphEntity instanceof AbstractClientPlayer;
 	}
 	
 	@Override
-	public void applyToMorphEntity(Entity morphEntity, PlayerEntity player)
+	public void applyToMorphEntity(Entity morphEntity, Player player)
 	{
-		AbstractClientPlayerEntity entity = (AbstractClientPlayerEntity) morphEntity;
+		AbstractClientPlayer entity = (AbstractClientPlayer) morphEntity;
 
-		entity.chasingPosX = player.chasingPosX;
-		entity.prevChasingPosX = player.prevChasingPosX;
-		entity.chasingPosY = player.chasingPosY;
-		entity.prevChasingPosY = player.prevChasingPosY;
-		entity.chasingPosZ = player.chasingPosZ;
-		entity.prevChasingPosZ = player.prevChasingPosZ;
+		entity.xCloak = player.xCloak;
+		entity.xCloakO = player.xCloakO;
+		entity.yCloak = player.yCloak;
+		entity.yCloakO = player.yCloakO;
+		entity.zCloak = player.zCloak;
+		entity.zCloakO = player.zCloakO;
 		
-		if (entity.isElytraFlying() != player.isElytraFlying())
+		if (entity.isFallFlying() != player.isFallFlying())
 		{
-			if (player.isElytraFlying())
+			if (player.isFallFlying())
 				entity.startFallFlying();
 			else
 				entity.stopFallFlying();

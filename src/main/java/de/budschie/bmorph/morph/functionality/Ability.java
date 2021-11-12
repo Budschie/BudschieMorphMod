@@ -5,8 +5,8 @@ import org.apache.logging.log4j.Logger;
 
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.configurable.ConfigurableAbility;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
 
 public abstract class Ability
 {
@@ -15,12 +15,12 @@ public abstract class Ability
 	private ResourceLocation resourceLocation;
 	private ConfigurableAbility<? extends Ability> configurableAbility;
 	
-	public void enableAbility(PlayerEntity player, MorphItem enabledItem) {}
+	public void enableAbility(Player player, MorphItem enabledItem) {}
 	
-	public void disableAbility(PlayerEntity player, MorphItem disabledItem) {}
+	public void disableAbility(Player player, MorphItem disabledItem) {}
 	
 	/** This method is fired when an active ability is used. **/
-	public void onUsedAbility(PlayerEntity player, MorphItem currentMorph) {}
+	public void onUsedAbility(Player player, MorphItem currentMorph) {}
 	
 	public void onRegister()
 	{

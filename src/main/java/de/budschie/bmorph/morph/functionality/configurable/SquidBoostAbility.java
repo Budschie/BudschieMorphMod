@@ -9,16 +9,16 @@ import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.StunAbility;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.network.SquidBoost;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class SquidBoostAbility extends StunAbility
 {
@@ -57,27 +57,27 @@ public class SquidBoostAbility extends StunAbility
 	}
 
 	@Override
-	public void onUsedAbility(PlayerEntity player, MorphItem currentMorph)
+	public void onUsedAbility(Player player, MorphItem currentMorph)
 	{
-		if(!isCurrentlyStunned(player.getUniqueID()))
+		if(!isCurrentlyStunned(player.getUUID()))
 		{
 			//player.world.addParticle(ParticleTypes.SQUID_INK, true, player.getPosX(), player.getPosY(), player.getPosZ(), .1f, .1f, .1f);
 			
-			((ServerWorld)player.world).spawnParticle(ParticleTypes.SQUID_INK, player.getPosX(), player.getPosY(), player.getPosZ(), 300, .4f, .4f, .4f, 0);
+			((ServerLevel)player.level).sendParticles(ParticleTypes.SQUID_INK, player.getX(), player.getY(), player.getZ(), 300, .4f, .4f, .4f, 0);
 			
 			if(blindnessDuration.isPresent())
 			{
-				player.world.getEntitiesWithinAABBExcludingEntity(player, new AxisAlignedBB(player.getPosition().add(-blindnessRadius, -blindnessRadius, -blindnessRadius), player.getPosition().add(blindnessRadius, blindnessRadius, blindnessRadius))).forEach(entity ->
+				player.level.getEntities(player, new AABB(player.blockPosition().offset(-blindnessRadius, -blindnessRadius, -blindnessRadius), player.blockPosition().offset(blindnessRadius, blindnessRadius, blindnessRadius))).forEach(entity ->
 				{
 					if(entity instanceof LivingEntity)
-						((LivingEntity)entity).addPotionEffect(new EffectInstance(Effects.BLINDNESS, blindnessDuration.get(), 5, false, false, false));
+						((LivingEntity)entity).addEffect(new MobEffectInstance(MobEffects.BLINDNESS, blindnessDuration.get(), 5, false, false, false));
 				});
 			}
 			
-			player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_SQUID_SQUIRT, SoundCategory.NEUTRAL, 10, 1);
-			stun(player.getUniqueID());
+			player.level.playSound(null, player.blockPosition(), SoundEvents.SQUID_SQUIRT, SoundSource.NEUTRAL, 10, 1);
+			stun(player.getUUID());
 			
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.DIMENSION.with(() -> player.world.getDimensionKey()), new SquidBoost.SquidBoostPacket(boostAmount, player.getUniqueID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.DIMENSION.with(() -> player.level.dimension()), new SquidBoost.SquidBoostPacket(boostAmount, player.getUUID()));
 		}		
 	}
 }

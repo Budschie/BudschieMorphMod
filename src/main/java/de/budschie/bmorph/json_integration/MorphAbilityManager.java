@@ -20,15 +20,15 @@ import com.google.gson.JsonObject;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
-import net.minecraft.client.resources.JsonReloadListener;
-import net.minecraft.entity.EntityType;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
 /** https://forums.minecraftforge.net/topic/100915-1165-make-mod-data-editable-with-datapack-adding-new-data-type/ **/
-public class MorphAbilityManager extends JsonReloadListener
+public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final Gson GSON = (new GsonBuilder()).create();
@@ -61,8 +61,8 @@ public class MorphAbilityManager extends JsonReloadListener
 	}
 	
 	@Override
-	protected void apply(Map<ResourceLocation, JsonElement> objectIn, IResourceManager resourceManagerIn,
-			IProfiler profilerIn)
+	protected void apply(Map<ResourceLocation, JsonElement> objectIn, ResourceManager resourceManagerIn,
+			ProfilerFiller profilerIn)
 	{
 		abilityLookup.clear();
 		

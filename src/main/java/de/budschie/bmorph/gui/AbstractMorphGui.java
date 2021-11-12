@@ -1,9 +1,9 @@
 package de.budschie.bmorph.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import de.budschie.bmorph.morph.MorphItem;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public abstract class AbstractMorphGui implements IForgeRegistryEntry<AbstractMorphGui>
@@ -31,12 +31,12 @@ public abstract class AbstractMorphGui implements IForgeRegistryEntry<AbstractMo
 	public abstract void showGui();
 	
 	/** This method is used to render everything related to this gui. **/
-	public void render(MatrixStack matrixStack)
+	public void render(PoseStack matrixStack)
 	{
 		renderWidgets(matrixStack);
 	}
 	
-	public abstract void renderWidgets(MatrixStack matrixStack);
+	public abstract void renderWidgets(PoseStack matrixStack);
 	
 	/** Scrolls around in the morph menu. When scrolling up, {@code amount} is negative, when scrolling down, {@code amount} is positive. **/
 	public abstract void scroll(int amount);

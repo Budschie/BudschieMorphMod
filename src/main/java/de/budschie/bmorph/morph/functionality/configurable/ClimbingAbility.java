@@ -4,8 +4,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -42,12 +42,12 @@ public class ClimbingAbility extends AbstractEventAbility
 	{
 		if(event.phase == Phase.START)
 		{
-			PlayerEntity player = event.player;
+			Player player = event.player;
 	
-			if (trackedPlayers.contains(player.getUniqueID()) && player.collidedHorizontally && !player.abilities.isFlying)
+			if (trackedPlayers.contains(player.getUUID()) && player.horizontalCollision && !player.getAbilities().flying)
 			{
-				Vector3d toSet = player.getMotion().add(0, getClimbingSpeedAcceleration(), 0);
-				player.setMotion(new Vector3d(toSet.x, Math.min(toSet.y, getMaxClimbingSpeed()), toSet.z));
+				Vec3 toSet = player.getDeltaMovement().add(0, getClimbingSpeedAcceleration(), 0);
+				player.setDeltaMovement(new Vec3(toSet.x, Math.min(toSet.y, getMaxClimbingSpeed()), toSet.z));
 			}
 		}
 	}

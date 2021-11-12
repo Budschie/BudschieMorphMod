@@ -1,10 +1,10 @@
 package de.budschie.bmorph.morph;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
 
 public abstract class MorphItem
 {
@@ -15,16 +15,16 @@ public abstract class MorphItem
 		this.morphItemId = morphItemId;
 	}
 	
-	public CompoundNBT serialize()
+	public CompoundTag serialize()
 	{
-		CompoundNBT nbt = new CompoundNBT();
+		CompoundTag nbt = new CompoundTag();
 		nbt.putString("id", getMorphItemId());
 		nbt.put("additional", serializeAdditional());
 		
 		return nbt;
 	}
 	
-	public void deserialize(CompoundNBT nbt)
+	public void deserialize(CompoundTag nbt)
 	{
 		if(!nbt.getString("id").equals(getMorphItemId()))
 			throw new IllegalArgumentException("The wrong morph item is being serialized. Please report this bug to the developer.");
@@ -34,13 +34,13 @@ public abstract class MorphItem
 		}
 	}
 	
-	public abstract void deserializeAdditional(CompoundNBT nbt);
-	public abstract CompoundNBT serializeAdditional();
+	public abstract void deserializeAdditional(CompoundTag nbt);
+	public abstract CompoundTag serializeAdditional();
 	
 	public abstract EntityType<?> getEntityType();
-	public abstract Entity createEntity(World world);
+	public abstract Entity createEntity(Level world);
 	
-	public boolean isAllowedToPickUp(PlayerEntity picker)
+	public boolean isAllowedToPickUp(Player picker)
 	{
 		return true;
 	}

@@ -7,13 +7,13 @@ import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityAttacher;
 import de.budschie.bmorph.capabilities.guardian.IGuardianBeamCapability;
 import de.budschie.bmorph.render_handler.RenderHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.GuardianSound;
-import net.minecraft.command.arguments.EntityAnchorArgument;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.GuardianEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.client.resources.sounds.GuardianAttackSoundInstance;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.Guardian;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.RenderTickEvent;
@@ -42,20 +42,20 @@ public class GuardianClientAdapterInstance extends GuardianClientAdapter
 	@SubscribeEvent
 	public void onRenderGameEvent(RenderTickEvent event)
 	{
-		if(event.phase == Phase.START && Minecraft.getInstance().player != null && Minecraft.getInstance().world != null && isTracked(Minecraft.getInstance().player))
+		if(event.phase == Phase.START && Minecraft.getInstance().player != null && Minecraft.getInstance().level != null && isTracked(Minecraft.getInstance().player))
 		{
-			PlayerEntity player = Minecraft.getInstance().player;
+			Player player = Minecraft.getInstance().player;
 			
 			IGuardianBeamCapability cap = player.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).resolve().orElse(null);
 			
 			if(cap != null && cap.getAttackedEntity().isPresent())
 			{				
 				// Look at the entity the whole time
-				Entity toLookAt = Minecraft.getInstance().world.getEntityByID(cap.getAttackedEntity().get());
+				Entity toLookAt = Minecraft.getInstance().level.getEntity(cap.getAttackedEntity().get());
 								
 				if(toLookAt != null)
 				{
-					Minecraft.getInstance().player.lookAt(EntityAnchorArgument.Type.EYES, calculateSmoothedEntityPos(event.renderTickTime, toLookAt).add(0, toLookAt.getEntity().getEyeHeight(), 0));
+					Minecraft.getInstance().player.lookAt(EntityAnchorArgument.Anchor.EYES, calculateSmoothedEntityPos(event.renderTickTime, toLookAt).add(0, toLookAt.getEyeHeight(), 0));
 				}
 			}
 		}
@@ -64,11 +64,11 @@ public class GuardianClientAdapterInstance extends GuardianClientAdapter
 
 	
 	// I have the feeling that I am doing something wrong and that this code exists somewhere else already...
-	private Vector3d calculateSmoothedEntityPos(float renderTicks, Entity entity)
+	private Vec3 calculateSmoothedEntityPos(float renderTicks, Entity entity)
 	{
-		return new Vector3d(MathHelper.lerp(renderTicks, entity.prevPosX, entity.getPosX()),
-				MathHelper.lerp(renderTicks, entity.prevPosY, entity.getPosY()),
-				MathHelper.lerp(renderTicks, entity.prevPosZ, entity.getPosZ()));
+		return new Vec3(Mth.lerp(renderTicks, entity.xo, entity.getX()),
+				Mth.lerp(renderTicks, entity.yo, entity.getY()),
+				Mth.lerp(renderTicks, entity.zo, entity.getZ()));
 	}
 	
 	// This is some really cursed code holy fuck
@@ -78,10 +78,10 @@ public class GuardianClientAdapterInstance extends GuardianClientAdapter
 	}
 
 	@Override
-	public void playGuardianSound(PlayerEntity player)
+	public void playGuardianSound(Player player)
 	{
-		GuardianEntity guardian = (GuardianEntity) RenderHandler.getCachedEntity(player);
+		Guardian guardian = (Guardian) RenderHandler.getCachedEntity(player);
 		
-		Minecraft.getInstance().getSoundHandler().play(new GuardianSound(guardian));
+		Minecraft.getInstance().getSoundManager().play(new GuardianAttackSoundInstance(guardian));
 	}
 }

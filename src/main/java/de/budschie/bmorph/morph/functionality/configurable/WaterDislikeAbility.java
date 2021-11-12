@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,9 +33,9 @@ public class WaterDislikeAbility extends AbstractEventAbility
 	{
 		if(event.phase == Phase.START)
 		{
-			if(event.player.isInWaterRainOrBubbleColumn() && trackedPlayers.contains(event.player.getUniqueID()))
+			if(event.player.isInWaterRainOrBubble() && trackedPlayers.contains(event.player.getUUID()))
 			{
-				event.player.attackEntityFrom(DamageSource.DROWN, damageAmount);
+				event.player.hurt(DamageSource.DROWN, damageAmount);
 			}
 		}
 	}

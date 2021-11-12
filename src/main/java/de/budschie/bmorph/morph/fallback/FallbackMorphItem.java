@@ -2,19 +2,19 @@ package de.budschie.bmorph.morph.fallback;
 
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class FallbackMorphItem extends MorphItem
 {
-	private CompoundNBT entityData;
+	private CompoundTag entityData;
 	private EntityType<?> entityType;
 	
-	public FallbackMorphItem(CompoundNBT entityData, EntityType<?> entityType)
+	public FallbackMorphItem(CompoundTag entityData, EntityType<?> entityType)
 	{
 		super("fallback_morph_item");
 		this.entityData = entityData;
@@ -24,7 +24,7 @@ public class FallbackMorphItem extends MorphItem
 	
 	public FallbackMorphItem(EntityType<?> entityType)
 	{
-		this(new CompoundNBT(), entityType);
+		this(new CompoundTag(), entityType);
 	}
 	
 	public FallbackMorphItem()
@@ -37,20 +37,20 @@ public class FallbackMorphItem extends MorphItem
 		return entityType;
 	}
 	
-	public Entity createEntity(World world)
+	public Entity createEntity(Level world)
 	{
-		return EntityType.loadEntityAndExecute(entityData, world, entity -> entity);
+		return EntityType.loadEntityRecursive(entityData, world, entity -> entity);
 	}
 	
 	@Override
-	public void deserializeAdditional(CompoundNBT nbt)
+	public void deserializeAdditional(CompoundTag nbt)
 	{
 		this.entityType = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(nbt.getString("id")));
 		this.entityData = nbt;
 	}
 
 	@Override
-	public CompoundNBT serializeAdditional()
+	public CompoundTag serializeAdditional()
 	{
 		return entityData;
 	}

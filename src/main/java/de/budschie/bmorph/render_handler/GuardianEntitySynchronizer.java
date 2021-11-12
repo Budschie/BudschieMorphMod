@@ -1,18 +1,19 @@
 package de.budschie.bmorph.render_handler;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityAttacher;
 import de.budschie.bmorph.capabilities.guardian.IGuardianBeamCapability;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldVertexBufferUploader;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.GuardianEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.Guardian;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
@@ -37,22 +38,20 @@ public class GuardianEntitySynchronizer
 			{
 				Entity currentCachedEntity = RenderHandler.getCachedEntity(event.player);
 				
-				if(currentCachedEntity instanceof GuardianEntity)
+				if(currentCachedEntity instanceof Guardian casted)
 				{
-					GuardianEntity casted = (GuardianEntity) currentCachedEntity;
-					
 					casted.clientSideAttackTime = beamCap.getAttackProgression();
 					
 					if(beamCap.getAttackedEntity().isPresent())
 					{
-						casted.setTargetedEntity(beamCap.getAttackedEntity().get());
+						casted.setActiveAttackTarget(beamCap.getAttackedEntity().get());
 					}
 					else
 					{
-						casted.setTargetedEntity(0);
+						casted.setActiveAttackTarget(0);
 					}
 					
-					casted.clientSideTouchedGround = casted.getMotion().y < 0.0D && casted.world.isTopSolid(casted.getPosition().down(), casted);
+					casted.clientSideTouchedGround = casted.getDeltaMovement().y < 0.0D && casted.level.loadedAndEntityCanStandOn(casted.blockPosition().below(), casted);
 					
 					casted.clientSideSpikesAnimationO = casted.clientSideSpikesAnimation;
 		            casted.clientSideSpikesAnimation += (1.0F - casted.clientSideSpikesAnimation) * 0.06F;
@@ -61,7 +60,7 @@ public class GuardianEntitySynchronizer
 		            
 		            float tailAnimationSpeed = casted.isInWater() ? 0.4f : 0.2f;
 		            
-		            if(event.player.getMotion().lengthSquared() > 0.01f)
+		            if(event.player.getDeltaMovement().lengthSqr() > 0.01f)
 		            	tailAnimationSpeed *= 3.5;
 		            
 		            casted.clientSideTailAnimation += tailAnimationSpeed;
@@ -73,7 +72,7 @@ public class GuardianEntitySynchronizer
 	@SubscribeEvent
 	public static void onPlayerRenderer(RenderGameOverlayEvent.Post event)
 	{
-		if(event.getType() != ElementType.PORTAL)
+		if(event.getType() != ElementType.LAYER)
 			return;
 		
 		IGuardianBeamCapability beamCap = Minecraft.getInstance().player.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).resolve().orElse(null);
@@ -91,7 +90,7 @@ public class GuardianEntitySynchronizer
 			float animationMovement = (progression) * animationSpeed;
 			animationMovement *= animationMovement;
 			
-			Minecraft.getInstance().getTextureManager().bindTexture(new ResourceLocation("textures/entity/guardian_beam.png"));
+			RenderSystem.setShaderTexture(0, new ResourceLocation("textures/entity/guardian_beam.png"));
 			RenderSystem.enableBlend();
 			float scale = 2.5f;
 			
@@ -99,30 +98,30 @@ public class GuardianEntitySynchronizer
 	        float g = 0.125f + (progressionSq * 0.75f);
 	        float b = 0.5f - (progressionSq * 0.25f);
 						
-			renderColoredRect(event.getMatrixStack(), 0, 0, Minecraft.getInstance().getMainWindow().getScaledWidth(),
-					Minecraft.getInstance().getMainWindow().getScaledHeight(), animationMovement, animationMovement, scale, scale, r, g, b,
+			renderColoredRect(event.getMatrixStack(), 0, 0, Minecraft.getInstance().getWindow().getGuiScaledWidth(),
+					Minecraft.getInstance().getWindow().getGuiScaledHeight(), animationMovement, animationMovement, scale, scale, r, g, b,
 					(float) Math.abs(Math.sin(Math.pow(progression, 1.2f) / 7f)) * (progression) / 100);
 			
 		      RenderSystem.depthMask(true);
 		}
 	}
 	
-	private static void renderColoredRect(MatrixStack matrix, int x, int y, int width, int height, float u, float v, float uWidth, float vHeight, float r, float g, float b, float a)
+	private static void renderColoredRect(PoseStack matrix, int x, int y, int width, int height, float u, float v, float uWidth, float vHeight, float r, float g, float b, float a)
 	{
 		float ar = width / ((float)height);
 		
 		renderColoredRect(matrix, x, x + width, y, y + height, 0, u, u + (uWidth) * ar, v, v + vHeight, r, g, b, a);
 	}
 	
-	private static void renderColoredRect(MatrixStack matrix, float xMin, float xMax, float yMin, float yMax, float zIndex, float minU, float maxU, float minV, float maxV, float r, float g, float b, float a)
+	private static void renderColoredRect(PoseStack matrix, float xMin, float xMax, float yMin, float yMax, float zIndex, float minU, float maxU, float minV, float maxV, float r, float g, float b, float a)
 	{
-	      BufferBuilder bb = Tessellator.getInstance().getBuffer();
-	      bb.begin(7, DefaultVertexFormats.POSITION_COLOR_TEX);
-	      bb.pos(matrix.getLast().getMatrix(), xMin, yMax, zIndex).color(r, g, b, a).tex(minU, maxV).endVertex();
-	      bb.pos(matrix.getLast().getMatrix(), xMax, yMax, zIndex).color(r, g, b, a).tex(maxU, maxV).endVertex();
-	      bb.pos(matrix.getLast().getMatrix(), xMax, yMin, zIndex).color(r, g, b, a).tex(maxU, minV).endVertex();
-	      bb.pos(matrix.getLast().getMatrix(), xMin, yMin, zIndex).color(r, g, b, a).tex(minU, minV).endVertex();
-	      bb.finishDrawing();
-	      WorldVertexBufferUploader.draw(bb);
+	      BufferBuilder bb = Tesselator.getInstance().getBuilder();
+	      bb.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR_TEX);
+	      bb.vertex(matrix.last().pose(), xMin, yMax, zIndex).color(r, g, b, a).uv(minU, maxV).endVertex();
+	      bb.vertex(matrix.last().pose(), xMax, yMax, zIndex).color(r, g, b, a).uv(maxU, maxV).endVertex();
+	      bb.vertex(matrix.last().pose(), xMax, yMin, zIndex).color(r, g, b, a).uv(maxU, minV).endVertex();
+	      bb.vertex(matrix.last().pose(), xMin, yMin, zIndex).color(r, g, b, a).uv(minU, minV).endVertex();
+	      bb.end();
+	      BufferUploader.end(bb);
 	}
 }

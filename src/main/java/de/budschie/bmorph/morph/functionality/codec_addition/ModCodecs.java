@@ -13,53 +13,52 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.LazyTag;
 import de.budschie.bmorph.morph.functionality.codec_addition.CommandProvider.Selector;
-import net.minecraft.block.Block;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
-import net.minecraft.item.Item;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.EffectInstance;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class ModCodecs
 {
 	public static final Codec<Attribute> ATTRIBUTE = getRegistryCodec(ForgeRegistries.ATTRIBUTES::getValue);
-	public static final Codec<Effect> EFFECTS = getRegistryCodec(ForgeRegistries.POTIONS::getValue);
+	public static final Codec<MobEffect> EFFECTS = getRegistryCodec(ForgeRegistries.MOB_EFFECTS::getValue);
 	public static final Codec<EntityType<?>> ENTITIES = getRegistryCodec(ForgeRegistries.ENTITIES::getValue);
 	
 	public static final Codec<Selector> SELECTOR_ENUM = getEnumCodec(Selector.class, Selector::values);
 	
-	public static final Codec<LazyTag<Block>> LAZY_BLOCK_TAGS = getLazyTagCodec(rl -> BlockTags.getCollection().get(rl)); 
+	public static final Codec<LazyTag<Block>> LAZY_BLOCK_TAGS = getLazyTagCodec(rl -> BlockTags.getAllTags().getTag(rl)); 
 	
-	public static final Codec<LazyTag<Item>> LAZY_ITEM_TAGS = getLazyTagCodec(rl -> ItemTags.getCollection().get(rl)); 
+	public static final Codec<LazyTag<Item>> LAZY_ITEM_TAGS = getLazyTagCodec(rl -> ItemTags.getAllTags().getTag(rl)); 
 	
-	public static final Codec<Vector3d> VECTOR_3D = RecordCodecBuilder.create(instance -> instance.group(Codec.DOUBLE.fieldOf("x").forGetter(inst -> inst.x),
-			Codec.DOUBLE.fieldOf("y").forGetter(inst -> inst.y), Codec.DOUBLE.fieldOf("z").forGetter(inst -> inst.z)).apply(instance, Vector3d::new));
+	public static final Codec<Vec3> VECTOR_3D = RecordCodecBuilder.create(instance -> instance.group(Codec.DOUBLE.fieldOf("x").forGetter(inst -> inst.x),
+			Codec.DOUBLE.fieldOf("y").forGetter(inst -> inst.y), Codec.DOUBLE.fieldOf("z").forGetter(inst -> inst.z)).apply(instance, Vec3::new));
 	
-	public static final Codec<EffectInstance> EFFECT_INSTANCE = RecordCodecBuilder.create(instance -> instance
+	public static final Codec<MobEffectInstance> EFFECT_INSTANCE = RecordCodecBuilder.create(instance -> instance
 			.group(
-					ModCodecs.EFFECTS.fieldOf("potion_effect").forGetter(EffectInstance::getPotion),
-					Codec.INT.optionalFieldOf("duration", 40).forGetter(EffectInstance::getDuration),
-					Codec.INT.optionalFieldOf("amplifier", 0).forGetter(EffectInstance::getAmplifier), 
-					Codec.BOOL.optionalFieldOf("ambient", false).forGetter(EffectInstance::isAmbient),
-					Codec.BOOL.optionalFieldOf("show_particles", false).forGetter(EffectInstance::doesShowParticles), 
-					Codec.BOOL.optionalFieldOf("show_icon", true).forGetter(EffectInstance::isShowIcon)
+					ModCodecs.EFFECTS.fieldOf("potion_effect").forGetter(MobEffectInstance::getEffect),
+					Codec.INT.optionalFieldOf("duration", 40).forGetter(MobEffectInstance::getDuration),
+					Codec.INT.optionalFieldOf("amplifier", 0).forGetter(MobEffectInstance::getAmplifier), 
+					Codec.BOOL.optionalFieldOf("ambient", false).forGetter(MobEffectInstance::isAmbient),
+					Codec.BOOL.optionalFieldOf("show_particles", false).forGetter(MobEffectInstance::isVisible), 
+					Codec.BOOL.optionalFieldOf("show_icon", true).forGetter(MobEffectInstance::showIcon)
 					)
-			.apply(instance, EffectInstance::new));
+			.apply(instance, MobEffectInstance::new));
 	
 	public static final Codec<CommandProvider> COMMAND_PROVIDER = RecordCodecBuilder
 			.create(instance -> instance.group(Codec.STRING.fieldOf("command").forGetter(CommandProvider::getCommand), SELECTOR_ENUM.optionalFieldOf("selector", Selector.SELF).forGetter(CommandProvider::getSelector))
 					.apply(instance, CommandProvider::new));
 	
-	public static final <T> Codec<LazyTag<T>> getLazyTagCodec(Function<ResourceLocation, ITag<T>> resolveFunction)
+	public static final <T> Codec<LazyTag<T>> getLazyTagCodec(Function<ResourceLocation, Tag<T>> resolveFunction)
 	{
 		return ResourceLocation.CODEC.flatXmap((resourceLocation) ->
 		{
@@ -77,7 +76,7 @@ public class ModCodecs
 	 
 	public static final <A extends Enum<A>> Codec<A> getEnumCodec(Class<A> clazz, Supplier<A[]> values)
 	{		
-		return new Codec<A>()
+		return new Codec<>()
 		{
 			@Override
 			public <T> DataResult<T> encode(A input, DynamicOps<T> ops, T prefix)
@@ -120,7 +119,7 @@ public class ModCodecs
 		};
 	}
 	
-	public static final Codec<Operation> OPERATION = new Codec<AttributeModifier.Operation>()
+	public static final Codec<Operation> OPERATION = new Codec<>()
 	{
 		@Override
 		public <T> DataResult<T> encode(Operation input, DynamicOps<T> ops, T prefix)
@@ -148,7 +147,7 @@ public class ModCodecs
 	// This is dumb...
 	public static <A> Codec<A> newCodec(Supplier<A> supplier)
 	{
-		return new Codec<A>()
+		return new Codec<>()
 		{
 			@Override
 			public <T> DataResult<T> encode(A input, DynamicOps<T> ops, T prefix)
@@ -166,7 +165,7 @@ public class ModCodecs
 	
 	private static <A extends IForgeRegistryEntry<A>> Codec<A> getRegistryCodec(Function<ResourceLocation, A> registryRetrieval)
 	{
-		return new Codec<A>()
+		return new Codec<>()
 		{
 			@Override
 			public <T> DataResult<T> encode(A input, DynamicOps<T> ops, T prefix)

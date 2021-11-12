@@ -16,24 +16,24 @@ import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
 import de.budschie.bmorph.morph.functionality.configurable.client.GuardianClientAdapter;
 import de.budschie.bmorph.morph.functionality.configurable.client.GuardianClientAdapterInstance;
 import de.budschie.bmorph.util.SoundInstance;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileHelper;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceContext.BlockMode;
-import net.minecraft.util.math.RayTraceContext.FluidMode;
-import net.minecraft.util.math.RayTraceResult.Type;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.ClipContext.Block;
+import net.minecraft.world.level.ClipContext.Fluid;
+import net.minecraft.world.phys.HitResult.Type;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -144,9 +144,9 @@ public class GuardianAbility extends AbstractEventAbility
 	}
 	
 	@Override
-	public void onUsedAbility(PlayerEntity player, MorphItem currentMorph)
+	public void onUsedAbility(Player player, MorphItem currentMorph)
 	{
-		if(!player.getEntityWorld().isRemote)
+		if(!player.getCommandSenderWorld().isClientSide)
 		{
 			// Cancel this shit
 			if(isAbilityActive(player))
@@ -161,16 +161,16 @@ public class GuardianAbility extends AbstractEventAbility
 			else
 			{
 				// Shoot ray to detect the entity that the player is currently looking at
-				Vector3d from = player.getPositionVec().add(Vector3d.fromPitchYaw(player.getPitchYaw())).add(0, player.getEyeHeight(), 0);
-				Vector3d to = Vector3d.fromPitchYaw(player.getPitchYaw()).mul(50, 50, 50).add(from);
+				Vec3 from = player.position().add(Vec3.directionFromRotation(player.getRotationVector())).add(0, player.getEyeHeight(), 0);
+				Vec3 to = Vec3.directionFromRotation(player.getRotationVector()).multiply(50, 50, 50).add(from);
 				
-				AxisAlignedBB aabb = new AxisAlignedBB(from, to);
+				AABB aabb = new AABB(from, to);
 				
-				EntityRayTraceResult result = ProjectileHelper.rayTraceEntities(player.getEntityWorld(), player, from, to, aabb, entity -> entity instanceof LivingEntity);
+				EntityHitResult result = ProjectileUtil.getEntityHitResult(player.getCommandSenderWorld(), player, from, to, aabb, entity -> entity instanceof LivingEntity);
 				
 				if(result != null)
 				{
-					BlockRayTraceResult blockResult = player.getEntityWorld().rayTraceBlocks(new RayTraceContext(from, result.getEntity().getPositionVec().add(0, result.getEntity().getEyeHeight(), 0), BlockMode.VISUAL, FluidMode.NONE, null));
+					BlockHitResult blockResult = player.getCommandSenderWorld().clip(new ClipContext(from, result.getEntity().position().add(0, result.getEntity().getEyeHeight(), 0), Block.VISUAL, Fluid.NONE, null));
 					
 					if(blockResult == null || blockResult.getType() == Type.MISS)
 					{
@@ -185,9 +185,9 @@ public class GuardianAbility extends AbstractEventAbility
 	@SubscribeEvent
 	public void onLivingJumpEvent(LivingJumpEvent event)
 	{
-		if(isTracked(event.getEntity()) && isAbilityActive((PlayerEntity)event.getEntity()) && !mayMove)
+		if(isTracked(event.getEntity()) && isAbilityActive((Player)event.getEntity()) && !mayMove)
 		{
-			event.getEntityLiving().setMotion(event.getEntityLiving().getMotion().x, 0, event.getEntityLiving().getMotion().z);
+			event.getEntityLiving().setDeltaMovement(event.getEntityLiving().getDeltaMovement().x, 0, event.getEntityLiving().getDeltaMovement().z);
 		}
 	}
 	
@@ -197,13 +197,13 @@ public class GuardianAbility extends AbstractEventAbility
 		if(isTracked(event.getPlayer()))
 		{				
 			// Check if we are on the logical server
-			if(!event.getPlayer().getEntityWorld().isRemote)
+			if(!event.getPlayer().getCommandSenderWorld().isClientSide)
 			{
 				// Retrieve current entity
-				Entity targettedEntity = ((ServerWorld)event.getPlayer().getEntityWorld()).getEntityByUuid(event.getCapability().getAttackedEntityServer().get());
+				Entity targettedEntity = ((ServerLevel)event.getPlayer().getCommandSenderWorld()).getEntity(event.getCapability().getAttackedEntityServer().get());
 				
 				// Check if entity is null or out of bounds
-				if(targettedEntity == null || !targettedEntity.isAlive() || targettedEntity.getPositionVec().squareDistanceTo(event.getPlayer().getPositionVec()) > (maxDistance * maxDistance))
+				if(targettedEntity == null || !targettedEntity.isAlive() || targettedEntity.position().distanceToSqr(event.getPlayer().position()) > (maxDistance * maxDistance))
 				{
 					GuardianBeamCapabilityHandler.unattackServer(event.getPlayer());
 					deapplyAbilityEffects(event.getPlayer());
@@ -213,11 +213,11 @@ public class GuardianAbility extends AbstractEventAbility
 				// Test if we may shoot through blocks
 				if(!xray)
 				{
-					Vector3d from = event.getPlayer().getPositionVec().add(Vector3d.fromPitchYaw(event.getPlayer().getPitchYaw())).add(0, event.getPlayer().getEyeHeight(), 0);
-					Vector3d to = targettedEntity.getPositionVec().add(0, targettedEntity.getEyeHeight(), 0);
+					Vec3 from = event.getPlayer().position().add(Vec3.directionFromRotation(event.getPlayer().getRotationVector())).add(0, event.getPlayer().getEyeHeight(), 0);
+					Vec3 to = targettedEntity.position().add(0, targettedEntity.getEyeHeight(), 0);
 					
 					// Re-check if entity is still not obstructed by block
-					BlockRayTraceResult blockResult = event.getPlayer().getEntityWorld().rayTraceBlocks(new RayTraceContext(from, to, BlockMode.VISUAL, FluidMode.NONE, event.getPlayer()));
+					BlockHitResult blockResult = event.getPlayer().getCommandSenderWorld().clip(new ClipContext(from, to, Block.VISUAL, Fluid.NONE, event.getPlayer()));
 					
 					// If a block was hit, cancel everything.
 					if(blockResult != null && blockResult.getType() == Type.BLOCK)
@@ -232,10 +232,10 @@ public class GuardianAbility extends AbstractEventAbility
 				if(event.getCapability().getAttackProgression() >= attackDuration)
 				{
 					// Attack entity
-					Entity currentlyTargettedEntity = ((ServerWorld) event.getPlayer().getEntityWorld())
-							.getEntityByUuid(event.getCapability().getAttackedEntityServer().get());
+					Entity currentlyTargettedEntity = ((ServerLevel) event.getPlayer().getCommandSenderWorld())
+							.getEntity(event.getCapability().getAttackedEntityServer().get());
 					
-					currentlyTargettedEntity.attackEntityFrom(DamageSource.causeIndirectMagicDamage(event.getPlayer(), event.getPlayer()), damage);
+					currentlyTargettedEntity.hurt(DamageSource.indirectMagic(event.getPlayer(), event.getPlayer()), damage);
 					
 					// Set the capability accordingly and sync it to the client
 					GuardianBeamCapabilityHandler.unattackServer(event.getPlayer());
@@ -256,20 +256,20 @@ public class GuardianAbility extends AbstractEventAbility
 	}
 	
 	// Apply slowness to the player performing the attack if necessary.
-	private void applyAbilityEffects(PlayerEntity player)
+	private void applyAbilityEffects(Player player)
 	{
-		if(!mayMove && !player.getEntityWorld().isRemote)
+		if(!mayMove && !player.getCommandSenderWorld().isClientSide)
 		{
-			player.getAttribute(Attributes.MOVEMENT_SPEED).applyNonPersistentModifier(am);
+			player.getAttribute(Attributes.MOVEMENT_SPEED).addTransientModifier(am);
 		}			
 	}
 	
 	// Remove slowness again when we are done attacking
-	private void deapplyAbilityEffects(PlayerEntity player)
+	private void deapplyAbilityEffects(Player player)
 	{
-		if(!mayMove && !player.getEntityWorld().isRemote)
+		if(!mayMove && !player.getCommandSenderWorld().isClientSide)
 		{
-			ModifiableAttributeInstance inst = player.getAttribute(Attributes.MOVEMENT_SPEED);
+			AttributeInstance inst = player.getAttribute(Attributes.MOVEMENT_SPEED);
 			
 			if(inst.hasModifier(am))
 				inst.removeModifier(am);
@@ -277,18 +277,18 @@ public class GuardianAbility extends AbstractEventAbility
 	}
 	
 	@Override
-	public void enableAbility(PlayerEntity player, MorphItem enabledItem)
+	public void enableAbility(Player player, MorphItem enabledItem)
 	{
 		super.enableAbility(player, enabledItem);
 		
-		if(adapter != null && player.getEntityWorld().isRemote)
+		if(adapter != null && player.getCommandSenderWorld().isClientSide)
 			adapter.playGuardianSound(player);
 	}
 	
 	@Override
-	public void disableAbility(PlayerEntity player, MorphItem disabledItem)
+	public void disableAbility(Player player, MorphItem disabledItem)
 	{
-		if(!player.getEntityWorld().isRemote)
+		if(!player.getCommandSenderWorld().isClientSide)
 		{
 			IGuardianBeamCapability cap = getNullableBeamCap(player);
 			if (cap != null && cap.getAttackedEntity().isPresent())
@@ -302,7 +302,7 @@ public class GuardianAbility extends AbstractEventAbility
 		super.disableAbility(player, disabledItem);
 	}
 	
-	private boolean isAbilityActive(PlayerEntity player)
+	private boolean isAbilityActive(Player player)
 	{
 		IGuardianBeamCapability cap = getNullableBeamCap(player);
 		
@@ -312,7 +312,7 @@ public class GuardianAbility extends AbstractEventAbility
 			return cap.getAttackedEntity().isPresent();
 	}
 	
-	private IGuardianBeamCapability getNullableBeamCap(PlayerEntity player)
+	private IGuardianBeamCapability getNullableBeamCap(Player player)
 	{
 		return player.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).resolve().orElse(null);
 	}

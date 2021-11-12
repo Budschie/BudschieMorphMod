@@ -12,7 +12,7 @@ import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.network.MorphRequestAbilityUsage;
 import de.budschie.bmorph.network.MorphRequestMorphIndexChange.RequestMorphIndexChangePacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -85,12 +85,12 @@ public class MorphGuiHandler
 	{		
 		if(event.phase == Phase.END)
 		{
-			if(Minecraft.getInstance().world != null)
+			if(Minecraft.getInstance().level != null)
 			{	
 				if(!currentMorphGui.isPresent())
 					traverseToIndexAndSetGui();
 				
-				if(ClientSetup.TOGGLE_MORPH_UI.isPressed())
+				if(ClientSetup.TOGGLE_MORPH_UI.consumeClick())
 				{				
 					if (guiHidden)
 						showGui();
@@ -100,20 +100,20 @@ public class MorphGuiHandler
 				
 				if(canGuiBeDisplayed())
 				{
-					if (ClientSetup.SCROLL_DOWN_MORPH_UI.isPressed())
+					if (ClientSetup.SCROLL_DOWN_MORPH_UI.consumeClick())
 						currentMorphGui.get().scroll(1);
 		
-					if (ClientSetup.SCROLL_UP_MORPH_UI.isPressed())
+					if (ClientSetup.SCROLL_UP_MORPH_UI.consumeClick())
 						currentMorphGui.get().scroll(-1);
 					
-					if (ClientSetup.SCROLL_LEFT_MORPH_UI.isPressed())
+					if (ClientSetup.SCROLL_LEFT_MORPH_UI.consumeClick())
 						currentMorphGui.get().horizontalScroll(-1);
 		
-					if (ClientSetup.SCROLL_RIGHT_MORPH_UI.isPressed())
+					if (ClientSetup.SCROLL_RIGHT_MORPH_UI.consumeClick())
 						currentMorphGui.get().horizontalScroll(1);
 	
 					
-					if(ClientSetup.NEXT_MORPH_UI.isPressed())
+					if(ClientSetup.NEXT_MORPH_UI.consumeClick())
 					{
 						currentIndex++;
 						currentIndex %= MorphGuiRegistry.REGISTRY.get().getValues().size();
@@ -121,7 +121,7 @@ public class MorphGuiHandler
 						updateCurrentMorphUI();
 					}
 					
-					if(ClientSetup.PREVIOUS_MORPH_UI.isPressed())
+					if(ClientSetup.PREVIOUS_MORPH_UI.consumeClick())
 					{
 						currentIndex--;
 						currentIndex %= MorphGuiRegistry.REGISTRY.get().getValues().size();
@@ -129,7 +129,7 @@ public class MorphGuiHandler
 						updateCurrentMorphUI();
 					}
 					
-					if(ClientSetup.TOGGLE_MORPH_FAVOURITE.isPressed())
+					if(ClientSetup.TOGGLE_MORPH_FAVOURITE.consumeClick())
 					{
 						LazyOptional<IMorphCapability> cap = Minecraft.getInstance().player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 						
@@ -153,7 +153,7 @@ public class MorphGuiHandler
 					}
 				}
 				
-				if(ClientSetup.USE_ABILITY_KEY.isPressed())
+				if(ClientSetup.USE_ABILITY_KEY.consumeClick())
 					MainNetworkChannel.INSTANCE.sendToServer(new MorphRequestAbilityUsage.MorphRequestAbilityUsagePacket());			
 			}
 		}
@@ -162,7 +162,7 @@ public class MorphGuiHandler
 	@SubscribeEvent
 	public static void onPressedKeyboardKeyRaw(KeyInputEvent event)
 	{
-		if(canGuiBeDisplayed() && ClientSetup.MORPH_UI.isPressed() && currentMorphGui.isPresent())
+		if(canGuiBeDisplayed() && ClientSetup.MORPH_UI.consumeClick() && currentMorphGui.isPresent())
 		{
 			MainNetworkChannel.INSTANCE.sendToServer(new RequestMorphIndexChangePacket(currentMorphGui.get().getMorphIndex()));
 			
@@ -182,7 +182,7 @@ public class MorphGuiHandler
 		}
 	}
 	
-	public static void scheduleEyeHeightChange(float newEyeHeight, PlayerEntity player)
+	public static void scheduleEyeHeightChange(float newEyeHeight, Player player)
 	{
 		EyeHeightChangePair pair = new EyeHeightChangePair();
 		pair.newEyeHeight = newEyeHeight;
@@ -194,6 +194,6 @@ public class MorphGuiHandler
 	private static class EyeHeightChangePair
 	{
 		float newEyeHeight;
-		PlayerEntity player;
+		Player player;
 	}
 }
