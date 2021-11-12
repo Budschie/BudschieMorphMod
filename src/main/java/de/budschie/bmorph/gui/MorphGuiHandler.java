@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
 
+import org.lwjgl.glfw.GLFW;
+
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.main.ClientSetup;
 import de.budschie.bmorph.morph.FavouriteNetworkingHelper;
+import de.budschie.bmorph.network.DeleteOrDropMorph;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.network.MorphRequestAbilityUsage;
 import de.budschie.bmorph.network.MorphRequestMorphIndexChange.RequestMorphIndexChangePacket;
@@ -61,6 +64,15 @@ public class MorphGuiHandler
 	public static Optional<AbstractMorphGui> getCurrentMorphGui()
 	{
 		return currentMorphGui;
+	}
+	
+	public static void updateMorphUi()
+	{
+		if(!guiHidden)
+		{
+			hideGui();
+			showGui();
+		}
 	}
 	
 	public static void showGui()
@@ -162,15 +174,38 @@ public class MorphGuiHandler
 	@SubscribeEvent
 	public static void onPressedKeyboardKeyRaw(KeyInputEvent event)
 	{
-		if(canGuiBeDisplayed() && ClientSetup.MORPH_UI.consumeClick() && currentMorphGui.isPresent())
+		if(canGuiBeDisplayed() && currentMorphGui.isPresent())
 		{
-			MainNetworkChannel.INSTANCE.sendToServer(new RequestMorphIndexChangePacket(currentMorphGui.get().getMorphIndex()));
+			boolean glfwPress = event.getAction() == GLFW.GLFW_PRESS;
 			
-			if(guiHidden)
-				showGui();
-			else
-				hideGui();			
+			int morphIndex = currentMorphGui.get().getMorphIndex(); 
+			
+			if(ClientSetup.MORPH_UI.consumeClick() && glfwPress)
+			{
+				MainNetworkChannel.INSTANCE.sendToServer(new RequestMorphIndexChangePacket(currentMorphGui.get().getMorphIndex()));
+				
+				if(guiHidden)
+					showGui();
+				else
+					hideGui();
+			}
+			else if(morphIndex >= 0)
+			{
+				if(ClientSetup.DROP_CURRENT_MORPH.consumeClick() && glfwPress)
+				{
+					dropOrDelete(true, morphIndex);
+				}
+				else if(ClientSetup.DELETE_CURRENT_MORPH.consumeClick() && glfwPress)
+				{
+					dropOrDelete(false, morphIndex);
+				}
+			}
 		}
+	}
+	
+	private static void dropOrDelete(boolean drop, int currentMorphIndex)
+	{
+		MainNetworkChannel.INSTANCE.sendToServer(new DeleteOrDropMorph.DeleteOrDropMorphPacket(currentMorphIndex, drop));
 	}
 	
 	@SubscribeEvent

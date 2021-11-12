@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
+import de.budschie.bmorph.gui.MorphGuiHandler;
 import de.budschie.bmorph.network.MorphRemovedSynchronizer.MorphRemovedPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -41,6 +42,8 @@ public class MorphRemovedSynchronizer implements ISimpleImplPacket<MorphRemovedP
 					
 					resolved.removeFromMorphList(packet.getRemovedMorph());
 				}
+				
+				MorphGuiHandler.updateMorphUi();
 			}
 		});
 	}

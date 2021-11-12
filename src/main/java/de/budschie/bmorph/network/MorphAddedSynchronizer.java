@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
+import de.budschie.bmorph.gui.MorphGuiHandler;
 import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.network.MorphAddedSynchronizer.MorphAddedPacket;
@@ -43,6 +44,8 @@ public class MorphAddedSynchronizer implements ISimpleImplPacket<MorphAddedPacke
 					
 					resolved.addToMorphList(packet.getAddedMorph());
 				}
+				
+				MorphGuiHandler.updateMorphUi();
 			}
 		});
 	}
