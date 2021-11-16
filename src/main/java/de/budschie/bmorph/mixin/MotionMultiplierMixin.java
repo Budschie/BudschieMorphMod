@@ -18,7 +18,7 @@ public abstract class MotionMultiplierMixin
 	@Shadow
 	private Vec3 stuckSpeedMultiplier;
 	
-	@Inject(at = @At("HEAD"), method = "makeStuckInBlock(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/vector/Vector3d;)V", cancellable = true)
+	@Inject(at = @At("HEAD"), method = "makeStuckInBlock(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/phys/Vec3;)V", cancellable = true)
 	private void onSetMotionMultiplier(BlockState blockState, Vec3 vector3d, CallbackInfo info)
 	{
 		Entity thisInstance = ((Entity)(Object)this);

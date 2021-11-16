@@ -40,7 +40,7 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
 		super(rendererManager, entityModelIn, shadowSizeIn);
 	}
 	
-	@Inject(at = @At("HEAD"), method = "renderRightHand(Lcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;ILnet/minecraft/client/entity/player/AbstractClientPlayerEntity;)V", cancellable = true)
+	@Inject(at = @At("HEAD"), method = "renderRightHand(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/player/AbstractClientPlayer;)V", cancellable = true)
 	private void renderRightHand(PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn,
 			AbstractClientPlayer playerIn, CallbackInfo info)
 	{
@@ -70,7 +70,7 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
 		}
 	}
 	
-	@Inject(at = @At("HEAD"), method = "renderLeftHand(Lcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;ILnet/minecraft/client/entity/player/AbstractClientPlayerEntity;)V", cancellable = true)
+	@Inject(at = @At("HEAD"), method = "renderLeftHand(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/player/AbstractClientPlayer;)V", cancellable = true)
 	private void renderLeftHand(PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn,
 			AbstractClientPlayer playerIn, CallbackInfo info)
 	{		

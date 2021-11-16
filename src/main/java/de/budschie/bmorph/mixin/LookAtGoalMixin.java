@@ -21,8 +21,8 @@ public abstract class LookAtGoalMixin extends Goal
 	@Shadow
 	private Entity lookAt;
 	
-	@Inject(method = "shouldExecute()Z", at = @At("TAIL"), cancellable = true)
-	private void shouldExecute(CallbackInfoReturnable<Boolean> callback)
+	@Inject(method = "canUse()Z", at = @At("TAIL"), cancellable = true)
+	private void canUse(CallbackInfoReturnable<Boolean> callback)
 	{
 		if(this.lookAt != null && ServerSetup.server.getGameRules().getBoolean(BMorphMod.PREVENT_LOOKAT) && this.lookAt instanceof Player)
 		{
