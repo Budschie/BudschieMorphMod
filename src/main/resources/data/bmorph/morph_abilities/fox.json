@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:fox",
+    "grant":
+    [
+        "bmorph:berry_bush_passthrough"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

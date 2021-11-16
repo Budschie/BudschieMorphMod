@@ -1,0 +1,8 @@
+{
+    "ability": "bmorph:block_passthrough",
+    "config":
+    {
+        "speed_multiplier": 0,
+        "applies_to": "bmorph:sweet_berry_bush"
+    }
+}
