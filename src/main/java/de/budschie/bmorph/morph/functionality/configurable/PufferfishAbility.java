@@ -13,12 +13,12 @@ import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.StunAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import de.budschie.bmorph.util.SoundInstance;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -116,11 +116,10 @@ public class PufferfishAbility extends StunAbility
 						for(LivingEntity entity : entities)
 						{
 							if(entity == event.player || !entity.isAlive())
-								break;
+								continue;
 
 							if(entity.hurt(DamageSource.mobAttack(event.player), directDamage))
 							{
-								
 								for(MobEffectInstance effect : effects)
 								{
 									entity.addEffect(new MobEffectInstance(effect));
