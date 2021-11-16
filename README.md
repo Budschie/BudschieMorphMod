@@ -1,5 +1,5 @@
 # Budschie's Morph Mod
-This is a mod whose goal it is to recreate the experience of the more or less discontinued MetaMorphMod in the Minecraft version 1.16.5.
+This is a mod whose goal it is to recreate the experience of the more or less discontinued MetaMorphMod in the Minecraft version 1.17.1.
 ## What can this mod do?
 This mod has several features, such as following:
 
@@ -88,6 +88,8 @@ If something doesn't work, look at the logs. If you have malformed JSON, or eith
 
 Here is a list of all sample abilities (Is active ability => if you have to press a button for the ability to work):
 
+**OUTDATED!**
+
 | **Ability** | **Description** | **Ability ID** | **Is active ability?** |
 |---|---|---|---|
 | *BOOM!* | The name explains it all. This ability allows you to explode. | bmorph:boom | Yes |
@@ -128,6 +130,7 @@ So, that's it. Hopefully you've enjoyed this guide and could create a cool new d
 If there are some issues on creating this data pack, feel free to post them as an issue on my Github page.
 
 ## Special thanks
+* Everyone that have participated in this project by contributing ideas or reporting issues.
 
 * The forge discord for helping me out when I had a programming issue.
 
