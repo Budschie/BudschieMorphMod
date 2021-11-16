@@ -7,6 +7,7 @@ import de.budschie.bmorph.entity.EntityRegistry;
 import de.budschie.bmorph.gui.MorphGuiRegistry;
 import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
+import de.budschie.bmorph.morph.VisualMorphDataRegistry;
 import de.budschie.bmorph.morph.fallback.FallbackMorphItem;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import de.budschie.bmorph.morph.functionality.DynamicAbilityRegistry;
@@ -43,6 +44,7 @@ public class BMorphMod
 	public static Key<IntegerValue> MORPH_AGGRO_DURATION;
 	
 	public static DynamicAbilityRegistry DYNAMIC_ABILITY_REGISTRY;
+	public static VisualMorphDataRegistry VISUAL_MORPH_DATA;
 	
 	public BMorphMod()
 	{
@@ -85,5 +87,6 @@ public class BMorphMod
 		EntitySynchronizerRegistry.addEntitySynchronizer(new PufferfishSynchronizer());
 		
 		DYNAMIC_ABILITY_REGISTRY = new DynamicAbilityRegistry();
+		VISUAL_MORPH_DATA = new VisualMorphDataRegistry();
 	}	
 }

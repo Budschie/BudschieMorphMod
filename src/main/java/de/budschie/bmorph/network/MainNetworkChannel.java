@@ -42,6 +42,7 @@ public class MainNetworkChannel
 		registerSimpleImplPacket(GuardianBeamAttack.GuardianBeamAttackPacket.class, new GuardianBeamAttack());
 		registerSimpleImplPacket(DisposePlayerMorphData.DisposePlayerMorphDataPacket.class, new DisposePlayerMorphData());
 		registerSimpleImplPacket(DeleteOrDropMorph.DeleteOrDropMorphPacket.class, new DeleteOrDropMorph());
+		registerSimpleImplPacket(VisualMorphSynchronizer.VisualMorphPacket.class, new VisualMorphSynchronizer());
 	}
 	
 	public static <T> void registerSimpleImplPacket(Class<T> packetClass, ISimpleImplPacket<T> packet)

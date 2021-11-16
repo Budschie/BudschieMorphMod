@@ -20,6 +20,7 @@ import de.budschie.bmorph.entity.MorphEntity;
 import de.budschie.bmorph.json_integration.AbilityConfigurationHandler;
 import de.budschie.bmorph.json_integration.MorphAbilityManager;
 import de.budschie.bmorph.json_integration.MorphNBTHandler;
+import de.budschie.bmorph.json_integration.VisualMorphDataHandler;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
@@ -67,6 +68,7 @@ public class Events
 	public static final MorphAbilityManager MORPH_ABILITY_MANAGER = new MorphAbilityManager();
 	public static final MorphNBTHandler MORPH_NBT_HANDLER = new MorphNBTHandler();
 	public static final AbilityConfigurationHandler ABILITY_CONFIG_HANDLER = new AbilityConfigurationHandler();
+	public static final VisualMorphDataHandler VISUAL_MORPH_DATA_HANDLER = new VisualMorphDataHandler();
 	
 	@SubscribeEvent
 	public static void onRegisterCapabilities(RegisterCapabilitiesEvent event)
@@ -114,6 +116,7 @@ public class Events
 		if(event.getPlayer() == null)
 		{
 			BMorphMod.DYNAMIC_ABILITY_REGISTRY.syncWithClients();
+			BMorphMod.VISUAL_MORPH_DATA.syncWithClients();
 			
 			ServerSetup.server.getPlayerList().getPlayers().forEach(player ->
 			{
@@ -126,7 +129,10 @@ public class Events
 			});
 		}
 		else
+		{
 			BMorphMod.DYNAMIC_ABILITY_REGISTRY.syncWithClient(event.getPlayer());
+			BMorphMod.VISUAL_MORPH_DATA.syncWithClient(event.getPlayer());
+		}
 	}
 	
 	@SubscribeEvent
@@ -148,6 +154,7 @@ public class Events
 		event.addListener(ABILITY_CONFIG_HANDLER);
 		event.addListener(MORPH_ABILITY_MANAGER);
 		event.addListener(MORPH_NBT_HANDLER);
+		event.addListener(VISUAL_MORPH_DATA_HANDLER);
 	}
 	
 	@SubscribeEvent

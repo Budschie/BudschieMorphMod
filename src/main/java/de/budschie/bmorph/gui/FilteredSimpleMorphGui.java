@@ -16,8 +16,10 @@ import com.mojang.math.Quaternion;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
+import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.main.References;
 import de.budschie.bmorph.morph.MorphItem;
+import de.budschie.bmorph.morph.VisualMorphDataRegistry.VisualMorphData;
 import de.budschie.bmorph.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
@@ -72,7 +74,8 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 					morphList.add(i);
 			}
 			
-			morphWidgets.add(new MorphWidget(null, false, -1));
+			// Nice
+			morphWidgets.add(new MorphWidget(null, false, -1, 69));
 			
 			HashMap<EntityType<?>, Pair<MorphWidget, Integer>> currentWidgetHeads = new HashMap<>();
 			
@@ -82,7 +85,13 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 				
 				MorphItem item = resolved.getMorphList().getMorphArrayList().get(indexOfMorph);
 				
-				MorphWidget widget = new MorphWidget(item, resolved.getFavouriteList().containsMorphItem(item), indexOfMorph);
+				float morphScale = 1;
+				VisualMorphData visualData = BMorphMod.VISUAL_MORPH_DATA.getDataForMorph(item);
+				
+				if(visualData != null)
+					morphScale = visualData.getScale();
+				
+				MorphWidget widget = new MorphWidget(item, resolved.getFavouriteList().containsMorphItem(item), indexOfMorph, morphScale);
 				
 				Pair<MorphWidget, Integer> currentWidgetHead = currentWidgetHeads.get(widget.morphItem.getEntityType());
 				
@@ -247,17 +256,19 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 		MorphItem morphItem;
 		MorphWidget child;
 		boolean isFavourite;
+		float morphScale;
 		// This is dumb
 		int depth;
 		boolean crashed = false;
 		
 		int morphListIndex;
 		
-		public MorphWidget(MorphItem morphItem, boolean isFavourite, int morphListIndex)
+		public MorphWidget(MorphItem morphItem, boolean isFavourite, int morphListIndex, float morphScale)
 		{
 			this.morphItem = morphItem;
 			this.isFavourite = isFavourite;
 			this.morphListIndex = morphListIndex;
+			this.morphScale = morphScale;
 		}
 		
 		@SubscribeEvent
@@ -310,7 +321,7 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 				    			    
 					stack.pushPose();
 					stack.translate(30, 70, 50);
-					stack.scale(ENTITY_SCALE_FACTOR, -ENTITY_SCALE_FACTOR, ENTITY_SCALE_FACTOR);
+					stack.scale(ENTITY_SCALE_FACTOR * morphScale, -ENTITY_SCALE_FACTOR * morphScale, ENTITY_SCALE_FACTOR * morphScale);
 					stack.mulPose(ENTITY_ROTATION);
 					
 					dumbFix = this.morphEntity.get();

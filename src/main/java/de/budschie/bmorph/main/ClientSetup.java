@@ -97,7 +97,10 @@ public class ClientSetup
 		{
 			// Unregister every ability when leaving world
 			if(event.getPlayer() != null)
+			{
 				BMorphMod.DYNAMIC_ABILITY_REGISTRY.unregisterAll();
+				BMorphMod.VISUAL_MORPH_DATA.clear();
+			}
 		}
 	}
 	
