@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.network.VisualMorphSynchronizer;
+import de.budschie.bmorph.util.BudschieUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fmllegacy.network.PacketDistributor;
@@ -40,12 +41,18 @@ public class VisualMorphDataRegistry
 	
 	public void syncWithClient(ServerPlayer client)
 	{
-		MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> client), new VisualMorphSynchronizer.VisualMorphPacket(visualMorphDataRegistry.values()));
+		if(!visualMorphDataRegistry.isEmpty() && !BudschieUtils.isLocalWorld())
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> client), new VisualMorphSynchronizer.VisualMorphPacket(visualMorphDataRegistry.values()));
+		else
+			System.out.println("Skipping visual data sync as world is local.");
 	}
 	
 	public void syncWithClients()
 	{
-		MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new VisualMorphSynchronizer.VisualMorphPacket(visualMorphDataRegistry.values()));
+		if(!visualMorphDataRegistry.isEmpty() && !BudschieUtils.isLocalWorld())
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new VisualMorphSynchronizer.VisualMorphPacket(visualMorphDataRegistry.values()));
+		else
+			System.out.println("Skipping visual data sync as world is local.");
 	}
 	
 	public static class VisualMorphData

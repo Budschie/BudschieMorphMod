@@ -2,13 +2,11 @@ package de.budschie.bmorph.morph.functionality;
 
 import java.util.HashMap;
 
-import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.network.ConfiguredAbilitySynchronizer;
 import de.budschie.bmorph.network.MainNetworkChannel;
+import de.budschie.bmorph.util.BudschieUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 public class DynamicAbilityRegistry
@@ -50,7 +48,7 @@ public class DynamicAbilityRegistry
 	
 	public void syncWithClients()
 	{
-		if(!abilities.isEmpty() && !isLocalWorld())
+		if(!abilities.isEmpty() && !BudschieUtils.isLocalWorld())
 			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new ConfiguredAbilitySynchronizer.ConfiguredAbilityPacket(abilities.values()));
 		else
 			System.out.println("Skipping registry sync as world is local.");
@@ -58,14 +56,9 @@ public class DynamicAbilityRegistry
 	
 	public void syncWithClient(ServerPlayer player)
 	{
-		if(!abilities.isEmpty() && !isLocalWorld())
+		if(!abilities.isEmpty() && !BudschieUtils.isLocalWorld())
 			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new ConfiguredAbilitySynchronizer.ConfiguredAbilityPacket(abilities.values()));
 		else
 			System.out.println("Skipping registry sync as world is local.");
-	}
-	
-	private boolean isLocalWorld()
-	{
-		return FMLEnvironment.dist == Dist.CLIENT && ServerSetup.server != null;
-	}
+	}	
 }
