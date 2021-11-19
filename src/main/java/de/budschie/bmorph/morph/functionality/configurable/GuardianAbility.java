@@ -16,24 +16,24 @@ import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
 import de.budschie.bmorph.morph.functionality.configurable.client.GuardianClientAdapter;
 import de.budschie.bmorph.morph.functionality.configurable.client.GuardianClientAdapterInstance;
 import de.budschie.bmorph.util.SoundInstance;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.ClipContext.Block;
 import net.minecraft.world.level.ClipContext.Fluid;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -162,7 +162,7 @@ public class GuardianAbility extends AbstractEventAbility
 			{
 				// Shoot ray to detect the entity that the player is currently looking at
 				Vec3 from = player.position().add(Vec3.directionFromRotation(player.getRotationVector())).add(0, player.getEyeHeight(), 0);
-				Vec3 to = Vec3.directionFromRotation(player.getRotationVector()).multiply(50, 50, 50).add(from);
+				Vec3 to = Vec3.directionFromRotation(player.getRotationVector()).multiply(maxDistance, maxDistance, maxDistance).add(from);
 				
 				AABB aabb = new AABB(from, to);
 				
@@ -172,7 +172,7 @@ public class GuardianAbility extends AbstractEventAbility
 				{
 					BlockHitResult blockResult = player.getCommandSenderWorld().clip(new ClipContext(from, result.getEntity().position().add(0, result.getEntity().getEyeHeight(), 0), Block.VISUAL, Fluid.NONE, null));
 					
-					if(blockResult == null || blockResult.getType() == Type.MISS)
+					if(blockResult == null || blockResult.getType() == Type.MISS && !isEntityOutOfRange(player, result.getEntity()))
 					{
 						GuardianBeamCapabilityHandler.attackServer(player, result.getEntity(), getAttackDuration());
 						applyAbilityEffects(player);
@@ -180,6 +180,11 @@ public class GuardianAbility extends AbstractEventAbility
 				}
 			}
 		}
+	}
+	
+	private boolean isEntityOutOfRange(Player ofPlayer, Entity entity)
+	{
+		return entity.position().distanceToSqr(ofPlayer.position()) > (maxDistance * maxDistance);
 	}
 	
 	@SubscribeEvent
@@ -203,7 +208,7 @@ public class GuardianAbility extends AbstractEventAbility
 				Entity targettedEntity = ((ServerLevel)event.getPlayer().getCommandSenderWorld()).getEntity(event.getCapability().getAttackedEntityServer().get());
 				
 				// Check if entity is null or out of bounds
-				if(targettedEntity == null || !targettedEntity.isAlive() || targettedEntity.position().distanceToSqr(event.getPlayer().position()) > (maxDistance * maxDistance))
+				if(targettedEntity == null || !targettedEntity.isAlive() || isEntityOutOfRange(event.getPlayer(), targettedEntity))
 				{
 					GuardianBeamCapabilityHandler.unattackServer(event.getPlayer());
 					deapplyAbilityEffects(event.getPlayer());
