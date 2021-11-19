@@ -2,7 +2,8 @@
     "entity_type": "minecraft:fox",
     "grant":
     [
-        "bmorph:berry_bush_passthrough"
+        "bmorph:berry_bush_passthrough",
+        "bmorph:no_berry_damage"
     ],
     "revoke":
     [
