@@ -1,16 +1,11 @@
 package de.budschie.bmorph.render_handler;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
 
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityAttacher;
 import de.budschie.bmorph.capabilities.guardian.IGuardianBeamCapability;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Guardian;
@@ -70,58 +65,43 @@ public class GuardianEntitySynchronizer
 	}
 	
 	@SubscribeEvent
-	public static void onPlayerRenderer(RenderGameOverlayEvent.Post event)
+	public static void onPlayerRenderer(RenderGameOverlayEvent.Pre event)
 	{
-		if(event.getType() != ElementType.LAYER)
+		if(event.getType() != ElementType.TEXT)
 			return;
 		
 		IGuardianBeamCapability beamCap = Minecraft.getInstance().player.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).resolve().orElse(null);
 		
 		// Render beam
 		if(beamCap != null && beamCap.getAttackedEntity().isPresent())
-		{			
-		    RenderSystem.depthMask(false);
-
+		{
 			float progression = beamCap.getAttackProgression() + event.getPartialTicks();
 			float linearProgression = progression / beamCap.getMaxAttackProgression();
 			float progressionSq = linearProgression * linearProgression;
-			float animationSpeed = .025f;
+			float animationSpeed = .25f;
 			
 			float animationMovement = (progression) * animationSpeed;
 			animationMovement *= animationMovement;
 			
 			RenderSystem.setShaderTexture(0, new ResourceLocation("textures/entity/guardian_beam.png"));
 			RenderSystem.enableBlend();
-			float scale = 2.5f;
+			
+			float scale = 7f;
 			
             float r = 0.25f + (progressionSq * 0.75f);
 	        float g = 0.125f + (progressionSq * 0.75f);
 	        float b = 0.5f - (progressionSq * 0.25f);
-						
-			renderColoredRect(event.getMatrixStack(), 0, 0, Minecraft.getInstance().getWindow().getGuiScaledWidth(),
-					Minecraft.getInstance().getWindow().getGuiScaledHeight(), animationMovement, animationMovement, scale, scale, r, g, b,
-					(float) Math.abs(Math.sin(Math.pow(progression, 1.2f) / 7f)) * (progression) / 100);
+	        float a = (float) Math.abs(Math.sin(Math.pow(progression / 2.0f, 1.2f) / 7f)) * (progression) / 100;
+	        
+			RenderSystem.setShaderColor(r, g, b, a);
+	        
+//			renderColoredRect(event.getMatrixStack(), 0, 0, Minecraft.getInstance().getWindow().getGuiScaledWidth(),
+//					Minecraft.getInstance().getWindow().getGuiScaledHeight(), animationMovement, animationMovement, scale, scale, r, g, b,
+//					a);
 			
-		      RenderSystem.depthMask(true);
+	        Gui.blit(event.getMatrixStack(), 0, 0, animationMovement, animationMovement, Minecraft.getInstance().getWindow().getGuiScaledWidth(), Minecraft.getInstance().getWindow().getGuiScaledHeight(), (int)(32 * scale), (int)(32 * scale));
+	        
+			RenderSystem.disableBlend();
 		}
-	}
-	
-	private static void renderColoredRect(PoseStack matrix, int x, int y, int width, int height, float u, float v, float uWidth, float vHeight, float r, float g, float b, float a)
-	{
-		float ar = width / ((float)height);
-		
-		renderColoredRect(matrix, x, x + width, y, y + height, 0, u, u + (uWidth) * ar, v, v + vHeight, r, g, b, a);
-	}
-	
-	private static void renderColoredRect(PoseStack matrix, float xMin, float xMax, float yMin, float yMax, float zIndex, float minU, float maxU, float minV, float maxV, float r, float g, float b, float a)
-	{
-	      BufferBuilder bb = Tesselator.getInstance().getBuilder();
-	      bb.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR_TEX);
-	      bb.vertex(matrix.last().pose(), xMin, yMax, zIndex).color(r, g, b, a).uv(minU, maxV).endVertex();
-	      bb.vertex(matrix.last().pose(), xMax, yMax, zIndex).color(r, g, b, a).uv(maxU, maxV).endVertex();
-	      bb.vertex(matrix.last().pose(), xMax, yMin, zIndex).color(r, g, b, a).uv(maxU, minV).endVertex();
-	      bb.vertex(matrix.last().pose(), xMin, yMin, zIndex).color(r, g, b, a).uv(minU, minV).endVertex();
-	      bb.end();
-	      BufferUploader.end(bb);
 	}
 }
