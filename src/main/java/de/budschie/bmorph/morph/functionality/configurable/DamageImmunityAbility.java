@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class DamageImmunityAbility extends AbstractEventAbility
@@ -27,7 +27,7 @@ public class DamageImmunityAbility extends AbstractEventAbility
 	}
 	
 	@SubscribeEvent
-	public void onPlayerTakingDamage(LivingDamageEvent event)
+	public void onPlayerTakingDamage(LivingAttackEvent event)
 	{
 		if(event.getSource().getMsgId().equals(immuneTo) && event.getEntity() instanceof Player && trackedPlayers.contains(event.getEntityLiving().getUUID()))
 		{
