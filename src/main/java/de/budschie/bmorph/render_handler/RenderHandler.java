@@ -164,6 +164,8 @@ public class RenderHandler
 		
 		toRender.wasTouchingWater = player.isInWater();
 		
+		toRender.setOnGround(player.isOnGround());
+		
 		float divisor = ShrinkAPIInteractor.getInteractor().getShrinkingValue(player);
 		
 		matrixStack.pushPose();
