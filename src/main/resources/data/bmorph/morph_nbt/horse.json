@@ -1,0 +1,4 @@
+{
+    "entity_type": "minecraft:horse",
+    "tracked_nbt_keys": [ "Variant" ]
+}
