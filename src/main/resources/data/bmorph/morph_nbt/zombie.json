@@ -1,0 +1,4 @@
+{
+    "entity_type": "minecraft:zombie",
+    "tracked_nbt_keys": [ "IsBaby" ]
+}
