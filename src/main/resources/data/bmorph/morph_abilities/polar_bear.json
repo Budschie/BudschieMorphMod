@@ -3,7 +3,8 @@
     "grant":
     [
         "bmorph:fish_yeet",
-        "bmorph:water_sanic"
+        "bmorph:water_sanic",
+        "bmorph:no_freezing"
     ],
     "revoke":
     [

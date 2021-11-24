@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:snow_golem",
+    "grant":
+    [
+        "bmorph:no_freezing"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

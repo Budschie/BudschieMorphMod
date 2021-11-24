@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:stray",
+    "grant":
+    [
+        "bmorph:no_freezing"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

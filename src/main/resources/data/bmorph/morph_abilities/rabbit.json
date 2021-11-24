@@ -4,7 +4,8 @@
     [
         "bmorph:no_fall_damage",
         "bmorph:swiftness",
-        "bmorph:jumpboost"
+        "bmorph:jumpboost",
+        "bmorph:walk_on_powder_snow"
     ],
     "revoke":
     [
