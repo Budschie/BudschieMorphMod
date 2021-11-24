@@ -8,6 +8,12 @@ import de.budschie.bmorph.entity.EntityRegistry;
 import de.budschie.bmorph.entity.rendering.MorphEntityRenderer;
 import de.budschie.bmorph.morph.player.AdvancedAbstractClientPlayerEntity;
 import de.budschie.bmorph.morph.player.UglyHackThatDoesntWork;
+import de.budschie.bmorph.render_handler.AbstractPlayerSynchronizer;
+import de.budschie.bmorph.render_handler.EntitySynchronizerRegistry;
+import de.budschie.bmorph.render_handler.LivingEntitySynchronzier;
+import de.budschie.bmorph.render_handler.ParrotSynchronizer;
+import de.budschie.bmorph.render_handler.PufferfishSynchronizer;
+import de.budschie.bmorph.render_handler.SquidSynchronizer;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -63,6 +69,12 @@ public class ClientSetup
 		
 		ClientRegistry.registerKeyBinding(DELETE_CURRENT_MORPH);
 		ClientRegistry.registerKeyBinding(DROP_CURRENT_MORPH);
+		
+		EntitySynchronizerRegistry.addEntitySynchronizer(new LivingEntitySynchronzier());
+		EntitySynchronizerRegistry.addEntitySynchronizer(new ParrotSynchronizer());
+		EntitySynchronizerRegistry.addEntitySynchronizer(new SquidSynchronizer());
+		EntitySynchronizerRegistry.addEntitySynchronizer(new AbstractPlayerSynchronizer());
+		EntitySynchronizerRegistry.addEntitySynchronizer(new PufferfishSynchronizer());
 				
 		UglyHackThatDoesntWork.thisisstupid = (gameProfile, world) ->
 		{

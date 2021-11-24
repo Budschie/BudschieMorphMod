@@ -13,12 +13,6 @@ import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import de.budschie.bmorph.morph.functionality.DynamicAbilityRegistry;
 import de.budschie.bmorph.morph.player.PlayerMorphItem;
 import de.budschie.bmorph.network.MainNetworkChannel;
-import de.budschie.bmorph.render_handler.AbstractPlayerSynchronizer;
-import de.budschie.bmorph.render_handler.EntitySynchronizerRegistry;
-import de.budschie.bmorph.render_handler.LivingEntitySynchronzier;
-import de.budschie.bmorph.render_handler.ParrotSynchronizer;
-import de.budschie.bmorph.render_handler.PufferfishSynchronizer;
-import de.budschie.bmorph.render_handler.SquidSynchronizer;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameRules.BooleanValue;
 import net.minecraft.world.level.GameRules.Category;
@@ -79,13 +73,7 @@ public class BMorphMod
 		
 		// VanillaFallbackMorphData.intialiseFallbackData();
 		// APIInteractor.executeLoadClassIf(() -> ModList.get().isLoaded("betteranimalsplus"), "de.budschie.bmorph.morph.BetterAnimalsPlusFallbackMorphData");
-		
-		EntitySynchronizerRegistry.addEntitySynchronizer(new LivingEntitySynchronzier());
-		EntitySynchronizerRegistry.addEntitySynchronizer(new ParrotSynchronizer());
-		EntitySynchronizerRegistry.addEntitySynchronizer(new SquidSynchronizer());
-		EntitySynchronizerRegistry.addEntitySynchronizer(new AbstractPlayerSynchronizer());
-		EntitySynchronizerRegistry.addEntitySynchronizer(new PufferfishSynchronizer());
-		
+				
 		DYNAMIC_ABILITY_REGISTRY = new DynamicAbilityRegistry();
 		VISUAL_MORPH_DATA = new VisualMorphDataRegistry();
 	}	
