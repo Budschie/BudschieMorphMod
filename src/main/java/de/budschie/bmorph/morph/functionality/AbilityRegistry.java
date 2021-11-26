@@ -7,6 +7,7 @@ import de.budschie.bmorph.morph.functionality.configurable.AttackYeetAbility;
 import de.budschie.bmorph.morph.functionality.configurable.AttributeModifierAbility;
 import de.budschie.bmorph.morph.functionality.configurable.BlockPassthroughAbility;
 import de.budschie.bmorph.morph.functionality.configurable.Boom;
+import de.budschie.bmorph.morph.functionality.configurable.BurnInSunAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ClimbingAbility;
 import de.budschie.bmorph.morph.functionality.configurable.CommandOnDisable;
 import de.budschie.bmorph.morph.functionality.configurable.CommandOnEnable;
@@ -97,6 +98,8 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<RandomDelegatingOnUseAbility>> RANDOM_DELEGATING_ON_USE_ABILITY = ABILITY_REGISTRY.register("random_delegation_on_use", () -> new ConfigurableAbility<>(RandomDelegatingOnUseAbility.CODEC));
 	
 	public static RegistryObject<ConfigurableAbility<WalkOnPowderedSnowAbility>> WALK_ON_POWDERED_SNOW = ABILITY_REGISTRY.register("walk_on_powder_snow", () -> new ConfigurableAbility<>(WalkOnPowderedSnowAbility.CODEC));
+	
+	public static RegistryObject<ConfigurableAbility<BurnInSunAbility>> BURN_IN_SUN_ABILITY = ABILITY_REGISTRY.register("burn_in_sun", () -> new ConfigurableAbility<>(BurnInSunAbility.CODEC));
 
 //	public static RegistryObject<Ability> FLY_ABILITY = ABILITY_REGISTRY.register("flying", () -> new FlyAbility());
 //	public static RegistryObject<Ability> MOB_ATTACK_ABILITY = ABILITY_REGISTRY.register("mob_attack", () -> new MobAttackAbility());
