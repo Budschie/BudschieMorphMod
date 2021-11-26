@@ -9,17 +9,17 @@ import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.StunAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import de.budschie.bmorph.util.SoundInstance;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
 
 public class ProjectileShootingAbility extends StunAbility
 {
-	public static Codec<ProjectileShootingAbility> CODEC = RecordCodecBuilder
+	public static final Codec<ProjectileShootingAbility> CODEC = RecordCodecBuilder
 			.create(instance -> instance.group(
 					ModCodecs.ENTITIES.fieldOf("projectile_entity").forGetter(ProjectileShootingAbility::getProjectileEntityType),
 					Codec.INT.optionalFieldOf("stun", 40).forGetter(ProjectileShootingAbility::getStun),
@@ -87,16 +87,13 @@ public class ProjectileShootingAbility extends StunAbility
 			
 			createdEntity.setPos(player.getX(), player.getY() + player.getEyeHeight(), player.getZ());
 			
-			if(createdEntity instanceof Projectile)
+			if(createdEntity instanceof Projectile proj)
 			{
-				Projectile proj = (Projectile) createdEntity;
 				proj.setOwner(player);
 			}
 			
-			if(createdEntity instanceof AbstractHurtingProjectile)
+			if(createdEntity instanceof AbstractHurtingProjectile dmgProjectile)
 			{
-				AbstractHurtingProjectile dmgProjectile = (AbstractHurtingProjectile) createdEntity;
-				
 				dmgProjectile.xPower = dir.x * acceleration;
 				dmgProjectile.yPower = dir.y * acceleration;
 				dmgProjectile.zPower = dir.z * acceleration;

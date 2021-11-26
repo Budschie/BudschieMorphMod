@@ -41,7 +41,7 @@ import net.minecraftforge.fml.DistExecutor;
 
 public class GuardianAbility extends AbstractEventAbility
 {
-	public static Codec<GuardianAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+	public static final Codec<GuardianAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.FLOAT.fieldOf("damage").forGetter(GuardianAbility::getDamage),
 			Codec.BOOL.optionalFieldOf("may_move", false).forGetter(GuardianAbility::mayMove),
 			Codec.BOOL.optionalFieldOf("may_cancel", false).forGetter(GuardianAbility::mayCancel),

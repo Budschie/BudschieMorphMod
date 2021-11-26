@@ -12,19 +12,19 @@ import de.budschie.bmorph.morph.LazyTag;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class BlockPassthroughAbility extends AbstractEventAbility
 {
-	public static Codec<BlockPassthroughAbility> CODEC = RecordCodecBuilder
+	public static final Codec<BlockPassthroughAbility> CODEC = RecordCodecBuilder
 			.create(instance -> instance
 					.group(Codec.DOUBLE.fieldOf("speed_multiplier").forGetter(BlockPassthroughAbility::getWebSpeedMultiplier),
 							ModCodecs.LAZY_BLOCK_TAGS.fieldOf("applies_to").forGetter(BlockPassthroughAbility::getAppliesTo))

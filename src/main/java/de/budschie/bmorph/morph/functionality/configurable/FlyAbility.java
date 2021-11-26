@@ -13,7 +13,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class FlyAbility extends AbstractEventAbility
 {
-	public static Codec<FlyAbility> CODEC = ModCodecs.newCodec(FlyAbility::new);
+	public static final Codec<FlyAbility> CODEC = ModCodecs.newCodec(FlyAbility::new);
 	
 	public FlyAbility()
 	{
