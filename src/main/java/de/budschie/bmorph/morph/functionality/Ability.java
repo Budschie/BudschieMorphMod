@@ -5,8 +5,8 @@ import org.apache.logging.log4j.Logger;
 
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.configurable.ConfigurableAbility;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
 public abstract class Ability
 {
@@ -22,15 +22,9 @@ public abstract class Ability
 	/** This method is fired when an active ability is used. **/
 	public void onUsedAbility(Player player, MorphItem currentMorph) {}
 	
-	public void onRegister()
-	{
-		
-	}
+	public void onRegister() {}
 	
-	public void onUnregister()
-	{
-		
-	}
+	public void onUnregister() {}
 	
 	public ResourceLocation getResourceLocation()
 	{
@@ -61,10 +55,8 @@ public abstract class Ability
 	@Override
 	public boolean equals(Object obj)
 	{
-		if(obj instanceof Ability)
+		if(obj instanceof Ability otherAbility)
 		{
-			Ability otherAbility = (Ability) obj;
-			
 			if(otherAbility.getResourceLocation().equals(this.getResourceLocation()))
 				return true;
 		}
