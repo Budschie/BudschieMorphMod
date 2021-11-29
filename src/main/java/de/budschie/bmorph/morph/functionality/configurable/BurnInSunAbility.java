@@ -46,7 +46,7 @@ public class BurnInSunAbility extends AbstractEventAbility
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent event)
 	{
-		if(!event.player.getCommandSenderWorld().isClientSide)
+		if(isTracked(event.player) && !event.player.isInvulnerable() && !event.player.getCommandSenderWorld().isClientSide)
 		{
 			// Check if entity shall burn
 			if (event.player.level.isDay() && !event.player.level.isClientSide)
@@ -66,6 +66,12 @@ public class BurnInSunAbility extends AbstractEventAbility
 					{
 						// TODO: This could *maybe* cause a bug where the hat doesn't get destroyed.
 						hatItem.setDamageValue(hatItem.getDamageValue() + event.player.getRandom().nextInt(maxArmorDamage));
+						
+						if (hatItem.getDamageValue() >= hatItem.getMaxDamage())
+						{
+							event.player.broadcastBreakEvent(EquipmentSlot.HEAD);
+							event.player.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
+						}
 						
 						return;
 					}

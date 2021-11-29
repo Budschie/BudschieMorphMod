@@ -1,0 +1,9 @@
+{
+    "ability": "bmorph:burn_in_sun",
+    "config":
+    {
+        "burn_time": 8,
+        "ignore_hat": false,
+        "max_armor_damage": 10
+    }
+}

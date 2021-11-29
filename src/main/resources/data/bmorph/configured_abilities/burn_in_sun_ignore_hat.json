@@ -1,0 +1,8 @@
+{
+    "ability": "bmorph:burn_in_sun",
+    "config":
+    {
+        "burn_time": 8,
+        "ignore_hat": true
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "entity_type": "minecraft:bat",
+    "grant":
+    [
+        "bmorph:flying",
+        "bmorph:night_vision",
+        "bmorph:burn_in_sun_ignore_hat"
+    ],
+    "revoke":
+    [
+
+    ]
+}

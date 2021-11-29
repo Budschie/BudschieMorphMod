@@ -1,0 +1,12 @@
+{
+    "entity_type": "minecraft:zombie_villager",
+    "grant":
+    [
+        "bmorph:burn_in_sun",
+        "bmorph:infect_villagers"
+    ],
+    "revoke":
+    [
+
+    ]
+}

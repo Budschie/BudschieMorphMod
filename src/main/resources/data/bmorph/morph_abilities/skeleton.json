@@ -1,12 +1,11 @@
 {
-    "entity_type": "minecraft:drowned",
+    "entity_type": "minecraft:skeleton",
     "grant":
     [
-        "bmorph:water_breathing",
         "bmorph:burn_in_sun"
     ],
     "revoke":
     [
-        
+
     ]
 }
