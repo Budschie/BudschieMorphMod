@@ -184,7 +184,9 @@ public class Events
 			{
 				Player player = (Player) event.getSource().getEntity();
 				
-				if(!(player instanceof FakePlayer))
+				boolean selfKill = event.getSource().getEntity() == event.getEntity();
+				
+				if(!(player instanceof FakePlayer || selfKill))
 				{
 					LazyOptional<IMorphCapability> playerMorph = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 					
