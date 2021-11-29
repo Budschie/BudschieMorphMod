@@ -1,0 +1,31 @@
+{
+    "ability": "bmorph:transform_on_kill",
+    "config":
+    {
+        "transform_from": "minecraft:villager",
+        "transform_to": "minecraft:zombie_villager",
+        "transformation_sound":
+        {
+            "sound": "minecraft:entity.zombie.infect"
+        },
+        "nbt_mappings":
+        [
+            {
+                "copy_nbt_source": "VillagerData;level",
+                "copy_nbt_dest": "VillagerData;level"
+            },
+            {
+                "copy_nbt_source": "VillagerData;Xp",
+                "copy_nbt_dest": "VillagerData;Xp"
+            },
+            {
+                "copy_nbt_source": "VillagerData;profession",
+                "copy_nbt_dest": "VillagerData;profession"
+            },
+            {
+                "copy_nbt_source": "VillagerData;type",
+                "copy_nbt_dest": "VillagerData;type"
+            }
+        ]
+    }
+}

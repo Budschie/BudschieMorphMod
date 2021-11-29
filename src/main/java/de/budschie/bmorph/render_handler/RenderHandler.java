@@ -12,6 +12,7 @@ import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.player.AdvancedAbstractClientPlayerEntity;
+import de.budschie.bmorph.util.EntityUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -146,21 +147,7 @@ public class RenderHandler
 		
 		toRender.tickCount = player.tickCount;
 		
-		toRender.setPos(player.getX(), player.getY(), player.getZ());
-		
-		toRender.xo = player.xo;
-		toRender.yo = player.yo;
-		toRender.zo = player.zo;
-		
-		toRender.setXRot(player.getXRot());
-		toRender.setYRot(player.getYRot());
-		
-		toRender.xOld = player.xOld;
-		toRender.yOld = player.yOld;
-		toRender.zOld = player.zOld;
-		
-		toRender.xRotO = player.xRotO;
-		toRender.yRotO = player.yRotO;
+		EntityUtil.copyLocationAndRotation(player, toRender);
 		
 		toRender.wasTouchingWater = player.isInWater();
 		
