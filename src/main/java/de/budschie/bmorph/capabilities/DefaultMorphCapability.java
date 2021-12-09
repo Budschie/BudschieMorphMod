@@ -152,7 +152,7 @@ public class DefaultMorphCapability implements IMorphCapability
 		if(!getCurrentMorph().isPresent())
 		{
 			player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20);
-			player.setHealth((float) Math.floor(20f * playerHealthPercentage));
+			player.setHealth(20f * playerHealthPercentage);
 		}
 		else
 		{
@@ -163,13 +163,13 @@ public class DefaultMorphCapability implements IMorphCapability
 			{
 				float maxHealthOfEntity = ((LivingEntity)thisisnotveryperformantoranythinglikethisbutidontcarealsothisnameisverystupidsoidkmaybeishouldhchangethislaterbutontheotherhandthisisalsobtwyouhavejustfoundaneasteregginmycode).getMaxHealth();
 				player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHealthOfEntity);
-				player.setHealth(Math.max((float) Math.floor(maxHealthOfEntity * playerHealthPercentage), .1f));
+				player.setHealth(maxHealthOfEntity * playerHealthPercentage);
 			}
 			else
 			{
 				// This is some bad copy pasta right here, which is f*cking bad, but i dont wanna think right now
 				player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20);
-				player.setHealth((float) Math.floor(20f * playerHealthPercentage));
+				player.setHealth(20f * playerHealthPercentage);
 			}
 		}
 		
