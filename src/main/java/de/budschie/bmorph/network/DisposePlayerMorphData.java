@@ -30,6 +30,7 @@ public class DisposePlayerMorphData implements ISimpleImplPacket<DisposePlayerMo
 		ctx.get().enqueueWork(() ->
 		{
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientOnlyShit.disposePlayerMorphData(packet.getToDispose()));
+			ctx.get().setPacketHandled(true);
 		});
 	}
 	

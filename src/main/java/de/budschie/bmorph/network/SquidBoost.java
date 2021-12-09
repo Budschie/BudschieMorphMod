@@ -36,6 +36,7 @@ public class SquidBoost implements ISimpleImplPacket<SquidBoostPacket>
 				if(potentialPlayer != null)
 				{
 					potentialPlayer.setDeltaMovement(potentialPlayer.getDeltaMovement().add(potentialPlayer.getForward().multiply(packet.strength, packet.strength, packet.strength)));
+					ctx.get().setPacketHandled(true);
 				}
 			}
 		});

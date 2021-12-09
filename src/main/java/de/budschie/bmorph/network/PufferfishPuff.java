@@ -31,6 +31,7 @@ public class PufferfishPuff implements ISimpleImplPacket<PufferfishPuffPacket>
 		ctx.get().enqueueWork(() ->
 		{
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientOnlyShit.handlePufferfishPacketClient(packet));
+			ctx.get().setPacketHandled(true);
 		});
 	}
 	

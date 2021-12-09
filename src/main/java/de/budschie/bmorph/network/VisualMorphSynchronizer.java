@@ -42,6 +42,8 @@ public class VisualMorphSynchronizer implements ISimpleImplPacket<VisualMorphPac
 			
 			for(VisualMorphData data : packet.getData())
 				BMorphMod.VISUAL_MORPH_DATA.addVisualMorphData(data);
+			
+			ctx.get().setPacketHandled(true);
 		});
 	}
 	

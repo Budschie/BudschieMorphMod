@@ -90,6 +90,7 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 						resolved.setFavouriteList(packet.getFavouriteList());
 					}
 					MorphUtil.morphToClient(packet.getEntityData(), packet.getEntityIndex(), packet.getAbilities(), player);	
+					ctx.get().setPacketHandled(true);
 				}
 			}
 		});

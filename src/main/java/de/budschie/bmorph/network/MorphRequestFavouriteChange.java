@@ -46,6 +46,8 @@ public class MorphRequestFavouriteChange implements ISimpleImplPacket<MorphReque
 						favouriteList.addFavourite(packet.getIndexInMorphArray());
 					else
 						favouriteList.removeFavourite(packet.getIndexInMorphArray());
+					
+					ctx.get().setPacketHandled(true);
 				}
 			}
 		});

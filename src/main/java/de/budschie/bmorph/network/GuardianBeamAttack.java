@@ -51,6 +51,7 @@ public class GuardianBeamAttack implements ISimpleImplPacket<GuardianBeamAttackP
 		ctx.get().enqueueWork(() ->
 		{
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientOnlyShit.handleGuardianPacketClient(packet));
+			ctx.get().setPacketHandled(true);
 		});
 	}
 	

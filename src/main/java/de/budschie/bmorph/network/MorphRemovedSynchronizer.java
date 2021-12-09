@@ -44,6 +44,7 @@ public class MorphRemovedSynchronizer implements ISimpleImplPacket<MorphRemovedP
 				}
 				
 				MorphGuiHandler.updateMorphUi();
+				ctx.get().setPacketHandled(true);
 			}
 		});
 	}

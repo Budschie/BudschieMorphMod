@@ -74,6 +74,8 @@ public class ConfiguredAbilitySynchronizer implements ISimpleImplPacket<Configur
 		{
 			BMorphMod.DYNAMIC_ABILITY_REGISTRY.unregisterAll();
 			packet.getAbilities().forEach(ability -> BMorphMod.DYNAMIC_ABILITY_REGISTRY.registerAbility(ability));
+			
+			ctx.get().setPacketHandled(true);
 		});
 	}
 	

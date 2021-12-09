@@ -72,6 +72,8 @@ public class DeleteOrDropMorph implements ISimpleImplPacket<DeleteOrDropMorphPac
 					morphEntity.setPos(ctx.get().getSender().position());
 					level.addFreshEntity(morphEntity);
 				}
+				
+				ctx.get().setPacketHandled(true);
 			});			
 		});
 	}

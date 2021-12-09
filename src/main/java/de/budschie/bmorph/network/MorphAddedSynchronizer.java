@@ -46,6 +46,7 @@ public class MorphAddedSynchronizer implements ISimpleImplPacket<MorphAddedPacke
 				}
 				
 				MorphGuiHandler.updateMorphUi();
+				ctx.get().setPacketHandled(true);
 			}
 		});
 	}
