@@ -4,7 +4,8 @@
     [
         "bmorph:water_breathing",
         "bmorph:water_sanic",
-        "bmorph:squid_boost"
+        "bmorph:squid_boost",
+        "bmorph:air_suffocation"
     ],
     "revoke":
     [

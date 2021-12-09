@@ -3,6 +3,7 @@ package de.budschie.bmorph.morph.functionality;
 import java.util.function.Supplier;
 
 import de.budschie.bmorph.main.References;
+import de.budschie.bmorph.morph.functionality.configurable.AirSuffocationAbility;
 import de.budschie.bmorph.morph.functionality.configurable.AttackYeetAbility;
 import de.budschie.bmorph.morph.functionality.configurable.AttributeModifierAbility;
 import de.budschie.bmorph.morph.functionality.configurable.BlockPassthroughAbility;
@@ -103,6 +104,8 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<BurnInSunAbility>> BURN_IN_SUN_ABILITY = ABILITY_REGISTRY.register("burn_in_sun", () -> new ConfigurableAbility<>(BurnInSunAbility.CODEC));
 
 	public static RegistryObject<ConfigurableAbility<TransformEntityOnDeath>> TRANSFORM_ENTITY_ON_DEATH_ABILITY = ABILITY_REGISTRY.register("transform_on_kill", () -> new ConfigurableAbility<>(TransformEntityOnDeath.CODEC));
+
+	public static RegistryObject<ConfigurableAbility<AirSuffocationAbility>> SUFFOCATE_ON_LAND = ABILITY_REGISTRY.register("suffocate_on_land", () -> new ConfigurableAbility<>(AirSuffocationAbility.CODEC));
 
 //	public static RegistryObject<Ability> FLY_ABILITY = ABILITY_REGISTRY.register("flying", () -> new FlyAbility());
 //	public static RegistryObject<Ability> MOB_ATTACK_ABILITY = ABILITY_REGISTRY.register("mob_attack", () -> new MobAttackAbility());

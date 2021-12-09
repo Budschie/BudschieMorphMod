@@ -10,6 +10,7 @@ import net.minecraftforge.common.MinecraftForge;
 
 public abstract class AbstractEventAbility extends Ability 
 {
+	// TODO: Investigate whether players that die are being removed from this list on the client and server.
 	protected HashSet<UUID> trackedPlayers = new HashSet<>();
 	
 	public AbstractEventAbility()
