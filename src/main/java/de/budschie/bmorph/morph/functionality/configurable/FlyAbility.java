@@ -23,6 +23,8 @@ public class FlyAbility extends AbstractEventAbility
 	@Override
 	public void enableAbility(Player player, MorphItem enabledItem)
 	{
+		super.enableAbility(player, enabledItem);
+
 		player.getAbilities().mayfly = true;
 	}
 
@@ -34,6 +36,8 @@ public class FlyAbility extends AbstractEventAbility
 			player.getAbilities().mayfly = false;
 			player.getAbilities().flying = false;
 		}
+
+		super.disableAbility(player, disabledItem);
 	}
 	
 	@SubscribeEvent
