@@ -1,0 +1,13 @@
+{
+    "entity_type": "minecraft:glow_squid",
+    "grant":
+    [
+        "bmorph:water_breathing",
+        "bmorph:water_sanic",
+        "bmorph:glow_squid_boost"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

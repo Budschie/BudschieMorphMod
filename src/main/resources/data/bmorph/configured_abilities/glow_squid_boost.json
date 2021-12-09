@@ -8,25 +8,30 @@
         [
             {
                 "potion_effect": "minecraft:blindness",
-                "duration": 200,
+                "duration": 60,
                 "amplifier": 100
             },
             {
                 "potion_effect": "minecraft:slowness",
-                "duration": 50,
+                "duration": 20,
                 "amplifier": 100
             },
             {
                 "potion_effect": "minecraft:jump_boost",
-                "duration": 50,
+                "duration": 20,
                 "amplifier": 128,
                 "__comment": "I hate it that you can't really put comments into JSON. Anyways, you might wonder why I've put jump boost into here with such a high amplifier. The answer is simple: There is a bug (or feature?) in MC that allows you to \"disable\" jumping by setting the amplifier at ~128(because of interger overflow AFAIK)."
+            },
+            {
+                "potion_effect": "minecraft:glowing",
+                "duration": 9600,
+                "amplifier": 69
             }
         ],
         "particles":
         [
             {
-                "particle_type": "minecraft:squid_ink",
+                "particle_type": "minecraft:glow_squid_ink",
                 "delta":
                 {
                     "x": 2,
