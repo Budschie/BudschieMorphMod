@@ -14,7 +14,7 @@ public class PufferfishSynchronizer implements IEntitySynchronizer
 	}
 
 	@Override
-	public void applyToMorphEntity(Entity morphEntity, Player player)
+	public void applyToMorphEntity(Entity morphEntity, Player player, float partialTicks)
 	{
 		Pufferfish pufferEntity = (Pufferfish) morphEntity;
 		

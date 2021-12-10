@@ -1,9 +1,9 @@
 package de.budschie.bmorph.render_handler;
 
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Squid;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
 public class SquidSynchronizer implements IEntitySynchronizer
@@ -16,7 +16,7 @@ public class SquidSynchronizer implements IEntitySynchronizer
 	}
 
 	@Override
-	public void applyToMorphEntity(Entity morphEntity, Player player)
+	public void applyToMorphEntity(Entity morphEntity, Player player, float partialTicks)
 	{
 		Squid squid = (Squid) morphEntity;
 		squid.oldTentacleAngle = squid.tentacleAngle;

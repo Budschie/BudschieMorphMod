@@ -138,13 +138,7 @@ public class RenderHandler
 		
 		// Holy shit that's unperformant... I'll maybe change this later
 		ArrayList<IEntitySynchronizer> list = EntitySynchronizerRegistry.getSynchronizers();
-		
-		for(IEntitySynchronizer sync : list)
-		{
-			if(sync.appliesToMorph(toRender))
-				sync.applyToMorphEntity(toRender, player);
-		}
-		
+				
 		toRender.tickCount = player.tickCount;
 		
 		EntityUtil.copyLocationAndRotation(player, toRender);
@@ -162,6 +156,12 @@ public class RenderHandler
 		
 		if(player.isCrouching() && ShrinkAPIInteractor.getInteractor().isShrunk(player))
 			matrixStack.translate(0, 1, 0);
+		
+		for(IEntitySynchronizer sync : list)
+		{
+			if(sync.appliesToMorph(toRender))
+				sync.applyToMorphEntity(toRender, player, partialRenderTicks);
+		}
 					
 		
 		// info: We are getting NOTEX when displaying tVariant render thingys by better animals plus https://github.com/itsmeow/betteranimalsplus/blob/1.16/src/main/java/its_meow/betteranimalsplus/client/ClientLifecycleHandler.java

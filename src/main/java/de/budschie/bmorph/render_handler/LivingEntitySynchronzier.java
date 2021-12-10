@@ -1,11 +1,11 @@
 package de.budschie.bmorph.render_handler;
 
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.InteractionHand;
 
 public class LivingEntitySynchronzier implements IEntitySynchronizer
 {
@@ -17,7 +17,7 @@ public class LivingEntitySynchronzier implements IEntitySynchronizer
 	}
 
 	@Override
-	public void applyToMorphEntity(Entity morphEntity, Player player)
+	public void applyToMorphEntity(Entity morphEntity, Player player, float partialTicks)
 	{
 		LivingEntity entity = (LivingEntity) morphEntity;
 		

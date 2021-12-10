@@ -13,7 +13,7 @@ public class ParrotSynchronizer implements IEntitySynchronizer
 	}
 
 	@Override
-	public void applyToMorphEntity(Entity morphEntity, Player player)
+	public void applyToMorphEntity(Entity morphEntity, Player player, float partialTicks)
 	{
 		Parrot parrot = (Parrot) morphEntity;
 	}
