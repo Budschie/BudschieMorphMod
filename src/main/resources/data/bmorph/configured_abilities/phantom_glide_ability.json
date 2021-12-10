@@ -1,0 +1,12 @@
+{
+    "ability": "bmorph:phantom_glide",
+    "config":
+    {
+        "charging_speed": 1.2,
+        "max_flight_speed_x": 0.75,
+        "min_flight_speed_y": 0.5,
+        "max_flight_speed_z": 0.75,
+        "charging_ticks": 40,
+        "transition_ticks": 5
+    }
+}

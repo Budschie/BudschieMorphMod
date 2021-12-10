@@ -26,6 +26,7 @@ import de.budschie.bmorph.morph.functionality.configurable.MobAttackAbility;
 import de.budschie.bmorph.morph.functionality.configurable.NoKnockbackAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PassiveEffectAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PassiveTickCommandAbility;
+import de.budschie.bmorph.morph.functionality.configurable.PhantomAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ProjectileShootingAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PufferfishAbility;
 import de.budschie.bmorph.morph.functionality.configurable.RandomDelegatingOnUseAbility;
@@ -106,6 +107,8 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<TransformEntityOnDeath>> TRANSFORM_ENTITY_ON_DEATH_ABILITY = ABILITY_REGISTRY.register("transform_on_kill", () -> new ConfigurableAbility<>(TransformEntityOnDeath.CODEC));
 
 	public static RegistryObject<ConfigurableAbility<AirSuffocationAbility>> SUFFOCATE_ON_LAND = ABILITY_REGISTRY.register("suffocate_on_land", () -> new ConfigurableAbility<>(AirSuffocationAbility.CODEC));
+	
+	public static RegistryObject<ConfigurableAbility<PhantomAbility>> PHANTOM_FLIGHT = ABILITY_REGISTRY.register("phantom_glide", () -> new ConfigurableAbility<>(PhantomAbility.CODEC));
 
 //	public static RegistryObject<Ability> FLY_ABILITY = ABILITY_REGISTRY.register("flying", () -> new FlyAbility());
 //	public static RegistryObject<Ability> MOB_ATTACK_ABILITY = ABILITY_REGISTRY.register("mob_attack", () -> new MobAttackAbility());

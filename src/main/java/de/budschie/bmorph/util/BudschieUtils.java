@@ -10,4 +10,9 @@ public class BudschieUtils
 	{
 		return FMLEnvironment.dist == Dist.CLIENT && ServerSetup.server != null;
 	}
+	
+	public static float getPhantomEaseFunction(float currentTime, float maxTime)
+	{
+		return (float) Math.pow((currentTime) / (maxTime), 1);
+	}
 }

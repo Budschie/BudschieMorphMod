@@ -43,6 +43,7 @@ public class MainNetworkChannel
 		registerSimpleImplPacket(DisposePlayerMorphData.DisposePlayerMorphDataPacket.class, new DisposePlayerMorphData());
 		registerSimpleImplPacket(DeleteOrDropMorph.DeleteOrDropMorphPacket.class, new DeleteOrDropMorph());
 		registerSimpleImplPacket(VisualMorphSynchronizer.VisualMorphPacket.class, new VisualMorphSynchronizer());
+		registerSimpleImplPacket(GlideStatusChange.GlideStatusChangePacket.class, new GlideStatusChange());
 	}
 	
 	public static <T> void registerSimpleImplPacket(Class<T> packetClass, ISimpleImplPacket<T> packet)

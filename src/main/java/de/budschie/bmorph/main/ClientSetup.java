@@ -12,6 +12,7 @@ import de.budschie.bmorph.render_handler.AbstractPlayerSynchronizer;
 import de.budschie.bmorph.render_handler.EntitySynchronizerRegistry;
 import de.budschie.bmorph.render_handler.LivingEntitySynchronzier;
 import de.budschie.bmorph.render_handler.ParrotSynchronizer;
+import de.budschie.bmorph.render_handler.PhantomSynchronizer;
 import de.budschie.bmorph.render_handler.PufferfishSynchronizer;
 import de.budschie.bmorph.render_handler.SquidSynchronizer;
 import net.minecraft.client.KeyMapping;
@@ -75,6 +76,7 @@ public class ClientSetup
 		EntitySynchronizerRegistry.addEntitySynchronizer(new SquidSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new AbstractPlayerSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new PufferfishSynchronizer());
+		EntitySynchronizerRegistry.addEntitySynchronizer(new PhantomSynchronizer());
 				
 		UglyHackThatDoesntWork.thisisstupid = (gameProfile, world) ->
 		{

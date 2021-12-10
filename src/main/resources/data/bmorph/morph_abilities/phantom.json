@@ -1,10 +1,11 @@
 {
-    "entity_type": "minecraft:bat",
+    "entity_type": "minecraft:phantom",
     "grant":
     [
-        "bmorph:flying",
         "bmorph:night_vision",
-        "bmorph:burn_in_sun_ignore_hat"
+        "bmorph:burn_in_sun_ignore_hat",
+        "bmorph:phantom_glide_ability",
+        "bmorph:no_fall_damage"
     ],
     "revoke":
     [

@@ -14,6 +14,7 @@ import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityAttacher;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityHandler;
 import de.budschie.bmorph.capabilities.guardian.IGuardianBeamCapability;
+import de.budschie.bmorph.capabilities.phantom_glide.GlideCapabilityHandler;
 import de.budschie.bmorph.capabilities.pufferfish.IPufferfishCapability;
 import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityHandler;
 import de.budschie.bmorph.entity.MorphEntity;
@@ -106,6 +107,9 @@ public class Events
 				
 				GuardianBeamCapabilityHandler.synchronizeWithClients(player);
 				GuardianBeamCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) player);
+				
+				GlideCapabilityHandler.synchronizeWithClients(player);
+				GlideCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) player);
 			}
 		}
 	}
@@ -145,6 +149,7 @@ public class Events
 			
 			PufferfishCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
 			GuardianBeamCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
+			GlideCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
 		}
 	}
 	
