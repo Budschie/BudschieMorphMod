@@ -2,7 +2,7 @@
     "entity_type": "minecraft:ghast",
     "grant":
     [
-        "bmorph:flying",
+        "bmorph:slow_flying",
         "bmorph:fire_ghast",
         "bmorph:no_on_fire_damage",
         "bmorph:no_in_fire_damage",

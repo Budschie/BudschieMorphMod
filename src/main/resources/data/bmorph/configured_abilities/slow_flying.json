@@ -1,0 +1,7 @@
+{
+    "ability": "bmorph:flying",
+    "config":
+    {
+        "flying_speed": 0.015
+    }
+}
