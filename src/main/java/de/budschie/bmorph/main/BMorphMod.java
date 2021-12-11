@@ -1,6 +1,7 @@
 package de.budschie.bmorph.main;
 
 import de.budschie.bmorph.api_interact.ShrinkAPIInteractor;
+import de.budschie.bmorph.attributes.BMorphAttributes;
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import de.budschie.bmorph.entity.EntityRegistry;
@@ -46,6 +47,7 @@ public class BMorphMod
 		EntityRegistry.SERIALIZER_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
 		AbilityRegistry.ABILITY_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
 		MorphGuiRegistry.MORPH_GUI_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
+		BMorphAttributes.ATTRIBUTES.register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
 	
 	@SubscribeEvent

@@ -4,12 +4,14 @@
 	"compatibilityLevel": "JAVA_8",
 	"refmap": "bmorph.refmap.json",
 	"client": [
-        "PlayerRendererMixin"
+        "PlayerRendererMixin",
+		"PickMixin"
 	],
 	"mixins": [
 		"LookAtGoalMixin",
 		"MotionMultiplierMixin",
-		"PowderSnowBlockMixin"
+		"PowderSnowBlockMixin",
+		"ServerGamePacketListenerImplMixin"
 	],
 	"minVersion": "0.8"
 }
