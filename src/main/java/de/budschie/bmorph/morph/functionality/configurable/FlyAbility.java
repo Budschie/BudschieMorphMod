@@ -1,10 +1,10 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
-import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -13,11 +13,15 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class FlyAbility extends AbstractEventAbility
 {
-	public static final Codec<FlyAbility> CODEC = ModCodecs.newCodec(FlyAbility::new);
+	public static final Codec<FlyAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			Codec.FLOAT.optionalFieldOf("flying_speed", 0.05f).forGetter(FlyAbility::getFlyingSpeed))
+			.apply(instance, FlyAbility::new));
 	
-	public FlyAbility()
+	private float flyingSpeed;
+	
+	public FlyAbility(float flyingSpeed)
 	{
-		
+		this.flyingSpeed = flyingSpeed;
 	}
 	
 	@Override
@@ -26,6 +30,7 @@ public class FlyAbility extends AbstractEventAbility
 		super.enableAbility(player, enabledItem);
 
 		player.getAbilities().mayfly = true;
+		player.getAbilities().setFlyingSpeed(flyingSpeed);
 	}
 
 	@Override
@@ -33,6 +38,7 @@ public class FlyAbility extends AbstractEventAbility
 	{
 		if(!player.isCreative() && !player.isSpectator())
 		{
+			player.getAbilities().setFlyingSpeed(0.05f);
 			player.getAbilities().mayfly = false;
 			player.getAbilities().flying = false;
 		}
@@ -52,5 +58,10 @@ public class FlyAbility extends AbstractEventAbility
 				event.player.getAbilities().mayfly = true;
 			}
 		}
+	}
+	
+	public float getFlyingSpeed()
+	{
+		return flyingSpeed;
 	}
 }

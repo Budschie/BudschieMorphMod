@@ -147,23 +147,23 @@ public class ModCodecs
 	};
 	
 	// This is dumb...
-	public static <A> Codec<A> newCodec(Supplier<A> supplier)
-	{
-		return new Codec<>()
-		{
-			@Override
-			public <T> DataResult<T> encode(A input, DynamicOps<T> ops, T prefix)
-			{
-				return DataResult.<T>success(ops.empty());
-			}
-
-			@Override
-			public <T> DataResult<Pair<A, T>> decode(DynamicOps<T> ops, T input)
-			{
-				return DataResult.success(new Pair<>(supplier.get(), input));
-			}
-		};
-	}
+//	public static <A> Codec<A> newCodec(Supplier<A> supplier)
+//	{
+//		return new Codec<>()
+//		{
+//			@Override
+//			public <T> DataResult<T> encode(A input, DynamicOps<T> ops, T prefix)
+//			{
+//				return DataResult.<T>success(ops.empty());
+//			}
+//
+//			@Override
+//			public <T> DataResult<Pair<A, T>> decode(DynamicOps<T> ops, T input)
+//			{
+//				return DataResult.success(new Pair<>(supplier.get(), input));
+//			}
+//		};
+//	}
 	
 	private static <A extends IForgeRegistryEntry<A>> Codec<A> getRegistryCodec(Function<ResourceLocation, A> registryRetrieval)
 	{
