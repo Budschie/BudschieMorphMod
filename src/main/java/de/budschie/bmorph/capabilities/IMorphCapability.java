@@ -46,12 +46,11 @@ public interface IMorphCapability
 	public void applyHealthOnPlayer(Player player);
 	
 	/**
-	 * By calling this method, you sync the capability data with every player.
+	 * By calling this method, you sync the capability data with every player that is tracking this player.
 	 * This method shall not be called if you intent to try to synchronize a morph
 	 * change across every client. Use
 	 * {@link IMorphCapability#syncMorphChange(PlayerEntity)} to do this.
 	 **/
-	@Deprecated
 	public void syncWithClients(Player player);
 	
 	/** This method is used to synchronize this capability with a specific target. **/
