@@ -1,6 +1,7 @@
 package de.budschie.bmorph.capabilities;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -302,5 +303,27 @@ public class DefaultMorphCapability implements IMorphCapability
 	public void setMobAttack(boolean value)
 	{
 		this.mobAttack = value;
+	}
+
+	@Override
+	public void applyAbility(Player player, Ability ability)
+	{
+		if(this.getCurrentAbilities() == null)
+			currentAbilities = Arrays.asList(ability);
+		else
+			currentAbilities.add(ability);
+		
+		ability.enableAbility(player, getCurrentMorph().orElse(null));
+	}
+
+	@Override
+	public void deapplyAbility(Player player, Ability ability)
+	{
+		if(this.getCurrentAbilities() != null)
+		{
+			currentAbilities.remove(ability);
+			
+			ability.disableAbility(player, getCurrentMorph().orElse(null));
+		}
 	}
 }

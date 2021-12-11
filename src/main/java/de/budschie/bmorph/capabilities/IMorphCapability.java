@@ -9,9 +9,9 @@ import de.budschie.bmorph.morph.FavouriteList;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
 import de.budschie.bmorph.morph.functionality.Ability;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.Connection;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 public interface IMorphCapability
 {
@@ -84,6 +84,12 @@ public interface IMorphCapability
 	public void applyAbilities(Player player);
 	/** This method deapplies all abilities by once again iterating over every old ability and deapplying it. **/
 	public void deapplyAbilities(Player player);
+	
+	/** This method adds a single ability to the list of abilities and enables it. **/
+	public void applyAbility(Player player, Ability ability);
+	
+	/** This method searches for the given ability and removes + deapplies it when it was found. **/
+	public void deapplyAbility(Player player, Ability ability);
 	
 	/** This will iterate over every ability and signal them that the button to use an ability has been pressed. **/
 	public void useAbility(Player player);
