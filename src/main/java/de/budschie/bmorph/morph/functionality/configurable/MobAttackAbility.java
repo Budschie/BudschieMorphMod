@@ -5,12 +5,11 @@ import com.mojang.serialization.Codec;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.morph.functionality.Ability;
-import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import net.minecraft.world.entity.player.Player;
 
 public class MobAttackAbility extends Ability
 {
-	public static final Codec<MobAttackAbility> CODEC = ModCodecs.newCodec(() -> new MobAttackAbility());
+	public static final Codec<MobAttackAbility> CODEC = Codec.unit(() -> new MobAttackAbility());
 	
 	/** An entity predicate defining entities by which you can be attacked would be nice in the future. But we live in the sad present, where we don't have any CODEC for EntityPredicate's, so we have to
 	 * put that feature onto our todo list. 

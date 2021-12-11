@@ -10,7 +10,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class WaterBreathingAbility extends AbstractEventAbility
 {
-	public static final Codec<WaterBreathingAbility> CODEC = ModCodecs.newCodec(WaterBreathingAbility::new);
+	public static final Codec<WaterBreathingAbility> CODEC = Codec.unit(WaterBreathingAbility::new);
 	
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent event)
