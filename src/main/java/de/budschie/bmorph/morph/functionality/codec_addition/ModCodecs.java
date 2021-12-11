@@ -11,7 +11,9 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.LazyTag;
+import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.codec_addition.CommandProvider.Selector;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
@@ -41,6 +43,35 @@ public class ModCodecs
 	public static final Codec<LazyTag<Block>> LAZY_BLOCK_TAGS = getLazyTagCodec(rl -> BlockTags.getAllTags().getTag(rl)); 
 	
 	public static final Codec<LazyTag<Item>> LAZY_ITEM_TAGS = getLazyTagCodec(rl -> ItemTags.getAllTags().getTag(rl)); 
+	
+	public static final Codec<Ability> ABILITY = new Codec<>()
+	{
+		@Override
+		public <T> DataResult<T> encode(Ability input, DynamicOps<T> ops, T prefix)
+		{
+			return DataResult.success(ops.createString(input.getResourceLocation().toString()));
+		}
+
+		@Override
+		public <T> DataResult<Pair<Ability, T>> decode(DynamicOps<T> ops, T input)
+		{
+			DataResult<String> rl = ops.getStringValue(input);
+			
+			if(rl.result().isPresent())
+			{
+				ResourceLocation result = new ResourceLocation(rl.result().get());
+				
+				Ability retrieved = BMorphMod.DYNAMIC_ABILITY_REGISTRY.getAbility(result);
+				
+				if(retrieved == null)
+					return DataResult.error(String.format("The resource location %s did not yield any ability when tried to resolve into an actual instance.", result));
+				else
+					return DataResult.<Pair<Ability, T>>success(Pair.of(retrieved, input));
+			}
+			else
+				return DataResult.error(rl.error().get().message());
+		}
+	};
 	
 	public static final Codec<Vec3> VECTOR_3D = RecordCodecBuilder.create(instance -> instance.group(Codec.DOUBLE.fieldOf("x").forGetter(inst -> inst.x),
 			Codec.DOUBLE.fieldOf("y").forGetter(inst -> inst.y), Codec.DOUBLE.fieldOf("z").forGetter(inst -> inst.z)).apply(instance, Vec3::new));

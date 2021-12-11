@@ -1,5 +1,8 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -7,9 +10,13 @@ import de.budschie.bmorph.capabilities.phantom_glide.ChargeDirection;
 import de.budschie.bmorph.capabilities.phantom_glide.GlideCapabilityAttacher;
 import de.budschie.bmorph.capabilities.phantom_glide.GlideCapabilityHandler;
 import de.budschie.bmorph.capabilities.phantom_glide.GlideStatus;
+import de.budschie.bmorph.capabilities.phantom_glide.GlideStatusChangedEvent;
 import de.budschie.bmorph.capabilities.phantom_glide.IGlideCapability;
 import de.budschie.bmorph.morph.MorphItem;
+import de.budschie.bmorph.morph.MorphUtil;
+import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
+import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -31,7 +38,8 @@ public class PhantomAbility extends AbstractEventAbility
 			Codec.FLOAT.fieldOf("min_flight_speed_y").forGetter(PhantomAbility::getMinFlightSpeedY),
 			Codec.FLOAT.fieldOf("max_flight_speed_z").forGetter(PhantomAbility::getMaxFlightSpeedZ),
 			Codec.INT.fieldOf("charging_ticks").forGetter(PhantomAbility::getMaxChargingTicks),
-			Codec.INT.fieldOf("transition_ticks").forGetter(PhantomAbility::getTransitionTicks))
+			Codec.INT.fieldOf("transition_ticks").forGetter(PhantomAbility::getTransitionTicks),
+			ModCodecs.ABILITY.listOf().optionalFieldOf("gliding_abilities", Arrays.asList()).forGetter(PhantomAbility::getGlidingAbilities))
 			.apply(instance, PhantomAbility::new));
 	
 	private float chargingSpeed;
@@ -41,7 +49,9 @@ public class PhantomAbility extends AbstractEventAbility
 	private int maxChargingTicks;
 	private int transitionTicks;
 	
-	public PhantomAbility(float chargingSpeed, float maxFlightSpeedX, float minFlightSpeedY, float maxFlightSpeedZ, int maxChargingTicks, int transitionTicks)
+	private List<Ability> glidingAbilities;
+	
+	public PhantomAbility(float chargingSpeed, float maxFlightSpeedX, float minFlightSpeedY, float maxFlightSpeedZ, int maxChargingTicks, int transitionTicks, List<Ability> glidingAbilities)
 	{
 		this.chargingSpeed = chargingSpeed;
 		this.maxFlightSpeedX = maxFlightSpeedX;
@@ -49,6 +59,38 @@ public class PhantomAbility extends AbstractEventAbility
 		this.maxFlightSpeedZ = maxFlightSpeedZ;
 		this.maxChargingTicks = maxChargingTicks;
 		this.transitionTicks = transitionTicks;
+		
+		this.glidingAbilities = glidingAbilities;
+	}
+	
+	private void applyGlidingAbilities(Player player)
+	{
+		MorphUtil.processCap(player, cap ->
+		{
+			for(Ability ability : glidingAbilities)
+				cap.applyAbility(player, ability);
+		});
+	}
+	
+	private void deapplyGlidingAbilities(Player player)
+	{
+		MorphUtil.processCap(player, cap ->
+		{
+			for(Ability ability : glidingAbilities)
+				cap.deapplyAbility(player, ability);
+		});
+	}
+	
+	@Override
+	public void enableAbility(Player player, MorphItem enabledItem)
+	{
+		super.enableAbility(player, enabledItem);
+		
+		player.getCapability(GlideCapabilityAttacher.GLIDE_CAP).ifPresent(cap ->
+		{
+			if(cap.getGlideStatus() == GlideStatus.GLIDE)
+				applyGlidingAbilities(player);
+		});
 	}
 
 	@Override
@@ -81,6 +123,24 @@ public class PhantomAbility extends AbstractEventAbility
 	}
 	
 	@SubscribeEvent
+	public void onGlideStatusChanged(GlideStatusChangedEvent event)
+	{
+		if(isTracked(event.getPlayer()))
+		{
+			if(event.getNewGlideStatus() == GlideStatus.GLIDE)
+			{
+				// If we start gliding, we should apply gliding abilities
+				applyGlidingAbilities(event.getPlayer());
+			}
+			else if(event.getOldGlideStatus() == GlideStatus.GLIDE)
+			{
+				// if we stop gliding, we should not apply gliding abilities
+				deapplyGlidingAbilities(event.getPlayer());
+			}
+		}
+	}
+	
+	@SubscribeEvent
 	public void onUpdatePlayer(PlayerTickEvent event)
 	{
 		if(event.phase == Phase.END && isTracked(event.player))
@@ -108,7 +168,10 @@ public class PhantomAbility extends AbstractEventAbility
 					{
 						event.player.startFallFlying();
 						
-						Vec3 newMovement = new Vec3(Math.min(event.player.getForward().x * maxFlightSpeedX, event.player.getDeltaMovement().x), Math.max(event.player.getForward().y * minFlightSpeedY, event.player.getDeltaMovement().y), Math.min(event.player.getForward().z * maxFlightSpeedZ, event.player.getDeltaMovement().z));
+						Vec3 playerForward = event.player.getForward();
+						Vec3 playerMotion = event.player.getDeltaMovement();
+						
+						Vec3 newMovement = new Vec3(Math.min(playerForward.x * maxFlightSpeedX, playerMotion.x), Math.max(playerForward.y * minFlightSpeedY, playerMotion.y), Math.min(playerForward.z * maxFlightSpeedZ, playerMotion.z));
 						
 						event.player.setDeltaMovement(newMovement);
 					}
@@ -141,10 +204,10 @@ public class PhantomAbility extends AbstractEventAbility
 	{
 		return cap.getChargeDirection().getMovementDirection().multiply(1, chargingSpeed, 1);
 	}
-
-	public static Codec<PhantomAbility> getCodec()
+	
+	public List<Ability> getGlidingAbilities()
 	{
-		return CODEC;
+		return glidingAbilities;
 	}
 
 	public float getChargingSpeed()

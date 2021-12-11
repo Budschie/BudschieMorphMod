@@ -7,6 +7,7 @@
         "min_flight_speed_y": 0.5,
         "max_flight_speed_z": 0.75,
         "charging_ticks": 40,
-        "transition_ticks": 5
+        "transition_ticks": 5,
+        "gliding_abilities": ["bmorph:reach"]
     }
 }

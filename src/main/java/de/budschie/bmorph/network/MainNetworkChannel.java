@@ -44,6 +44,7 @@ public class MainNetworkChannel
 		registerSimpleImplPacket(DeleteOrDropMorph.DeleteOrDropMorphPacket.class, new DeleteOrDropMorph());
 		registerSimpleImplPacket(VisualMorphSynchronizer.VisualMorphPacket.class, new VisualMorphSynchronizer());
 		registerSimpleImplPacket(GlideStatusChange.GlideStatusChangePacket.class, new GlideStatusChange());
+		registerSimpleImplPacket(AdditionalAbilitySynchronization.AdditionalAbilitySynchronizationPacket.class, new AdditionalAbilitySynchronization());
 	}
 	
 	public static <T> void registerSimpleImplPacket(Class<T> packetClass, ISimpleImplPacket<T> packet)

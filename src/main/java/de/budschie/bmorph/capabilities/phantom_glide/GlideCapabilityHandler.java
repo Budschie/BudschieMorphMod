@@ -51,7 +51,7 @@ public class GlideCapabilityHandler
 						cap.setTransitionTime(cap.getMaxTransitionTime());
 						
 						// After transitioning, start charging
-						cap.setGlideStatus(GlideStatus.CHARGE);
+						cap.setGlideStatus(GlideStatus.CHARGE, event.player);
 					}
 				}
 				else if(cap.getGlideStatus() == GlideStatus.CHARGE)
@@ -59,7 +59,7 @@ public class GlideCapabilityHandler
 					cap.setChargeTime(cap.getChargeTime() - 1);
 					
 					if(cap.getChargeTime() <= 0)
-						cap.setGlideStatus(GlideStatus.CHARGE_TRANSITION_OUT);
+						cap.setGlideStatus(GlideStatus.CHARGE_TRANSITION_OUT, event.player);
 				}
 				else if(cap.getGlideStatus() == GlideStatus.CHARGE_TRANSITION_OUT)
 				{
@@ -68,7 +68,7 @@ public class GlideCapabilityHandler
 					if(cap.getTransitionTime() <= 0)
 					{
 						// After transitioning, start gliding
-						cap.setGlideStatus(GlideStatus.GLIDE);
+						cap.setGlideStatus(GlideStatus.GLIDE, event.player);
 					}
 				}
 			});
@@ -76,27 +76,27 @@ public class GlideCapabilityHandler
 	}	
 	public static void glideServer(Player player)
 	{
-		changeStatusServer(player, glide -> glide.glide());
+		changeStatusServer(player, glide -> glide.glide(player));
 	}
 	
 	public static void chargeServer(Player player, int maxChargeTime, ChargeDirection direction)
 	{
-		changeStatusServer(player, charge -> charge.charge(maxChargeTime, direction));
+		changeStatusServer(player, charge -> charge.charge(maxChargeTime, direction, player));
 	}
 	
 	public static void startChargingServer(Player player, int transitionTime, int maxChargeTime, ChargeDirection direction)
 	{
-		changeStatusServer(player, transitionIn -> transitionIn.transitionIn(transitionTime, maxChargeTime, direction));
+		changeStatusServer(player, transitionIn -> transitionIn.transitionIn(transitionTime, maxChargeTime, direction, player));
 	}
 	
 	public static void stopChargingServer(Player player)
 	{
-		changeStatusServer(player, transitionOut -> transitionOut.transitionOut());
+		changeStatusServer(player, transitionOut -> transitionOut.transitionOut(player));
 	}
 	
 	public static void standardServer(Player player)
 	{
-		changeStatusServer(player, standard -> standard.standard());
+		changeStatusServer(player, standard -> standard.standard(player));
 	}
 	
 	public static void synchronizeWithClient(Player toSynchronize, ServerPlayer with)

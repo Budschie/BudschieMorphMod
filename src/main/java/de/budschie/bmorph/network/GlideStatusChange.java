@@ -63,7 +63,7 @@ public class GlideStatusChange implements ISimpleImplPacket<GlideStatusChangePac
 				{
 					player.getCapability(GlideCapabilityAttacher.GLIDE_CAP).ifPresent(cap ->
 					{
-						cap.setGlideStatus(packet.getGlideStatus());
+						cap.setGlideStatus(packet.getGlideStatus(), player);
 						cap.setChargeTime(packet.getChargeTime());
 						cap.setMaxChargeTime(packet.getMaxChargeTime());
 						cap.setTransitionTime(packet.getTransitionTime());

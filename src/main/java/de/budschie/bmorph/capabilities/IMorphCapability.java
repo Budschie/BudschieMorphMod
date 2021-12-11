@@ -66,6 +66,12 @@ public interface IMorphCapability
 	/** This method synchronizes the removal of a morph to all players. **/
 	public void syncMorphRemoval(Player player, int index);
 	
+	/** This method syncs the addition of one or more abilities. **/
+	public void syncAbilityAddition(Player player, Ability...abilities);
+	
+	/** This method syncs the removal of one or more abilities. **/
+	public void syncAbilityRemoval(Player player, Ability...abilities);
+	
 	/** Returns the value of the flag mentioned in {@link IMorphCapability#setMobAttack(boolean)}. **/
 	public boolean shouldMobsAttack();
 	

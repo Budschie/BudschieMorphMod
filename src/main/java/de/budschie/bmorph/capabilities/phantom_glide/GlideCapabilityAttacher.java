@@ -62,7 +62,7 @@ public class GlideCapabilityAttacher implements ICapabilitySerializable<Compound
 	{
 		IGlideCapability instance = capability.resolve().get();
 		
-		instance.setGlideStatus(GlideStatus.valueOf(nbt.getString("glide")));
+		instance.setGlideStatus(GlideStatus.valueOf(nbt.getString("glide")), null);
 		instance.setChargeTime(nbt.getInt("chargeTime"));
 		instance.setMaxChargeTime(nbt.getInt("maxChargeTime"));
 		instance.setTransitionTime(nbt.getInt("transitionTime"));

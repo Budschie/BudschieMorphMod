@@ -1,5 +1,8 @@
 package de.budschie.bmorph.capabilities.phantom_glide;
 
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.MinecraftForge;
+
 public class GlideCapability implements IGlideCapability
 {
 	private GlideStatus glideStatus = GlideStatus.STANDARD;
@@ -16,9 +19,16 @@ public class GlideCapability implements IGlideCapability
 	}
 
 	@Override
-	public void setGlideStatus(GlideStatus glideStatus)
+	public void setGlideStatus(GlideStatus glideStatus, Player player)
 	{
+		GlideStatus oldGlideStatus = this.glideStatus;
 		this.glideStatus = glideStatus;
+		
+		if(player != null && oldGlideStatus != this.glideStatus)
+		{
+			GlideStatusChangedEvent event = new GlideStatusChangedEvent(player, oldGlideStatus, this.glideStatus);
+			MinecraftForge.EVENT_BUS.post(event);
+		}
 	}
 
 	@Override

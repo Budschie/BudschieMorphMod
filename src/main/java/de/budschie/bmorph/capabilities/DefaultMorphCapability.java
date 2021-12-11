@@ -11,11 +11,13 @@ import de.budschie.bmorph.morph.FavouriteList;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
 import de.budschie.bmorph.morph.functionality.Ability;
+import de.budschie.bmorph.network.AdditionalAbilitySynchronization;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.network.MorphAddedSynchronizer;
 import de.budschie.bmorph.network.MorphCapabilityFullSynchronizer;
 import de.budschie.bmorph.network.MorphChangedSynchronizer;
 import de.budschie.bmorph.network.MorphRemovedSynchronizer.MorphRemovedPacket;
+import de.budschie.bmorph.util.LockableList;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -37,7 +39,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	MorphList morphList = new MorphList();
 	FavouriteList favouriteList = new FavouriteList(morphList);
 	
-	List<Ability> currentAbilities = new ArrayList<>();
+	LockableList<Ability> currentAbilities = new LockableList<>();
 	
 	@Override
 	public void syncWithClients(Player player)
@@ -97,6 +99,28 @@ public class DefaultMorphCapability implements IMorphCapability
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphRemovedPacket(player.getUUID(), index));
+	}
+	
+	@Override
+	public void syncAbilityAddition(Player player, Ability... abilities)
+	{
+		if(player.level.isClientSide)
+			throw new IllegalAccessError("This method may not be called on client side.");
+		else
+		{
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new AdditionalAbilitySynchronization.AdditionalAbilitySynchronizationPacket(player.getUUID(), true, abilities));
+		}
+	}
+
+	@Override
+	public void syncAbilityRemoval(Player player, Ability... abilities)
+	{
+		if(player.level.isClientSide)
+			throw new IllegalAccessError("This method may not be called on client side.");
+		else
+		{
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new AdditionalAbilitySynchronization.AdditionalAbilitySynchronizationPacket(player.getUUID(), false, abilities));
+		}
 	}
 	
 	private ArrayList<String> serializeAbilities()
@@ -227,34 +251,54 @@ public class DefaultMorphCapability implements IMorphCapability
 	@Override
 	public List<Ability> getCurrentAbilities()
 	{
-		return currentAbilities;
+		return currentAbilities == null ? null : currentAbilities.getList();
 	}
 
 	@Override
 	public void setCurrentAbilities(List<Ability> abilities)
 	{
-		this.currentAbilities = abilities;
+		this.currentAbilities = new LockableList<>(abilities);
 	}
 
 	@Override
 	public void applyAbilities(Player player)
 	{
+		// This could be solved more efficiently, but I am not in the mood to do that, so I rely on quick, dirty and memory inefficient ways instead :kekw:
+//		if(getCurrentAbilities() != null && getCurrentMorph().isPresent())
+//		{
+//			ArrayList<Ability> abilityCopy = new ArrayList<>();
+//			abilityCopy.addAll(getCurrentAbilities());
+//			abilityCopy.forEach(ability -> ability.enableAbility(player, getCurrentMorph().get()));
+//		}
+		
 		if(getCurrentAbilities() != null && getCurrentMorph().isPresent())
-			getCurrentAbilities().forEach(ability -> ability.enableAbility(player, getCurrentMorph().get()));
+		{
+			currentAbilities.lock();
+			currentAbilities.getList().forEach(ability -> ability.enableAbility(player, getCurrentMorph().get()));
+			currentAbilities.unlock();
+		}
 	}
 
 	@Override
 	public void deapplyAbilities(Player player)
 	{
 		if(getCurrentAbilities() != null)
-			getCurrentAbilities().forEach(ability -> ability.disableAbility(player, getCurrentMorph().get()));
+		{
+			currentAbilities.lock();
+			currentAbilities.getList().forEach(ability -> ability.disableAbility(player, getCurrentMorph().get()));
+			currentAbilities.unlock();
+		}
 	}
 
 	@Override
 	public void useAbility(Player player)
 	{
 		if(getCurrentAbilities() != null)
-			getCurrentAbilities().forEach(ability -> ability.onUsedAbility(player, getCurrentMorph().get()));
+		{
+			currentAbilities.lock();
+			currentAbilities.getList().forEach(ability -> ability.onUsedAbility(player, getCurrentMorph().get()));
+			currentAbilities.unlock();
+		}
 	}
 
 	@Override
@@ -309,9 +353,9 @@ public class DefaultMorphCapability implements IMorphCapability
 	public void applyAbility(Player player, Ability ability)
 	{
 		if(this.getCurrentAbilities() == null)
-			currentAbilities = Arrays.asList(ability);
+			currentAbilities = new LockableList<>(Arrays.asList(ability));
 		else
-			currentAbilities.add(ability);
+			currentAbilities.safeAdd(ability);
 		
 		ability.enableAbility(player, getCurrentMorph().orElse(null));
 	}
@@ -321,7 +365,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	{
 		if(this.getCurrentAbilities() != null)
 		{
-			currentAbilities.remove(ability);
+			currentAbilities.safeRemove(ability);
 			
 			ability.disableAbility(player, getCurrentMorph().orElse(null));
 		}
