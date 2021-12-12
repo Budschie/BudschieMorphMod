@@ -10,9 +10,8 @@ import de.budschie.bmorph.capabilities.guardian.IGuardianBeamCapability;
 import de.budschie.bmorph.network.GuardianBeamAttack.GuardianBeamAttackPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
+
 
 public class GuardianBeamAttack extends CommonCapabilitySynchronizer<GuardianBeamAttackPacket, IGuardianBeamCapability>
 {	
@@ -54,12 +53,9 @@ public class GuardianBeamAttack extends CommonCapabilitySynchronizer<GuardianBea
 	@Override
 	public boolean handleCapabilitySync(GuardianBeamAttackPacket packet, Supplier<Context> ctx, Player player, IGuardianBeamCapability capabilityInterface)
 	{
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
-		{
-			capabilityInterface.setAttackedEntity(packet.getEntity());
-			capabilityInterface.setAttackProgression(packet.getAttackProgression());
-			capabilityInterface.setMaxAttackProgression(packet.getMaxAttackProgression());
-		});
+		capabilityInterface.setAttackedEntity(packet.getEntity());
+		capabilityInterface.setAttackProgression(packet.getAttackProgression());
+		capabilityInterface.setMaxAttackProgression(packet.getMaxAttackProgression());
 		
 		return true;
 	}
