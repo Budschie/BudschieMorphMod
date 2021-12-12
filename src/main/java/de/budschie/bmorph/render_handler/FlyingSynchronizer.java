@@ -1,5 +1,6 @@
 package de.budschie.bmorph.render_handler;
 
+import de.budschie.bmorph.capabilities.parrot_dance.ParrotDanceCapabilityInstance;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Chicken;
@@ -47,6 +48,11 @@ public class FlyingSynchronizer
 			else if(morphEntity instanceof Parrot parrot)
 			{
 				parrot.calculateFlapping();
+				
+				event.player.getCapability(ParrotDanceCapabilityInstance.PARROT_CAP).ifPresent(cap ->
+				{
+					parrot.partyParrot = cap.isDancing();
+				});
 			}
 		}
 	}
