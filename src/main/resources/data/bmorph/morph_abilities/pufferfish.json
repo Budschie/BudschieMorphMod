@@ -6,8 +6,7 @@
         "bmorph:poison_on_hit",
         "bmorph:water_breathing",
         "bmorph:water_sanic",
-        "bmorph:pufferfish",
-        "bmorph:air_suffocation"
+        "bmorph:pufferfish"
     ],
     "revoke":
     [
