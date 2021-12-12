@@ -14,6 +14,7 @@ import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityHandler;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityInstance;
 import de.budschie.bmorph.capabilities.guardian.IGuardianBeamCapability;
+import de.budschie.bmorph.capabilities.parrot_dance.ParrotDanceCapabilityHandler;
 import de.budschie.bmorph.capabilities.phantom_glide.GlideCapabilityHandler;
 import de.budschie.bmorph.capabilities.pufferfish.IPufferfishCapability;
 import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityHandler;
@@ -103,10 +104,9 @@ public class Events
 				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Post(player, cap.resolve().get(), cap.resolve().get().getCurrentMorph().orElse(null)));
 				
 				PufferfishCapabilityHandler.INSTANCE.synchronizeWithClients(player);
-				
 				GuardianBeamCapabilityHandler.INSTANCE.synchronizeWithClients(player);
-				
 				GlideCapabilityHandler.INSTANCE.synchronizeWithClients(player);
+				ParrotDanceCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 			}
 		}
 	}
@@ -147,6 +147,7 @@ public class Events
 			PufferfishCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
 			GuardianBeamCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
 			GlideCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
+			ParrotDanceCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
 		}
 	}
 	
