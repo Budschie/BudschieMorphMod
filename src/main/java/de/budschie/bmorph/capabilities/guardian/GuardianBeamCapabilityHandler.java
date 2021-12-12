@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 @EventBusSubscriber
 public class GuardianBeamCapabilityHandler extends CommonCapabilityHandler<IGuardianBeamCapability, GuardianBeamAttackPacket>
 {
-	public static GuardianBeamCapabilityHandler INSTANCE = new GuardianBeamCapabilityHandler();
+	public static final GuardianBeamCapabilityHandler INSTANCE = new GuardianBeamCapabilityHandler();
 	
 	public GuardianBeamCapabilityHandler()
 	{
