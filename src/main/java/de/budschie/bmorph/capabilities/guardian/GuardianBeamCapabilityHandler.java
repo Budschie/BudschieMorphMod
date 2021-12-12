@@ -6,7 +6,6 @@ import de.budschie.bmorph.capabilities.common.CommonCapabilityHandler;
 import de.budschie.bmorph.events.GuardianAbilityStatusUpdateEvent;
 import de.budschie.bmorph.network.GuardianBeamAttack.GuardianBeamAttackPacket;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -50,7 +49,6 @@ public class GuardianBeamCapabilityHandler extends CommonCapabilityHandler<IGuar
 			cap.attackServer(Optional.of(toAttack), maxAttackDuration);
 			
 			synchronizeWithClients(player);
-			synchronizeWithClient(player, (ServerPlayer) player);
 		});	
 	}
 	
@@ -61,7 +59,6 @@ public class GuardianBeamCapabilityHandler extends CommonCapabilityHandler<IGuar
 			cap.attackServer(Optional.empty(), 0);
 			
 			synchronizeWithClients(player);
-			synchronizeWithClient(player, (ServerPlayer) player);
 		});
 	}
 	
