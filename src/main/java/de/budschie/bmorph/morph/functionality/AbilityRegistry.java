@@ -24,6 +24,7 @@ import de.budschie.bmorph.morph.functionality.configurable.InstaJumpAbility;
 import de.budschie.bmorph.morph.functionality.configurable.InstaRegenAbility;
 import de.budschie.bmorph.morph.functionality.configurable.MobAttackAbility;
 import de.budschie.bmorph.morph.functionality.configurable.NoKnockbackAbility;
+import de.budschie.bmorph.morph.functionality.configurable.ParrotDanceAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PassiveEffectAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PassiveTickCommandAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PhantomAbility;
@@ -109,7 +110,9 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<AirSuffocationAbility>> SUFFOCATE_ON_LAND = ABILITY_REGISTRY.register("suffocate_on_land", () -> new ConfigurableAbility<>(AirSuffocationAbility.CODEC));
 	
 	public static RegistryObject<ConfigurableAbility<PhantomAbility>> PHANTOM_FLIGHT = ABILITY_REGISTRY.register("phantom_glide", () -> new ConfigurableAbility<>(PhantomAbility.CODEC));
-
+	
+	public static RegistryObject<ConfigurableAbility<ParrotDanceAbility>> PARROT_DANCE = ABILITY_REGISTRY.register("parrot_dance", () -> new ConfigurableAbility<>(ParrotDanceAbility.CODEC));
+	
 //	public static RegistryObject<Ability> FLY_ABILITY = ABILITY_REGISTRY.register("flying", () -> new FlyAbility());
 //	public static RegistryObject<Ability> MOB_ATTACK_ABILITY = ABILITY_REGISTRY.register("mob_attack", () -> new MobAttackAbility());
 //	public static RegistryObject<Ability> FIRE_SHOOTING_ABILITY = ABILITY_REGISTRY.register("fire_blaze", () -> new ProjectileShootingAbility((player, direction) -> 
