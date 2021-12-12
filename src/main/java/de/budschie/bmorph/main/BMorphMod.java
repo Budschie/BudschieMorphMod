@@ -35,6 +35,7 @@ public class BMorphMod
 	public static Key<BooleanValue> DO_MORPH_DROPS;
 	public static Key<BooleanValue> ALLOW_MORPH_DELETION;
 	public static Key<BooleanValue> ALLOW_MORPH_DROPPING;
+	public static Key<BooleanValue> ALLOW_MORPH_TOOLS;
 
 	public static Key<IntegerValue> MORPH_AGGRO_DURATION;
 	
@@ -65,7 +66,8 @@ public class BMorphMod
 		MORPH_AGGRO_DURATION = GameRules.register("morphAggroDuration", Category.PLAYER, IntegerValue.create(200));
 		ALLOW_MORPH_DELETION = GameRules.register("allowMorphDeletion", Category.PLAYER, BooleanValue.create(true));
 		ALLOW_MORPH_DROPPING = GameRules.register("allowMorphDropping", Category.PLAYER, BooleanValue.create(true));
-		
+		ALLOW_MORPH_TOOLS = GameRules.register("allowMorphTools", Category.PLAYER, BooleanValue.create(true));
+
 		MainNetworkChannel.registerMainNetworkChannels();
 		
 		MorphHandler.addMorphItem("player_morph_item", () -> new PlayerMorphItem());

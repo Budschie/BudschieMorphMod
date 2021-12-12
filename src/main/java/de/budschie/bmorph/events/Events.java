@@ -39,6 +39,8 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.TieredItem;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.util.FakePlayer;
@@ -55,6 +57,8 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -175,6 +179,57 @@ public class Events
 		{
 			// Tell the client to demorph the given player that is now not tracked.
 			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getPlayer()), new DisposePlayerMorphData.DisposePlayerMorphDataPacket(event.getTarget().getUUID()));
+		}
+	}
+	
+	private static boolean mayUseTool(Player player)
+	{		
+		if(!ServerSetup.server.getGameRules().getBoolean(BMorphMod.ALLOW_MORPH_TOOLS))
+		{
+			IMorphCapability cap = MorphUtil.getCapOrNull(player);
+			
+			if(cap != null)
+			{
+				if(cap.getCurrentMorph().isPresent())
+				{
+					return false;
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	@SubscribeEvent
+	public static void onPlayerBreakingBlockCheck(PlayerEvent.HarvestCheck event)
+	{
+		if(!event.getPlayer().isCreative() && !mayUseTool(event.getPlayer()) && event.getTargetBlock().requiresCorrectToolForDrops())
+			event.setCanHarvest(false);
+	}
+	
+	@SubscribeEvent
+	public static void onPlayerBreakingBlockSpeed(PlayerEvent.BreakSpeed event)
+	{
+		if(!event.getPlayer().isCreative() && !mayUseTool(event.getPlayer()) && event.getPlayer().getMainHandItem().getItem() instanceof TieredItem)
+			event.setNewSpeed(event.getOriginalSpeed() / ((TieredItem)event.getPlayer().getMainHandItem().getItem()).getTier().getSpeed());
+	}
+	
+	@SubscribeEvent
+	public static void onPlayerInteractItem(PlayerInteractEvent.RightClickItem event)
+	{
+		if(!event.getPlayer().isCreative() && !mayUseTool(event.getPlayer()))
+		{
+			if(event.getItemStack().getItem() instanceof TieredItem || event.getItemStack().getItem() instanceof ProjectileWeaponItem)
+				event.setCanceled(true);
+		}
+	}
+	
+	@SubscribeEvent
+	public static void onInteractAtBlock(PlayerInteractEvent.RightClickBlock event)
+	{
+		if(!event.getPlayer().isCreative() && !mayUseTool(event.getPlayer()))
+		{
+			event.setUseItem(Result.DENY);
 		}
 	}
 	
