@@ -20,7 +20,7 @@ public class PhantomSynchronizer implements IEntitySynchronizer
 	public void applyToMorphEntity(Entity morphEntity, Player player, float partialTicks)
 	{
 		Phantom phantom = (Phantom) morphEntity;
-
+		
 		player.getCapability(GlideCapabilityAttacher.GLIDE_CAP).ifPresent(cap ->
 		{
 			float correctedXRot = -phantom.getXRot();
