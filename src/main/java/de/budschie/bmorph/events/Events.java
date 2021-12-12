@@ -236,13 +236,17 @@ public class Events
 		// I've tested it and it doesnt cause a crash. That's good.
 		if(!(event.isWasDeath() && !ServerSetup.server.getGameRules().getBoolean(BMorphMod.KEEP_MORPH_INVENTORY)))
 		{
-			LazyOptional<IMorphCapability> oldCap = event.getOriginal().getCapability(MorphCapabilityAttacher.MORPH_CAP);
-			LazyOptional<IMorphCapability> newCap = event.getPlayer().getCapability(MorphCapabilityAttacher.MORPH_CAP);
+			event.getOriginal().reviveCaps();
+			
+			Optional<IMorphCapability> oldCap = event.getOriginal().getCapability(MorphCapabilityAttacher.MORPH_CAP).resolve();
+			Optional<IMorphCapability> newCap = event.getPlayer().getCapability(MorphCapabilityAttacher.MORPH_CAP).resolve();
+			
+			event.getOriginal().invalidateCaps();
 			
 			if(oldCap.isPresent() && newCap.isPresent())
 			{
-				IMorphCapability oldResolved = oldCap.resolve().get();
-				IMorphCapability newResolved = newCap.resolve().get();
+				IMorphCapability oldResolved = oldCap.get();
+				IMorphCapability newResolved = newCap.get();
 				
 				newResolved.setMorphList(oldResolved.getMorphList());
 				
