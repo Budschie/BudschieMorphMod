@@ -1,6 +1,6 @@
 package de.budschie.bmorph.render_handler;
 
-import de.budschie.bmorph.capabilities.phantom_glide.GlideCapabilityAttacher;
+import de.budschie.bmorph.capabilities.phantom_glide.GlideCapabilityInstance;
 import de.budschie.bmorph.capabilities.phantom_glide.GlideStatus;
 import de.budschie.bmorph.util.BudschieUtils;
 import net.minecraft.util.Mth;
@@ -21,7 +21,7 @@ public class PhantomSynchronizer implements IEntitySynchronizer
 	{
 		Phantom phantom = (Phantom) morphEntity;
 		
-		player.getCapability(GlideCapabilityAttacher.GLIDE_CAP).ifPresent(cap ->
+		player.getCapability(GlideCapabilityInstance.GLIDE_CAP).ifPresent(cap ->
 		{
 			float correctedXRot = -phantom.getXRot();
 			float correctedXRotO = -phantom.xRotO;

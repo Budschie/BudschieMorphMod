@@ -107,8 +107,7 @@ public class Events
 				
 				GuardianBeamCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 				
-				GlideCapabilityHandler.synchronizeWithClients(player);
-				GlideCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) player);
+				GlideCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 			}
 		}
 	}
@@ -148,7 +147,7 @@ public class Events
 			
 			PufferfishCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
 			GuardianBeamCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
-			GlideCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
+			GlideCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
 		}
 	}
 	

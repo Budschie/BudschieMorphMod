@@ -1,23 +1,28 @@
 package de.budschie.bmorph.network;
 
-import java.util.UUID;
 import java.util.function.Supplier;
 
+import de.budschie.bmorph.capabilities.common.CommonCapabilitySynchronizer;
+import de.budschie.bmorph.capabilities.common.CommonCapabilitySynchronizer.CommonCapabilitySynchronizerPacket;
 import de.budschie.bmorph.capabilities.phantom_glide.ChargeDirection;
-import de.budschie.bmorph.capabilities.phantom_glide.GlideCapabilityAttacher;
+import de.budschie.bmorph.capabilities.phantom_glide.GlideCapabilityInstance;
 import de.budschie.bmorph.capabilities.phantom_glide.GlideStatus;
+import de.budschie.bmorph.capabilities.phantom_glide.IGlideCapability;
 import de.budschie.bmorph.network.GlideStatusChange.GlideStatusChangePacket;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
 
-public class GlideStatusChange implements ISimpleImplPacket<GlideStatusChangePacket>
+public class GlideStatusChange extends CommonCapabilitySynchronizer<GlideStatusChangePacket, IGlideCapability>
 {
-	@Override
-	public void encode(GlideStatusChangePacket packet, FriendlyByteBuf buffer)
+	public GlideStatusChange()
 	{
-		buffer.writeUUID(packet.getPlayer());
+		super(GlideCapabilityInstance.GLIDE_CAP);
+	}
+	
+	@Override
+	public void encodeAdditional(GlideStatusChangePacket packet, FriendlyByteBuf buffer)
+	{
 		buffer.writeUtf(packet.getGlideStatus().name());
 		buffer.writeInt(packet.getChargeTime());
 		buffer.writeInt(packet.getMaxChargeTime());
@@ -34,9 +39,8 @@ public class GlideStatusChange implements ISimpleImplPacket<GlideStatusChangePac
 	}
 
 	@Override
-	public GlideStatusChangePacket decode(FriendlyByteBuf buffer)
+	public GlideStatusChangePacket decodeAdditional(FriendlyByteBuf buffer)
 	{
-		UUID player = buffer.readUUID();
 		String glideStatus = buffer.readUtf();
 		int chargeTime = buffer.readInt();
 		int maxChargeTime = buffer.readInt();
@@ -47,59 +51,38 @@ public class GlideStatusChange implements ISimpleImplPacket<GlideStatusChangePac
 		if(buffer.readBoolean())
 			chargeDir = ChargeDirection.valueOf(buffer.readUtf());
 		
-		return new GlideStatusChangePacket(player, GlideStatus.valueOf(glideStatus), chargeTime, maxChargeTime, transitionTime, chargeDir);
+		return new GlideStatusChangePacket(GlideStatus.valueOf(glideStatus), chargeTime, maxChargeTime, transitionTime, chargeDir);
 	}
 
 	@Override
-	public void handle(GlideStatusChangePacket packet, Supplier<Context> ctx)
+	public boolean handleCapabilitySync(GlideStatusChangePacket packet, Supplier<Context> ctx, Player player, IGlideCapability capabilityInterface)
 	{
-		ctx.get().enqueueWork(() ->
-		{
-			if(Minecraft.getInstance().level != null)
-			{
-				Player player = Minecraft.getInstance().level.getPlayerByUUID(packet.getPlayer());
+		capabilityInterface.setGlideStatus(packet.getGlideStatus(), player);
+		capabilityInterface.setChargeTime(packet.getChargeTime());
+		capabilityInterface.setMaxChargeTime(packet.getMaxChargeTime());
+		capabilityInterface.setTransitionTime(packet.getTransitionTime());
+		// Transition time is guaranteed to be maxtransitiontime.
+		capabilityInterface.setMaxTransitionTime(packet.getTransitionTime());
+		capabilityInterface.setChargeDirection(packet.getChargeDirection());
 		
-				if (player != null)
-				{
-					player.getCapability(GlideCapabilityAttacher.GLIDE_CAP).ifPresent(cap ->
-					{
-						cap.setGlideStatus(packet.getGlideStatus(), player);
-						cap.setChargeTime(packet.getChargeTime());
-						cap.setMaxChargeTime(packet.getMaxChargeTime());
-						cap.setTransitionTime(packet.getTransitionTime());
-						// Transition time is guaranteed to be maxtransitiontime.
-						cap.setMaxTransitionTime(packet.getTransitionTime());
-						cap.setChargeDirection(packet.getChargeDirection());
-					});
-				}
-			}
-			
-			ctx.get().setPacketHandled(true);
-		});
+		return true;
 	}
 	
-	public static class GlideStatusChangePacket
+	public static class GlideStatusChangePacket extends CommonCapabilitySynchronizerPacket
 	{
-		private UUID player;
 		private GlideStatus glideStatus;
 		private int chargeTime;
 		private int maxChargeTime;
 		private int transitionTime;
 		private ChargeDirection chargeDirection;
 		
-		public GlideStatusChangePacket(UUID player, GlideStatus glideStatus, int chargeTime, int maxChargeTime, int transitionTime, ChargeDirection chargeDirection)
+		public GlideStatusChangePacket(GlideStatus glideStatus, int chargeTime, int maxChargeTime, int transitionTime, ChargeDirection chargeDirection)
 		{
-			this.player = player;
 			this.chargeTime = chargeTime;
 			this.maxChargeTime = maxChargeTime;
 			this.transitionTime = transitionTime;
 			this.glideStatus = glideStatus;
 			this.chargeDirection = chargeDirection;
-		}
-
-		public UUID getPlayer()
-		{
-			return player;
 		}
 
 		public int getChargeTime()

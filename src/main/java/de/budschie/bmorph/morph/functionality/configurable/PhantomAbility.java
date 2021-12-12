@@ -7,8 +7,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.capabilities.phantom_glide.ChargeDirection;
-import de.budschie.bmorph.capabilities.phantom_glide.GlideCapabilityAttacher;
 import de.budschie.bmorph.capabilities.phantom_glide.GlideCapabilityHandler;
+import de.budschie.bmorph.capabilities.phantom_glide.GlideCapabilityInstance;
 import de.budschie.bmorph.capabilities.phantom_glide.GlideStatus;
 import de.budschie.bmorph.capabilities.phantom_glide.GlideStatusChangedEvent;
 import de.budschie.bmorph.capabilities.phantom_glide.IGlideCapability;
@@ -84,7 +84,7 @@ public class PhantomAbility extends AbstractEventAbility
 	{
 		super.enableAbility(player, enabledItem);
 		
-		player.getCapability(GlideCapabilityAttacher.GLIDE_CAP).ifPresent(cap ->
+		player.getCapability(GlideCapabilityInstance.GLIDE_CAP).ifPresent(cap ->
 		{
 			if(cap.getGlideStatus() == GlideStatus.GLIDE)
 				applyGlidingAbilities(player);
@@ -94,11 +94,11 @@ public class PhantomAbility extends AbstractEventAbility
 	@Override
 	public void onUsedAbility(Player player, MorphItem currentMorph)
 	{
-		player.getCapability(GlideCapabilityAttacher.GLIDE_CAP).ifPresent(cap ->
+		player.getCapability(GlideCapabilityInstance.GLIDE_CAP).ifPresent(cap ->
 		{
 			// If we charge and then press the ability button, we should stop charging
 			if(cap.getGlideStatus() == GlideStatus.CHARGE)
-				GlideCapabilityHandler.stopChargingServer(player);
+				GlideCapabilityHandler.INSTANCE.stopChargingServer(player);
 			// If we are gliding and press the ability button, we should start to charge
 			else if (cap.getGlideStatus() == GlideStatus.GLIDE)
 			{
@@ -109,13 +109,13 @@ public class PhantomAbility extends AbstractEventAbility
 				else
 					dir = ChargeDirection.DOWN;
 				
-				GlideCapabilityHandler.startChargingServer(player, transitionTicks, maxChargingTicks, dir);
+				GlideCapabilityHandler.INSTANCE.startChargingServer(player, transitionTicks, maxChargingTicks, dir);
 			}
 			// If we are on the ground and press the ability button, we should start to glide
 			else if(cap.getGlideStatus() == GlideStatus.STANDARD)
 			{
 				if(!cancelAbility(player))
-					GlideCapabilityHandler.glideServer(player);
+					GlideCapabilityHandler.INSTANCE.glideServer(player);
 			}
 		});
 	}
@@ -143,7 +143,7 @@ public class PhantomAbility extends AbstractEventAbility
 	{
 		if(event.phase == Phase.END && isTracked(event.player))
 		{
-			event.player.getCapability(GlideCapabilityAttacher.GLIDE_CAP).ifPresent(cap ->
+			event.player.getCapability(GlideCapabilityInstance.GLIDE_CAP).ifPresent(cap ->
 			{
 				if(cap.getGlideStatus() == GlideStatus.CHARGE)
 				{
@@ -151,7 +151,7 @@ public class PhantomAbility extends AbstractEventAbility
 						event.player.setDeltaMovement(getChargeMovement(cap));
 					
 					if(!event.player.level.isClientSide() && cancelAbility(event.player))
-						GlideCapabilityHandler.standardServer(event.player);
+						GlideCapabilityHandler.INSTANCE.standardServer(event.player);
 				}
 				else if(cap.getGlideStatus() == GlideStatus.GLIDE || cap.getGlideStatus() == GlideStatus.CHARGE_TRANSITION_IN || cap.getGlideStatus() == GlideStatus.CHARGE_TRANSITION_OUT)
 				{
@@ -160,7 +160,7 @@ public class PhantomAbility extends AbstractEventAbility
 						event.player.stopFallFlying();
 						
 						if(!event.player.level.isClientSide())
-							GlideCapabilityHandler.standardServer(event.player);
+							GlideCapabilityHandler.INSTANCE.standardServer(event.player);
 					}
 					else
 					{

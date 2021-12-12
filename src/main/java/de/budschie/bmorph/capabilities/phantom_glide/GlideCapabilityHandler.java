@@ -2,27 +2,31 @@ package de.budschie.bmorph.capabilities.phantom_glide;
 
 import java.util.function.Consumer;
 
-import de.budschie.bmorph.network.GlideStatusChange;
-import de.budschie.bmorph.network.MainNetworkChannel;
-import net.minecraft.server.level.ServerPlayer;
+import de.budschie.bmorph.capabilities.common.CommonCapabilityHandler;
+import de.budschie.bmorph.network.GlideStatusChange.GlideStatusChangePacket;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 @EventBusSubscriber
-public class GlideCapabilityHandler
+public class GlideCapabilityHandler extends CommonCapabilityHandler<IGlideCapability, GlideStatusChangePacket>
 {	
-	private static void changeStatusServer(Player player, Consumer<IGlideCapability> consumer)
+	public static final GlideCapabilityHandler INSTANCE = new GlideCapabilityHandler();
+	
+	public GlideCapabilityHandler()
 	{
-		player.getCapability(GlideCapabilityAttacher.GLIDE_CAP).ifPresent(cap ->
+		super(GlideCapabilityInstance.GLIDE_CAP);
+	}
+
+	private void changeStatusServer(Player player, Consumer<IGlideCapability> consumer)
+	{
+		player.getCapability(GlideCapabilityInstance.GLIDE_CAP).ifPresent(cap ->
 		{
 			consumer.accept(cap);
 			
 			synchronizeWithClients(player);
-			synchronizeWithClient(player, (ServerPlayer) player);
 		});
 	}
 	
@@ -31,16 +35,8 @@ public class GlideCapabilityHandler
 	{
 		if(event.phase == Phase.END)
 		{
-			event.player.getCapability(GlideCapabilityAttacher.GLIDE_CAP).ifPresent(cap ->
+			event.player.getCapability(GlideCapabilityInstance.GLIDE_CAP).ifPresent(cap ->
 			{
-//				if(cap.getGlideStatus() == GlideStatus.CHARGE)
-//				{
-//					cap.setChargeTime(cap.getChargeTime() - 1);
-//					
-//					if(cap.getChargeTime() <= 0)
-//						cap.setGlideStatus(GlideStatus.GLIDE);
-//				}
-				
 				if(cap.getGlideStatus() == GlideStatus.CHARGE_TRANSITION_IN)
 				{
 					cap.setTransitionTime(cap.getTransitionTime() - 1);
@@ -74,46 +70,34 @@ public class GlideCapabilityHandler
 			});
 		}
 	}	
-	public static void glideServer(Player player)
+	public void glideServer(Player player)
 	{
 		changeStatusServer(player, glide -> glide.glide(player));
 	}
 	
-	public static void chargeServer(Player player, int maxChargeTime, ChargeDirection direction)
+	public void chargeServer(Player player, int maxChargeTime, ChargeDirection direction)
 	{
 		changeStatusServer(player, charge -> charge.charge(maxChargeTime, direction, player));
 	}
 	
-	public static void startChargingServer(Player player, int transitionTime, int maxChargeTime, ChargeDirection direction)
+	public void startChargingServer(Player player, int transitionTime, int maxChargeTime, ChargeDirection direction)
 	{
 		changeStatusServer(player, transitionIn -> transitionIn.transitionIn(transitionTime, maxChargeTime, direction, player));
 	}
 	
-	public static void stopChargingServer(Player player)
+	public void stopChargingServer(Player player)
 	{
 		changeStatusServer(player, transitionOut -> transitionOut.transitionOut(player));
 	}
 	
-	public static void standardServer(Player player)
+	public void standardServer(Player player)
 	{
 		changeStatusServer(player, standard -> standard.standard(player));
 	}
-	
-	public static void synchronizeWithClient(Player toSynchronize, ServerPlayer with)
+
+	@Override
+	protected GlideStatusChangePacket createPacket(Player player, IGlideCapability capability)
 	{
-		toSynchronize.getCapability(GlideCapabilityAttacher.GLIDE_CAP).ifPresent(cap ->
-		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> with),
-					new GlideStatusChange.GlideStatusChangePacket(toSynchronize.getUUID(), cap.getGlideStatus(), cap.getChargeTime(), cap.getMaxChargeTime(), cap.getTransitionTime(), cap.getChargeDirection()));
-		});
-	}
-	
-	public static void synchronizeWithClients(Player toSynchronize)
-	{
-		toSynchronize.getCapability(GlideCapabilityAttacher.GLIDE_CAP).ifPresent(cap ->
-		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> toSynchronize),
-					new GlideStatusChange.GlideStatusChangePacket(toSynchronize.getUUID(), cap.getGlideStatus(), cap.getChargeTime(), cap.getMaxChargeTime(), cap.getTransitionTime(), cap.getChargeDirection()));
-		});
+		return new GlideStatusChangePacket(capability.getGlideStatus(), capability.getChargeTime(), capability.getMaxChargeTime(), capability.getTransitionTime(), capability.getChargeDirection());
 	}
 }
