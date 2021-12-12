@@ -102,8 +102,7 @@ public class Events
 				
 				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Post(player, cap.resolve().get(), cap.resolve().get().getCurrentMorph().orElse(null)));
 				
-				PufferfishCapabilityHandler.synchronizeWithClients(player);
-				PufferfishCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) player);
+				PufferfishCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 				
 				GuardianBeamCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 				
@@ -145,7 +144,7 @@ public class Events
 			Player player = (Player) event.getTarget();
 			MorphUtil.processCap(player, resolved -> resolved.syncWithClient(player, (ServerPlayer) event.getPlayer()));
 			
-			PufferfishCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
+			PufferfishCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
 			GuardianBeamCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
 			GlideCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
 		}

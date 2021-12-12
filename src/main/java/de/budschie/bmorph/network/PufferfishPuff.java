@@ -1,51 +1,55 @@
 package de.budschie.bmorph.network;
 
-import java.util.UUID;
 import java.util.function.Supplier;
 
+import de.budschie.bmorph.capabilities.common.CommonCapabilitySynchronizer;
+import de.budschie.bmorph.capabilities.common.CommonCapabilitySynchronizer.CommonCapabilitySynchronizerPacket;
+import de.budschie.bmorph.capabilities.pufferfish.IPufferfishCapability;
+import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityInstance;
 import de.budschie.bmorph.network.PufferfishPuff.PufferfishPuffPacket;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
 
-public class PufferfishPuff implements ISimpleImplPacket<PufferfishPuffPacket>
+public class PufferfishPuff extends CommonCapabilitySynchronizer<PufferfishPuffPacket, IPufferfishCapability>
 {
+	public PufferfishPuff()
+	{
+		super(PufferfishCapabilityInstance.PUFFER_CAP);
+	}
+	
 	@Override
-	public void encode(PufferfishPuffPacket packet, FriendlyByteBuf buffer)
+	public void encodeAdditional(PufferfishPuffPacket packet, FriendlyByteBuf buffer)
 	{
 		buffer.writeInt(packet.getOriginalDuration());
 		buffer.writeInt(packet.getDuration());
-		buffer.writeUUID(packet.getPlayer());
 	}
 
 	@Override
-	public PufferfishPuffPacket decode(FriendlyByteBuf buffer)
+	public PufferfishPuffPacket decodeAdditional(FriendlyByteBuf buffer)
 	{
-		return new PufferfishPuffPacket(buffer.readInt(), buffer.readInt(), buffer.readUUID());
+		return new PufferfishPuffPacket(buffer.readInt(), buffer.readInt());
 	}
 
 	@Override
-	public void handle(PufferfishPuffPacket packet, Supplier<Context> ctx)
+	public boolean handleCapabilitySync(PufferfishPuffPacket packet, Supplier<Context> ctx, Player player, IPufferfishCapability capabilityInterface)
 	{
-		ctx.get().enqueueWork(() ->
-		{
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientOnlyShit.handlePufferfishPacketClient(packet));
-			ctx.get().setPacketHandled(true);
-		});
+		capabilityInterface.setOriginalPuffTime(packet.getOriginalDuration());
+		capabilityInterface.setPuffTime(packet.getDuration());
+		
+		return true;
 	}
+
 	
-	public static class PufferfishPuffPacket
+	public static class PufferfishPuffPacket extends CommonCapabilitySynchronizerPacket
 	{
 		private int originalDuration;
 		private int duration;
-		private UUID player;
 		
-		public PufferfishPuffPacket(int originalDuration, int duration, UUID player)
+		public PufferfishPuffPacket(int originalDuration, int duration)
 		{
 			this.originalDuration = originalDuration;
 			this.duration = duration;
-			this.player = player;
 		}
 		
 		public int getDuration()
@@ -58,11 +62,6 @@ public class PufferfishPuff implements ISimpleImplPacket<PufferfishPuffPacket>
 			return originalDuration;
 		}
 		
-		public UUID getPlayer()
-		{
-			return player;
-		}
-		
 		public void setDuration(int duration)
 		{
 			this.duration = duration;
@@ -71,11 +70,6 @@ public class PufferfishPuff implements ISimpleImplPacket<PufferfishPuffPacket>
 		public void setOriginalDuration(int originalDuration)
 		{
 			this.originalDuration = originalDuration;
-		}
-		
-		public void setPlayer(UUID player)
-		{
-			this.player = player;
 		}
 	}
 }

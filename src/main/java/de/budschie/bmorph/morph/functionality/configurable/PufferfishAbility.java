@@ -7,8 +7,8 @@ import java.util.UUID;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityAttacher;
 import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityHandler;
+import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityInstance;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.StunAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
@@ -107,7 +107,7 @@ public class PufferfishAbility extends StunAbility
 		{
 			if(trackedPlayers.contains(event.player.getUUID()))
 			{
-				event.player.getCapability(PufferfishCapabilityAttacher.PUFFER_CAP).ifPresent(cap ->
+				event.player.getCapability(PufferfishCapabilityInstance.PUFFER_CAP).ifPresent(cap ->
 				{
 					if(cap.getPuffTime() > 0)
 					{
@@ -164,7 +164,7 @@ public class PufferfishAbility extends StunAbility
 		{
 			stun(player.getUUID());
 			
-			PufferfishCapabilityHandler.puffServer(player, duration);
+			PufferfishCapabilityHandler.INSTANCE.puffServer(player, duration);
 			blowUpSoundEffect.playSoundAt(player);
 		}
 	}
@@ -172,7 +172,7 @@ public class PufferfishAbility extends StunAbility
 	@Override
 	public void disableAbility(Player player, MorphItem disabledItem)
 	{
-		player.getCapability(PufferfishCapabilityAttacher.PUFFER_CAP).ifPresent(cap ->
+		player.getCapability(PufferfishCapabilityInstance.PUFFER_CAP).ifPresent(cap ->
 		{
 			cap.puff(0);
 		});
