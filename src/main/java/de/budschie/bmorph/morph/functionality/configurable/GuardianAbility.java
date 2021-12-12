@@ -6,8 +6,8 @@ import java.util.UUID;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityAttacher;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityHandler;
+import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityInstance;
 import de.budschie.bmorph.capabilities.guardian.IGuardianBeamCapability;
 import de.budschie.bmorph.events.GuardianAbilityStatusUpdateEvent;
 import de.budschie.bmorph.events.PlayerMorphEvent;
@@ -154,7 +154,7 @@ public class GuardianAbility extends AbstractEventAbility
 				if(mayCancel)
 				{
 					cancelAbilitySound.ifPresent(sound -> sound.playSoundAt(player));
-					GuardianBeamCapabilityHandler.unattackServer(player);
+					GuardianBeamCapabilityHandler.INSTANCE.unattackServer(player);
 					deapplyAbilityEffects(player);
 				}
 			}
@@ -174,7 +174,7 @@ public class GuardianAbility extends AbstractEventAbility
 					
 					if(blockResult == null || blockResult.getType() == Type.MISS && !isEntityOutOfRange(player, result.getEntity()))
 					{
-						GuardianBeamCapabilityHandler.attackServer(player, result.getEntity(), getAttackDuration());
+						GuardianBeamCapabilityHandler.INSTANCE.attackServer(player, result.getEntity(), getAttackDuration());
 						applyAbilityEffects(player);
 					}
 				}
@@ -210,7 +210,7 @@ public class GuardianAbility extends AbstractEventAbility
 				// Check if entity is null or out of bounds
 				if(targettedEntity == null || !targettedEntity.isAlive() || isEntityOutOfRange(event.getPlayer(), targettedEntity))
 				{
-					GuardianBeamCapabilityHandler.unattackServer(event.getPlayer());
+					GuardianBeamCapabilityHandler.INSTANCE.unattackServer(event.getPlayer());
 					deapplyAbilityEffects(event.getPlayer());
 					return;
 				}
@@ -227,7 +227,7 @@ public class GuardianAbility extends AbstractEventAbility
 					// If a block was hit, cancel everything.
 					if(blockResult != null && blockResult.getType() == Type.BLOCK)
 					{
-						GuardianBeamCapabilityHandler.unattackServer(event.getPlayer());
+						GuardianBeamCapabilityHandler.INSTANCE.unattackServer(event.getPlayer());
 						deapplyAbilityEffects(event.getPlayer());
 						return;
 					}
@@ -243,7 +243,7 @@ public class GuardianAbility extends AbstractEventAbility
 					currentlyTargettedEntity.hurt(DamageSource.indirectMagic(event.getPlayer(), event.getPlayer()), damage);
 					
 					// Set the capability accordingly and sync it to the client
-					GuardianBeamCapabilityHandler.unattackServer(event.getPlayer());
+					GuardianBeamCapabilityHandler.INSTANCE.unattackServer(event.getPlayer());
 					
 					// Remove the slowness effect if possible
 					deapplyAbilityEffects(event.getPlayer());
@@ -298,7 +298,7 @@ public class GuardianAbility extends AbstractEventAbility
 			IGuardianBeamCapability cap = getNullableBeamCap(player);
 			if (cap != null && cap.getAttackedEntity().isPresent())
 			{
-				GuardianBeamCapabilityHandler.unattackServer(player);
+				GuardianBeamCapabilityHandler.INSTANCE.unattackServer(player);
 			}
 			
 			deapplyAbilityEffects(player);
@@ -319,6 +319,6 @@ public class GuardianAbility extends AbstractEventAbility
 	
 	private IGuardianBeamCapability getNullableBeamCap(Player player)
 	{
-		return player.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).resolve().orElse(null);
+		return player.getCapability(GuardianBeamCapabilityInstance.GUARDIAN_BEAM_CAP).resolve().orElse(null);
 	}
 }

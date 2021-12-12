@@ -11,8 +11,8 @@ import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
-import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityAttacher;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityHandler;
+import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityInstance;
 import de.budschie.bmorph.capabilities.guardian.IGuardianBeamCapability;
 import de.budschie.bmorph.capabilities.phantom_glide.GlideCapabilityHandler;
 import de.budschie.bmorph.capabilities.pufferfish.IPufferfishCapability;
@@ -105,8 +105,7 @@ public class Events
 				PufferfishCapabilityHandler.synchronizeWithClients(player);
 				PufferfishCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) player);
 				
-				GuardianBeamCapabilityHandler.synchronizeWithClients(player);
-				GuardianBeamCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) player);
+				GuardianBeamCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 				
 				GlideCapabilityHandler.synchronizeWithClients(player);
 				GlideCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) player);
@@ -148,7 +147,7 @@ public class Events
 			MorphUtil.processCap(player, resolved -> resolved.syncWithClient(player, (ServerPlayer) event.getPlayer()));
 			
 			PufferfishCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
-			GuardianBeamCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
+			GuardianBeamCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
 			GlideCapabilityHandler.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
 		}
 	}
@@ -165,11 +164,11 @@ public class Events
 	@SubscribeEvent
 	public static void onPlayerStoppedBeingLoaded(PlayerEvent.StopTracking event)
 	{
-		event.getPlayer().getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).ifPresent(cap ->
+		event.getPlayer().getCapability(GuardianBeamCapabilityInstance.GUARDIAN_BEAM_CAP).ifPresent(cap ->
 		{
 			if(cap.getAttackedEntity().isPresent() && cap.getAttackedEntity().get() == event.getTarget().getId())
 			{
-				GuardianBeamCapabilityHandler.unattackServer(event.getPlayer());
+				GuardianBeamCapabilityHandler.INSTANCE.unattackServer(event.getPlayer());
 			}
 		});
 		

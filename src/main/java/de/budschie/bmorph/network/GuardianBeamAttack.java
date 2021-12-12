@@ -1,22 +1,29 @@
 package de.budschie.bmorph.network;
 
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Supplier;
 
+import de.budschie.bmorph.capabilities.common.CommonCapabilitySynchronizer;
+import de.budschie.bmorph.capabilities.common.CommonCapabilitySynchronizer.CommonCapabilitySynchronizerPacket;
+import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityInstance;
+import de.budschie.bmorph.capabilities.guardian.IGuardianBeamCapability;
 import de.budschie.bmorph.network.GuardianBeamAttack.GuardianBeamAttackPacket;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
 
-public class GuardianBeamAttack implements ISimpleImplPacket<GuardianBeamAttackPacket>
-{
-
-	@Override
-	public void encode(GuardianBeamAttackPacket packet, FriendlyByteBuf buffer)
+public class GuardianBeamAttack extends CommonCapabilitySynchronizer<GuardianBeamAttackPacket, IGuardianBeamCapability>
+{	
+	public GuardianBeamAttack()
 	{
-		buffer.writeUUID(packet.getPlayer());
+		super(GuardianBeamCapabilityInstance.GUARDIAN_BEAM_CAP);
+	}
+	
+	@Override
+	public void encodeAdditional(GuardianBeamAttackPacket packet, FriendlyByteBuf buffer)
+	{
 		buffer.writeBoolean(packet.getEntity().isPresent());
 		
 		if(packet.getEntity().isPresent())
@@ -28,9 +35,8 @@ public class GuardianBeamAttack implements ISimpleImplPacket<GuardianBeamAttackP
 	}
 
 	@Override
-	public GuardianBeamAttackPacket decode(FriendlyByteBuf buffer)
+	public GuardianBeamAttackPacket decodeAdditional(FriendlyByteBuf buffer)
 	{
-		UUID player = buffer.readUUID();
 		Optional<Integer> entity = Optional.empty();
 		int attackProgression = 0;
 		int maxAttackProgression = 0;
@@ -42,37 +48,33 @@ public class GuardianBeamAttack implements ISimpleImplPacket<GuardianBeamAttackP
 			maxAttackProgression = buffer.readInt();
 		}
 		
-		return new GuardianBeamAttackPacket(player, entity, attackProgression, maxAttackProgression);
-	}
-
-	@Override
-	public void handle(GuardianBeamAttackPacket packet, Supplier<Context> ctx)
-	{
-		ctx.get().enqueueWork(() ->
-		{
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientOnlyShit.handleGuardianPacketClient(packet));
-			ctx.get().setPacketHandled(true);
-		});
+		return new GuardianBeamAttackPacket(entity, attackProgression, maxAttackProgression);
 	}
 	
-	public static class GuardianBeamAttackPacket
+	@Override
+	public boolean handleCapabilitySync(GuardianBeamAttackPacket packet, Supplier<Context> ctx, Player player, IGuardianBeamCapability capabilityInterface)
 	{
-		private UUID player;
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+		{
+			capabilityInterface.setAttackedEntity(packet.getEntity());
+			capabilityInterface.setAttackProgression(packet.getAttackProgression());
+			capabilityInterface.setMaxAttackProgression(packet.getMaxAttackProgression());
+		});
+		
+		return true;
+	}
+	
+	public static class GuardianBeamAttackPacket extends CommonCapabilitySynchronizerPacket
+	{
 		private Optional<Integer> entity;
 		private int attackProgression;
 		private int maxAttackProgression;
 		
-		public GuardianBeamAttackPacket(UUID player, Optional<Integer> entity, int attackProgression, int maxAttackProgression)
+		public GuardianBeamAttackPacket(Optional<Integer> entity, int attackProgression, int maxAttackProgression)
 		{
-			this.player = player;
 			this.entity = entity;
 			this.attackProgression = attackProgression;
 			this.maxAttackProgression = maxAttackProgression;
-		}
-		
-		public UUID getPlayer()
-		{
-			return player;
 		}
 		
 		public Optional<Integer> getEntity()

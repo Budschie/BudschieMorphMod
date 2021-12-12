@@ -2,7 +2,7 @@ package de.budschie.bmorph.render_handler;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityAttacher;
+import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityInstance;
 import de.budschie.bmorph.capabilities.guardian.IGuardianBeamCapability;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -27,7 +27,7 @@ public class GuardianEntitySynchronizer
 	{
 		if(event.side == LogicalSide.CLIENT && event.phase == Phase.START)
 		{
-			IGuardianBeamCapability beamCap = event.player.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).resolve().orElse(null);
+			IGuardianBeamCapability beamCap = event.player.getCapability(GuardianBeamCapabilityInstance.GUARDIAN_BEAM_CAP).resolve().orElse(null);
 
 			if (beamCap != null)
 			{
@@ -70,7 +70,7 @@ public class GuardianEntitySynchronizer
 		if(event.getType() != ElementType.TEXT)
 			return;
 		
-		IGuardianBeamCapability beamCap = Minecraft.getInstance().player.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).resolve().orElse(null);
+		IGuardianBeamCapability beamCap = Minecraft.getInstance().player.getCapability(GuardianBeamCapabilityInstance.GUARDIAN_BEAM_CAP).resolve().orElse(null);
 		
 		// Render beam
 		if(beamCap != null && beamCap.getAttackedEntity().isPresent())

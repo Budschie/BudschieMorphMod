@@ -2,9 +2,9 @@ package de.budschie.bmorph.capabilities.guardian;
 
 import java.util.Optional;
 
+import de.budschie.bmorph.capabilities.common.CommonCapabilityHandler;
 import de.budschie.bmorph.events.GuardianAbilityStatusUpdateEvent;
-import de.budschie.bmorph.network.GuardianBeamAttack;
-import de.budschie.bmorph.network.MainNetworkChannel;
+import de.budschie.bmorph.network.GuardianBeamAttack.GuardianBeamAttackPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -15,17 +15,23 @@ import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 @EventBusSubscriber
-public class GuardianBeamCapabilityHandler
+public class GuardianBeamCapabilityHandler extends CommonCapabilityHandler<IGuardianBeamCapability, GuardianBeamAttackPacket>
 {
+	public static GuardianBeamCapabilityHandler INSTANCE = new GuardianBeamCapabilityHandler();
+	
+	public GuardianBeamCapabilityHandler()
+	{
+		super(GuardianBeamCapabilityInstance.GUARDIAN_BEAM_CAP);
+	}
+
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent event)
 	{
 		if(event.phase == Phase.END)
 		{
-			event.player.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).ifPresent(cap ->
+			event.player.getCapability(GuardianBeamCapabilityInstance.GUARDIAN_BEAM_CAP).ifPresent(cap ->
 			{
 				if(cap.getAttackedEntity().isPresent())
 				{
@@ -37,9 +43,9 @@ public class GuardianBeamCapabilityHandler
 		}
 	}
 	
-	public static void attackServer(Player player, Entity toAttack, int maxAttackDuration)
+	public void attackServer(Player player, Entity toAttack, int maxAttackDuration)
 	{
-		player.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).ifPresent(cap ->
+		player.getCapability(GuardianBeamCapabilityInstance.GUARDIAN_BEAM_CAP).ifPresent(cap ->
 		{
 			cap.attackServer(Optional.of(toAttack), maxAttackDuration);
 			
@@ -48,36 +54,14 @@ public class GuardianBeamCapabilityHandler
 		});	
 	}
 	
-	public static void unattackServer(Player player)
+	public void unattackServer(Player player)
 	{
-		player.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).ifPresent(cap ->
+		player.getCapability(GuardianBeamCapabilityInstance.GUARDIAN_BEAM_CAP).ifPresent(cap ->
 		{
 			cap.attackServer(Optional.empty(), 0);
 			
 			synchronizeWithClients(player);
 			synchronizeWithClient(player, (ServerPlayer) player);
-		});
-	}
-	
-	public static void synchronizeWithClient(Player toSynchronize, ServerPlayer with)
-	{
-		toSynchronize.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).ifPresent(cap ->
-		{
-			validateEntity(toSynchronize.getCommandSenderWorld(), cap);
-
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> with),
-					new GuardianBeamAttack.GuardianBeamAttackPacket(toSynchronize.getUUID(), cap.getAttackedEntity(), cap.getAttackProgression(), cap.getMaxAttackProgression()));
-		});
-	}
-	
-	public static void synchronizeWithClients(Player toSynchronize)
-	{		
-		toSynchronize.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).ifPresent(cap ->
-		{
-			validateEntity(toSynchronize.getCommandSenderWorld(), cap);
-			
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> toSynchronize),
-					new GuardianBeamAttack.GuardianBeamAttackPacket(toSynchronize.getUUID(), cap.getAttackedEntity(), cap.getAttackProgression(), cap.getMaxAttackProgression()));
 		});
 	}
 	
@@ -92,5 +76,13 @@ public class GuardianBeamCapabilityHandler
 			else
 				cap.setAttackedEntity(Optional.of(entity.getId()));
 		}
+	}
+
+	@Override
+	protected GuardianBeamAttackPacket createPacket(Player player, IGuardianBeamCapability capability)
+	{
+		validateEntity(player.level, capability);
+		
+		return new GuardianBeamAttackPacket(capability.getAttackedEntity(), capability.getAttackProgression(), capability.getMaxAttackProgression());
 	}
 }

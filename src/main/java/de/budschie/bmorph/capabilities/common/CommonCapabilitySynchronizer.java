@@ -21,6 +21,11 @@ public abstract class CommonCapabilitySynchronizer<P extends CommonCapabilitySyn
 	
 	private Capability<C> capabilityToken;
 	
+	public CommonCapabilitySynchronizer(Capability<C> capabilityToken)
+	{
+		this.capabilityToken = capabilityToken;
+	}
+	
 	@Override
 	public void encode(P packet, FriendlyByteBuf buffer)
 	{
@@ -60,7 +65,7 @@ public abstract class CommonCapabilitySynchronizer<P extends CommonCapabilitySyn
 					
 					if(capabilityInterface.isPresent())
 					{
-						handleCapabilitySync(packet, ctx, player, capabilityInterface.get());
+						ctx.get().setPacketHandled(handleCapabilitySync(packet, ctx, player, capabilityInterface.get()));
 					}
 					else
 					{
@@ -71,6 +76,13 @@ public abstract class CommonCapabilitySynchronizer<P extends CommonCapabilitySyn
 		});
 	}
 	
+	/**
+	 * This is an abstract method that is called when the packet is handled and the
+	 * player and its capability was located.
+	 * 
+	 * @return A boolean which indicates whether the handling of the capability was
+	 *         successful or not.
+	 **/
 	public abstract boolean handleCapabilitySync(P packet, Supplier<Context> ctx, Player player, C capabilityInterface);
 	
 	public abstract P decodeAdditional(FriendlyByteBuf buffer);

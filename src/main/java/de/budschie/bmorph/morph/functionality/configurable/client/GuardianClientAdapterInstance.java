@@ -3,7 +3,7 @@ package de.budschie.bmorph.morph.functionality.configurable.client;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityAttacher;
+import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityInstance;
 import de.budschie.bmorph.capabilities.guardian.IGuardianBeamCapability;
 import de.budschie.bmorph.render_handler.RenderHandler;
 import net.minecraft.client.Minecraft;
@@ -46,7 +46,7 @@ public class GuardianClientAdapterInstance extends GuardianClientAdapter
 		{
 			Player player = Minecraft.getInstance().player;
 			
-			IGuardianBeamCapability cap = player.getCapability(GuardianBeamCapabilityAttacher.GUARDIAN_BEAM_CAP).resolve().orElse(null);
+			IGuardianBeamCapability cap = player.getCapability(GuardianBeamCapabilityInstance.GUARDIAN_BEAM_CAP).resolve().orElse(null);
 			
 			if(cap != null && cap.getAttackedEntity().isPresent())
 			{				
