@@ -3,7 +3,8 @@
     "grant":
     [
         "bmorph:flying",
-        "bmorph:cookie_death"
+        "bmorph:cookie_death",
+        "bmorph:parrot_dance"
     ],
     "revoke":
     [
