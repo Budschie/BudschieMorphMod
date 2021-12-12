@@ -76,6 +76,10 @@ public abstract class CommonCapabilitySynchronizer<P extends CommonCapabilitySyn
 		});
 	}
 	
+	public abstract void encodeAdditional(P packet, FriendlyByteBuf buffer);
+	
+	public abstract P decodeAdditional(FriendlyByteBuf buffer);
+	
 	/**
 	 * This is an abstract method that is called when the packet is handled and the
 	 * player and its capability was located.
@@ -84,11 +88,7 @@ public abstract class CommonCapabilitySynchronizer<P extends CommonCapabilitySyn
 	 *         successful or not.
 	 **/
 	public abstract boolean handleCapabilitySync(P packet, Supplier<Context> ctx, Player player, C capabilityInterface);
-	
-	public abstract P decodeAdditional(FriendlyByteBuf buffer);
-	
-	public abstract void encodeAdditional(P packet, FriendlyByteBuf buffer);
-	
+			
 	public Logger getLogger()
 	{
 		return logger;
