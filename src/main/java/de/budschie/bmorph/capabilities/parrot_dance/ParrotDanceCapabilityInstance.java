@@ -4,6 +4,7 @@ import de.budschie.bmorph.capabilities.common.CommonCapabilityInstance;
 import de.budschie.bmorph.main.References;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -25,9 +26,10 @@ public class ParrotDanceCapabilityInstance extends CommonCapabilityInstance<IPar
 	}
 	
 	@SubscribeEvent
-	public static void onAttachCaps(AttachCapabilitiesEvent<Player> event)
+	public static void onAttachCaps(AttachCapabilitiesEvent<Entity> event)
 	{
-		event.addCapability(PARROT_CAP_NAME, new ParrotDanceCapabilityInstance());
+		if(event.getObject() instanceof Player)
+			event.addCapability(PARROT_CAP_NAME, new ParrotDanceCapabilityInstance());
 	}
 
 	@Override

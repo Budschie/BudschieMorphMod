@@ -6,6 +6,7 @@ import de.budschie.bmorph.morph.MorphHandler;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -24,9 +25,10 @@ public class MorphCapabilityAttacher implements ICapabilitySerializable<Compound
 	public static final Capability<IMorphCapability> MORPH_CAP = CapabilityManager.get(new CapabilityToken<>(){});
 	
 	@SubscribeEvent
-	public static void onAttachCapsOnPlayer(AttachCapabilitiesEvent<Player> event)
+	public static void onAttachCapsOnPlayer(AttachCapabilitiesEvent<Entity> event)
 	{
-		event.addCapability(CAPABILITY_NAME, new MorphCapabilityAttacher());
+		if(event.getObject() instanceof Player)
+			event.addCapability(CAPABILITY_NAME, new MorphCapabilityAttacher());
 	}
 	
 	public MorphCapabilityAttacher()

@@ -6,6 +6,7 @@ import de.budschie.bmorph.capabilities.common.CommonCapabilityInstance;
 import de.budschie.bmorph.main.References;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -28,9 +29,10 @@ public class GuardianBeamCapabilityInstance extends CommonCapabilityInstance<IGu
 	}
 	
 	@SubscribeEvent
-	public static void onAttachCapsOnPlayer(AttachCapabilitiesEvent<Player> event)
+	public static void onAttachCapsOnPlayer(AttachCapabilitiesEvent<Entity> event)
 	{
-		event.addCapability(CAPABILITY_NAME, new GuardianBeamCapabilityInstance());
+		if(event.getObject() instanceof Player)
+			event.addCapability(CAPABILITY_NAME, new GuardianBeamCapabilityInstance());
 	}
 
 	@Override
