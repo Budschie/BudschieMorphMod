@@ -3,9 +3,18 @@
     "config":
     {
         "charging_speed": 1.2,
-        "max_flight_speed_x": 0.75,
-        "min_flight_speed_y": 0.5,
-        "max_flight_speed_z": 0.75,
+        "min_flight_speed":
+        {
+            "x": 0.3,
+            "y": 0.4,
+            "z": 0.3
+        },
+        "max_flight_speed":
+        {
+            "x": 0.7,
+            "y": 0.4,
+            "z": 0.7
+        },
         "charging_ticks": 40,
         "transition_ticks": 5,
         "gliding_abilities": ["bmorph:reach"]

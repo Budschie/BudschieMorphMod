@@ -19,6 +19,7 @@ import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -34,29 +35,26 @@ public class PhantomAbility extends AbstractEventAbility
 {
 	public static final Codec<PhantomAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.FLOAT.fieldOf("charging_speed").forGetter(PhantomAbility::getChargingSpeed),
-			Codec.FLOAT.fieldOf("max_flight_speed_x").forGetter(PhantomAbility::getMaxFlightSpeedX),
-			Codec.FLOAT.fieldOf("min_flight_speed_y").forGetter(PhantomAbility::getMinFlightSpeedY),
-			Codec.FLOAT.fieldOf("max_flight_speed_z").forGetter(PhantomAbility::getMaxFlightSpeedZ),
+			ModCodecs.VECTOR_3D.fieldOf("min_flight_speed").forGetter(PhantomAbility::getMinFlightSpeed),
+			ModCodecs.VECTOR_3D.fieldOf("max_flight_speed").forGetter(PhantomAbility::getMaxFlightSpeed),
 			Codec.INT.fieldOf("charging_ticks").forGetter(PhantomAbility::getMaxChargingTicks),
 			Codec.INT.fieldOf("transition_ticks").forGetter(PhantomAbility::getTransitionTicks),
 			ModCodecs.ABILITY.listOf().optionalFieldOf("gliding_abilities", Arrays.asList()).forGetter(PhantomAbility::getGlidingAbilities))
 			.apply(instance, PhantomAbility::new));
 	
 	private float chargingSpeed;
-	private float maxFlightSpeedX;
-	private float minFlightSpeedY;
-	private float maxFlightSpeedZ;
+	private Vec3 minFlightSpeed;
+	private Vec3 maxFlightSpeed;
 	private int maxChargingTicks;
 	private int transitionTicks;
 	
-	private List<Ability> glidingAbilities;
+	private List<LazyOptional<Ability>> glidingAbilities;
 	
-	public PhantomAbility(float chargingSpeed, float maxFlightSpeedX, float minFlightSpeedY, float maxFlightSpeedZ, int maxChargingTicks, int transitionTicks, List<Ability> glidingAbilities)
+	public PhantomAbility(float chargingSpeed, Vec3 minFlightSpeed, Vec3 maxFlightSpeed, int maxChargingTicks, int transitionTicks, List<LazyOptional<Ability>> glidingAbilities)
 	{
 		this.chargingSpeed = chargingSpeed;
-		this.maxFlightSpeedX = maxFlightSpeedX;
-		this.minFlightSpeedY = minFlightSpeedY;
-		this.maxFlightSpeedZ = maxFlightSpeedZ;
+		this.minFlightSpeed = minFlightSpeed;
+		this.maxFlightSpeed = maxFlightSpeed;
 		this.maxChargingTicks = maxChargingTicks;
 		this.transitionTicks = transitionTicks;
 		
@@ -67,8 +65,8 @@ public class PhantomAbility extends AbstractEventAbility
 	{
 		MorphUtil.processCap(player, cap ->
 		{
-			for(Ability ability : glidingAbilities)
-				cap.applyAbility(player, ability);
+			for(LazyOptional<Ability> ability : glidingAbilities)
+				ability.ifPresent(resolved -> cap.applyAbility(player, resolved));
 		});
 	}
 	
@@ -76,8 +74,8 @@ public class PhantomAbility extends AbstractEventAbility
 	{
 		MorphUtil.processCap(player, cap ->
 		{
-			for(Ability ability : glidingAbilities)
-				cap.deapplyAbility(player, ability);
+			for(LazyOptional<Ability> ability : glidingAbilities)
+				ability.ifPresent(resolved -> cap.deapplyAbility(player, resolved));
 		});
 	}
 	
@@ -171,7 +169,13 @@ public class PhantomAbility extends AbstractEventAbility
 						Vec3 playerForward = event.player.getForward();
 						Vec3 playerMotion = event.player.getDeltaMovement();
 						
-						Vec3 newMovement = new Vec3(Math.min(playerForward.x * maxFlightSpeedX, playerMotion.x), Math.max(playerForward.y * minFlightSpeedY, playerMotion.y), Math.min(playerForward.z * maxFlightSpeedZ, playerMotion.z));
+//						Vec3 newMovement = new Vec3(clamp(-maxFlightSpeedX, maxFlightSpeedX, playerMotion.x), Math.min(playerForward.y * minFlightSpeedY, playerMotion.y), clamp(-maxFlightSpeedZ, maxFlightSpeedZ, playerMotion.z));
+						// We should probably implement a min and max value
+						
+						Vec3 newMovement = 
+								new Vec3(clamp(-maxFlightSpeed.x, maxFlightSpeed.x, minormax(playerForward.x * minFlightSpeed.x, playerMotion.x)),
+										clamp(-maxFlightSpeed.y, maxFlightSpeed.y, minormax(playerForward.y * minFlightSpeed.y, playerMotion.y)),
+										clamp(-maxFlightSpeed.z, maxFlightSpeed.z, minormax(playerForward.z * minFlightSpeed.z, playerMotion.z)));
 						
 						event.player.setDeltaMovement(newMovement);
 					}
@@ -195,6 +199,26 @@ public class PhantomAbility extends AbstractEventAbility
 		}
 	}
 	
+	// Does a min operation if the first number is negative, otherwise we'll do a max operation
+	public double minormax(double a, double b)
+	{
+		if(Math.signum(a) < 0)
+			return Math.min(a, b);
+		else
+			return Math.max(a, b);
+	}
+	
+	private double clamp(double smallestValue, double largestValue, double number)
+	{
+		if(number < smallestValue)
+			return smallestValue;
+		
+		if(number > largestValue)
+			return largestValue;
+		
+		return number;
+	}
+	
 	private boolean cancelAbility(Player player)
 	{
 		return player.isOnGround() || player.isInWaterOrBubble();
@@ -205,7 +229,7 @@ public class PhantomAbility extends AbstractEventAbility
 		return cap.getChargeDirection().getMovementDirection().multiply(1, chargingSpeed, 1);
 	}
 	
-	public List<Ability> getGlidingAbilities()
+	public List<LazyOptional<Ability>> getGlidingAbilities()
 	{
 		return glidingAbilities;
 	}
@@ -215,19 +239,14 @@ public class PhantomAbility extends AbstractEventAbility
 		return chargingSpeed;
 	}
 
-	public float getMaxFlightSpeedX()
+	public Vec3 getMinFlightSpeed()
 	{
-		return maxFlightSpeedX;
+		return minFlightSpeed;
 	}
 	
-	public float getMinFlightSpeedY()
+	public Vec3 getMaxFlightSpeed()
 	{
-		return minFlightSpeedY;
-	}
-	
-	public float getMaxFlightSpeedZ()
-	{
-		return maxFlightSpeedZ;
+		return maxFlightSpeed;
 	}
 
 	public int getMaxChargingTicks()

@@ -28,6 +28,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
@@ -44,16 +45,20 @@ public class ModCodecs
 	
 	public static final Codec<LazyTag<Item>> LAZY_ITEM_TAGS = getLazyTagCodec(rl -> ItemTags.getAllTags().getTag(rl)); 
 	
-	public static final Codec<Ability> ABILITY = new Codec<>()
+	public static final Codec<LazyOptional<Ability>> ABILITY = new Codec<>()
 	{
 		@Override
-		public <T> DataResult<T> encode(Ability input, DynamicOps<T> ops, T prefix)
+		public <T> DataResult<T> encode(LazyOptional<Ability> input, DynamicOps<T> ops, T prefix)
 		{
-			return DataResult.success(ops.createString(input.getResourceLocation().toString()));
+			if(input.isPresent())
+				return DataResult.success(ops.createString(input.resolve().get().getResourceLocation().toString()));
+			else
+				return DataResult.error("The given ability could not be encoded because it is null.");
+//			return DataResult.success(ops.createString(input..getResourceLocation().toString()));
 		}
 
 		@Override
-		public <T> DataResult<Pair<Ability, T>> decode(DynamicOps<T> ops, T input)
+		public <T> DataResult<Pair<LazyOptional<Ability>, T>> decode(DynamicOps<T> ops, T input)
 		{
 			DataResult<String> rl = ops.getStringValue(input);
 			
@@ -61,12 +66,7 @@ public class ModCodecs
 			{
 				ResourceLocation result = new ResourceLocation(rl.result().get());
 				
-				Ability retrieved = BMorphMod.DYNAMIC_ABILITY_REGISTRY.getAbility(result);
-				
-				if(retrieved == null)
-					return DataResult.error(String.format("The resource location %s did not yield any ability when tried to resolve into an actual instance.", result));
-				else
-					return DataResult.<Pair<Ability, T>>success(Pair.of(retrieved, input));
+				return DataResult.success(Pair.of(LazyOptional.of(() -> BMorphMod.DYNAMIC_ABILITY_REGISTRY.getAbility(result)), input));
 			}
 			else
 				return DataResult.error(rl.error().get().message());
