@@ -32,6 +32,7 @@ public class ParrotDanceSync extends CommonCapabilitySynchronizer<ParrotDanceSyn
 	@Override
 	public boolean handleCapabilitySync(ParrotDanceSyncPacket packet, Supplier<Context> ctx, Player player, IParrotDanceCapability capabilityInterface)
 	{
+		capabilityInterface.setDancing(packet.isDancing());
 		return true;
 	}
 	
