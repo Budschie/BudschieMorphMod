@@ -4,17 +4,18 @@ import java.util.function.Predicate;
 
 import com.mojang.authlib.GameProfile;
 
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.resources.DefaultPlayerSkin;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.PlayerModelPart;
 
 public class AdvancedAbstractClientPlayerEntity extends AbstractClientPlayer
 {
 	public ResourceLocation skinResourceLocation = DefaultPlayerSkin.getDefaultSkin(getUUID());
 	public ResourceLocation elytraResourceLocation = null;
 	public ResourceLocation capeResourceLocation = null;
+	public String modelName;
 	
 	private Predicate<PlayerModelPart> isWearing = null;
 	
@@ -62,5 +63,11 @@ public class AdvancedAbstractClientPlayerEntity extends AbstractClientPlayer
 	public ResourceLocation getCloakTextureLocation()
 	{
 		return capeResourceLocation;
+	}
+	
+	@Override
+	public String getModelName()
+	{
+		return modelName == null ? DefaultPlayerSkin.getSkinModelName(this.getUUID()) : modelName;
 	}
 }

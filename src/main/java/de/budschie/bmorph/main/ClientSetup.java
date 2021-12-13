@@ -84,11 +84,15 @@ public class ClientSetup
 			{				
 				if(type == Type.CAPE)
 				{
-					entity.capeResourceLocation = Minecraft.getInstance().getSkinManager().registerTexture(texture, type);;
+					entity.capeResourceLocation = Minecraft.getInstance().getSkinManager().registerTexture(texture, type);
 				}
 				else if(type == Type.SKIN)
 				{
 					entity.skinResourceLocation = Minecraft.getInstance().getSkinManager().registerTexture(texture, type);
+					
+					String modelName = texture.getMetadata("model");
+					
+					entity.modelName = modelName == null ? "default" : modelName;
 				}
 				else if(type == Type.ELYTRA)
 				{

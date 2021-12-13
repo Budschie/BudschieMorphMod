@@ -62,6 +62,7 @@ public class RenderHandler
 		
 		if(event.getMorphEntity() instanceof AdvancedAbstractClientPlayerEntity)
 		{
+			// What is this code that I produced??!? Plz send help...
 			AdvancedAbstractClientPlayerEntity advanced = (AdvancedAbstractClientPlayerEntity) event.getMorphEntity();
 			
 			// I LOVE lambdas!
