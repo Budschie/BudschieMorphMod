@@ -1,0 +1,19 @@
+{
+    "ability": "bmorph:block_trail",
+    "config":
+    {
+        "trail_block":
+        {
+            "type": "simple_state_provider",
+            "state":
+            {
+                "Name": "minecraft:snow",
+                "Properties":
+                {
+                    "layers": 1
+                }
+            }
+        },
+        "should_only_spawn_in_cold_biome": true
+    }
+}
