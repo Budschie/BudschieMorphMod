@@ -7,6 +7,7 @@ import de.budschie.bmorph.morph.functionality.configurable.AirSuffocationAbility
 import de.budschie.bmorph.morph.functionality.configurable.AttackYeetAbility;
 import de.budschie.bmorph.morph.functionality.configurable.AttributeModifierAbility;
 import de.budschie.bmorph.morph.functionality.configurable.BlockPassthroughAbility;
+import de.budschie.bmorph.morph.functionality.configurable.BlockTrailAbility;
 import de.budschie.bmorph.morph.functionality.configurable.Boom;
 import de.budschie.bmorph.morph.functionality.configurable.BurnInSunAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ClimbingAbility;
@@ -113,6 +114,8 @@ public class AbilityRegistry
 	
 	public static RegistryObject<ConfigurableAbility<ParrotDanceAbility>> PARROT_DANCE = ABILITY_REGISTRY.register("parrot_dance", () -> new ConfigurableAbility<>(ParrotDanceAbility.CODEC));
 	
+	public static RegistryObject<ConfigurableAbility<BlockTrailAbility>> BLOCK_TRAIL = ABILITY_REGISTRY.register("block_trail", () -> new ConfigurableAbility<>(BlockTrailAbility.CODEC));
+
 //	public static RegistryObject<Ability> FLY_ABILITY = ABILITY_REGISTRY.register("flying", () -> new FlyAbility());
 //	public static RegistryObject<Ability> MOB_ATTACK_ABILITY = ABILITY_REGISTRY.register("mob_attack", () -> new MobAttackAbility());
 //	public static RegistryObject<Ability> FIRE_SHOOTING_ABILITY = ABILITY_REGISTRY.register("fire_blaze", () -> new ProjectileShootingAbility((player, direction) -> 
