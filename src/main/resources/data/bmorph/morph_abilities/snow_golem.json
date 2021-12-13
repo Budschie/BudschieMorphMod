@@ -2,7 +2,9 @@
     "entity_type": "minecraft:snow_golem",
     "grant":
     [
-        "bmorph:no_freezing"
+        "bmorph:no_freezing",
+        "bmorph:snowball_yeet",
+        "bmorph:water_dislike"
     ],
     "revoke":
     [

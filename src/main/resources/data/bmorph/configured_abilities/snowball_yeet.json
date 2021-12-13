@@ -1,0 +1,14 @@
+{
+    "ability": "bmorph:shoot_projectile",
+    "config":
+    {
+        "projectile_entity": "minecraft:snowball",
+        "stun": 5,
+        "motion": 1.5,
+        "sound":
+        {
+            "sound": "minecraft:entity.snowball.throw",
+            "pitch": 0.0
+        }
+    }
+}

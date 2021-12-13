@@ -1,0 +1,4 @@
+{
+    "entity_type": "minecraft:snow_golem",
+    "tracked_nbt_keys": [ "Pumpkin" ]
+}
