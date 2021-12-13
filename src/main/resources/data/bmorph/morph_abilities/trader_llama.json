@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:trader_llama",
+    "grant":
+    [
+        "bmorph:llama_spit"
+    ],
+    "revoke":
+    [
+        
+    ]
+}
