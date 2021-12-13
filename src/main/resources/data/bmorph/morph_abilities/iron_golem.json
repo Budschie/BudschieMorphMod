@@ -6,7 +6,9 @@
         "bmorph:yeet",
         "bmorph:slowness",
         "bmorph:no_knockback",
-        "bmorph:more_damage"
+        "bmorph:more_damage",
+        "bmorph:no_fall_damage",
+        "bmorph:water_breathing"
     ],
     "revoke":
     [
