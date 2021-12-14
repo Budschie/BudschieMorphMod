@@ -1,0 +1,14 @@
+{
+    "entity_type": "minecraft:axolotl",
+    "grant":
+    [
+        "bmorph:water_breathing",
+        "bmorph:water_sanic",
+        "bmorph:extreme_regeneration",
+        "bmorph:extreme_slowness"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

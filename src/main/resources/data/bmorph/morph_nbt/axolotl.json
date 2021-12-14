@@ -1,0 +1,4 @@
+{
+    "entity_type": "minecraft:axolotl",
+    "tracked_nbt_keys": [ "Variant" ]
+}
