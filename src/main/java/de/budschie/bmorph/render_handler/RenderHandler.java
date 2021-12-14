@@ -154,15 +154,15 @@ public class RenderHandler
 		
 		if(ShrinkAPIInteractor.getInteractor().isShrunk(player))
 			matrixStack.scale(0.81f / divisor, 0.81f / divisor, 0.81f / divisor);
-		
-		if(player.isCrouching() && ShrinkAPIInteractor.getInteractor().isShrunk(player))
-			matrixStack.translate(0, 1, 0);
-		
+				
 		for(IEntitySynchronizer sync : list)
 		{
 			if(sync.appliesToMorph(toRender))
 				sync.applyToMorphEntity(toRender, player, partialRenderTicks);
 		}
+		
+		if(toRender.isCrouching() && ShrinkAPIInteractor.getInteractor().isShrunk(player))
+			matrixStack.translate(0, 1, 0);
 					
 		
 		// info: We are getting NOTEX when displaying tVariant render thingys by better animals plus https://github.com/itsmeow/betteranimalsplus/blob/1.16/src/main/java/its_meow/betteranimalsplus/client/ClientLifecycleHandler.java
