@@ -24,8 +24,6 @@ public class WeightedList<T>
 		
 		// Sort from biggest (index 0) to smallest (index n) weight to optimize.
 		this.weights.sort((o1, o2) -> Integer.compare(o2.getWeight(), o1.getWeight()));
-		
-		System.out.println("Done");
 	}
 	
 	public T getRandom(Random rand)
