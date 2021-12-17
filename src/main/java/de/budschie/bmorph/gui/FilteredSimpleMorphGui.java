@@ -159,12 +159,16 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 	@Override
 	public void renderWidgets(PoseStack matrixStack)
 	{							
-		
 		int startY = Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2 - MorphWidget.getHeight() / 2
 				- scroll * MorphWidget.getHeight();
 		int advanceY = 0;
 
-				
+		// First, we divide the gui scaled width by the morph widgets. This gives us the total widgets that could possibly fit onto the screen.
+		// Then we half the result so that we get the amount of widgets that would fit on half of the screen.
+		// Then, we look if the current scroll value exceedes this amount, and if it does, it should increase the scroll offset.
+		// This leads to a scroll if we are exceeding the half of the screen.
+		int scrollOffX = (int)(Math.ceil(Math.max(0, horizontalScroll - ((Minecraft.getInstance().getWindow().getGuiScaledWidth()) / ((float)MorphWidget.getWidth())) * 0.5)) * MorphWidget.getWidth());
+		
 		for (int i = 0; i < morphWidgets.size(); i++)
 		{
 			if((startY + advanceY + MorphWidget.getHeight()) > 0 && (startY + advanceY) < Minecraft.getInstance().getWindow().getGuiScaledHeight())
@@ -173,7 +177,7 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 				
 				MorphWidget widget = morphWidgets.get(i);
 				matrixStack.pushPose();
-				matrixStack.translate(6, startY + advanceY, 0);
+				matrixStack.translate(6 - scrollOffX, startY + advanceY, 0);
 				widget.render(matrixStack, i == scroll, horizontalScroll);
 	//			Minecraft.getInstance().fontRenderer.drawText(matrixStack, new StringTextComponent("Index " + i), 0, 0,
 	//					0xffffff);
