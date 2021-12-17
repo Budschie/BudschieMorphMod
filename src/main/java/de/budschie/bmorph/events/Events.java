@@ -39,6 +39,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.TieredItem;
 import net.minecraftforge.common.MinecraftForge;
@@ -184,7 +185,7 @@ public class Events
 	
 	private static boolean mayUseTool(Player player)
 	{		
-		if(!ServerSetup.server.getGameRules().getBoolean(BMorphMod.ALLOW_MORPH_TOOLS))
+		if(!player.level.getGameRules().getBoolean(BMorphMod.ALLOW_MORPH_TOOLS))
 		{
 			IMorphCapability cap = MorphUtil.getCapOrNull(player);
 			
@@ -200,6 +201,7 @@ public class Events
 		return true;
 	}
 	
+	// Gamerules are currently not synced, leading to a bit buggy drop times when having the gamerule enabled
 	@SubscribeEvent
 	public static void onPlayerBreakingBlockCheck(PlayerEvent.HarvestCheck event)
 	{
@@ -227,7 +229,7 @@ public class Events
 	@SubscribeEvent
 	public static void onInteractAtBlock(PlayerInteractEvent.RightClickBlock event)
 	{
-		if(!event.getPlayer().isCreative() && !mayUseTool(event.getPlayer()))
+		if(!event.getPlayer().isCreative() && !mayUseTool(event.getPlayer()) && !(event.getItemStack().getItem() instanceof BlockItem))
 		{
 			event.setUseItem(Result.DENY);
 		}
