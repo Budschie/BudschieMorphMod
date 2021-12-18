@@ -3,10 +3,10 @@ package de.budschie.bmorph.gui;
 import java.util.function.Supplier;
 
 import de.budschie.bmorph.main.References;
-import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
+import net.minecraftforge.registries.RegistryObject;
 
 public class MorphGuiRegistry
 {

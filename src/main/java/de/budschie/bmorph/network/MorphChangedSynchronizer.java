@@ -11,7 +11,7 @@ import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.network.MorphChangedSynchronizer.MorphChangedPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
+import net.minecraftforge.network.NetworkEvent.Context;
 
 public class MorphChangedSynchronizer implements ISimpleImplPacket<MorphChangedPacket>
 {

@@ -63,7 +63,7 @@ public class BlockTrailAbility extends AbstractEventAbility
 			
 			BlockState blockState = trailBlock.getState(player.getRandom(), blockPos);
 			
-			if (player.level.isEmptyBlock(blockPos) && (player.level.getBiome(blockPos).getTemperature(blockPos) < 0.8F || !shouldSpawnOnlyInColdBiome()) && blockState.canSurvive(player.level, blockPos))
+			if (player.level.isEmptyBlock(blockPos) && (player.level.getBiome(blockPos).shouldSnowGolemBurn(blockPos) || !shouldSpawnOnlyInColdBiome()) && blockState.canSurvive(player.level, blockPos))
 			{
 				player.level.setBlockAndUpdate(blockPos, trailBlock.getState(player.getRandom(), blockPos));
 			}

@@ -7,7 +7,7 @@ import de.budschie.bmorph.network.VisualMorphSynchronizer;
 import de.budschie.bmorph.util.BudschieUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 public class VisualMorphDataRegistry
 {

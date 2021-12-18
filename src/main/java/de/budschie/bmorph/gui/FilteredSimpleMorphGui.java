@@ -280,7 +280,7 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 		{
 			if(dumbFix != null && event.getEntity() == dumbFix && event.getEntity().hasCustomName())
 			{
-				event.getMatrixStack().mulPose(NAMEPLATE_ORIENTATION);
+				event.getPoseStack().mulPose(NAMEPLATE_ORIENTATION);
 				event.setResult(Result.ALLOW);
 			}
 		}

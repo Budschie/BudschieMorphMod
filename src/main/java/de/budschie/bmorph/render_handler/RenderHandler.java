@@ -125,7 +125,7 @@ public class RenderHandler
 				
 				Entity toRender = cachedEntities.get(player.getUUID());
 				
-				renderMorph(player, toRender, event.getMatrixStack(), event.getPartialRenderTick(), event.getBuffers(), event.getLight());
+				renderMorph(player, toRender, event.getPoseStack(), event.getPartialTick(), event.getMultiBufferSource(), event.getPackedLight());
 			}
 		}
 	}

@@ -14,7 +14,7 @@ import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.network.DeleteOrDropMorph.DeleteOrDropMorphPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
+import net.minecraftforge.network.NetworkEvent.Context;
 
 public class DeleteOrDropMorph implements ISimpleImplPacket<DeleteOrDropMorphPacket>
 {

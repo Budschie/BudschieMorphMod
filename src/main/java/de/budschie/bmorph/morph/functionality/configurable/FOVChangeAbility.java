@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
-import net.minecraftforge.client.event.FOVUpdateEvent;
+import net.minecraftforge.client.event.FOVModifierEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class FOVChangeAbility extends AbstractEventAbility
@@ -25,9 +25,8 @@ public class FOVChangeAbility extends AbstractEventAbility
 		return amount;
 	}
 	
-	// TODO: Remove crash on server that **will** happen
 	@SubscribeEvent
-	public void onFOVChangedEvent(FOVUpdateEvent event)
+	public void onFOVChangedEvent(FOVModifierEvent event)
 	{
 		if(isTracked(event.getEntity()))
 			event.setNewfov(event.getFov() * (event.getEntity().isSprinting() ? amount : 1));

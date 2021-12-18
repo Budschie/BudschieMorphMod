@@ -8,10 +8,9 @@ import org.apache.logging.log4j.Logger;
 import de.budschie.bmorph.morph.fallback.FallbackMorphItem;
 import de.budschie.bmorph.morph.fallback.IMorphNBTHandler;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.NumericTag;
 import net.minecraft.nbt.StringTag;
-import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraft.nbt.Tag;
 
 public class JsonMorphNBTHandler implements IMorphNBTHandler
 {
@@ -85,13 +84,13 @@ public class JsonMorphNBTHandler implements IMorphNBTHandler
 		if(nbt == null)
 			return null;
 		
-		if(nbt.getId() == NBT.TAG_INT)
+		if(nbt.getId() == Tag.TAG_INT)
 			return Integer.valueOf(((NumericTag)nbt).getAsInt());
-		else if(nbt.getId() == NBT.TAG_STRING)
+		else if(nbt.getId() == Tag.TAG_STRING)
 			return ((StringTag)nbt).getAsString();
-		else if(nbt.getId() == NBT.TAG_BYTE)
+		else if(nbt.getId() == Tag.TAG_BYTE)
 			return Byte.valueOf(((NumericTag)nbt).getAsByte());
-		else if(nbt.getId() == NBT.TAG_LONG)
+		else if(nbt.getId() == Tag.TAG_LONG)
 			return Long.valueOf(((NumericTag)nbt).getAsLong());
 		else
 		{

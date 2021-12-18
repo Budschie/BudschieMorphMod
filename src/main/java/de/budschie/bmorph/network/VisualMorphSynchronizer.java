@@ -8,7 +8,7 @@ import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.VisualMorphDataRegistry.VisualMorphData;
 import de.budschie.bmorph.network.VisualMorphSynchronizer.VisualMorphPacket;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
+import net.minecraftforge.network.NetworkEvent.Context;
 
 public class VisualMorphSynchronizer implements ISimpleImplPacket<VisualMorphPacket>
 {

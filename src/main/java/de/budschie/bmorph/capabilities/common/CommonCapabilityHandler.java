@@ -10,7 +10,7 @@ import de.budschie.bmorph.network.MainNetworkChannel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 public abstract class CommonCapabilityHandler<C, P extends CommonCapabilitySynchronizerPacket>
 {

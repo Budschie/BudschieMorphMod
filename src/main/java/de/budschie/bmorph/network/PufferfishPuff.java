@@ -9,7 +9,7 @@ import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityInstance;
 import de.budschie.bmorph.network.PufferfishPuff.PufferfishPuffPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
+import net.minecraftforge.network.NetworkEvent.Context;
 
 public class PufferfishPuff extends CommonCapabilitySynchronizer<PufferfishPuffPacket, IPufferfishCapability>
 {

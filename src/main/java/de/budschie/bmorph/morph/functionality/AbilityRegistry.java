@@ -41,10 +41,10 @@ import de.budschie.bmorph.morph.functionality.configurable.WaterBreathingAbility
 import de.budschie.bmorph.morph.functionality.configurable.WaterDislikeAbility;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
+import net.minecraftforge.registries.RegistryObject;
 
 @EventBusSubscriber(bus = Bus.MOD)
 public class AbilityRegistry

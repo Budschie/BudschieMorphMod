@@ -12,7 +12,7 @@ import de.budschie.bmorph.network.MorphAddedSynchronizer.MorphAddedPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
+import net.minecraftforge.network.NetworkEvent.Context;
 
 public class MorphAddedSynchronizer implements ISimpleImplPacket<MorphAddedPacket>
 {

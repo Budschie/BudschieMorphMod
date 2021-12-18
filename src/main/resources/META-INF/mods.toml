@@ -6,10 +6,10 @@
 # The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader="javafml" #mandatory
 # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
-loaderVersion="[37,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+loaderVersion="[39,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
 # The license for you mod. This is mandatory metadata and allows for easier comprehension of your redistributive properties.
 # Review your options at https://choosealicense.com/. All rights reserved is the default copyright stance, and is thus the default here.
-license="All rights reserved"
+license="MIT"
 # A URL to refer people to when problems occur with this mod
 #issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
 # A list of mods - how many allowed here is determined by the individual mod loader
@@ -40,7 +40,11 @@ and porting it to 1.16.5.
 Also, one of the goals of this project was/is to make it really compatible
 with other mods and allowing other devs to create addons for this mod.
 
-Currently, you are playing the 1.17.1 version of this mod.
+This mod also features data-driven definition of abilities. This enables
+mod pack creators to create cool data packs for this mod that either extend already
+existing mobs or add compatiblity for added entities of mods.
+
+Currently, you are playing the 1.18.1 version of this mod.
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.bmorph]] #optional
@@ -49,7 +53,7 @@ Currently, you are playing the 1.17.1 version of this mod.
     # Does this dependency have to exist - if not, ordering below must be specified
     mandatory=true #mandatory
     # The version range of the dependency
-    versionRange="[37.1.1,)" #mandatory
+    versionRange="[39,)" #mandatory
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
@@ -59,18 +63,6 @@ Currently, you are playing the 1.17.1 version of this mod.
     modId="minecraft"
     mandatory=true
 # This version range declares a minimum of the current minecraft version up to but not including the next major version
-    versionRange="[1.17.1,1.18)"
+    versionRange="[1.18.1,1.19)"
     ordering="NONE"
-    side="BOTH"
-
-[[dependencies.bmorph]] #optional
-    # the modid of the dependency
-    modId="shrink" #mandatory
-    # Does this dependency have to exist - if not, ordering below must be specified
-    mandatory=false #mandatory
-    # The version range of the dependency
-    versionRange="[1.0.1,)" #mandatory
-    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
-    ordering="NONE"
-    # Side this dependency is applied on - BOTH, CLIENT or SERVER
     side="BOTH"

@@ -8,7 +8,7 @@ import de.budschie.bmorph.morph.FavouriteList;
 import de.budschie.bmorph.network.MorphRequestFavouriteChange.MorphRequestFavouriteChangePacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
+import net.minecraftforge.network.NetworkEvent.Context;
 
 public class MorphRequestFavouriteChange implements ISimpleImplPacket<MorphRequestFavouriteChangePacket>
 {

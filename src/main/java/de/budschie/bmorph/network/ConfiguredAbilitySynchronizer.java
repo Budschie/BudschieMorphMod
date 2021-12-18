@@ -13,7 +13,7 @@ import de.budschie.bmorph.network.ConfiguredAbilitySynchronizer.ConfiguredAbilit
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
+import net.minecraftforge.network.NetworkEvent.Context;
 
 public class ConfiguredAbilitySynchronizer implements ISimpleImplPacket<ConfiguredAbilityPacket>
 {

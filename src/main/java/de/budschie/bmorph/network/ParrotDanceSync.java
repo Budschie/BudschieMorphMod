@@ -8,7 +8,7 @@ import de.budschie.bmorph.capabilities.parrot_dance.ParrotDanceCapabilityInstanc
 import de.budschie.bmorph.network.ParrotDanceSync.ParrotDanceSyncPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.fmllegacy.network.NetworkEvent.Context;
+import net.minecraftforge.network.NetworkEvent.Context;
 
 public class ParrotDanceSync extends CommonCapabilitySynchronizer<ParrotDanceSyncPacket, IParrotDanceCapability>
 {
