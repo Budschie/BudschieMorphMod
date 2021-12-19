@@ -51,11 +51,16 @@ public class FlyAbility extends AbstractEventAbility
 	{
 		if(event.phase == Phase.END)
 		{
-			if(trackedPlayers.contains(event.player.getUUID()) && event.player.getAbilities().flying)
+			if(trackedPlayers.contains(event.player.getUUID()))
 			{
-				event.player.setPose(Pose.STANDING);
-				event.player.setForcedPose(null);
-				event.player.getAbilities().mayfly = true;
+				if(event.player.getAbilities().flying)
+				{
+					event.player.setPose(Pose.STANDING);
+					event.player.setForcedPose(null);
+				}
+				
+				if(!event.player.getAbilities().mayfly)
+					event.player.getAbilities().mayfly = true;
 			}
 		}
 	}
