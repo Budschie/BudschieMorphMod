@@ -18,7 +18,7 @@ public class EntityUtil
 	});
 	private static LazyOptional<Method> addAdditionalSaveDataField = LazyOptional.of(() ->
 	{
-		Method method = ObfuscationReflectionHelper.findMethod(Entity.class, "m_142347_", CompoundTag.class);
+		Method method = ObfuscationReflectionHelper.findMethod(Entity.class, "m_7380_", CompoundTag.class);
 		method.setAccessible(true);
 		return method;
 	});
