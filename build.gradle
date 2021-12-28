@@ -164,6 +164,9 @@ dependencies {
     // implementation fg.deobf("curse.maven:rats-323596:3319810")
     
     annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
+
+	implementation fg.deobf("curse.maven:shrink-426386:3576970")
+	implementation fg.deobf("curse.maven:betteranimalsplus-303557:3580530")
         
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
