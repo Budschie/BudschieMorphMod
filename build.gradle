@@ -167,6 +167,7 @@ dependencies {
 
 	implementation fg.deobf("curse.maven:shrink-426386:3576970")
 	implementation fg.deobf("curse.maven:betteranimalsplus-303557:3580530")
+	implementation fg.deobf("curse.maven:firstpersonmodel-333287:3556530")
 	
 	// Deps of betteranimalsplus mod
 	implementation fg.deobf("curse.maven:architectury-419699:3582324")
