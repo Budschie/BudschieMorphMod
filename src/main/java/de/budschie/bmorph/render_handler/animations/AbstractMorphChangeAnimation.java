@@ -73,12 +73,20 @@ public abstract class AbstractMorphChangeAnimation
 	public void tick()
 	{
 		this.ticks++;
+		
+		synchronizersFrom.forEach(oldSync -> oldSync.applyToMorphEntity(transitionFrom, player));
+		synchronizersTo.forEach(newSync -> newSync.applyToMorphEntity(transitionTo, player));
 	}
 	
-	public abstract void render(Entity toRender, PoseStack matrixStack, float partialRenderTicks, MultiBufferSource buffers, int light);
+	public abstract void render(PoseStack matrixStack, float partialRenderTicks, MultiBufferSource buffers, int light);
 	
 	public float getProgress()
 	{
 		return ((float)ticks) / ((float)animationDuration);
+	}
+	
+	public float getProgress(float partialTicks)
+	{
+		return ((ticks) + partialTicks) / (animationDuration);
 	}
 }

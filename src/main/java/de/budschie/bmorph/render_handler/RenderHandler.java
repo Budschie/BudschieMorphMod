@@ -34,6 +34,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 @EventBusSubscriber(value = Dist.CLIENT)
 public class RenderHandler
 {
+	private static boolean veryDodgyStackOverflowPreventionHackJesJes = false;
+	
 	// Setup the proxy entity when we initialize it
 	@SubscribeEvent
 	public static void onMorphInit(InitializeMorphEntityEvent event)
@@ -77,6 +79,10 @@ public class RenderHandler
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void onRenderedHandler(RenderPlayerEvent.Pre event)
 	{
+		if(veryDodgyStackOverflowPreventionHackJesJes)
+			return;
+		
+		veryDodgyStackOverflowPreventionHackJesJes = true;
 		IRenderDataCapability renderDataCapability = event.getPlayer().getCapability(RenderDataCapabilityProvider.RENDER_CAP).resolve().get();
 		
 		LazyOptional<IMorphCapability> morph = event.getPlayer().getCapability(MorphCapabilityAttacher.MORPH_CAP);
@@ -84,6 +90,7 @@ public class RenderHandler
 		if(renderDataCapability.hasAnimation())
 		{
 			renderDataCapability.renderAnimation(event.getPlayer(), event.getPoseStack(), event.getPartialTick(), event.getMultiBufferSource(), event.getPackedLight());
+			event.setCanceled(true);
 		}
 		else if(morph.isPresent())
 		{
@@ -100,6 +107,7 @@ public class RenderHandler
 				renderMorph(player, toRender, event.getPoseStack(), event.getPartialTick(), event.getMultiBufferSource(), event.getPackedLight());
 			}
 		}
+		veryDodgyStackOverflowPreventionHackJesJes = false;
 	}
 	
 	@SubscribeEvent
@@ -110,6 +118,8 @@ public class RenderHandler
 			// Retrieve the player's IRenderDataCapability
 			
 			IRenderDataCapability renderDataCapability = event.player.getCapability(RenderDataCapabilityProvider.RENDER_CAP).resolve().get();
+			
+			renderDataCapability.tickAnimation();
 			
 			ArrayList<IEntitySynchronizer> syncs = renderDataCapability.getOrCreateCachedSynchronizers(event.player);
 			

@@ -9,13 +9,19 @@ import org.apache.logging.log4j.Logger;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
+import de.budschie.bmorph.capabilities.client.render_data.IRenderDataCapability;
+import de.budschie.bmorph.capabilities.client.render_data.RenderDataCapabilityProvider;
 import de.budschie.bmorph.events.Events;
 import de.budschie.bmorph.events.PlayerMorphEvent;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.functionality.Ability;
+import de.budschie.bmorph.render_handler.EntitySynchronizerRegistry;
+import de.budschie.bmorph.render_handler.IEntitySynchronizer;
 import de.budschie.bmorph.render_handler.RenderHandler;
-import net.minecraft.world.entity.player.Player;
+import de.budschie.bmorph.render_handler.animations.ScaleAnimation;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
@@ -107,7 +113,7 @@ public class MorphUtil
 			{
 				IMorphCapability resolved = cap.resolve().get();
 				
-				MorphItem aboutToMorphTo = null;
+				MorphItem aboutToMorphTo = null;					
 				
 				if(morphItem.isPresent())
 					aboutToMorphTo = morphItem.get();
@@ -115,6 +121,18 @@ public class MorphUtil
 					aboutToMorphTo = resolved.getMorphList().getMorphArrayList().get(morphIndex.get());
 				
 				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Client.Pre(player, resolved, aboutToMorphTo));
+				
+				IRenderDataCapability renderDataCap = player.getCapability(RenderDataCapabilityProvider.RENDER_CAP).resolve().get();
+				
+				Entity cachedEntityOld = renderDataCap.getOrCreateCachedEntity(player);
+				ArrayList<IEntitySynchronizer> synchronizersOld = EntitySynchronizerRegistry.getSynchronizersForEntity(cachedEntityOld);
+				
+				// If we don't have any cached entity => we are demorphed, just use no synchronizer and the player itself as an entity
+				if(cachedEntityOld == null)
+				{
+					cachedEntityOld = player;
+					synchronizersOld.clear();
+				}
 				
 				resolved.deapplyAbilities(player);
 				
@@ -152,6 +170,18 @@ public class MorphUtil
 				resolved.applyAbilities(player);
 				
 				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Client.Post(player, resolved, aboutToMorphTo));
+				
+				Entity cachedEntityNew = renderDataCap.getOrCreateCachedEntity(player);
+				ArrayList<IEntitySynchronizer> synchronizersNew = EntitySynchronizerRegistry.getSynchronizersForEntity(cachedEntityNew);
+				
+				// If we don't have any cached entity => we are demorphed, just use no synchronizer and the player itself as an entity
+				if(cachedEntityNew == null)
+				{
+					cachedEntityNew = player;
+					synchronizersNew.clear();
+				}
+				
+				renderDataCap.setAnimation(Optional.of(new ScaleAnimation(player, cachedEntityOld, synchronizersOld, cachedEntityNew, synchronizersNew, 20)));
 			}
 			else
 				System.out.println("Could not synchronize data, as the morph cap is not created yet.");

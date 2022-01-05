@@ -33,13 +33,19 @@ public class RenderDataCapability implements IRenderDataCapability
 	@Override
 	public void tickAnimation()
 	{
-		animation.ifPresent(presentAnimation -> presentAnimation.tick());
+		if(animation.isPresent())
+		{
+			animation.get().tick();
+			
+			if(animation.get().getAnimationDuration() == animation.get().getTicks())
+				animation = Optional.empty();
+		}
 	}
 
 	@Override
 	public void renderAnimation(Player player, PoseStack poseStack, float partialTicks, MultiBufferSource buffer, int light)
 	{
-		animation.ifPresent(presentAnimation -> presentAnimation.render(getOrCreateCachedEntity(player), poseStack, partialTicks, buffer, light));
+		animation.ifPresent(presentAnimation -> presentAnimation.render(poseStack, partialTicks, buffer, light));
 	}
 
 	@Override
