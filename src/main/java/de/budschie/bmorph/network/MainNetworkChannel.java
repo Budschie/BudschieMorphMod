@@ -17,7 +17,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 public class MainNetworkChannel
 {
-	public static final String PROTOCOL_VERSION = "3";
+	public static final String PROTOCOL_VERSION = "4";
 	
 	public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(References.MODID, "main"), 
 			() -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
@@ -40,7 +40,6 @@ public class MainNetworkChannel
 		registerSimpleImplPacket(ConfiguredAbilityPacket.class, new ConfiguredAbilitySynchronizer());
 		registerSimpleImplPacket(PufferfishPuffPacket.class, new PufferfishPuff());
 		registerSimpleImplPacket(GuardianBeamAttack.GuardianBeamAttackPacket.class, new GuardianBeamAttack());
-		registerSimpleImplPacket(DisposePlayerMorphData.DisposePlayerMorphDataPacket.class, new DisposePlayerMorphData());
 		registerSimpleImplPacket(DeleteOrDropMorph.DeleteOrDropMorphPacket.class, new DeleteOrDropMorph());
 		registerSimpleImplPacket(VisualMorphSynchronizer.VisualMorphPacket.class, new VisualMorphSynchronizer());
 		registerSimpleImplPacket(GlideStatusChange.GlideStatusChangePacket.class, new GlideStatusChange());
