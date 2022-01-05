@@ -1,51 +1,40 @@
 package de.budschie.bmorph.render_handler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Optional;
-import java.util.UUID;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import de.budschie.bmorph.api_interact.ShrinkAPIInteractor;
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
+import de.budschie.bmorph.capabilities.client.render_data.IRenderDataCapability;
+import de.budschie.bmorph.capabilities.client.render_data.RenderDataCapabilityProvider;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.player.AdvancedAbstractClientPlayerEntity;
-import de.budschie.bmorph.util.EntityUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.TickEvent.Phase;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber(value = Dist.CLIENT)
 public class RenderHandler
-{		
-	private static HashMap<UUID, Entity> cachedEntities = new HashMap<>();
-	
-	public static Entity getCachedEntity(Player player)
-	{
-		return getCachedEntity(player.getUUID());
-	}
-	
-	public static Entity getCachedEntity(UUID player)
-	{
-		return cachedEntities.get(player);
-	}
-	
+{
+	// Setup the proxy entity when we initialize it
 	@SubscribeEvent
 	public static void onMorphInit(InitializeMorphEntityEvent event)
 	{		
@@ -78,42 +67,25 @@ public class RenderHandler
 		}
 	}
 	
-	public static void disposePlayerMorphData(UUID player)
-	{
-		handleCacheRemoval(cachedEntities.get(player));
-		cachedEntities.remove(player);
-	}
-	
 	public static void onBuildNewEntity(Player player, IMorphCapability capability, MorphItem aboutToMorphTo)
 	{
-		if(aboutToMorphTo == null)
-			handleCacheRemoval(cachedEntities.remove(player.getUUID()));
-		else
-		{
-			Entity toCreate = aboutToMorphTo.createEntity(player.level);
-			
-			// Remove the previous entity
-			handleCacheRemoval(cachedEntities.get(player.getUUID()));
-			cachedEntities.put(player.getUUID(), toCreate);
-			
-			MinecraftForge.EVENT_BUS.post(new InitializeMorphEntityEvent(player, toCreate));
-		}
-	}
-	
-	// This method calls remove on the previous entity. We have to do this as this might create a dangling reference
-	// when playing the GuardianSound otherwise.
-	private static void handleCacheRemoval(Entity entity)
-	{
-		if(entity != null)
-			entity.remove(RemovalReason.DISCARDED);
+		IRenderDataCapability renderDataCapability = player.getCapability(RenderDataCapabilityProvider.RENDER_CAP).resolve().get();
+		
+		renderDataCapability.invalidateCache();
 	}
 	
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void onRenderedHandler(RenderPlayerEvent.Pre event)
 	{
+		IRenderDataCapability renderDataCapability = event.getPlayer().getCapability(RenderDataCapabilityProvider.RENDER_CAP).resolve().get();
+		
 		LazyOptional<IMorphCapability> morph = event.getPlayer().getCapability(MorphCapabilityAttacher.MORPH_CAP);
 		
-		if(morph.isPresent())
+		if(renderDataCapability.hasAnimation())
+		{
+			renderDataCapability.renderAnimation(event.getPlayer(), event.getPoseStack(), event.getPartialTick(), event.getMultiBufferSource(), event.getPackedLight());
+		}
+		else if(morph.isPresent())
 		{
 			Optional<MorphItem> currentMorph = morph.resolve().get().getCurrentMorph();
 			
@@ -123,31 +95,33 @@ public class RenderHandler
 
 				Player player = event.getPlayer();
 				
-				Entity toRender = cachedEntities.get(player.getUUID());
+				Entity toRender = renderDataCapability.getOrCreateCachedEntity(player);
 				
 				renderMorph(player, toRender, event.getPoseStack(), event.getPartialTick(), event.getMultiBufferSource(), event.getPackedLight());
 			}
 		}
 	}
 	
-	public static void renderMorph(Player player, Entity toRender, PoseStack matrixStack, float partialRenderTicks, MultiBufferSource buffers, int light)
+	@SubscribeEvent
+	public static void onPlayerTick(PlayerTickEvent event)
 	{
-		if(toRender.level != player.level)
+		if(event.side == LogicalSide.CLIENT && event.phase == Phase.END)
 		{
-			toRender.level = player.level;
+			// Retrieve the player's IRenderDataCapability
+			
+			IRenderDataCapability renderDataCapability = event.player.getCapability(RenderDataCapabilityProvider.RENDER_CAP).resolve().get();
+			
+			ArrayList<IEntitySynchronizer> syncs = renderDataCapability.getOrCreateCachedSynchronizers(event.player);
+			
+			if(syncs != null)
+			{
+				syncs.forEach(sync -> sync.applyToMorphEntity(renderDataCapability.getOrCreateCachedEntity(event.player), event.player));
+			}
 		}
-		
-		// Holy shit that's unperformant... I'll maybe change this later
-		ArrayList<IEntitySynchronizer> list = EntitySynchronizerRegistry.getSynchronizers();
-				
-		toRender.tickCount = player.tickCount;
-		
-		EntityUtil.copyLocationAndRotation(player, toRender);
-		
-		toRender.wasTouchingWater = player.isInWater();
-		
-		toRender.setOnGround(player.isOnGround());
-		
+	}
+	
+	public static void renderMorph(Player player, Entity toRender, PoseStack matrixStack, float partialRenderTicks, MultiBufferSource buffers, int light)
+	{			
 		float divisor = ShrinkAPIInteractor.getInteractor().getShrinkingValue(player);
 		
 		matrixStack.pushPose();
@@ -156,13 +130,7 @@ public class RenderHandler
 			matrixStack.scale(0.81f / divisor, 0.81f / divisor, 0.81f / divisor);
 		
 		if(toRender.isCrouching() && ShrinkAPIInteractor.getInteractor().isShrunk(player))
-			matrixStack.translate(0, 1, 0);
-		
-		for(IEntitySynchronizer sync : list)
-		{
-			if(sync.appliesToMorph(toRender))
-				sync.applyToMorphEntity(toRender, player, partialRenderTicks);
-		}					
+			matrixStack.translate(0, 1, 0);	
 		
 		// info: We are getting NOTEX when displaying tVariant render thingys by better animals plus https://github.com/itsmeow/betteranimalsplus/blob/1.16/src/main/java/its_meow/betteranimalsplus/client/ClientLifecycleHandler.java
 		// NOTE: This does not occur when using tSingle...

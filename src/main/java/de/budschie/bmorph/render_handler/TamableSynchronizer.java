@@ -14,7 +14,7 @@ public class TamableSynchronizer implements IEntitySynchronizer
 	}
 
 	@Override
-	public void applyToMorphEntity(Entity morphEntity, Player player, float partialTicks)
+	public void applyToMorphEntity(Entity morphEntity, Player player)
 	{
 		TamableAnimal animal = (TamableAnimal) morphEntity;
 		

@@ -17,7 +17,7 @@ public class LivingEntitySynchronzier implements IEntitySynchronizer
 	}
 
 	@Override
-	public void applyToMorphEntity(Entity morphEntity, Player player, float partialTicks)
+	public void applyToMorphEntity(Entity morphEntity, Player player)
 	{
 		LivingEntity entity = (LivingEntity) morphEntity;
 		

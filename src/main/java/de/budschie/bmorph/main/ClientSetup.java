@@ -9,8 +9,12 @@ import de.budschie.bmorph.entity.rendering.MorphEntityRenderer;
 import de.budschie.bmorph.morph.player.AdvancedAbstractClientPlayerEntity;
 import de.budschie.bmorph.morph.player.UglyHackThatDoesntWork;
 import de.budschie.bmorph.render_handler.AbstractPlayerSynchronizer;
+import de.budschie.bmorph.render_handler.ChickenSynchronizer;
+import de.budschie.bmorph.render_handler.CommonEntitySynchronizer;
 import de.budschie.bmorph.render_handler.EntitySynchronizerRegistry;
+import de.budschie.bmorph.render_handler.GuardianEntitySynchronizer;
 import de.budschie.bmorph.render_handler.LivingEntitySynchronzier;
+import de.budschie.bmorph.render_handler.ParrotSynchronizer;
 import de.budschie.bmorph.render_handler.PhantomSynchronizer;
 import de.budschie.bmorph.render_handler.PufferfishSynchronizer;
 import de.budschie.bmorph.render_handler.SquidSynchronizer;
@@ -71,10 +75,14 @@ public class ClientSetup
 		ClientRegistry.registerKeyBinding(DELETE_CURRENT_MORPH);
 		ClientRegistry.registerKeyBinding(DROP_CURRENT_MORPH);
 		
+		EntitySynchronizerRegistry.addEntitySynchronizer(new CommonEntitySynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new LivingEntitySynchronzier());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new SquidSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new AbstractPlayerSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new PufferfishSynchronizer());
+		EntitySynchronizerRegistry.addEntitySynchronizer(new GuardianEntitySynchronizer());
+		EntitySynchronizerRegistry.addEntitySynchronizer(new ChickenSynchronizer());
+		EntitySynchronizerRegistry.addEntitySynchronizer(new ParrotSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new PhantomSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new TamableSynchronizer());
 				

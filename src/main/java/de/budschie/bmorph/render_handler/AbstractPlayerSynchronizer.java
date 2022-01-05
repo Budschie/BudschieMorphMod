@@ -13,7 +13,7 @@ public class AbstractPlayerSynchronizer implements IEntitySynchronizer
 	}
 	
 	@Override
-	public void applyToMorphEntity(Entity morphEntity, Player player, float partialTicks)
+	public void applyToMorphEntity(Entity morphEntity, Player player)
 	{
 		AbstractClientPlayer entity = (AbstractClientPlayer) morphEntity;
 

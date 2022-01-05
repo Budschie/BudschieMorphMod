@@ -17,7 +17,7 @@ public class PhantomSynchronizer implements IEntitySynchronizer
 	}
 
 	@Override
-	public void applyToMorphEntity(Entity morphEntity, Player player, float partialTicks)
+	public void applyToMorphEntity(Entity morphEntity, Player player)
 	{
 		Phantom phantom = (Phantom) morphEntity;
 		
@@ -26,28 +26,38 @@ public class PhantomSynchronizer implements IEntitySynchronizer
 			float correctedXRot = -phantom.getXRot();
 			float correctedXRotO = -phantom.xRotO;
 
+			morphEntity.xRotO = morphEntity.getXRot();
+			
 			if (cap.getGlideStatus() == GlideStatus.CHARGE)
 			{
 				// Just look up/down
-				morphEntity.xRotO = cap.getChargeDirection().getRotX();
+				// morphEntity.xRotO = cap.getChargeDirection().getRotX();
 				morphEntity.setXRot(cap.getChargeDirection().getRotX());
+				// morphEntity.xRotO = cap.getChargeDirection().getRotX();
 			}
 			else if(cap.getGlideStatus() == GlideStatus.CHARGE_TRANSITION_IN || cap.getGlideStatus() == GlideStatus.CHARGE_TRANSITION_OUT)
 			{
 				// Ease in or out
 				boolean invert = cap.getGlideStatus() == GlideStatus.CHARGE_TRANSITION_OUT;
 				
-				float progress = BudschieUtils.getPhantomEaseFunction(cap.getTransitionTime() - partialTicks, cap.getMaxTransitionTime());
+				// Partial ticks removed. I hope this won't turn out to be a bad thing.
+				float progress = BudschieUtils.getPhantomEaseFunction(cap.getTransitionTime(), cap.getMaxTransitionTime());
+				float oldProgress = BudschieUtils.getPhantomEaseFunction(Math.max(cap.getTransitionTime() - 1, 0), cap.getMaxTransitionTime());
 				
 				if(invert)
+				{
 					progress = 1 - progress;
+					oldProgress = 1 - oldProgress;
+				}
 				
-				morphEntity.xRotO = Mth.lerp(progress, cap.getChargeDirection().getRotX(), correctedXRotO);
+				// We can use the rot and old value to interpolate instead of using the partial ticks to prevent stuttery movement
+				// morphEntity.xRotO = morphEntity.getXRot();
 				morphEntity.setXRot(Mth.lerp(progress, cap.getChargeDirection().getRotX(), correctedXRot));
+				// morphEntity.xRotO = Mth.lerp(oldProgress, cap.getChargeDirection().getRotX(), correctedXRot);
 			}
 			else
 			{
-				phantom.xRotO = correctedXRotO;
+				// phantom.xRotO = correctedXRotO;
 				phantom.setXRot(correctedXRot);
 			}
 		});

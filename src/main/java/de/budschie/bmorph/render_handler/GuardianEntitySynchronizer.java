@@ -9,61 +9,60 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Guardian;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 // We do this shit instead of using an IEntitySynchronizer because we have to sync data with the cached entity, even if it is not rendered, as the synced data is used for the GuardianSound instance.
 @EventBusSubscriber(value = Dist.CLIENT)
-public class GuardianEntitySynchronizer
+public class GuardianEntitySynchronizer implements IEntitySynchronizer
 {	
-	@SubscribeEvent
-	public static void onPlayerTickEvent(PlayerTickEvent event)
+	@Override
+	public boolean appliesToMorph(Entity morphEntity)
 	{
-		if(event.side == LogicalSide.CLIENT && event.phase == Phase.START)
-		{
-			IGuardianBeamCapability beamCap = event.player.getCapability(GuardianBeamCapabilityInstance.GUARDIAN_BEAM_CAP).resolve().orElse(null);
+		return morphEntity instanceof Guardian;
+	}
 
-			if (beamCap != null)
+	@Override
+	public void applyToMorphEntity(Entity morphEntity, Player player)
+	{
+		IGuardianBeamCapability beamCap = player.getCapability(GuardianBeamCapabilityInstance.GUARDIAN_BEAM_CAP).resolve().orElse(null);
+
+		if (beamCap != null)
+		{
+			Guardian casted = (Guardian) morphEntity;
+
+			casted.clientSideAttackTime = beamCap.getAttackProgression();
+
+			if (beamCap.getAttackedEntity().isPresent())
 			{
-				Entity currentCachedEntity = RenderHandler.getCachedEntity(event.player);
-				
-				if(currentCachedEntity instanceof Guardian casted)
-				{
-					casted.clientSideAttackTime = beamCap.getAttackProgression();
-					
-					if(beamCap.getAttackedEntity().isPresent())
-					{
-						casted.setActiveAttackTarget(beamCap.getAttackedEntity().get());
-					}
-					else
-					{
-						casted.setActiveAttackTarget(0);
-					}
-					
-					casted.clientSideTouchedGround = casted.getDeltaMovement().y < 0.0D && casted.level.loadedAndEntityCanStandOn(casted.blockPosition().below(), casted);
-					
-					casted.clientSideSpikesAnimationO = casted.clientSideSpikesAnimation;
-		            casted.clientSideSpikesAnimation += (1.0F - casted.clientSideSpikesAnimation) * 0.06F;
-		            
-		            casted.clientSideTailAnimationO = casted.clientSideTailAnimation;
-		            
-		            float tailAnimationSpeed = casted.isInWater() ? 0.4f : 0.2f;
-		            
-		            if(event.player.getDeltaMovement().lengthSqr() > 0.01f)
-		            	tailAnimationSpeed *= 3.5;
-		            
-		            casted.clientSideTailAnimation += tailAnimationSpeed;
-				}
+				casted.setActiveAttackTarget(beamCap.getAttackedEntity().get());
+			} 
+			else
+			{
+				casted.setActiveAttackTarget(0);
 			}
+
+			casted.clientSideTouchedGround = casted.getDeltaMovement().y < 0.0D && casted.level.loadedAndEntityCanStandOn(casted.blockPosition().below(), casted);
+
+			casted.clientSideSpikesAnimationO = casted.clientSideSpikesAnimation;
+			casted.clientSideSpikesAnimation += (1.0F - casted.clientSideSpikesAnimation) * 0.06F;
+
+			casted.clientSideTailAnimationO = casted.clientSideTailAnimation;
+
+			float tailAnimationSpeed = casted.isInWater() ? 0.4f : 0.2f;
+
+			if (player.getDeltaMovement().lengthSqr() > 0.01f)
+				tailAnimationSpeed *= 3.5;
+
+			casted.clientSideTailAnimation += tailAnimationSpeed;
 		}
 	}
 	
+	// Render the UI when shooting lasers
 	@SubscribeEvent
 	public static void onPlayerRenderer(RenderGameOverlayEvent.Pre event)
 	{

@@ -2,12 +2,11 @@ package de.budschie.bmorph.network;
 
 import java.util.UUID;
 
-import de.budschie.bmorph.render_handler.RenderHandler;
-
 public class ClientOnlyShit
 {	
+	// TODO: This is now obsolete
 	public static void disposePlayerMorphData(UUID playerToDispose)
 	{
-		RenderHandler.disposePlayerMorphData(playerToDispose);
+		// RenderHandler.disposePlayerMorphData(playerToDispose);
 	}
 }

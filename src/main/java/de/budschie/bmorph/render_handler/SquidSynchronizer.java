@@ -16,7 +16,7 @@ public class SquidSynchronizer implements IEntitySynchronizer
 	}
 
 	@Override
-	public void applyToMorphEntity(Entity morphEntity, Player player, float partialTicks)
+	public void applyToMorphEntity(Entity morphEntity, Player player)
 	{
 		Squid squid = (Squid) morphEntity;
 		squid.oldTentacleAngle = squid.tentacleAngle;

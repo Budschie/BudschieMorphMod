@@ -3,9 +3,9 @@ package de.budschie.bmorph.morph.functionality.configurable.client;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import de.budschie.bmorph.capabilities.client.render_data.RenderDataCapabilityProvider;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityInstance;
 import de.budschie.bmorph.capabilities.guardian.IGuardianBeamCapability;
-import de.budschie.bmorph.render_handler.RenderHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.GuardianAttackSoundInstance;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
@@ -80,8 +80,6 @@ public class GuardianClientAdapterInstance extends GuardianClientAdapter
 	@Override
 	public void playGuardianSound(Player player)
 	{
-		Guardian guardian = (Guardian) RenderHandler.getCachedEntity(player);
-		
-		Minecraft.getInstance().getSoundManager().play(new GuardianAttackSoundInstance(guardian));
+		Minecraft.getInstance().getSoundManager().play(new GuardianAttackSoundInstance((Guardian) player.getCapability(RenderDataCapabilityProvider.RENDER_CAP).resolve().get().getOrCreateCachedEntity(player)));
 	}
 }

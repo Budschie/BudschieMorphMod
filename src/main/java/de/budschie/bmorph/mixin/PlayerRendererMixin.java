@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
-import de.budschie.bmorph.render_handler.RenderHandler;
+import de.budschie.bmorph.capabilities.client.render_data.RenderDataCapabilityProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
@@ -49,7 +49,7 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
 //			RenderHandler.checkCache(playerIn);
 			info.cancel();
 			
-			Entity cachedEntity = RenderHandler.getCachedEntity(playerIn); 
+			Entity cachedEntity = playerIn.getCapability(RenderDataCapabilityProvider.RENDER_CAP).resolve().get().getOrCreateCachedEntity(playerIn); 
 			EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(cachedEntity);
 			
 			if(renderer instanceof LivingEntityRenderer<?, ?>)
@@ -79,7 +79,7 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
 //			RenderHandler.checkCache(playerIn);
 			info.cancel();
 			
-			Entity cachedEntity = RenderHandler.getCachedEntity(playerIn); 
+			Entity cachedEntity = playerIn.getCapability(RenderDataCapabilityProvider.RENDER_CAP).resolve().get().getOrCreateCachedEntity(playerIn); 
 			EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(cachedEntity);
 			
 			if(renderer instanceof LivingEntityRenderer<?, ?>)
