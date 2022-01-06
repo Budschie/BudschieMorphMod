@@ -17,7 +17,7 @@
             "type": "simple_state_provider",
             "state":
             {
-                "Name": "minecraft:dirt_block"
+                "Name": "minecraft:dirt"
             }
         },
         "stun": 10

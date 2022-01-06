@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:sheep",
+    "grant":
+    [
+        "bmorph:sheep_eat_grass"
+    ],
+    "revoke":
+    [
+        
+    ]
+}
