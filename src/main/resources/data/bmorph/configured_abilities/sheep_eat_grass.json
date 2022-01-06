@@ -20,6 +20,8 @@
                 "Name": "minecraft:dirt"
             }
         },
-        "stun": 10
+        "stun": 10,
+		"gain_food_level": 2,
+		"gain_saturation": 2
     }
 }
