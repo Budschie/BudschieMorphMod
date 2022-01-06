@@ -22,12 +22,17 @@ public abstract class StunAbility extends Ability
 	
 	public boolean isCurrentlyStunned(UUID player)
 	{
-		return (delayHashMap.getOrDefault(player, 0) + stun) > ServerSetup.server.getTickCount();
+		return delayHashMap.getOrDefault(player, 0) > ServerSetup.server.getTickCount();
 	}
 	
 	public void stun(UUID player)
 	{
-		delayHashMap.put(player, ServerSetup.server.getTickCount());
+		delayHashMap.put(player, ServerSetup.server.getTickCount() + stun);
+	}
+	
+	public void stun(UUID player, int nonDefaultStunTime)
+	{
+		delayHashMap.put(player, ServerSetup.server.getTickCount() + nonDefaultStunTime);
 	}
 	
 //	@SubscribeEvent
