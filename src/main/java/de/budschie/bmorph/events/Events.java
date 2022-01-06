@@ -28,8 +28,6 @@ import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphUtil;
-import de.budschie.bmorph.network.DisposePlayerMorphData;
-import de.budschie.bmorph.network.MainNetworkChannel;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -63,7 +61,6 @@ import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.network.PacketDistributor;
 
 @EventBusSubscriber
 public class Events
@@ -175,12 +172,6 @@ public class Events
 				GuardianBeamCapabilityHandler.INSTANCE.unattackServer(event.getPlayer());
 			}
 		});
-		
-		if(event.getTarget() instanceof Player)
-		{
-			// Tell the client to demorph the given player that is now not tracked.
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getPlayer()), new DisposePlayerMorphData.DisposePlayerMorphDataPacket(event.getTarget().getUUID()));
-		}
 	}
 	
 	private static boolean mayUseTool(Player player)
