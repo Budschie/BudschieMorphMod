@@ -29,7 +29,8 @@ import net.minecraft.world.phys.Vec3;
 public class SheepEatGrassAbility extends StunAbility
 {
 	public static final Codec<SheepEatGrassAbility> CODEC = RecordCodecBuilder.create(instance ->
-	instance.group(SoundInstance.CODEC.fieldOf("shear_sound").forGetter(SheepEatGrassAbility::getShearSound), 
+	instance.group(
+			SoundInstance.CODEC.fieldOf("shear_sound").forGetter(SheepEatGrassAbility::getShearSound), 
 			SoundInstance.CODEC.fieldOf("consume_grass_sound").forGetter(SheepEatGrassAbility::getConsumeGrassSound),
 			ModCodecs.DIRECTION_ENUM.listOf().fieldOf("valid_directions").forGetter(SheepEatGrassAbility::getValidEatingDirections),
 			ModCodecs.BLOCKS.fieldOf("valid_eatable_block").forGetter(SheepEatGrassAbility::getFromBlock), 
