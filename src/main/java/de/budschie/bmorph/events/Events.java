@@ -11,13 +11,17 @@ import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
+import de.budschie.bmorph.capabilities.client.render_data.IRenderDataCapability;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityHandler;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityInstance;
 import de.budschie.bmorph.capabilities.guardian.IGuardianBeamCapability;
+import de.budschie.bmorph.capabilities.parrot_dance.IParrotDanceCapability;
 import de.budschie.bmorph.capabilities.parrot_dance.ParrotDanceCapabilityHandler;
 import de.budschie.bmorph.capabilities.phantom_glide.GlideCapabilityHandler;
+import de.budschie.bmorph.capabilities.phantom_glide.IGlideCapability;
 import de.budschie.bmorph.capabilities.pufferfish.IPufferfishCapability;
 import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityHandler;
+import de.budschie.bmorph.capabilities.sheep.ISheepCapability;
 import de.budschie.bmorph.entity.MorphEntity;
 import de.budschie.bmorph.json_integration.AbilityConfigurationHandler;
 import de.budschie.bmorph.json_integration.MorphAbilityManager;
@@ -80,6 +84,11 @@ public class Events
 		event.register(IMorphCapability.class);
 		event.register(IPufferfishCapability.class);
 		event.register(IGuardianBeamCapability.class);
+		event.register(IParrotDanceCapability.class);
+		event.register(IGlideCapability.class);
+		event.register(IPufferfishCapability.class);
+		event.register(ISheepCapability.class);
+		event.register(IRenderDataCapability.class);
 	}
 	
 	@SubscribeEvent
