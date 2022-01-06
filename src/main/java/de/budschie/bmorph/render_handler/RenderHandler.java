@@ -83,30 +83,34 @@ public class RenderHandler
 			return;
 		
 		veryDodgyStackOverflowPreventionHackJesJes = true;
-		IRenderDataCapability renderDataCapability = event.getPlayer().getCapability(RenderDataCapabilityProvider.RENDER_CAP).resolve().get();
+		IRenderDataCapability renderDataCapability = event.getPlayer().getCapability(RenderDataCapabilityProvider.RENDER_CAP).resolve().orElse(null);
 		
-		LazyOptional<IMorphCapability> morph = event.getPlayer().getCapability(MorphCapabilityAttacher.MORPH_CAP);
-		
-		if(renderDataCapability.hasAnimation())
+		if(renderDataCapability != null)
 		{
-			renderDataCapability.renderAnimation(event.getPlayer(), event.getPoseStack(), event.getPartialTick(), event.getMultiBufferSource(), event.getPackedLight());
-			event.setCanceled(true);
-		}
-		else if(morph.isPresent())
-		{
-			Optional<MorphItem> currentMorph = morph.resolve().get().getCurrentMorph();
+			LazyOptional<IMorphCapability> morph = event.getPlayer().getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			
-			if(currentMorph.isPresent())
+			if(renderDataCapability.hasAnimation())
 			{
+				renderDataCapability.renderAnimation(event.getPlayer(), event.getPoseStack(), event.getPartialTick(), event.getMultiBufferSource(), event.getPackedLight());
 				event.setCanceled(true);
-
-				Player player = event.getPlayer();
-				
-				Entity toRender = renderDataCapability.getOrCreateCachedEntity(player);
-				
-				renderMorph(player, toRender, event.getPoseStack(), event.getPartialTick(), event.getMultiBufferSource(), event.getPackedLight());
 			}
+			else if(morph.isPresent())
+			{
+				Optional<MorphItem> currentMorph = morph.resolve().get().getCurrentMorph();
+				
+				if(currentMorph.isPresent())
+				{
+					event.setCanceled(true);
+	
+					Player player = event.getPlayer();
+					
+					Entity toRender = renderDataCapability.getOrCreateCachedEntity(player);
+					
+					renderMorph(player, toRender, event.getPoseStack(), event.getPartialTick(), event.getMultiBufferSource(), event.getPackedLight());
+				}
+			}			
 		}
+		
 		veryDodgyStackOverflowPreventionHackJesJes = false;
 	}
 	
@@ -117,15 +121,18 @@ public class RenderHandler
 		{
 			// Retrieve the player's IRenderDataCapability
 			
-			IRenderDataCapability renderDataCapability = event.player.getCapability(RenderDataCapabilityProvider.RENDER_CAP).resolve().get();
+			IRenderDataCapability renderDataCapability = event.player.getCapability(RenderDataCapabilityProvider.RENDER_CAP).resolve().orElse(null);
 			
-			renderDataCapability.tickAnimation();
-			
-			ArrayList<IEntitySynchronizer> syncs = renderDataCapability.getOrCreateCachedSynchronizers(event.player);
-			
-			if(syncs != null)
+			if(renderDataCapability != null)
 			{
-				syncs.forEach(sync -> sync.applyToMorphEntity(renderDataCapability.getOrCreateCachedEntity(event.player), event.player));
+				renderDataCapability.tickAnimation();
+				
+				ArrayList<IEntitySynchronizer> syncs = renderDataCapability.getOrCreateCachedSynchronizers(event.player);
+				
+				if(syncs != null)
+				{
+					syncs.forEach(sync -> sync.applyToMorphEntity(renderDataCapability.getOrCreateCachedEntity(event.player), event.player));
+				}
 			}
 		}
 	}

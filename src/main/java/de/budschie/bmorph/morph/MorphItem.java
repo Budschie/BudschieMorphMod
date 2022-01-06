@@ -38,7 +38,7 @@ public abstract class MorphItem
 	public abstract CompoundTag serializeAdditional();
 	
 	public abstract EntityType<?> getEntityType();
-	public abstract Entity createEntity(Level world);
+	public abstract Entity createEntity(Level world) throws NullPointerException;
 	
 	public boolean isAllowedToPickUp(Player picker)
 	{

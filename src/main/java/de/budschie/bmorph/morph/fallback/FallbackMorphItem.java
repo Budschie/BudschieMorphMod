@@ -32,14 +32,21 @@ public class FallbackMorphItem extends MorphItem
 		super("fallback_morph_item");
 	}
 	
+	@Override
 	public EntityType<?> getEntityType()
 	{
 		return entityType;
 	}
 	
+	@Override
 	public Entity createEntity(Level world)
 	{
-		return EntityType.loadEntityRecursive(entityData, world, entity -> entity);
+		Entity entityLoaded = EntityType.loadEntityRecursive(entityData, world, entity -> entity);
+		
+		if(entityLoaded == null)
+			throw new NullPointerException("The morph item \"" + entityType.getRegistryName().toString() + "\" could *NOT* be initialized, thus being null now.");
+		
+		return entityLoaded;
 	}
 	
 	@Override
@@ -64,10 +71,8 @@ public class FallbackMorphItem extends MorphItem
 	@Override
 	public boolean equals(Object obj)
 	{
-		if (obj instanceof FallbackMorphItem)
+		if (obj instanceof FallbackMorphItem casted)
 		{
-			FallbackMorphItem casted = (FallbackMorphItem) obj;
-
 			return MorphManagerHandlers.FALLBACK.equalsFor(this, casted);
 		}
 
