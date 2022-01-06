@@ -45,6 +45,7 @@ public class MainNetworkChannel
 		registerSimpleImplPacket(GlideStatusChange.GlideStatusChangePacket.class, new GlideStatusChange());
 		registerSimpleImplPacket(AdditionalAbilitySynchronization.AdditionalAbilitySynchronizationPacket.class, new AdditionalAbilitySynchronization());
 		registerSimpleImplPacket(ParrotDanceSync.ParrotDanceSyncPacket.class, new ParrotDanceSync());
+		registerSimpleImplPacket(MorphSheepSheared.MorphSheepShearedPacket.class, new MorphSheepSheared());
 	}
 	
 	public static <T> void registerSimpleImplPacket(Class<T> packetClass, ISimpleImplPacket<T> packet)
