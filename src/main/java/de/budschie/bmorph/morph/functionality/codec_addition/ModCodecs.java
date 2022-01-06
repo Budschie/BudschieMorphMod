@@ -15,6 +15,7 @@ import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.LazyTag;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.codec_addition.CommandProvider.Selector;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -37,13 +38,15 @@ public class ModCodecs
 	public static final Codec<Attribute> ATTRIBUTE = getRegistryCodec(ForgeRegistries.ATTRIBUTES::getValue);
 	public static final Codec<MobEffect> EFFECTS = getRegistryCodec(ForgeRegistries.MOB_EFFECTS::getValue);
 	public static final Codec<EntityType<?>> ENTITIES = getRegistryCodec(ForgeRegistries.ENTITIES::getValue);
+	public static final Codec<Block> BLOCKS = getRegistryCodec(ForgeRegistries.BLOCKS::getValue);
 	public static final Codec<ParticleType<?>> PARTICLE_TYPE = getRegistryCodec(ForgeRegistries.PARTICLE_TYPES::getValue);
 	
 	public static final Codec<Selector> SELECTOR_ENUM = getEnumCodec(Selector.class, Selector::values);
+	public static final Codec<Direction> DIRECTION_ENUM = getEnumCodec(Direction.class, Direction::values);
 	
 	public static final Codec<LazyTag<Block>> LAZY_BLOCK_TAGS = getLazyTagCodec(rl -> BlockTags.getAllTags().getTag(rl)); 
 	
-	public static final Codec<LazyTag<Item>> LAZY_ITEM_TAGS = getLazyTagCodec(rl -> ItemTags.getAllTags().getTag(rl)); 
+	public static final Codec<LazyTag<Item>> LAZY_ITEM_TAGS = getLazyTagCodec(rl -> ItemTags.getAllTags().getTag(rl));
 	
 	public static final Codec<LazyOptional<Ability>> ABILITY = new Codec<>()
 	{

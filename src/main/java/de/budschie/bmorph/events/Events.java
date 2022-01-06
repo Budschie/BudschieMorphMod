@@ -22,6 +22,7 @@ import de.budschie.bmorph.capabilities.phantom_glide.IGlideCapability;
 import de.budschie.bmorph.capabilities.pufferfish.IPufferfishCapability;
 import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityHandler;
 import de.budschie.bmorph.capabilities.sheep.ISheepCapability;
+import de.budschie.bmorph.capabilities.sheep.SheepCapabilityHandler;
 import de.budschie.bmorph.entity.MorphEntity;
 import de.budschie.bmorph.json_integration.AbilityConfigurationHandler;
 import de.budschie.bmorph.json_integration.MorphAbilityManager;
@@ -118,6 +119,7 @@ public class Events
 				GuardianBeamCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 				GlideCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 				ParrotDanceCapabilityHandler.INSTANCE.synchronizeWithClients(player);
+				SheepCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 			}
 		}
 	}
@@ -155,10 +157,11 @@ public class Events
 			Player player = (Player) event.getTarget();
 			MorphUtil.processCap(player, resolved -> resolved.syncWithClient(player, (ServerPlayer) event.getPlayer()));
 			
-			PufferfishCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
-			GuardianBeamCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
-			GlideCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
-			ParrotDanceCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
+			PufferfishCapabilityHandler.INSTANCE.synchronizeWithClients(player);
+			GuardianBeamCapabilityHandler.INSTANCE.synchronizeWithClients(player);
+			GlideCapabilityHandler.INSTANCE.synchronizeWithClients(player);
+			ParrotDanceCapabilityHandler.INSTANCE.synchronizeWithClients(player);
+			SheepCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 		}
 	}
 	

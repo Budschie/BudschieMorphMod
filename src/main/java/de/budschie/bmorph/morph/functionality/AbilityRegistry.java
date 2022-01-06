@@ -32,6 +32,7 @@ import de.budschie.bmorph.morph.functionality.configurable.PhantomAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ProjectileShootingAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PufferfishAbility;
 import de.budschie.bmorph.morph.functionality.configurable.RandomDelegatingOnUseAbility;
+import de.budschie.bmorph.morph.functionality.configurable.SheepEatGrassAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SoundOnUseAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SquidBoostAbility;
 import de.budschie.bmorph.morph.functionality.configurable.TeleportAbility;
@@ -115,6 +116,8 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<ParrotDanceAbility>> PARROT_DANCE = ABILITY_REGISTRY.register("parrot_dance", () -> new ConfigurableAbility<>(ParrotDanceAbility.CODEC));
 	
 	public static RegistryObject<ConfigurableAbility<BlockTrailAbility>> BLOCK_TRAIL = ABILITY_REGISTRY.register("block_trail", () -> new ConfigurableAbility<>(BlockTrailAbility.CODEC));
+	
+	public static RegistryObject<ConfigurableAbility<SheepEatGrassAbility>> SHEEP_EAT_GRASS = ABILITY_REGISTRY.register("sheep_eat_grass", () -> new ConfigurableAbility<>(SheepEatGrassAbility.CODEC));
 
 //	public static RegistryObject<Ability> FLY_ABILITY = ABILITY_REGISTRY.register("flying", () -> new FlyAbility());
 //	public static RegistryObject<Ability> MOB_ATTACK_ABILITY = ABILITY_REGISTRY.register("mob_attack", () -> new MobAttackAbility());
