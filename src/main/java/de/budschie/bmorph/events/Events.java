@@ -87,7 +87,6 @@ public class Events
 		event.register(IGuardianBeamCapability.class);
 		event.register(IParrotDanceCapability.class);
 		event.register(IGlideCapability.class);
-		event.register(IPufferfishCapability.class);
 		event.register(ISheepCapability.class);
 		event.register(IRenderDataCapability.class);
 	}
