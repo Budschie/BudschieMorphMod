@@ -73,7 +73,7 @@ public class SoundInstance
 
 	public void playSoundAt(Entity player)
 	{
-		playSound(player.getX(), player.getY(), player.getZ(), player.getCommandSenderWorld());
+		playSound(player.getX(), player.getY(), player.getZ(), player.level);
 	}
 	
 	public void playSound(double x, double y, double z, Level world)
