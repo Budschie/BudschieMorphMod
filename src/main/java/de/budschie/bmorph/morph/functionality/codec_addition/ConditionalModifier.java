@@ -1,0 +1,223 @@
+package de.budschie.bmorph.morph.functionality.codec_addition;
+
+import java.util.HashMap;
+import java.util.function.BiPredicate;
+
+import com.mojang.datafixers.util.Either;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.Decoder;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.Encoder;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import net.minecraft.nbt.ByteTag;
+import net.minecraft.nbt.DoubleTag;
+import net.minecraft.nbt.FloatTag;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.LongTag;
+import net.minecraft.nbt.NumericTag;
+import net.minecraft.nbt.ShortTag;
+import net.minecraft.nbt.Tag;
+import net.minecraftforge.common.util.LazyOptional;
+
+/**
+ * Usage: This modifier can change values based on if-statements. Its first
+ * parameter is the "operator" JSON field; it is one of five operators: ">=, ==,
+ * <=, <, >" <br>
+ * <br>
+ * The second parameter is "to_compare", which is the number which we shall use
+ * for comparison on the right side. This means that if a is the value given to
+ * this modifier and b is the to_compare parameter, the if-term would look like
+ * this: "if a == b"; b is on the right side where as a is on the left. Note
+ * that although these numbers are always read in as a double; please report any
+ * rounding errors to me (if they occur). <br>
+ * <br>
+ * The third parameter is "then", it is also a double and it is the number that
+ * shall be returned if the bool-statement is true. Note that this number will
+ * be cast to the type that was inputted to this modifier, so, again, please
+ * report any rounding errors if they occur so that I know that this code
+ * doesn't work. <br>
+ * <br>
+ * As the fourth and last parameter(s), we can chose one of these two parameter
+ * names:<br>
+ * 1. "else_if": This parameter is just a recursive modifier, meaning that it
+ * contains the same parameters that this modifier posses. This allows for big
+ * chains of "else_if" statements.<br>
+ * 2. "else": This parameter is just a double that will be the output of this
+ * modifier if the statement described in 1. and 2. is not true. <br>
+ * <br>
+ * <br>
+ * Note that if none of the if-checks pass, the data will be returned as-is.
+ * 
+ **/
+public class ConditionalModifier implements IDataModifier
+{	
+	public static enum OperatorType
+	{		
+		GEQUALS(">=", (a, b) -> ((NumericTag)a).getAsDouble() >= b), 
+		EQUALS("==", (a, b) -> ((NumericTag)a).getAsDouble() > b), 
+		LEQUALS("<=", (a, b) -> ((NumericTag)a).getAsDouble() <= b), 
+		LESS("<", (a, b) -> ((NumericTag)a).getAsDouble() < b), 
+		GREATER(">", (a, b) -> ((NumericTag)a).getAsDouble() > b);
+	
+		private static LazyOptional<HashMap<String, OperatorType>> operators = LazyOptional.of(() ->
+		{
+			HashMap<String, OperatorType> opMap = new HashMap<>();
+			
+			for(OperatorType type : OperatorType.values())
+			{
+				opMap.put(type.getOperatorName(), type);
+			}
+			
+			return opMap;
+		});
+		
+		private String operatorName;
+		private BiPredicate<Tag, Double> operation;
+		
+		OperatorType(String operatorName, BiPredicate<Tag, Double> operation)
+		{
+			this.operatorName = operatorName;
+			this.operation = operation;
+		}
+		
+		public boolean applyOperation(Tag leftSide, double rightSide)
+		{
+			return operation.test(leftSide, rightSide);
+		}
+		
+		public String getOperatorName()
+		{
+			return operatorName;
+		}
+		
+		public static OperatorType getOperatorByName(String operator)
+		{
+			return operators.resolve().get().get(operator);
+		}
+	}
+	
+	private static final Codec<OperatorType> OPERATOR_CODEC = Codec.STRING.flatXmap(convertToOp ->
+	{
+		OperatorType type = OperatorType.getOperatorByName(convertToOp);
+		
+		if(type == null)
+			return DataResult.error(String.format("Unknown operator type \"%s\" in your conditional_modifier."));
+		else
+			return DataResult.success(type);
+	}, opType -> DataResult.success(opType.getOperatorName()));
+	
+	public static final Codec<ConditionalModifier> CODEC = RecordCodecBuilder
+			.create(instance -> instance.group(OPERATOR_CODEC.fieldOf("operator").forGetter(ConditionalModifier::getOperatorType),
+					Codec.DOUBLE.fieldOf("to_compare").forGetter(ConditionalModifier::getToCompare),
+					Codec.DOUBLE.fieldOf("then").forGetter(ConditionalModifier::getThen),
+					Codec.mapEither(Codec.of(new Encoder<ConditionalModifier>()
+					{
+						@Override
+						public <T> DataResult<T> encode(ConditionalModifier input, DynamicOps<T> ops, T prefix)
+						{
+							return CODEC.encodeStart(ops, input);
+						}
+					}, new Decoder<ConditionalModifier>()
+					{
+						@Override
+						public <T> DataResult<Pair<ConditionalModifier, T>> decode(DynamicOps<T> ops, T input)
+						{
+							return CODEC.decode(ops, input);
+						}
+					}).fieldOf("else_if"), Codec.DOUBLE.fieldOf("else")).forGetter(ConditionalModifier::getElifTerm)).apply(instance, ConditionalModifier::new));
+	
+//	public static Codec<ConditionalModifier>
+	
+	private OperatorType operatorType;
+	private Either<ConditionalModifier, Double> elifTerm;
+	private double toCompare;
+	private double then;
+	
+	public ConditionalModifier(OperatorType operatorType, double toCompare, double then, Either<ConditionalModifier, Double> elifTerm)
+	{
+		this.operatorType = operatorType;
+		this.elifTerm = elifTerm;
+		this.toCompare = toCompare;
+		this.then = then;
+	}
+	
+	// It depends whether this can operate on numeric tags or not
+	@Override
+	public boolean canOperateOn(Tag nbtTag)
+	{
+		return nbtTag instanceof NumericTag;
+	}
+
+	@Override
+	public Tag applyModifier(Tag inputTag)
+	{
+		boolean success = operatorType.applyOperation(inputTag, toCompare);
+		
+		if(success)
+		{
+			// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+			return convertToTag(inputTag.getId(), toCompare);
+		}
+		else
+		{
+			// Check if we should just return a plain value or if we should actually do something:
+			if(elifTerm.right().isPresent())
+			{
+				return convertToTag(inputTag.getId(), elifTerm.right().get());
+			}
+			else if (elifTerm.left().isPresent())
+			{
+				if(elifTerm.left().get().canOperateOn(inputTag))
+					return elifTerm.left().get().applyModifier(inputTag);
+				else
+					throw new IllegalArgumentException(String.format("The provided tag type for the ConditionalModifier is illegal."));
+			}
+		}
+		
+		return inputTag;
+	}
+	
+	public OperatorType getOperatorType()
+	{
+		return operatorType;
+	}
+	
+	public Either<ConditionalModifier, Double> getElifTerm()
+	{
+		return elifTerm;
+	}
+	
+	public double getToCompare()
+	{
+		return toCompare;
+	}
+	
+	public double getThen()
+	{
+		return then;
+	}
+	
+	private static Tag convertToTag(byte tag, double originalValue)
+	{
+		switch (tag)
+		{
+		case Tag.TAG_BYTE:	
+			return ByteTag.valueOf((byte)originalValue);
+		case Tag.TAG_SHORT:
+			return ShortTag.valueOf((short)originalValue);
+		case Tag.TAG_INT:
+			return IntTag.valueOf((int)originalValue);
+		case Tag.TAG_LONG:
+			return LongTag.valueOf((long)originalValue);
+		case Tag.TAG_FLOAT:
+			return FloatTag.valueOf((float)originalValue);
+		case Tag.TAG_DOUBLE:
+			return DoubleTag.valueOf(originalValue);
+		default:
+			throw new IllegalArgumentException("Unexpected value: " + originalValue);
+		}
+	}
+}
