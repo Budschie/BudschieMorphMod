@@ -5,10 +5,11 @@ import org.apache.logging.log4j.Logger;
 
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.configurable.ConfigurableAbility;
+import de.budschie.bmorph.util.IDynamicRegistryObject;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
-public abstract class Ability
+public abstract class Ability implements IDynamicRegistryObject
 {
 	private final Logger LOGGER = LogManager.getLogger();
 	
@@ -26,6 +27,7 @@ public abstract class Ability
 	
 	public void onUnregister() {}
 	
+	@Override
 	public ResourceLocation getResourceLocation()
 	{
 		return resourceLocation;

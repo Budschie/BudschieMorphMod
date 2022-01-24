@@ -142,14 +142,14 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 		{
 			return grantedAbilities.stream().filter(granted -> !revokedAbilities.contains(granted)).filter(exists ->
 			{
-				if(!BMorphMod.DYNAMIC_ABILITY_REGISTRY.doesAbilityExist(new ResourceLocation(exists)))
+				if(!BMorphMod.DYNAMIC_ABILITY_REGISTRY.hasEntry(new ResourceLocation(exists)))
 				{
 					LOGGER.warn(String.format("Ability %s does not exist. Please check if every mod is loaded, or if you made a typo. Skipping this ability.", exists));
 					return false;
 				}
 				
 				return true;
-			}).map(strRaw -> BMorphMod.DYNAMIC_ABILITY_REGISTRY.getAbility(new ResourceLocation(strRaw))).collect(Collectors.toList());
+			}).map(strRaw -> BMorphMod.DYNAMIC_ABILITY_REGISTRY.getEntry(new ResourceLocation(strRaw))).collect(Collectors.toList());
 		}
 	}
 }

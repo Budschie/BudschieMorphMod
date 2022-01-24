@@ -1,64 +1,28 @@
 package de.budschie.bmorph.morph.functionality;
 
-import java.util.HashMap;
-
 import de.budschie.bmorph.network.ConfiguredAbilitySynchronizer;
-import de.budschie.bmorph.network.MainNetworkChannel;
-import de.budschie.bmorph.util.BudschieUtils;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.PacketDistributor;
+import de.budschie.bmorph.network.ConfiguredAbilitySynchronizer.ConfiguredAbilityPacket;
+import de.budschie.bmorph.util.DynamicRegistry;
 
-public class DynamicAbilityRegistry
+public class DynamicAbilityRegistry extends DynamicRegistry<Ability, ConfiguredAbilitySynchronizer.ConfiguredAbilityPacket>
 {
-	private HashMap<ResourceLocation, Ability> abilities = new HashMap<>();
-	
-	public void registerAbility(Ability ability)
+	@Override
+	public ConfiguredAbilityPacket getPacket()
 	{
-		if(abilities.containsKey(ability.getResourceLocation()))
-			throw new IllegalArgumentException(String.format("The key %s already exists.", ability.getResourceLocation()));
-		else
-		{
-			System.out.println("Registered " + ability.getResourceLocation());
-			abilities.put(ability.getResourceLocation(), ability);
-			ability.onRegister();
-		}
+		return new ConfiguredAbilitySynchronizer.ConfiguredAbilityPacket(entries.values());
 	}
 	
-	public boolean isEmpty()
+	@Override
+	public void onRegister(Ability registeredObject)
 	{
-		return abilities.isEmpty();
+		super.onRegister(registeredObject);
+		registeredObject.onRegister();
 	}
 	
-	public Ability getAbility(ResourceLocation key)
+	@Override
+	public void onUnregister(Ability unregisteredObject)
 	{
-		return abilities.get(key);
+		super.onUnregister(unregisteredObject);
+		unregisteredObject.onUnregister();
 	}
-	
-	public boolean doesAbilityExist(ResourceLocation key)
-	{
-		return abilities.containsKey(key);
-	}
-	
-	public void unregisterAll()
-	{
-		abilities.forEach((name, ability) -> ability.onUnregister());
-		abilities.clear();
-	}
-	
-	public void syncWithClients()
-	{
-		if(!abilities.isEmpty() && !BudschieUtils.isLocalWorld())
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new ConfiguredAbilitySynchronizer.ConfiguredAbilityPacket(abilities.values()));
-		else
-			System.out.println("Skipping registry sync as world is local.");
-	}
-	
-	public void syncWithClient(ServerPlayer player)
-	{
-		if(!abilities.isEmpty() && !BudschieUtils.isLocalWorld())
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new ConfiguredAbilitySynchronizer.ConfiguredAbilityPacket(abilities.values()));
-		else
-			System.out.println("Skipping registry sync as world is local.");
-	}	
 }

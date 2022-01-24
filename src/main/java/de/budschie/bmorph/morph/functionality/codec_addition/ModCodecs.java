@@ -69,7 +69,7 @@ public class ModCodecs
 			{
 				ResourceLocation result = new ResourceLocation(rl.result().get());
 				
-				return DataResult.success(Pair.of(LazyOptional.of(() -> BMorphMod.DYNAMIC_ABILITY_REGISTRY.getAbility(result)), input));
+				return DataResult.success(Pair.of(LazyOptional.of(() -> BMorphMod.DYNAMIC_ABILITY_REGISTRY.getEntry(result)), input));
 			}
 			else
 				return DataResult.error(rl.error().get().message());

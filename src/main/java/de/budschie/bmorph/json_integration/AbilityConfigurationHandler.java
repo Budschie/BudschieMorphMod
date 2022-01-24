@@ -54,7 +54,7 @@ public class AbilityConfigurationHandler extends SimpleJsonResourceReloadListene
 				if(ability.isPresent())
 				{
 					ability.get().setResourceLocation(resourceLocation);
-					BMorphMod.DYNAMIC_ABILITY_REGISTRY.registerAbility(ability.get());
+					BMorphMod.DYNAMIC_ABILITY_REGISTRY.registerEntry(ability.get());
 				}
 			}
 			
