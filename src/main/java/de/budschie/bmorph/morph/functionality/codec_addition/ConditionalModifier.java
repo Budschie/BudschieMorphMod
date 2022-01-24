@@ -1,6 +1,7 @@
 package de.budschie.bmorph.morph.functionality.codec_addition;
 
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.function.BiPredicate;
 
 import com.mojang.datafixers.util.Either;
@@ -40,20 +41,69 @@ import net.minecraftforge.common.util.LazyOptional;
  * report any rounding errors if they occur so that I know that this code
  * doesn't work. <br>
  * <br>
- * As the fourth and last parameter(s), we can chose one of these two parameter
+ * As the fourth parameter(s), we can chose one of these two parameter
  * names:<br>
  * 1. "else_if": This parameter is just a recursive modifier, meaning that it
  * contains the same parameters that this modifier posses. This allows for big
  * chains of "else_if" statements.<br>
  * 2. "else": This parameter is just a double that will be the output of this
- * modifier if the statement described in 1. and 2. is not true. <br>
+ * modifier if the statement described in 1. and 2. is not true. <br><br>
+ * As the fifth and last parameter, we have the optional "data_type" paramater.
+ * It can have one of the following values: "byte, short, int, long, float, double".
+ * This is the data type that the double given in parameter 3 will be converted to.
+ * This has several usecases, for example, you can get a double as an input, but output booleans (booleans are internally just bytes having the value 0 and 1).
  * <br>
  * <br>
  * Note that if none of the if-checks pass, the data will be returned as-is.
- * 
  **/
 public class ConditionalModifier implements IDataModifier
 {	
+	public static enum DataType
+	{
+		BYTE("byte", Tag.TAG_BYTE),
+		SHORT("short", Tag.TAG_SHORT),
+		INT("int", Tag.TAG_INT),
+		LONG("long", Tag.TAG_LONG),
+		FLOAT("float", Tag.TAG_FLOAT),
+		DOUBLE("double", Tag.TAG_DOUBLE);
+		
+		private static LazyOptional<HashMap<String, DataType>> types = LazyOptional.of(() ->
+		{
+			HashMap<String, DataType> dMap = new HashMap<>();
+			
+			for(DataType type : DataType.values())
+			{
+				dMap.put(type.getDataTypeName(), type);
+			}
+			
+			return dMap;
+		});
+		
+		private String dataTypeName;
+		private byte dataTypeId;
+		
+		private DataType(String dataTypeName, byte dataTypeId)
+		{
+			this.dataTypeName = dataTypeName;
+			this.dataTypeId = dataTypeId;
+		}
+		
+		public byte getDataTypeId()
+		{
+			return dataTypeId;
+		}
+		
+		public String getDataTypeName()
+		{
+			return dataTypeName;
+		}
+		
+		public static DataType getDataTypeByName(String name)
+		{
+			return types.resolve().get().get(name);
+		}
+	}
+	
 	public static enum OperatorType
 	{		
 		GEQUALS(">=", (a, b) -> ((NumericTag)a).getAsDouble() >= b), 
@@ -108,6 +158,18 @@ public class ConditionalModifier implements IDataModifier
 		else
 			return DataResult.success(type);
 	}, opType -> DataResult.success(opType.getOperatorName()));
+
+	// This copy-pasta can be eliminated, but I'm too lazy honestly.
+	private static final Codec<DataType> DATA_TYPE_CODEC = Codec.STRING.flatXmap(convertToOp ->
+	{
+		DataType type = DataType.getDataTypeByName(convertToOp);
+		
+		if(type == null)
+			return DataResult.error(String.format("Unknown data type \"%s\" in your conditional_modifier."));
+		else
+			return DataResult.success(type);
+	}, opType -> DataResult.success(opType.getDataTypeName()));
+
 	
 	public static final Codec<ConditionalModifier> CODEC = RecordCodecBuilder
 			.create(instance -> instance.group(OPERATOR_CODEC.fieldOf("operator").forGetter(ConditionalModifier::getOperatorType),
@@ -127,21 +189,24 @@ public class ConditionalModifier implements IDataModifier
 						{
 							return CODEC.decode(ops, input);
 						}
-					}).fieldOf("else_if"), Codec.DOUBLE.fieldOf("else")).forGetter(ConditionalModifier::getElifTerm)).apply(instance, ConditionalModifier::new));
-	
-//	public static Codec<ConditionalModifier>
-	
+					}).fieldOf("else_if"), Codec.DOUBLE.fieldOf("else")).forGetter(ConditionalModifier::getElifTerm),
+					DATA_TYPE_CODEC.optionalFieldOf("data_type").forGetter(ConditionalModifier::getDataTypeOutput)
+					).apply(instance, ConditionalModifier::new));
+		
 	private OperatorType operatorType;
 	private Either<ConditionalModifier, Double> elifTerm;
 	private double toCompare;
 	private double then;
+	private Optional<DataType> dataTypeOutput;
 	
-	public ConditionalModifier(OperatorType operatorType, double toCompare, double then, Either<ConditionalModifier, Double> elifTerm)
+	public ConditionalModifier(OperatorType operatorType, double toCompare, double then, Either<ConditionalModifier, Double> elifTerm, Optional<DataType> dataTypeOutput)
 	{
 		this.operatorType = operatorType;
 		this.elifTerm = elifTerm;
 		this.toCompare = toCompare;
 		this.then = then;
+		
+		this.dataTypeOutput = dataTypeOutput;
 	}
 	
 	// It depends whether this can operate on numeric tags or not
@@ -166,7 +231,8 @@ public class ConditionalModifier implements IDataModifier
 			// Check if we should just return a plain value or if we should actually do something:
 			if(elifTerm.right().isPresent())
 			{
-				return convertToTag(inputTag.getId(), elifTerm.right().get());
+				byte toConvertTo = dataTypeOutput.isPresent() ? dataTypeOutput.get().getDataTypeId() : inputTag.getId();
+				convertToTag(inputTag.getId(), elifTerm.right().get());
 			}
 			else if (elifTerm.left().isPresent())
 			{
@@ -200,22 +266,28 @@ public class ConditionalModifier implements IDataModifier
 		return then;
 	}
 	
+	public Optional<DataType> getDataTypeOutput()
+	{
+		return dataTypeOutput;
+	}
+	
 	private static Tag convertToTag(byte tag, double originalValue)
 	{
+		// I need some eye bleach
 		switch (tag)
 		{
 		case Tag.TAG_BYTE:	
 			return ByteTag.valueOf((byte)originalValue);
-		case Tag.TAG_SHORT:
-			return ShortTag.valueOf((short)originalValue);
 		case Tag.TAG_INT:
 			return IntTag.valueOf((int)originalValue);
-		case Tag.TAG_LONG:
-			return LongTag.valueOf((long)originalValue);
-		case Tag.TAG_FLOAT:
-			return FloatTag.valueOf((float)originalValue);
 		case Tag.TAG_DOUBLE:
 			return DoubleTag.valueOf(originalValue);
+		case Tag.TAG_FLOAT:
+			return FloatTag.valueOf((float)originalValue);
+		case Tag.TAG_LONG:
+			return LongTag.valueOf((long)originalValue);
+		case Tag.TAG_SHORT:
+			return ShortTag.valueOf((short)originalValue);
 		default:
 			throw new IllegalArgumentException("Unexpected value: " + originalValue);
 		}
