@@ -1,10 +1,17 @@
 package de.budschie.bmorph.morph.functionality.codec_addition;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.budschie.bmorph.json_integration.NBTPath;
+import de.budschie.bmorph.util.IDynamicRegistryObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * The purpose of this class is to represent a modification of existing NBT
@@ -17,26 +24,113 @@ import net.minecraft.nbt.Tag;
  * Thus I have decided that this class should handle such situations by representing a multitude of operations and if-statements.
  * Every data transformer has a source, a destination and a list of modifiers.
  **/
-public class DataTransformer
-{
+public class DataTransformer implements IDynamicRegistryObject
+{	
+	private static final Logger LOGGER = LogManager.getLogger();
+	
+	private ResourceLocation name;
+	
 	private NBTPath source;
 	private NBTPath destination;
-	private List<IDataModifier> modifiers;
+	private List<DataModifier> modifiers;
 	
-	public DataTransformer()
+	public DataTransformer(NBTPath source, NBTPath destination, List<DataModifier> modifiers)
 	{
+		this.modifiers = modifiers;
+	}
+	
+	public static DataTransformer valueOf(CompoundTag compoundTag)
+	{
+		ResourceLocation resourceLocation = new ResourceLocation(compoundTag.getString("TransformerId"));
+		NBTPath src = NBTPath.valueOf(compoundTag.getString("NbtSrc"));
+		NBTPath dest = NBTPath.valueOf(compoundTag.getString("NbtDest"));
 		
+		ArrayList<DataModifier> modifiers = new ArrayList<>();
+		
+		int length = compoundTag.getInt("Length");
+		
+		for(int i = 0; i < length; i++)
+		{
+			CompoundTag modifierTag = compoundTag.getCompound(Integer.valueOf(i).toString());
+			
+			// TODO: Create registry for modifier holders
+			DataModifierHolder<?> modifierHolder = null;
+			
+			Optional<? extends DataModifier> dataModifier = modifierHolder.deserializeNbt(modifierTag.getCompound("Data"));
+			
+			if(dataModifier.isPresent())
+			{
+				modifiers.add(dataModifier.get());
+			}
+			else
+			{
+				LOGGER.error("Skipped data modifier of type {0} whilst deserializing data transformer {1}. If you see this, please report it as a bug.", modifierHolder.getRegistryName(), resourceLocation);
+			}
+		}
+		
+		DataTransformer transformer = new DataTransformer(src, dest, modifiers);
+		transformer.setResourceLocation(resourceLocation);
+		
+		return transformer;
 	}
 	
 	public void transformData(CompoundTag dataRootSource, CompoundTag dataRootDestination)
 	{
 		Tag originalTag = source.resolve(dataRootDestination);
 		
-		for(IDataModifier modifier : modifiers)
+		for(DataModifier modifier : modifiers)
 		{
 			originalTag = modifier.applyModifier(originalTag);
 		}
 		
 		destination.setTag(dataRootDestination, originalTag);
+	}
+	
+	public CompoundTag toNbt()
+	{
+		CompoundTag tag = new CompoundTag();
+		
+		tag.putString("TransformerId", getResourceLocation().toString());
+		
+		int i = 0;
+		for(DataModifier modifier : modifiers)
+		{
+			DataModifier currentMod = modifiers.get(i);
+			
+			Optional<CompoundTag> toSerialize = currentMod.serializeNbt();
+			
+			if(toSerialize.isPresent())
+			{
+				CompoundTag modTag = new CompoundTag();
+				modTag.putString("ModifierId", modifier.getDataModifierHolder().getRegistryName().toString());
+				modTag.put("Data", toSerialize.get());
+				
+				tag.put(Integer.valueOf(i++).toString(), modTag);
+			}
+			else
+			{
+				LOGGER.warn("Skipped data modifier of type {0} in {1} because it could not be serialized. This data can consequently not be used. Skipping this modifier.", modifier.getDataModifierHolder().getRegistryName(), getResourceLocation());
+			}
+		}
+		
+		// Store the length. We don't have to increment i here because we use i++ and not ++i in the upper code.
+		tag.putInt("Length", i);
+		
+		tag.putString("NbtSrc", source.toString());
+		tag.putString("NbtDest", destination.toString());
+		
+		return tag;
+	}
+
+	@Override
+	public ResourceLocation getResourceLocation()
+	{
+		return name;
+	}
+
+	@Override
+	public void setResourceLocation(ResourceLocation name)
+	{
+		this.name = name;
 	}
 }
