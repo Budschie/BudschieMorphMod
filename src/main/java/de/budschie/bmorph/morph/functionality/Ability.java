@@ -33,6 +33,7 @@ public abstract class Ability implements IDynamicRegistryObject
 		return resourceLocation;
 	}
 	
+	@Override
 	public void setResourceLocation(ResourceLocation resourceLocation)
 	{
 		this.resourceLocation = resourceLocation;
