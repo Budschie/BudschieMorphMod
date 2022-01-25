@@ -56,7 +56,7 @@ import net.minecraftforge.common.util.LazyOptional;
  * <br>
  * Note that if none of the if-checks pass, the data will be returned as-is.
  **/
-public class ConditionalModifier implements IDataModifier
+public class ConditionalModifier extends DataModifier
 {	
 	public static enum DataType
 	{
