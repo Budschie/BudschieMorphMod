@@ -68,7 +68,7 @@ public class AdditionalAbilitySynchronization implements ISimpleImplPacket<Addit
 					
 					for(String rawAbility : packet.getAbilities())
 					{
-						Ability retrievedAbility = BMorphMod.DYNAMIC_ABILITY_REGISTRY.getAbility(new ResourceLocation(rawAbility));
+						Ability retrievedAbility = BMorphMod.DYNAMIC_ABILITY_REGISTRY.getEntry(new ResourceLocation(rawAbility));
 						
 						if(retrievedAbility == null)
 						{

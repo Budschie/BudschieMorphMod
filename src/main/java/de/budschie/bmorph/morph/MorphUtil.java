@@ -150,7 +150,7 @@ public class MorphUtil
 				for(String name : abilities)
 				{					
 					ResourceLocation resourceLocation = new ResourceLocation(name);
-					Ability foundAbility = BMorphMod.DYNAMIC_ABILITY_REGISTRY.getAbility(resourceLocation);
+					Ability foundAbility = BMorphMod.DYNAMIC_ABILITY_REGISTRY.getEntry(resourceLocation);
 					
 					if(foundAbility == null)
 					{
