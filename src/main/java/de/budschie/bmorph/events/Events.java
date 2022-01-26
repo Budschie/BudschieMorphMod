@@ -25,6 +25,7 @@ import de.budschie.bmorph.capabilities.sheep.ISheepCapability;
 import de.budschie.bmorph.capabilities.sheep.SheepCapabilityHandler;
 import de.budschie.bmorph.entity.MorphEntity;
 import de.budschie.bmorph.json_integration.AbilityConfigurationHandler;
+import de.budschie.bmorph.json_integration.DataTransformerHandler;
 import de.budschie.bmorph.json_integration.MorphAbilityManager;
 import de.budschie.bmorph.json_integration.MorphNBTHandler;
 import de.budschie.bmorph.json_integration.VisualMorphDataHandler;
@@ -77,6 +78,7 @@ public class Events
 	public static final MorphAbilityManager MORPH_ABILITY_MANAGER = new MorphAbilityManager();
 	public static final MorphNBTHandler MORPH_NBT_HANDLER = new MorphNBTHandler();
 	public static final AbilityConfigurationHandler ABILITY_CONFIG_HANDLER = new AbilityConfigurationHandler();
+	public static final DataTransformerHandler DATA_TRANSFORMER_HANDLER = new DataTransformerHandler();
 	public static final VisualMorphDataHandler VISUAL_MORPH_DATA_HANDLER = new VisualMorphDataHandler();
 	
 	@SubscribeEvent
@@ -171,6 +173,7 @@ public class Events
 	{
 		event.addListener(ABILITY_CONFIG_HANDLER);
 		event.addListener(MORPH_ABILITY_MANAGER);
+		event.addListener(DATA_TRANSFORMER_HANDLER);
 		event.addListener(MORPH_NBT_HANDLER);
 		event.addListener(VISUAL_MORPH_DATA_HANDLER);
 	}
