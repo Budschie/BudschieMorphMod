@@ -129,6 +129,7 @@ public class Events
 		if(event.getPlayer() == null)
 		{
 			BMorphMod.DYNAMIC_ABILITY_REGISTRY.syncWithClients();
+			BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY.syncWithClients();
 			BMorphMod.VISUAL_MORPH_DATA.syncWithClients();
 			
 			ServerSetup.server.getPlayerList().getPlayers().forEach(player ->
@@ -144,6 +145,7 @@ public class Events
 		else
 		{
 			BMorphMod.DYNAMIC_ABILITY_REGISTRY.syncWithClient(event.getPlayer());
+			BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY.syncWithClient(event.getPlayer());
 			BMorphMod.VISUAL_MORPH_DATA.syncWithClient(event.getPlayer());
 		}
 	}
