@@ -1,4 +1,4 @@
-package de.budschie.bmorph.morph.functionality.codec_addition;
+package de.budschie.bmorph.morph.functionality.data_transformers;
 
 import java.util.Optional;
 
