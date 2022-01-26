@@ -1,7 +1,12 @@
 package de.budschie.bmorph.network;
 
 import de.budschie.bmorph.main.References;
+import de.budschie.bmorph.network.AdditionalAbilitySynchronization.AdditionalAbilitySynchronizationPacket;
 import de.budschie.bmorph.network.ConfiguredAbilitySynchronizer.ConfiguredAbilityPacket;
+import de.budschie.bmorph.network.DataTransformerSynchronizer.DataTransfomerSynchronizerPacket;
+import de.budschie.bmorph.network.DeleteOrDropMorph.DeleteOrDropMorphPacket;
+import de.budschie.bmorph.network.GlideStatusChange.GlideStatusChangePacket;
+import de.budschie.bmorph.network.GuardianBeamAttack.GuardianBeamAttackPacket;
 import de.budschie.bmorph.network.MorphAddedSynchronizer.MorphAddedPacket;
 import de.budschie.bmorph.network.MorphCapabilityFullSynchronizer.MorphPacket;
 import de.budschie.bmorph.network.MorphChangedSynchronizer.MorphChangedPacket;
@@ -9,8 +14,11 @@ import de.budschie.bmorph.network.MorphRemovedSynchronizer.MorphRemovedPacket;
 import de.budschie.bmorph.network.MorphRequestAbilityUsage.MorphRequestAbilityUsagePacket;
 import de.budschie.bmorph.network.MorphRequestFavouriteChange.MorphRequestFavouriteChangePacket;
 import de.budschie.bmorph.network.MorphRequestMorphIndexChange.RequestMorphIndexChangePacket;
+import de.budschie.bmorph.network.MorphSheepSheared.MorphSheepShearedPacket;
+import de.budschie.bmorph.network.ParrotDanceSync.ParrotDanceSyncPacket;
 import de.budschie.bmorph.network.PufferfishPuff.PufferfishPuffPacket;
 import de.budschie.bmorph.network.SquidBoost.SquidBoostPacket;
+import de.budschie.bmorph.network.VisualMorphSynchronizer.VisualMorphPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -39,13 +47,14 @@ public class MainNetworkChannel
 		registerSimpleImplPacket(SquidBoostPacket.class, new SquidBoost());
 		registerSimpleImplPacket(ConfiguredAbilityPacket.class, new ConfiguredAbilitySynchronizer());
 		registerSimpleImplPacket(PufferfishPuffPacket.class, new PufferfishPuff());
-		registerSimpleImplPacket(GuardianBeamAttack.GuardianBeamAttackPacket.class, new GuardianBeamAttack());
-		registerSimpleImplPacket(DeleteOrDropMorph.DeleteOrDropMorphPacket.class, new DeleteOrDropMorph());
-		registerSimpleImplPacket(VisualMorphSynchronizer.VisualMorphPacket.class, new VisualMorphSynchronizer());
-		registerSimpleImplPacket(GlideStatusChange.GlideStatusChangePacket.class, new GlideStatusChange());
-		registerSimpleImplPacket(AdditionalAbilitySynchronization.AdditionalAbilitySynchronizationPacket.class, new AdditionalAbilitySynchronization());
-		registerSimpleImplPacket(ParrotDanceSync.ParrotDanceSyncPacket.class, new ParrotDanceSync());
-		registerSimpleImplPacket(MorphSheepSheared.MorphSheepShearedPacket.class, new MorphSheepSheared());
+		registerSimpleImplPacket(GuardianBeamAttackPacket.class, new GuardianBeamAttack());
+		registerSimpleImplPacket(DeleteOrDropMorphPacket.class, new DeleteOrDropMorph());
+		registerSimpleImplPacket(VisualMorphPacket.class, new VisualMorphSynchronizer());
+		registerSimpleImplPacket(GlideStatusChangePacket.class, new GlideStatusChange());
+		registerSimpleImplPacket(AdditionalAbilitySynchronizationPacket.class, new AdditionalAbilitySynchronization());
+		registerSimpleImplPacket(ParrotDanceSyncPacket.class, new ParrotDanceSync());
+		registerSimpleImplPacket(MorphSheepShearedPacket.class, new MorphSheepSheared());
+		registerSimpleImplPacket(DataTransfomerSynchronizerPacket.class, new DataTransformerSynchronizer());
 	}
 	
 	public static <T> void registerSimpleImplPacket(Class<T> packetClass, ISimpleImplPacket<T> packet)
