@@ -12,6 +12,7 @@ import de.budschie.bmorph.morph.VisualMorphDataRegistry;
 import de.budschie.bmorph.morph.fallback.FallbackMorphItem;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import de.budschie.bmorph.morph.functionality.DynamicAbilityRegistry;
+import de.budschie.bmorph.morph.functionality.data_transformers.DynamicDataTransformerRegistry;
 import de.budschie.bmorph.morph.player.PlayerMorphItem;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import net.minecraft.world.level.GameRules;
@@ -40,6 +41,7 @@ public class BMorphMod
 	public static Key<IntegerValue> MORPH_AGGRO_DURATION;
 	
 	public static DynamicAbilityRegistry DYNAMIC_ABILITY_REGISTRY;
+	public static DynamicDataTransformerRegistry DYNAMIC_DATA_TRANSFORMER_REGISTRY;
 	public static VisualMorphDataRegistry VISUAL_MORPH_DATA;
 	
 	public BMorphMod()
@@ -79,6 +81,7 @@ public class BMorphMod
 		// APIInteractor.executeLoadClassIf(() -> ModList.get().isLoaded("betteranimalsplus"), "de.budschie.bmorph.morph.BetterAnimalsPlusFallbackMorphData");
 				
 		DYNAMIC_ABILITY_REGISTRY = new DynamicAbilityRegistry();
+		DYNAMIC_DATA_TRANSFORMER_REGISTRY = new DynamicDataTransformerRegistry();
 		VISUAL_MORPH_DATA = new VisualMorphDataRegistry();
 	}	
 }

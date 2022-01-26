@@ -50,11 +50,19 @@ public class DataTransformer implements IDynamicRegistryObject
 		int length = compoundTag.getInt("Length");
 		
 		for(int i = 0; i < length; i++)
-		{
+		{			
 			CompoundTag modifierTag = compoundTag.getCompound(Integer.valueOf(i).toString());
 			
+			ResourceLocation modifierId = new ResourceLocation(modifierTag.getString("ModifierId"));
+			
 			// TODO: Create registry for modifier holders
-			DataModifierHolder<?> modifierHolder = null;
+			DataModifierHolder<?> modifierHolder = DataModifierRegistry.REGISTRY.get().getValue(modifierId);
+			
+			if(modifierHolder == null)
+			{
+				LOGGER.error("Skipped data modifier with illegal type id {0} whilst deserializing data transformer {1}. If you see this, please report it as a bug.", modifierId, resourceLocation);
+				continue;
+			}
 			
 			Optional<? extends DataModifier> dataModifier = modifierHolder.deserializeNbt(modifierTag.getCompound("Data"));
 			
