@@ -30,13 +30,16 @@ import de.budschie.bmorph.json_integration.MorphAbilityManager;
 import de.budschie.bmorph.json_integration.MorphNBTHandler;
 import de.budschie.bmorph.json_integration.VisualMorphDataHandler;
 import de.budschie.bmorph.main.BMorphMod;
+import de.budschie.bmorph.main.References;
 import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Mob;
@@ -149,6 +152,16 @@ public class Events
 			BMorphMod.DYNAMIC_ABILITY_REGISTRY.syncWithClient(event.getPlayer());
 			BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY.syncWithClient(event.getPlayer());
 			BMorphMod.VISUAL_MORPH_DATA.syncWithClient(event.getPlayer());
+		}
+	}
+	
+	@SubscribeEvent
+	public static void onMorphCreatedFromEntity(MorphCreatedFromEntityEvent event)
+	{
+		// If the killed morph is an ageable mob, use the age cutter data transformer
+		if(event.getEntity() instanceof AgeableMob)
+		{
+			BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY.getEntry(new ResourceLocation(References.MODID, "age_cutter")).transformData(event.getTagIn(), event.getTagOut());
 		}
 	}
 	
