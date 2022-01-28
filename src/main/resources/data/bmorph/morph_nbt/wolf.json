@@ -1,0 +1,5 @@
+{
+    "entity_type": "minecraft:wolf",
+    "tracked_nbt_keys": [ "CollarColor" ],
+    "data_transformers": [ "bmorph:clear_owner" ]
+}

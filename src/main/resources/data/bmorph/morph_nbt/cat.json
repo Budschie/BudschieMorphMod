@@ -1,4 +1,5 @@
 {
     "entity_type": "minecraft:cat",
-    "tracked_nbt_keys": [ "CatType" ]
+    "tracked_nbt_keys": [ "CatType", "CollarColor" ],
+    "data_transformers": [ "bmorph:clear_owner" ]
 }

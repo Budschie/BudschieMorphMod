@@ -1,0 +1,14 @@
+{
+    "nbt_source": "Owner",
+    "nbt_destination": "Owner",
+    "modifiers":
+    [
+	{
+	    "modifier": "bmorph:set_if_present",
+	    "config":
+	    {
+		"if_present": ""
+	    }
+	}
+    ]
+}
