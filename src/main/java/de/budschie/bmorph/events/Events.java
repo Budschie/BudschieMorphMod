@@ -324,6 +324,7 @@ public class Events
 				IMorphCapability newResolved = newCap.get();
 				
 				newResolved.setMorphList(oldResolved.getMorphList());
+				newResolved.setFavouriteList(oldResolved.getFavouriteList());
 				
 				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Pre(event.getPlayer(), newResolved, newResolved.getCurrentMorph().orElse(null)));
 				
