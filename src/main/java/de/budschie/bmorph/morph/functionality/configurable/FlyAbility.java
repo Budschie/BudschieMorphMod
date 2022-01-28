@@ -38,10 +38,11 @@ public class FlyAbility extends AbstractEventAbility
 	{
 		if(!player.isCreative() && !player.isSpectator())
 		{
-			player.getAbilities().setFlyingSpeed(0.05f);
 			player.getAbilities().mayfly = false;
 			player.getAbilities().flying = false;
 		}
+		
+		player.getAbilities().setFlyingSpeed(0.05f);
 
 		super.disableAbility(player, disabledItem);
 	}
@@ -57,6 +58,12 @@ public class FlyAbility extends AbstractEventAbility
 				{
 					event.player.setPose(Pose.STANDING);
 					event.player.setForcedPose(null);
+					
+					// Give player full speed when flying in creative
+					if(event.player.isCreative())
+						event.player.getAbilities().setFlyingSpeed(0.05F);
+					else
+						event.player.getAbilities().setFlyingSpeed(flyingSpeed);
 				}
 				
 				if(!event.player.getAbilities().mayfly)
