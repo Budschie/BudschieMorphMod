@@ -1,5 +1,6 @@
 package de.budschie.bmorph.datagen;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +45,7 @@ public class DataGeneratorHandler
 		
 		for(EntityType<?> entityType : entityTypes)
 		{
-			provider.addData(entityType, new JsonMorphNBTHandler(new CompoundTag(), new NBTPath("VariantId")));
+			provider.addData(entityType, new JsonMorphNBTHandler(new CompoundTag(), new NBTPath[]{new NBTPath("VariantId")}, new ArrayList<>()));
 		}
 	}
 }

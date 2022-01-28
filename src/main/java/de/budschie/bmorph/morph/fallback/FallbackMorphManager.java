@@ -1,5 +1,6 @@
 package de.budschie.bmorph.morph.fallback;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -13,7 +14,7 @@ import net.minecraft.nbt.CompoundTag;
 
 public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Void>
 {
-	public static final JsonMorphNBTHandler DEFAULT_HANDLER = new JsonMorphNBTHandler(new CompoundTag(), new NBTPath("CustomName"));
+	public static final JsonMorphNBTHandler DEFAULT_HANDLER = new JsonMorphNBTHandler(new CompoundTag(), new NBTPath[]{new NBTPath("CustomName")}, new ArrayList<>());
 	
 	private HashMap<EntityType<?>, IMorphNBTHandler> dataHandlers = new HashMap<>();
 	
