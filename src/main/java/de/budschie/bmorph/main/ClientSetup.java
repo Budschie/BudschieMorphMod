@@ -127,6 +127,7 @@ public class ClientSetup
 			if(event.getPlayer() != null)
 			{
 				BMorphMod.DYNAMIC_ABILITY_REGISTRY.unregisterAll();
+				BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY.unregisterAll();
 				BMorphMod.VISUAL_MORPH_DATA.clear();
 			}
 		}

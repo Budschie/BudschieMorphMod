@@ -38,6 +38,8 @@ public class ServerSetup
 	{
 		ConfigManager.INSTANCE.serverShutdown();
 		BMorphMod.DYNAMIC_ABILITY_REGISTRY.unregisterAll();
+		BMorphMod.VISUAL_MORPH_DATA.clear();
+		BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY.unregisterAll();
 		server = null;
 	}
 }

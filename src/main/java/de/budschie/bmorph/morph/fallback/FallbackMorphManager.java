@@ -34,7 +34,10 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 		
 		CompoundTag tagOut;
 		CompoundTag tagIn = entity.serializeNBT();
-		tagOut = handler.applyDefaultNBTData(tagIn);
+		if(handler == null)
+			tagOut = DEFAULT_HANDLER.applyDefaultNBTData(tagIn);
+		else
+			tagOut = handler.applyDefaultNBTData(tagIn);
 		
 		MorphCreatedFromEntityEvent event = new MorphCreatedFromEntityEvent(tagIn, tagOut, entity);
 		MinecraftForge.EVENT_BUS.post(event);

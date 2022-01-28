@@ -12,6 +12,7 @@ import de.budschie.bmorph.morph.VisualMorphDataRegistry;
 import de.budschie.bmorph.morph.fallback.FallbackMorphItem;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import de.budschie.bmorph.morph.functionality.DynamicAbilityRegistry;
+import de.budschie.bmorph.morph.functionality.data_transformers.DataModifierRegistry;
 import de.budschie.bmorph.morph.functionality.data_transformers.DynamicDataTransformerRegistry;
 import de.budschie.bmorph.morph.player.PlayerMorphItem;
 import de.budschie.bmorph.network.MainNetworkChannel;
@@ -49,6 +50,7 @@ public class BMorphMod
 		EntityRegistry.ENTITY_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
 		EntityRegistry.SERIALIZER_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
 		AbilityRegistry.ABILITY_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
+		DataModifierRegistry.DATA_MODIFIER_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
 		MorphGuiRegistry.MORPH_GUI_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
 		BMorphAttributes.ATTRIBUTES.register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
