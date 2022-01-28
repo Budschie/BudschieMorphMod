@@ -26,3 +26,6 @@ forge*changelog.txt
 
 # Build Store (hooks)
 build_store
+
+# EMACS temp files
+*.*~
