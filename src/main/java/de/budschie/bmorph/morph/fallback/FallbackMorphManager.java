@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
+import de.budschie.bmorph.events.MorphCreatedFromEntityEvent;
 import de.budschie.bmorph.json_integration.JsonMorphNBTHandler;
 import de.budschie.bmorph.json_integration.NBTPath;
 import de.budschie.bmorph.morph.IMorphManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraft.nbt.CompoundTag;
 
 public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Void>
@@ -27,7 +29,18 @@ public class FallbackMorphManager implements IMorphManager<FallbackMorphItem, Vo
 	@Override
 	public FallbackMorphItem createMorphFromEntity(Entity entity)
 	{
-		return createMorph(entity.getType(), entity.serializeNBT(), null);
+		// return createMorph(entity.getType(), entity.serializeNBT(), null);
+		IMorphNBTHandler handler = dataHandlers.get(entity.getType());
+		
+		CompoundTag tagOut;
+		CompoundTag tagIn = entity.serializeNBT();
+		tagOut = handler.applyDefaultNBTData(tagIn);
+		
+		MorphCreatedFromEntityEvent event = new MorphCreatedFromEntityEvent(tagIn, tagOut, entity);
+		MinecraftForge.EVENT_BUS.post(event);
+		tagOut = event.getTagOut();
+		
+		return new FallbackMorphItem(tagOut, entity.getType());
 	}
 
 	// This code is dumb

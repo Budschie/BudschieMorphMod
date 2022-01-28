@@ -33,7 +33,7 @@ public class DataGeneratorHandler
 	}
 	
 	private static void registerNBTHandlerProviders(NBTHandlerProvider provider)
-	{
+	{		
 		List<EntityType<?>> entityTypes = ForgeRegistries.ENTITIES.getValues().parallelStream().filter(entityType -> entityType.getRegistryName().getNamespace().equals("betteranimalsplus"))
 				.filter(entityType ->
 		{
