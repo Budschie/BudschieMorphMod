@@ -5,6 +5,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -20,6 +22,7 @@ import de.budschie.bmorph.util.DynamicRegistry;
 import de.budschie.bmorph.util.IDynamicRegistryObject;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -53,6 +56,22 @@ public class ModCodecs
 	
 	public static final Codec<LazyOptional<Ability>> ABILITY = getLazyDynamicRegistry(BMorphMod.DYNAMIC_ABILITY_REGISTRY, "ability");
 	public static final Codec<LazyOptional<DataTransformer>> DATA_TRANSFORMER = getLazyDynamicRegistry(BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY, "data transformer");
+	
+	public static final Codec<net.minecraft.nbt.Tag> NBT_TAG = Codec.STRING.flatXmap(str ->
+	{
+		net.minecraft.nbt.Tag tag;
+		
+		try
+		{
+			tag = new TagParser(new StringReader(str)).readValue();
+		}
+		catch(CommandSyntaxException ex)
+		{
+			return DataResult.error("Could not parse NBT data: " + ex.getMessage());
+		}
+		
+		return DataResult.success(tag);
+	}, tag -> DataResult.success(tag.toString()));
 	
 	/**
 	 * This method creates a codec for a lazy optional for loading in dynamic

@@ -16,4 +16,6 @@ public class DataModifierRegistry
 	public static Supplier<IForgeRegistry<DataModifierHolder<? extends DataModifier>>> REGISTRY = DATA_MODIFIER_REGISTRY.makeRegistry("data_modifiers", () -> new RegistryBuilder<DataModifierHolder<?>>().disableSaving());
 	
 	public static final RegistryObject<DataModifierHolder<ConditionalModifier>> CONDITIONAL_MODIFIER = DATA_MODIFIER_REGISTRY.register("conditional_modifier", () -> new DataModifierHolder<>(ConditionalModifier.CODEC));
+	public static final RegistryObject<DataModifierHolder<SetIfPresentModifier>> SET_IF_PRESENT_MODIFIER = DATA_MODIFIER_REGISTRY.register("set_if_present", () -> new DataModifierHolder<>(SetIfPresentModifier.CODEC));
 }
+
