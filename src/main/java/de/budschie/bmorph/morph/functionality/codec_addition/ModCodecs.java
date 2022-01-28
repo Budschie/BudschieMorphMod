@@ -15,6 +15,9 @@ import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.LazyTag;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.codec_addition.CommandProvider.Selector;
+import de.budschie.bmorph.morph.functionality.data_transformers.DataTransformer;
+import de.budschie.bmorph.util.DynamicRegistry;
+import de.budschie.bmorph.util.IDynamicRegistryObject;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
@@ -44,36 +47,50 @@ public class ModCodecs
 	public static final Codec<Selector> SELECTOR_ENUM = getEnumCodec(Selector.class, Selector::values);
 	public static final Codec<Direction> DIRECTION_ENUM = getEnumCodec(Direction.class, Direction::values);
 	
-	public static final Codec<LazyTag<Block>> LAZY_BLOCK_TAGS = getLazyTagCodec(rl -> BlockTags.getAllTags().getTag(rl)); 
+	public static final Codec<LazyTag<Block>> LAZY_BLOCK_TAGS = getLazyTagCodec(rl -> BlockTags.getAllTags().getTag(rl));
 	
 	public static final Codec<LazyTag<Item>> LAZY_ITEM_TAGS = getLazyTagCodec(rl -> ItemTags.getAllTags().getTag(rl));
 	
-	public static final Codec<LazyOptional<Ability>> ABILITY = new Codec<>()
+	public static final Codec<LazyOptional<Ability>> ABILITY = getLazyDynamicRegistry(BMorphMod.DYNAMIC_ABILITY_REGISTRY, "ability");
+	public static final Codec<LazyOptional<DataTransformer>> DATA_TRANSFORMER = getLazyDynamicRegistry(BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY, "data transformer");
+	
+	/**
+	 * This method creates a codec for a lazy optional for loading in dynamic
+	 * registries.
+	 * 
+	 * @param registry This is the DynamicRegistry object from which the data should
+	 *                 be loaded.
+	 * @param typeName This shall be the name of the objects that will be
+	 *                 registered. These will be displayed in error messages.
+	 **/
+	public static final <R extends IDynamicRegistryObject, D extends DynamicRegistry<R, ?>> Codec<LazyOptional<R>> getLazyDynamicRegistry(D registry, String typeName)
 	{
-		@Override
-		public <T> DataResult<T> encode(LazyOptional<Ability> input, DynamicOps<T> ops, T prefix)
+		return new Codec<>()
 		{
-			if(input.isPresent())
-				return DataResult.success(ops.createString(input.resolve().get().getResourceLocation().toString()));
-			else
-				return DataResult.error("The given ability could not be encoded because it is null.");
-//			return DataResult.success(ops.createString(input..getResourceLocation().toString()));
-		}
-
-		@Override
-		public <T> DataResult<Pair<LazyOptional<Ability>, T>> decode(DynamicOps<T> ops, T input)
-		{
-			DataResult<String> rl = ops.getStringValue(input);
-			
-			if(rl.result().isPresent())
+			@Override
+			public <T> DataResult<T> encode(LazyOptional<R> input, DynamicOps<T> ops, T prefix)
 			{
-				ResourceLocation result = new ResourceLocation(rl.result().get());
-				
-				return DataResult.success(Pair.of(LazyOptional.of(() -> BMorphMod.DYNAMIC_ABILITY_REGISTRY.getEntry(result)), input));
+				if (input.isPresent())
+					return DataResult.success(ops.createString(input.resolve().get().getResourceLocation().toString()));
+				else
+					return DataResult.error("The given " + typeName + " entry could not be encoded because it is null.");
 			}
-			else
-				return DataResult.error(rl.error().get().message());
-		}
+
+			@Override
+			public <T> DataResult<Pair<LazyOptional<R>, T>> decode(DynamicOps<T> ops, T input)
+			{
+				DataResult<String> rl = ops.getStringValue(input);
+
+				if (rl.result().isPresent())
+				{
+					ResourceLocation result = new ResourceLocation(rl.result().get());
+
+					return DataResult.success(Pair.of(LazyOptional.of(() -> registry.getEntry(result)), input));
+				} 
+				else
+					return DataResult.error(rl.error().get().message());
+			}
+		};
 	};
 	
 	public static final Codec<Vec3> VECTOR_3D = RecordCodecBuilder.create(instance -> instance.group(Codec.DOUBLE.fieldOf("x").forGetter(inst -> inst.x),
