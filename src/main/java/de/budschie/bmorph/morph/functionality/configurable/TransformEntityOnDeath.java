@@ -10,11 +10,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.budschie.bmorph.json_integration.NBTPath;
 import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
+import de.budschie.bmorph.morph.functionality.data_transformers.DataTransformer;
 import de.budschie.bmorph.util.EntityUtil;
 import de.budschie.bmorph.util.SoundInstance;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -24,6 +26,7 @@ public class TransformEntityOnDeath extends AbstractEventAbility
 			ModCodecs.ENTITIES.fieldOf("transform_from").forGetter(TransformEntityOnDeath::getEntityToTransformFrom),
 			ModCodecs.ENTITIES.fieldOf("transform_to").forGetter(TransformEntityOnDeath::getEntityToTransformTo),
 			NbtMappings.CODEC.listOf().optionalFieldOf("nbt_mappings", Arrays.asList()).forGetter(TransformEntityOnDeath::getNbtMappings),
+			ModCodecs.DATA_TRANSFORMER.listOf().optionalFieldOf("data_transformers", Arrays.asList()).forGetter(TransformEntityOnDeath::getDataTransformers),
 			Codec.STRING.listOf().optionalFieldOf("permitted_deaths").forGetter(TransformEntityOnDeath::getPermittedDeaths),
 			SoundInstance.CODEC.optionalFieldOf("transformation_sound").forGetter(TransformEntityOnDeath::getSoundToPlay))
 			.apply(instance, TransformEntityOnDeath::new));
@@ -31,15 +34,17 @@ public class TransformEntityOnDeath extends AbstractEventAbility
 	private EntityType<?> entityToTransformFrom;
 	private EntityType<?> entityToTransformTo;
 	private List<NbtMappings> nbtMappings;
+	private List<LazyOptional<DataTransformer>> dataTransformers;
 	private Optional<List<String>> permittedDeaths;
 	private Optional<SoundInstance> soundToPlay;
 	
-	public TransformEntityOnDeath(EntityType<?> entityToTransformFrom, EntityType<?> entityToTransformTo, List<NbtMappings> nbtMappings, Optional<List<String>> permittedDeaths,
+	public TransformEntityOnDeath(EntityType<?> entityToTransformFrom, EntityType<?> entityToTransformTo, List<NbtMappings> nbtMappings, List<LazyOptional<DataTransformer>> dataTransformers, Optional<List<String>> permittedDeaths,
 			Optional<SoundInstance> soundToPlay)
 	{
 		this.entityToTransformFrom = entityToTransformFrom;
 		this.entityToTransformTo = entityToTransformTo;
 		this.nbtMappings = nbtMappings;
+		this.dataTransformers = dataTransformers;
 		this.permittedDeaths = permittedDeaths;
 		this.soundToPlay = soundToPlay;
 	}
@@ -66,6 +71,9 @@ public class TransformEntityOnDeath extends AbstractEventAbility
 			
 			// Copy all important values over from the old entity to the new entity
 			nbtMappings.forEach(mapping -> mapping.copy(tagOld, tagNew));
+			
+			// Apply data transformer
+			dataTransformers.forEach(dataTransformer -> dataTransformer.resolve().get().transformData(tagOld, tagNew));
 			
 			// Read the additional save data for the new entity
 			EntityUtil.readAdditionalSaveData(newEntity, tagNew);
@@ -94,6 +102,11 @@ public class TransformEntityOnDeath extends AbstractEventAbility
 	public List<NbtMappings> getNbtMappings()
 	{
 		return nbtMappings;
+	}
+	
+	public List<LazyOptional<DataTransformer>> getDataTransformers()
+	{
+		return dataTransformers;
 	}
 
 	public Optional<List<String>> getPermittedDeaths()
