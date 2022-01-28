@@ -1,0 +1,17 @@
+{
+    "nbt_source": "Age",
+    "nbt_destination": "Age",
+    "modifiers":
+    [
+	{
+	    "modifier": "bmorph:conditional_modifier",
+	    "config":
+	    {
+		"operator": "<",
+		"to_compare": 0,
+		"then": -1,
+		"else": 0
+	    }
+	}
+    ]
+}
