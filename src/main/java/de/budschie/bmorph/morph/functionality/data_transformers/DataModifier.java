@@ -9,10 +9,10 @@ public abstract class DataModifier
 {
 	private DataModifierHolder<? extends DataModifier> dataModifierHolder;
 	
-	public abstract boolean canOperateOn(Tag nbtTag);
+	public abstract boolean canOperateOn(Optional<Tag> nbtTag);
 	
 	// Return a new tag based on the old tag
-	public abstract Tag applyModifier(Tag inputTag);
+	public abstract Optional<Tag> applyModifier(Optional<Tag> inputTag);
 	
 	public void setDataModifierHolder(DataModifierHolder<?> dataModifierHolder)
 	{

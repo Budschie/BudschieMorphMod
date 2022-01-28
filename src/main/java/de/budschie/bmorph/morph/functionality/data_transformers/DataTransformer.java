@@ -36,6 +36,8 @@ public class DataTransformer implements IDynamicRegistryObject
 	
 	public DataTransformer(NBTPath source, NBTPath destination, List<DataModifier> modifiers)
 	{
+		this.source = source;
+		this.destination = destination;
 		this.modifiers = modifiers;
 	}
 	
@@ -84,14 +86,15 @@ public class DataTransformer implements IDynamicRegistryObject
 	
 	public void transformData(CompoundTag dataRootSource, CompoundTag dataRootDestination)
 	{
-		Tag originalTag = source.resolve(dataRootDestination);
+		Optional<Tag> originalTag = source.resolveOptional(dataRootSource);
 		
 		for(DataModifier modifier : modifiers)
 		{
 			originalTag = modifier.applyModifier(originalTag);
 		}
 		
-		destination.setTag(dataRootDestination, originalTag);
+		if(originalTag.isPresent())
+			destination.setTag(dataRootDestination, originalTag.get());
 	}
 	
 	public CompoundTag toNbt()

@@ -1,5 +1,7 @@
 package de.budschie.bmorph.json_integration;
 
+import java.util.Optional;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
@@ -70,6 +72,17 @@ public class NBTPath
 			currentCompound = currentCompound.getCompound(nodes[i]);
 		
 		return currentCompound.get(nodes[nodes.length - 1]);
+	}
+	
+	/** Returns the tag that sits at the current nbt path. **/
+	public Optional<Tag> resolveOptional(CompoundTag compoundNBT)
+	{
+		CompoundTag currentCompound = compoundNBT;
+		
+		for(int i = 0; i < nodes.length - 1; i++)
+			currentCompound = currentCompound.getCompound(nodes[i]);
+		
+		return currentCompound.contains(getLastNode()) ? Optional.of(currentCompound.get(getLastNode())) : Optional.empty();
 	}
 	
 	public void copyTo(CompoundTag from, CompoundTag to)

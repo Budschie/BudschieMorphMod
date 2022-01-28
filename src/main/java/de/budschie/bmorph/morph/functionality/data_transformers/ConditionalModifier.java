@@ -211,28 +211,28 @@ public class ConditionalModifier extends DataModifier
 	
 	// It depends whether this can operate on numeric tags or not
 	@Override
-	public boolean canOperateOn(Tag nbtTag)
+	public boolean canOperateOn(Optional<Tag> nbtTag)
 	{
-		return nbtTag instanceof NumericTag;
+		return nbtTag.isPresent() && nbtTag.get() instanceof NumericTag;
 	}
 
 	@Override
-	public Tag applyModifier(Tag inputTag)
+	public Optional<Tag> applyModifier(Optional<Tag> inputTag)
 	{
-		boolean success = operatorType.applyOperation(inputTag, toCompare);
+		boolean success = operatorType.applyOperation(inputTag.get(), toCompare);
 		
 		if(success)
 		{
 			// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-			return convertToTag(inputTag.getId(), toCompare);
+			return Optional.of(convertToTag(inputTag.get().getId(), then));
 		}
 		else
 		{
 			// Check if we should just return a plain value or if we should actually do something:
 			if(elifTerm.right().isPresent())
 			{
-				byte toConvertTo = dataTypeOutput.isPresent() ? dataTypeOutput.get().getDataTypeId() : inputTag.getId();
-				convertToTag(inputTag.getId(), elifTerm.right().get());
+				// byte toConvertTo = dataTypeOutput.isPresent() ? dataTypeOutput.get().getDataTypeId() : inputTag.getId();
+				convertToTag(inputTag.get().getId(), elifTerm.right().get());
 			}
 			else if (elifTerm.left().isPresent())
 			{
