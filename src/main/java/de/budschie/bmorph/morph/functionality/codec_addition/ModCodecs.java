@@ -54,8 +54,8 @@ public class ModCodecs
 	
 	public static final Codec<LazyTag<Item>> LAZY_ITEM_TAGS = getLazyTagCodec(rl -> ItemTags.getAllTags().getTag(rl));
 	
-	public static final Codec<LazyOptional<Ability>> ABILITY = getLazyDynamicRegistry(BMorphMod.DYNAMIC_ABILITY_REGISTRY, "ability");
-	public static final Codec<LazyOptional<DataTransformer>> DATA_TRANSFORMER = getLazyDynamicRegistry(BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY, "data transformer");
+	public static final Codec<LazyOptional<Ability>> ABILITY = getLazyDynamicRegistry(() -> BMorphMod.DYNAMIC_ABILITY_REGISTRY, "ability");
+	public static final Codec<LazyOptional<DataTransformer>> DATA_TRANSFORMER = getLazyDynamicRegistry(() -> BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY, "data transformer");
 	
 	public static final Codec<net.minecraft.nbt.Tag> NBT_TAG = Codec.STRING.flatXmap(str ->
 	{
@@ -82,7 +82,7 @@ public class ModCodecs
 	 * @param typeName This shall be the name of the objects that will be
 	 *                 registered. These will be displayed in error messages.
 	 **/
-	public static final <R extends IDynamicRegistryObject, D extends DynamicRegistry<R, ?>> Codec<LazyOptional<R>> getLazyDynamicRegistry(D registry, String typeName)
+	public static final <R extends IDynamicRegistryObject, D extends DynamicRegistry<R, ?>> Codec<LazyOptional<R>> getLazyDynamicRegistry(Supplier<D> registry, String typeName)
 	{
 		return new Codec<>()
 		{
@@ -104,7 +104,7 @@ public class ModCodecs
 				{
 					ResourceLocation result = new ResourceLocation(rl.result().get());
 
-					return DataResult.success(Pair.of(LazyOptional.of(() -> registry.getEntry(result)), input));
+					return DataResult.success(Pair.of(LazyOptional.of(() -> registry.get().getEntry(result)), input));
 				} 
 				else
 					return DataResult.error(rl.error().get().message());
