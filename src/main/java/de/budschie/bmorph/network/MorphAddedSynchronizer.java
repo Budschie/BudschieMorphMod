@@ -37,6 +37,7 @@ public class MorphAddedSynchronizer implements ISimpleImplPacket<MorphAddedPacke
 			if(Minecraft.getInstance().level != null)
 			{
 				// TODO: A null pointer exception might occour here. Please check to fix it
+				// EDIT: Yes here is a NP
 				LazyOptional<IMorphCapability> cap = Minecraft.getInstance().level.getPlayerByUUID(packet.getPlayerUUID()).getCapability(MorphCapabilityAttacher.MORPH_CAP);
 				
 				if(cap.isPresent())
