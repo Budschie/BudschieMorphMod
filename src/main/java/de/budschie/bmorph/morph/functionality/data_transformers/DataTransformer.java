@@ -91,7 +91,8 @@ public class DataTransformer implements IDynamicRegistryObject
 		
 		for(DataModifier modifier : modifiers)
 		{
-			originalTag = modifier.applyModifier(originalTag);
+			if(modifier.canOperateOn(originalTag))
+				originalTag = modifier.applyModifier(originalTag);
 		}
 		
 		if(originalTag.isPresent())
