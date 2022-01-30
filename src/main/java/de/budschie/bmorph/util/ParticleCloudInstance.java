@@ -7,7 +7,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
@@ -86,7 +85,7 @@ public class ParticleCloudInstance
 		return (type.codec().decode(JsonOps.INSTANCE, new JsonObject()).getOrThrow(false, (a) -> {})).getFirst();
 	}
 	
-	public void placeParticleCloudOnClient(ClientLevel clientLevel, Vec3 position)
+	public void placeParticleCloudOnClient(Vec3 position)
 	{
 		Vec3 finalPos = position.add(offset);
 		

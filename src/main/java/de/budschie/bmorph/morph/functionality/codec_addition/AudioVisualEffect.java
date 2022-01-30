@@ -10,7 +10,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.util.ParticleCloudInstance;
 import de.budschie.bmorph.util.SoundInstance;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -55,7 +54,7 @@ public class AudioVisualEffect
 	}
 	
 	/** Plays this effect on the client. **/
-	public void playEffectClient(ClientLevel level, Vec3 at)
+	public void playEffectClient(Level level, Vec3 at)
 	{
 		for(SoundInstance sound : sounds)
 		{
@@ -63,7 +62,7 @@ public class AudioVisualEffect
 		}
 		
 		for(ParticleCloudInstance pCloud : particleClouds)
-			pCloud.placeParticleCloudOnClient(level, at);
+			pCloud.placeParticleCloudOnClient(at);
 	}
 	
 	/** Plays this effect on the server. **/
@@ -81,7 +80,7 @@ public class AudioVisualEffect
 	/**
 	 * Decides the method it will call. It will call either
 	 * {@link AudioVisualEffect#playEffectServer} or
-	 * {@link AudioVisualEffect#playEffectClient(ClientLevel, Vec3)},
+	 * {@link AudioVisualEffect#playEffectClient(Level, Vec3)},
 	 * depending on the type of level.
 	 * 
 	 * If none of those levels match, it will throw an UnsupportedOperationException.
@@ -91,12 +90,19 @@ public class AudioVisualEffect
 	 **/
 	public void playEffect(Level level, Vec3 at)
 	{
-		if(level instanceof ClientLevel cLevel)
-			playEffectClient(cLevel, at);
-		else if(level instanceof ServerLevel sLevel)
-			playEffectServer(sLevel, at);
+//		boolean serverLevel
+//		
+//		if(level instanceof ServerLevel sLevel)
+//			playEffectServer(sLevel, at);
+//		else if(level instanceof ClientLevel cLevel)
+//			playEffectClient(cLevel, at);
+//		else
+//			throw new UnsupportedOperationException("You can't play this effect on an unknown world type. How did you even get this error TBH?!???");
+		
+		if(level.isClientSide())
+			playEffectClient(level, at);
 		else
-			throw new UnsupportedOperationException("You can't play this effect on an unknown world type. How did you even get this error TBH?!???");
+			playEffectServer((ServerLevel)level, at);
 	}
 	
 	/**
