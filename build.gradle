@@ -22,7 +22,7 @@ apply plugin: 'maven-publish'
 
 // apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
-version = '1.18.1-1.0.0'
+version = '1.18.1-2.0.0'
 group = 'de.budschie.bmorph' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'bmorph'
 
