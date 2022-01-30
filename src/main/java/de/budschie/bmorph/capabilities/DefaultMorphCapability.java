@@ -89,7 +89,7 @@ public class DefaultMorphCapability implements IMorphCapability
 		if(player.level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphAddedSynchronizer.MorphAddedPacket(player.getUUID(), item));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player), new MorphAddedSynchronizer.MorphAddedPacket(player.getUUID(), item));
 	}
 
 	@Override
@@ -98,7 +98,7 @@ public class DefaultMorphCapability implements IMorphCapability
 		if(player.level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphRemovedPacket(player.getUUID(), index));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player), new MorphRemovedPacket(player.getUUID(), index));
 	}
 	
 	@Override
