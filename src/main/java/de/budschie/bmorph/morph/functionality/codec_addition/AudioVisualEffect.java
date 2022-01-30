@@ -1,5 +1,6 @@
 package de.budschie.bmorph.morph.functionality.codec_addition;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.compress.utils.Lists;
@@ -36,6 +37,11 @@ public class AudioVisualEffect
 	{
 		this.sounds = sounds;
 		this.particleClouds = particleClouds;
+	}
+	
+	public AudioVisualEffect()
+	{
+		this(Arrays.asList(), Arrays.asList());
 	}
 	
 	public List<ParticleCloudInstance> getParticleClouds()

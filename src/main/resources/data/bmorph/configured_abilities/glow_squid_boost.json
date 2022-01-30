@@ -28,19 +28,29 @@
                 "amplifier": 69
             }
         ],
-        "particles":
-        [
-            {
-                "particle_type": "minecraft:glow_squid_ink",
-                "delta":
-                {
-                    "x": 2,
-                    "y": 1,
-                    "z": 2
-                },
-                "count": 1000,
-                "speed": 0
-            }
-        ]
+        "audiovisual_effect":
+	{
+	    "particles":
+            [
+		{
+                    "particle_type": "minecraft:glow_squid_ink",
+                    "delta":
+                    {
+			"x": 2,
+			"y": 1,
+			"z": 2
+                    },
+                    "count": 1000,
+                    "speed": 0
+		}
+            ],
+	    "sounds":
+	    [
+		{
+		    "sound": "minecraft:entity.glow_squid.squirt",
+		    "volume": 10
+		}
+	    ]
+	}
     }
 }

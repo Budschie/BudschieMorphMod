@@ -8,6 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.StunAbility;
+import de.budschie.bmorph.morph.functionality.codec_addition.AudioVisualEffect;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.network.SquidBoost;
@@ -28,22 +29,22 @@ public class SquidBoostAbility extends StunAbility
 			Codec.INT.optionalFieldOf("effect_radius", 5).forGetter(SquidBoostAbility::getBlindnessRadius),
 			Codec.FLOAT.fieldOf("boost_amount").forGetter(SquidBoostAbility::getBoostAmount),
 			Codec.INT.fieldOf("stun").forGetter(SquidBoostAbility::getStun),
-			ParticleCloudInstance.CODEC.listOf().optionalFieldOf("particles", Arrays.asList()).forGetter(SquidBoostAbility::getParticleClouds)
+			AudioVisualEffect.CODEC.optionalFieldOf("audiovisual_effect", new AudioVisualEffect()).forGetter(SquidBoostAbility::getAudioVisualEffect)
 			).apply(instance, SquidBoostAbility::new));
 	
 	private float boostAmount;
 	private int effectRadius;
 	private List<MobEffectInstance> effects;
-	private List<ParticleCloudInstance> particleClouds;
+	private AudioVisualEffect audioVisualEffect;
 	
-	public SquidBoostAbility(List<MobEffectInstance> effects, int blindnessRadius, float boostAmount, int stun, List<ParticleCloudInstance> particleClouds)
+	public SquidBoostAbility(List<MobEffectInstance> effects, int blindnessRadius, float boostAmount, int stun, AudioVisualEffect particleClouds)
 	{
 		super(stun);
 		this.effects = effects;
 		this.effectRadius = blindnessRadius;
 		this.boostAmount = boostAmount;
 		
-		this.particleClouds = particleClouds;
+		this.audioVisualEffect = particleClouds;
 	}
 	
 	public int getBlindnessRadius()
@@ -61,9 +62,9 @@ public class SquidBoostAbility extends StunAbility
 		return boostAmount;
 	}
 	
-	public List<ParticleCloudInstance> getParticleClouds()
+	public AudioVisualEffect getAudioVisualEffect()
 	{
-		return particleClouds;
+		return audioVisualEffect;
 	}
 
 	@Override
@@ -77,7 +78,7 @@ public class SquidBoostAbility extends StunAbility
 			// ((ServerLevel)player.level).sendParticles(ParticleTypes.SQUID_INK, player.getX(), player.getY(), player.getZ(), 300, .4f, .4f, .4f, 0);
 			
 			if(!player.level.isClientSide())
-				particleClouds.forEach(pCloud -> pCloud.placeParticleCloudOnServer((ServerLevel) player.level, player.position()));
+				audioVisualEffect.playEffect(player);
 			
 			// Give effects to every entity in the radius
 			player.level.getEntities(player, new AABB(player.blockPosition().offset(-effectRadius, -effectRadius, -effectRadius),
@@ -88,7 +89,7 @@ public class SquidBoostAbility extends StunAbility
 					});
 			
 			// Play sound
-			player.level.playSound(null, player.blockPosition(), SoundEvents.SQUID_SQUIRT, SoundSource.NEUTRAL, 10, 1);
+//			player.level.playSound(null, player.blockPosition(), SoundEvents.SQUID_SQUIRT, SoundSource.NEUTRAL, 10, 1);
 			
 			stun(player.getUUID());
 			

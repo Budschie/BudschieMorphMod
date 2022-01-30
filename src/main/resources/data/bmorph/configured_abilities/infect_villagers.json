@@ -4,10 +4,15 @@
     {
         "transform_from": "minecraft:villager",
         "transform_to": "minecraft:zombie_villager",
-        "transformation_sound":
-        {
-            "sound": "minecraft:entity.zombie.infect"
-        },
+        "transformed_entity_effect":
+	{
+	    "sounds":
+	    [
+		{
+		    "sound": "minecraft:entity.zombie.infect"
+		}
+	    ]
+	},
         "nbt_mappings":
         [
             {

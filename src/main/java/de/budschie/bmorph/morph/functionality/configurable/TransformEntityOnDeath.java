@@ -9,6 +9,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.json_integration.NBTPath;
 import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
+import de.budschie.bmorph.morph.functionality.codec_addition.AudioVisualEffect;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import de.budschie.bmorph.morph.functionality.data_transformers.DataTransformer;
 import de.budschie.bmorph.util.EntityUtil;
@@ -28,7 +29,8 @@ public class TransformEntityOnDeath extends AbstractEventAbility
 			NbtMappings.CODEC.listOf().optionalFieldOf("nbt_mappings", Arrays.asList()).forGetter(TransformEntityOnDeath::getNbtMappings),
 			ModCodecs.DATA_TRANSFORMER.listOf().optionalFieldOf("data_transformers", Arrays.asList()).forGetter(TransformEntityOnDeath::getDataTransformers),
 			Codec.STRING.listOf().optionalFieldOf("permitted_deaths").forGetter(TransformEntityOnDeath::getPermittedDeaths),
-			SoundInstance.CODEC.optionalFieldOf("transformation_sound").forGetter(TransformEntityOnDeath::getSoundToPlay))
+			AudioVisualEffect.CODEC.optionalFieldOf("transformed_entity_effect").forGetter(TransformEntityOnDeath::getTransformedEntityEffect),
+			AudioVisualEffect.CODEC.optionalFieldOf("transformer_entity_effect").forGetter(TransformEntityOnDeath::getTransformerEntityEffect))
 			.apply(instance, TransformEntityOnDeath::new));
 	
 	private EntityType<?> entityToTransformFrom;
@@ -36,17 +38,19 @@ public class TransformEntityOnDeath extends AbstractEventAbility
 	private List<NbtMappings> nbtMappings;
 	private List<LazyOptional<DataTransformer>> dataTransformers;
 	private Optional<List<String>> permittedDeaths;
-	private Optional<SoundInstance> soundToPlay;
+	private Optional<AudioVisualEffect> transformedAudioVisualEffect;
+	private Optional<AudioVisualEffect> transformerAudioVisualEffect;
 	
 	public TransformEntityOnDeath(EntityType<?> entityToTransformFrom, EntityType<?> entityToTransformTo, List<NbtMappings> nbtMappings, List<LazyOptional<DataTransformer>> dataTransformers, Optional<List<String>> permittedDeaths,
-			Optional<SoundInstance> soundToPlay)
+			Optional<AudioVisualEffect> transformedAudioVisualEffect, Optional<AudioVisualEffect> transformerAudioVisualEffect)
 	{
 		this.entityToTransformFrom = entityToTransformFrom;
 		this.entityToTransformTo = entityToTransformTo;
 		this.nbtMappings = nbtMappings;
 		this.dataTransformers = dataTransformers;
 		this.permittedDeaths = permittedDeaths;
-		this.soundToPlay = soundToPlay;
+		this.transformedAudioVisualEffect = transformedAudioVisualEffect;
+		this.transformerAudioVisualEffect = transformerAudioVisualEffect;
 	}
 
 	@SubscribeEvent
@@ -85,7 +89,11 @@ public class TransformEntityOnDeath extends AbstractEventAbility
 			event.getEntity().discard();
 			
 			// Play sound
-			soundToPlay.ifPresent(sound -> sound.playSoundAt(newEntity));
+			if(!event.getEntity().level.isClientSide())
+			{
+				this.transformedAudioVisualEffect.ifPresent(effect -> effect.playEffect(newEntity));
+				this.transformerAudioVisualEffect.ifPresent(effect -> effect.playEffect(event.getSource().getEntity()));
+			}
 		}
 	}
 	
@@ -114,9 +122,14 @@ public class TransformEntityOnDeath extends AbstractEventAbility
 		return permittedDeaths;
 	}
 
-	public Optional<SoundInstance> getSoundToPlay()
+	public Optional<AudioVisualEffect> getTransformedEntityEffect()
 	{
-		return soundToPlay;
+		return transformedAudioVisualEffect;
+	}
+	
+	public Optional<AudioVisualEffect> getTransformerEntityEffect()
+	{
+		return transformerAudioVisualEffect;
 	}
 
 	public static class NbtMappings

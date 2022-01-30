@@ -23,19 +23,29 @@
                 "__comment": "I hate it that you can't really put comments into JSON. Anyways, you might wonder why I've put jump boost into here with such a high amplifier. The answer is simple: There is a bug (or feature?) in MC that allows you to \"disable\" jumping by setting the amplifier at ~128(because of interger overflow AFAIK)."
             }
         ],
-        "particles":
-        [
-            {
-                "particle_type": "minecraft:squid_ink",
-                "delta":
-                {
-                    "x": 2,
-                    "y": 1,
-                    "z": 2
-                },
-                "count": 1000,
-                "speed": 0
-            }
-        ]
+	"audiovisual_effect":
+	{
+            "particles":
+            [
+		{
+                    "particle_type": "minecraft:squid_ink",
+                    "delta":
+                    {
+			"x": 2,
+			"y": 1,
+			"z": 2
+                    },
+                    "count": 1000,
+                    "speed": 0
+		}
+            ],
+	    "sounds":
+	    [
+		{
+		    "sound": "minecraft:entity.squid.squirt",
+		    "volume": 10
+		}
+	    ]
+	}
     }
 }
