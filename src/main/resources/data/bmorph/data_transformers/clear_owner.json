@@ -7,7 +7,7 @@
 	    "modifier": "bmorph:set_if_present",
 	    "config":
 	    {
-		"if_present": ""
+		"if_present": "[I; 0, 0, 0, 0]"
 	    }
 	}
     ]
