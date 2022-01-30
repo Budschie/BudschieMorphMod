@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:cow",
+    "grant":
+    [
+        "bmorph:cow_milk"
+    ],
+    "revoke":
+    [
+
+    ]
+}

@@ -15,6 +15,7 @@ import de.budschie.bmorph.morph.functionality.configurable.CommandOnDisable;
 import de.budschie.bmorph.morph.functionality.configurable.CommandOnEnable;
 import de.budschie.bmorph.morph.functionality.configurable.CommandOnUseAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ConfigurableAbility;
+import de.budschie.bmorph.morph.functionality.configurable.CowMilkAbility;
 import de.budschie.bmorph.morph.functionality.configurable.DamageImmunityAbility;
 import de.budschie.bmorph.morph.functionality.configurable.EffectOnAttackEntity;
 import de.budschie.bmorph.morph.functionality.configurable.ElderGuardianJumpscareAbility;
@@ -91,4 +92,5 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<ParrotDanceAbility>> PARROT_DANCE = ABILITY_REGISTRY.register("parrot_dance", () -> new ConfigurableAbility<>(ParrotDanceAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<BlockTrailAbility>> BLOCK_TRAIL = ABILITY_REGISTRY.register("block_trail", () -> new ConfigurableAbility<>(BlockTrailAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<SheepEatGrassAbility>> SHEEP_EAT_GRASS = ABILITY_REGISTRY.register("sheep_eat_grass", () -> new ConfigurableAbility<>(SheepEatGrassAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<CowMilkAbility>> COW_MILK = ABILITY_REGISTRY.register("cow_milk", () -> new ConfigurableAbility<>(CowMilkAbility.CODEC));
 }
