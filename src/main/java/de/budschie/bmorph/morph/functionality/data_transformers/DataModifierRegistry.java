@@ -11,7 +11,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class DataModifierRegistry
 {
 	@SuppressWarnings("unchecked")
-	public static DeferredRegister<DataModifierHolder<? extends DataModifier>> DATA_MODIFIER_REGISTRY = DeferredRegister.<DataModifierHolder<? extends DataModifier>>create((Class<DataModifierHolder<?>>)((Class<?>)DataModifierHolder.class), References.MODID); 
+	public static DeferredRegister<DataModifierHolder<? extends DataModifier>> DATA_MODIFIER_REGISTRY = DeferredRegister.<DataModifierHolder<? extends DataModifier>>create((Class<DataModifierHolder<? extends DataModifier>>)((Class<?>)DataModifierHolder.class), References.MODID); 
 	
 	public static Supplier<IForgeRegistry<DataModifierHolder<? extends DataModifier>>> REGISTRY = DATA_MODIFIER_REGISTRY.makeRegistry("data_modifiers", () -> new RegistryBuilder<DataModifierHolder<?>>().disableSaving());
 	

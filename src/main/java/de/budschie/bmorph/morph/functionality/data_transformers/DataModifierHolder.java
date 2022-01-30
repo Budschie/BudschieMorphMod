@@ -18,7 +18,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 /** This class is a singleton holding a codec and a name for IDataModifiers. **/
-public class DataModifierHolder<T extends DataModifier> extends ForgeRegistryEntry<DataModifierHolder<T>>
+public class DataModifierHolder<T extends DataModifier> extends ForgeRegistryEntry<DataModifierHolder<? extends DataModifier>>
 {
 	private static final Logger LOGGER = LogManager.getLogger();
 	
