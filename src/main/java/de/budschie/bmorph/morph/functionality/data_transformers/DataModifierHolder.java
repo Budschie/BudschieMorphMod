@@ -1,5 +1,6 @@
 package de.budschie.bmorph.morph.functionality.data_transformers;
 
+import java.text.MessageFormat;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -36,13 +37,31 @@ public class DataModifierHolder<T extends DataModifier> extends ForgeRegistryEnt
 	public Optional<? extends DataModifier> deserializeJson(JsonElement object)
 	{
 		Optional<Pair<T, JsonElement>> optAbility = this.dataModifierCodec.decode(JsonOps.INSTANCE, object).resultOrPartial(err -> LOGGER.warn("Received bad data when parsing data modifier: " + err));
-		return optAbility.isPresent() ? Optional.of(optAbility.get().getFirst()) : Optional.empty();
+		
+		if(optAbility.isPresent())
+		{
+			optAbility.get().getFirst().setDataModifierHolder(this);
+			return Optional.of(optAbility.get().getFirst());
+		}
+		else
+		{
+			return Optional.empty();
+		}
 	}
 	
 	public Optional<? extends DataModifier> deserializeNbt(CompoundTag nbt)
 	{
 		Optional<Pair<T, Tag>> optAbility = this.dataModifierCodec.decode(NbtOps.INSTANCE, nbt).resultOrPartial(err -> LOGGER.warn("Received bad data when parsing data modifier: " + err));
-		return optAbility.isPresent() ? Optional.of(optAbility.get().getFirst()) : Optional.empty();
+
+		if(optAbility.isPresent())
+		{
+			optAbility.get().getFirst().setDataModifierHolder(this);
+			return Optional.of(optAbility.get().getFirst());
+		}
+		else
+		{
+			return Optional.empty();
+		}
 	}
 	
 	public Optional<CompoundTag> serializeNBT(T modifier)
@@ -57,7 +76,7 @@ public class DataModifierHolder<T extends DataModifier> extends ForgeRegistryEnt
 				return Optional.of(new CompoundTag());
 		}
 		else
-			LOGGER.warn("There was an error serializing a data modifier with its codec %s: %s", this.getRegistryName(), nbt.get().right().get().message());
+			LOGGER.warn(MessageFormat.format("There was an error serializing a data modifier with its codec {0}: {1}", this.getRegistryName(), nbt.get().right().get().message()));
 		
 		return Optional.empty();
 	}

@@ -1,5 +1,6 @@
 package de.budschie.bmorph.network;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -60,7 +61,7 @@ public class AdditionalAbilitySynchronization implements ISimpleImplPacket<Addit
 				
 				if(player == null)
 				{
-					LOGGER.info("The player {0} was not found when trying to synchronize abilities.", packet.getPlayer().toString());
+					LOGGER.info(MessageFormat.format("The player {0} was not found when trying to synchronize abilities.", packet.getPlayer().toString()));
 				}
 				else
 				{
@@ -72,7 +73,7 @@ public class AdditionalAbilitySynchronization implements ISimpleImplPacket<Addit
 						
 						if(retrievedAbility == null)
 						{
-							LOGGER.info("The ability {0} could not be resolved; it doesn't exist on the client. Please report this as a bug.", rawAbility);
+							LOGGER.info(MessageFormat.format("The ability {0} could not be resolved; it doesn't exist on the client. Please report this as a bug.", rawAbility));
 						}
 						else
 							resolvedAbilities.add(retrievedAbility);

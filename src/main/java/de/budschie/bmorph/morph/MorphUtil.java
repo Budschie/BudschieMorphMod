@@ -1,5 +1,6 @@
 package de.budschie.bmorph.morph;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -154,7 +155,7 @@ public class MorphUtil
 					
 					if(foundAbility == null)
 					{
-						LOGGER.warn("The ability %s is not present on the client. Ignoring this entry.", resourceLocation);
+						LOGGER.warn(MessageFormat.format("The ability {0} is not present on the client. Ignoring this entry.", resourceLocation));
 					}
 					else
 						resolvedAbilities.add(foundAbility);

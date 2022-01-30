@@ -1,5 +1,6 @@
 package de.budschie.bmorph.capabilities.common;
 
+import java.text.MessageFormat;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -57,7 +58,7 @@ public abstract class CommonCapabilitySynchronizer<P extends CommonCapabilitySyn
 				
 				if(player == null)
 				{
-					logger.info("Can't process capability sync packet because the player with the UUID {0} could not be found.", packet.getPlayer().toString());
+					logger.info(MessageFormat.format("Can't process capability sync packet because the player with the UUID {0} could not be found.", packet.getPlayer().toString()));
 				}
 				else
 				{
@@ -69,7 +70,7 @@ public abstract class CommonCapabilitySynchronizer<P extends CommonCapabilitySyn
 					}
 					else
 					{
-						logger.info("Can't process capability sync packet because the capability {0} was not attached to player {1}({2})", capabilityToken.getName(), packet.getPlayer(), player.getName().getString());
+						logger.info(MessageFormat.format("Can't process capability sync packet because the capability {0} was not attached to player {1}({2})", capabilityToken.getName(), packet.getPlayer(), player.getName().getString()));
 					}
 				}
 			}

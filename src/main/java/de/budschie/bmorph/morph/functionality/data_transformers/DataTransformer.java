@@ -1,5 +1,6 @@
 package de.budschie.bmorph.morph.functionality.data_transformers;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -62,7 +63,7 @@ public class DataTransformer implements IDynamicRegistryObject
 			
 			if(modifierHolder == null)
 			{
-				LOGGER.error("Skipped data modifier with illegal type id {0} whilst deserializing data transformer {1}. If you see this, please report it as a bug.", modifierId, resourceLocation);
+				LOGGER.error(MessageFormat.format("Skipped data modifier with illegal type id {0} whilst deserializing data transformer {1}. If you see this, please report it as a bug.", modifierId, resourceLocation));
 				continue;
 			}
 			
@@ -74,7 +75,7 @@ public class DataTransformer implements IDynamicRegistryObject
 			}
 			else
 			{
-				LOGGER.error("Skipped data modifier of type {0} whilst deserializing data transformer {1}. If you see this, please report it as a bug.", modifierHolder.getRegistryName(), resourceLocation);
+				LOGGER.error(MessageFormat.format("Skipped data modifier of type {0} whilst deserializing data transformer {1}. If you see this, please report it as a bug.", modifierHolder.getRegistryName(), resourceLocation));
 			}
 		}
 		
@@ -120,7 +121,7 @@ public class DataTransformer implements IDynamicRegistryObject
 			}
 			else
 			{
-				LOGGER.warn("Skipped data modifier of type {0} in {1} because it could not be serialized. This data can consequently not be used. Skipping this modifier.", modifier.getDataModifierHolder().getRegistryName(), getResourceLocation());
+				LOGGER.warn(MessageFormat.format("Skipped data modifier of type {0} in {1} because it could not be serialized. This data can consequently not be used. Skipping this modifier.", modifier.getDataModifierHolder().getRegistryName(), getResourceLocation()));
 			}
 		}
 		

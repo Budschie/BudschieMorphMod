@@ -1,5 +1,6 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
+import java.text.MessageFormat;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,8 +14,8 @@ import com.mojang.serialization.JsonOps;
 
 import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 public class ConfigurableAbility<A extends Ability> extends ForgeRegistryEntry<ConfigurableAbility<? extends Ability>>
@@ -59,7 +60,7 @@ public class ConfigurableAbility<A extends Ability> extends ForgeRegistryEntry<C
 				return Optional.of(new CompoundTag());
 		}
 		else
-			LOGGER.warn("There was an error serializing the ability %s with its codec %s: %s", ability.getResourceLocation(), this.getRegistryName(), nbt.get().right().get().message());
+			LOGGER.warn(MessageFormat.format("There was an error serializing the ability {0} with its codec {1}: {2}", ability.getResourceLocation(), this.getRegistryName(), nbt.get().right().get().message()));
 		
 		return Optional.empty();
 	}

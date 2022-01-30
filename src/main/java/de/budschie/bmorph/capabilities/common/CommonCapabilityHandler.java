@@ -1,5 +1,6 @@
 package de.budschie.bmorph.capabilities.common;
 
+import java.text.MessageFormat;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +39,7 @@ public abstract class CommonCapabilityHandler<C, P extends CommonCapabilitySynch
 		}
 		else
 		{
-			logger.info("The player {0}({1}) does not have the capability {2}.", player.getUUID(), player.getName().getString(), capabilityToken.getName());
+			logger.info(MessageFormat.format("The player {0}({1}) does not have the capability {2}.", player.getUUID(), player.getName().getString(), capabilityToken.getName()));
 			return Optional.empty();
 		}
 	}

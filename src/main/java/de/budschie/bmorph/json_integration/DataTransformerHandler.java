@@ -1,5 +1,6 @@
 package de.budschie.bmorph.json_integration;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
@@ -67,12 +68,12 @@ public class DataTransformerHandler extends SimpleJsonResourceReloadListener
 					}
 					else
 					{
-						LOGGER.warn("Data modifier with the id {0} in the data transformer {1} could not be parsed. See logs above for further info.", dataModifierName, resourceLocation);
+						LOGGER.warn(MessageFormat.format("Data modifier with the id {0} in the data transformer {1} could not be parsed. See logs above for further info.", dataModifierName, resourceLocation));
 					}
 				}
 				else
 				{
-					LOGGER.warn("Data modifier with the id {0} in the data transformer {1} is unknown.", dataModifierName, resourceLocation);
+					LOGGER.warn(MessageFormat.format("Data modifier with the id {0} in the data transformer {1} is unknown.", dataModifierName, resourceLocation));
 				}
 			}
 			
