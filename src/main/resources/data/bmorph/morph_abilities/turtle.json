@@ -1,0 +1,13 @@
+{
+    "entity_type": "minecraft:turtle",
+    "grant":
+    [
+        "bmorph:water_breathing",
+        "bmorph:water_sanic",
+        "bmorph:extreme_slowness"
+    ],
+    "revoke":
+    [
+        
+    ]
+}
