@@ -1,6 +1,5 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.mojang.serialization.Codec;
@@ -12,10 +11,6 @@ import de.budschie.bmorph.morph.functionality.codec_addition.AudioVisualEffect;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.network.SquidBoost;
-import de.budschie.bmorph.util.ParticleCloudInstance;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
