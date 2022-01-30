@@ -4,7 +4,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -24,7 +26,7 @@ public class SoundInstance
 	
 	public static final Codec<SoundInstance> CODEC = RecordCodecBuilder
 			.create(instance -> instance.group(
-					SoundEvent.CODEC.fieldOf("sound").forGetter(SoundInstance::getSoundEvent), 
+					ModCodecs.SOUND_EVENT_CODEC.fieldOf("sound").forGetter(SoundInstance::getSoundEvent), 
 					SOUND_CATEGORY_CODEC.optionalFieldOf("category", SoundSource.AMBIENT).forGetter(SoundInstance::getSoundCategory),
 					Codec.FLOAT.optionalFieldOf("pitch", 1.0f).forGetter(SoundInstance::getPitch),
 					Codec.FLOAT.optionalFieldOf("random_pitch_delta", 0.125f).forGetter(SoundInstance::getRandomPitchDelta),

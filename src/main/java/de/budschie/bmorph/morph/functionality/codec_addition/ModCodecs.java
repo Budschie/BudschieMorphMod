@@ -10,7 +10,9 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.Decoder;
 import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.Encoder;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.main.BMorphMod;
@@ -24,6 +26,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
@@ -41,6 +44,38 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class ModCodecs
 {	
+	public static final Codec<SoundEvent> SOUND_EVENT_CODEC = Codec.of(new Encoder<SoundEvent>()
+	{
+		@Override
+		public <T> DataResult<T> encode(SoundEvent input, DynamicOps<T> ops, T prefix)
+		{
+			return DataResult.success(ops.createString(input.getRegistryName().toString()));
+		}
+	}, new Decoder<SoundEvent>()
+	{
+		@Override
+		public <T> DataResult<Pair<SoundEvent, T>> decode(DynamicOps<T> ops, T input)
+		{
+			DataResult<String> id = ops.getStringValue(input);
+			
+			if(id.result().isPresent())
+			{
+				SoundEvent soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation(id.result().get()));
+				
+				if(soundEvent == null)
+				{
+					return SoundEvent.CODEC.decode(ops, input);
+				}
+				else
+				{
+					return DataResult.success(Pair.of(soundEvent, input));
+				}
+			}
+			else
+				return DataResult.error(id.error().get().message());
+		}
+	});
+	
 	public static final Codec<Attribute> ATTRIBUTE = getRegistryCodec(ForgeRegistries.ATTRIBUTES::getValue);
 	public static final Codec<MobEffect> EFFECTS = getRegistryCodec(ForgeRegistries.MOB_EFFECTS::getValue);
 	public static final Codec<EntityType<?>> ENTITIES = getRegistryCodec(ForgeRegistries.ENTITIES::getValue);
