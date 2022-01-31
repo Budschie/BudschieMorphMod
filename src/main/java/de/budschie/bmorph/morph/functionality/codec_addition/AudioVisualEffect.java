@@ -3,8 +3,7 @@ package de.budschie.bmorph.morph.functionality.codec_addition;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.compress.utils.Lists;
-
+import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
