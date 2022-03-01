@@ -40,7 +40,19 @@ public class FlyAbility extends Ability
 	{
 		super.disableAbility(player, disabledItem, newMorph, newAbilities, reason);
 		
-		if(!player.isCreative() && !player.isSpectator())
+		boolean mayStillFly = false;
+		
+		abilitySearch:
+		for(Ability ability : newAbilities)
+		{
+			if(ability instanceof FlyAbility)
+			{
+				mayStillFly = true;
+				break abilitySearch;
+			}
+		}
+		
+		if(!player.isCreative() && !player.isSpectator() && !mayStillFly)
 		{
 			player.getAbilities().mayfly = false;
 			player.getAbilities().flying = false;
