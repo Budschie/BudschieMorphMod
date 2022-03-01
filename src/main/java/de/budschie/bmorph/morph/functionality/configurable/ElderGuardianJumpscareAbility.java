@@ -7,8 +7,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.functionality.PassiveTickAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 
 public class ElderGuardianJumpscareAbility extends PassiveTickAbility
@@ -27,7 +27,7 @@ public class ElderGuardianJumpscareAbility extends PassiveTickAbility
 	{
 		super(updateDuration, (player, cap) ->
 		{			
-            if(!player.getCommandSenderWorld().isClientSide)
+            if(!player.level.isClientSide)
             {
             	double distanceSquared = distance * distance;
             	

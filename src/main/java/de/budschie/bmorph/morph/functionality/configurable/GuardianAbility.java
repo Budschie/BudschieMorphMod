@@ -1,5 +1,6 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,7 +13,7 @@ import de.budschie.bmorph.capabilities.guardian.IGuardianBeamCapability;
 import de.budschie.bmorph.events.GuardianAbilityStatusUpdateEvent;
 import de.budschie.bmorph.events.PlayerMorphEvent;
 import de.budschie.bmorph.morph.MorphItem;
-import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
+import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.configurable.client.GuardianClientAdapter;
 import de.budschie.bmorph.morph.functionality.configurable.client.GuardianClientAdapterInstance;
 import de.budschie.bmorph.util.SoundInstance;
@@ -39,7 +40,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 
-public class GuardianAbility extends AbstractEventAbility
+public class GuardianAbility extends Ability
 {
 	public static final Codec<GuardianAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.FLOAT.fieldOf("damage").forGetter(GuardianAbility::getDamage),
@@ -131,6 +132,7 @@ public class GuardianAbility extends AbstractEventAbility
 	public void onRegister()
 	{
 		super.onRegister();
+		
 		if(adapter != null)
 			adapter.enableAdapter();
 	}
@@ -139,6 +141,7 @@ public class GuardianAbility extends AbstractEventAbility
 	public void onUnregister()
 	{
 		super.onUnregister();
+		
 		if(adapter != null)
 			adapter.disableAdapter();
 	}
@@ -146,7 +149,7 @@ public class GuardianAbility extends AbstractEventAbility
 	@Override
 	public void onUsedAbility(Player player, MorphItem currentMorph)
 	{
-		if(!player.getCommandSenderWorld().isClientSide)
+		if(!player.level.isClientSide)
 		{
 			// Cancel this shit
 			if(isAbilityActive(player))
@@ -166,11 +169,11 @@ public class GuardianAbility extends AbstractEventAbility
 				
 				AABB aabb = new AABB(from, to);
 				
-				EntityHitResult result = ProjectileUtil.getEntityHitResult(player.getCommandSenderWorld(), player, from, to, aabb, entity -> entity instanceof LivingEntity);
+				EntityHitResult result = ProjectileUtil.getEntityHitResult(player.level, player, from, to, aabb, entity -> entity instanceof LivingEntity);
 				
 				if(result != null)
 				{
-					BlockHitResult blockResult = player.getCommandSenderWorld().clip(new ClipContext(from, result.getEntity().position().add(0, result.getEntity().getEyeHeight(), 0), Block.VISUAL, Fluid.NONE, null));
+					BlockHitResult blockResult = player.level.clip(new ClipContext(from, result.getEntity().position().add(0, result.getEntity().getEyeHeight(), 0), Block.VISUAL, Fluid.NONE, null));
 					
 					if(blockResult == null || blockResult.getType() == Type.MISS && !isEntityOutOfRange(player, result.getEntity()))
 					{
@@ -202,10 +205,10 @@ public class GuardianAbility extends AbstractEventAbility
 		if(isTracked(event.getPlayer()))
 		{				
 			// Check if we are on the logical server
-			if(!event.getPlayer().getCommandSenderWorld().isClientSide)
+			if(!event.getPlayer().level.isClientSide)
 			{
 				// Retrieve current entity
-				Entity targettedEntity = ((ServerLevel)event.getPlayer().getCommandSenderWorld()).getEntity(event.getCapability().getAttackedEntityServer().get());
+				Entity targettedEntity = ((ServerLevel)event.getPlayer().level).getEntity(event.getCapability().getAttackedEntityServer().get());
 				
 				// Check if entity is null or out of bounds
 				if(targettedEntity == null || !targettedEntity.isAlive() || isEntityOutOfRange(event.getPlayer(), targettedEntity))
@@ -222,7 +225,7 @@ public class GuardianAbility extends AbstractEventAbility
 					Vec3 to = targettedEntity.position().add(0, targettedEntity.getEyeHeight(), 0);
 					
 					// Re-check if entity is still not obstructed by block
-					BlockHitResult blockResult = event.getPlayer().getCommandSenderWorld().clip(new ClipContext(from, to, Block.VISUAL, Fluid.NONE, event.getPlayer()));
+					BlockHitResult blockResult = event.getPlayer().level.clip(new ClipContext(from, to, Block.VISUAL, Fluid.NONE, event.getPlayer()));
 					
 					// If a block was hit, cancel everything.
 					if(blockResult != null && blockResult.getType() == Type.BLOCK)
@@ -237,7 +240,7 @@ public class GuardianAbility extends AbstractEventAbility
 				if(event.getCapability().getAttackProgression() >= attackDuration)
 				{
 					// Attack entity
-					Entity currentlyTargettedEntity = ((ServerLevel) event.getPlayer().getCommandSenderWorld())
+					Entity currentlyTargettedEntity = ((ServerLevel) event.getPlayer().level)
 							.getEntity(event.getCapability().getAttackedEntityServer().get());
 					
 					currentlyTargettedEntity.hurt(DamageSource.indirectMagic(event.getPlayer(), event.getPlayer()), damage);
@@ -263,7 +266,7 @@ public class GuardianAbility extends AbstractEventAbility
 	// Apply slowness to the player performing the attack if necessary.
 	private void applyAbilityEffects(Player player)
 	{
-		if(!mayMove && !player.getCommandSenderWorld().isClientSide)
+		if(!mayMove && !player.level.isClientSide)
 		{
 			player.getAttribute(Attributes.MOVEMENT_SPEED).addTransientModifier(am);
 		}			
@@ -272,7 +275,7 @@ public class GuardianAbility extends AbstractEventAbility
 	// Remove slowness again when we are done attacking
 	private void deapplyAbilityEffects(Player player)
 	{
-		if(!mayMove && !player.getCommandSenderWorld().isClientSide)
+		if(!mayMove && !player.level.isClientSide)
 		{
 			AttributeInstance inst = player.getAttribute(Attributes.MOVEMENT_SPEED);
 			
@@ -282,18 +285,20 @@ public class GuardianAbility extends AbstractEventAbility
 	}
 	
 	@Override
-	public void enableAbility(Player player, MorphItem enabledItem)
+	public void enableAbility(Player player, MorphItem enabledItem, MorphItem oldMorph, List<Ability> oldAbilities, AbilityChangeReason reason)
 	{
-		super.enableAbility(player, enabledItem);
+		super.enableAbility(player, enabledItem, oldMorph, oldAbilities, reason);
 		
-		if(adapter != null && player.getCommandSenderWorld().isClientSide)
+		if(adapter != null && player.level.isClientSide)
 			adapter.playGuardianSound(player);
 	}
 	
 	@Override
-	public void disableAbility(Player player, MorphItem disabledItem)
+	public void disableAbility(Player player, MorphItem disabledItem, MorphItem newMorph, List<Ability> newAbilities, AbilityChangeReason reason)
 	{
-		if(!player.getCommandSenderWorld().isClientSide)
+		super.disableAbility(player, disabledItem, newMorph, newAbilities, reason);
+		
+		if(!player.level.isClientSide)
 		{
 			IGuardianBeamCapability cap = getNullableBeamCap(player);
 			if (cap != null && cap.getAttackedEntity().isPresent())
@@ -303,8 +308,6 @@ public class GuardianAbility extends AbstractEventAbility
 			
 			deapplyAbilityEffects(player);
 		}
-		
-		super.disableAbility(player, disabledItem);
 	}
 	
 	private boolean isAbilityActive(Player player)
@@ -320,5 +323,11 @@ public class GuardianAbility extends AbstractEventAbility
 	private IGuardianBeamCapability getNullableBeamCap(Player player)
 	{
 		return player.getCapability(GuardianBeamCapabilityInstance.GUARDIAN_BEAM_CAP).resolve().orElse(null);
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 }

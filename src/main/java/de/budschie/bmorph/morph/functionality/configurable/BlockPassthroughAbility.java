@@ -1,6 +1,7 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 import com.mojang.serialization.Codec;
@@ -10,7 +11,7 @@ import de.budschie.bmorph.events.MotionMultiplierEvent;
 import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.LazyTag;
 import de.budschie.bmorph.morph.MorphItem;
-import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
+import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -22,7 +23,7 @@ import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class BlockPassthroughAbility extends AbstractEventAbility
+public class BlockPassthroughAbility extends Ability
 {
 	public static final Codec<BlockPassthroughAbility> CODEC = RecordCodecBuilder
 			.create(instance -> instance
@@ -99,12 +100,19 @@ public class BlockPassthroughAbility extends AbstractEventAbility
 	
 	// We need this since this may cause issues like permanent speed boost (until world is loaded again) otherwise
 	@Override
-	public void disableAbility(Player player, MorphItem disabledItem)
+	public void disableAbility(Player player, MorphItem disabledItem, MorphItem newMorph, List<Ability> newAbilities, AbilityChangeReason reason)
 	{
-		super.disableAbility(player, disabledItem);
+		super.disableAbility(player, disabledItem, newMorph, newAbilities, reason);
+		
 		AttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
 		
 		if(attributeInstance.hasModifier(am))
 			attributeInstance.removeModifier(am);
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 }

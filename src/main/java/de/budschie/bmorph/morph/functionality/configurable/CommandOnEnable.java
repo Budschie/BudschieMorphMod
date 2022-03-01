@@ -1,5 +1,7 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
+import java.util.List;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -22,8 +24,10 @@ public class CommandOnEnable extends Ability
 	}
 	
 	@Override
-	public void enableAbility(Player player, MorphItem disabledItem)
+	public void enableAbility(Player player, MorphItem enabledItem, MorphItem oldMorph, List<Ability> oldAbilities, AbilityChangeReason reason)
 	{
+		super.enableAbility(player, enabledItem, oldMorph, oldAbilities, reason);
+		
 		if(!player.level.isClientSide)
 			commandProvider.executeAsPlayer(player);
 	}

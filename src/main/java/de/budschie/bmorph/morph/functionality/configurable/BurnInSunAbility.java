@@ -3,14 +3,14 @@ package de.budschie.bmorph.morph.functionality.configurable;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
+import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class BurnInSunAbility extends AbstractEventAbility
+public class BurnInSunAbility extends Ability
 {
 	public static final Codec<BurnInSunAbility> CODEC = RecordCodecBuilder
 			.create(instance -> instance.group(Codec.INT.fieldOf("burn_time").forGetter(BurnInSunAbility::getBurnTime),
@@ -80,5 +80,11 @@ public class BurnInSunAbility extends AbstractEventAbility
 				}
 			}
 		}
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 }

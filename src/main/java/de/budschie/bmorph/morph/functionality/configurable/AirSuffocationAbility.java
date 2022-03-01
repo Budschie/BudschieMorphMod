@@ -2,13 +2,13 @@ package de.budschie.bmorph.morph.functionality.configurable;
 
 import com.mojang.serialization.Codec;
 
-import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
+import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class AirSuffocationAbility extends AbstractEventAbility
+public class AirSuffocationAbility extends Ability
 {
 	public static final Codec<AirSuffocationAbility> CODEC = Codec.unit(AirSuffocationAbility::new);
 	
@@ -30,5 +30,11 @@ public class AirSuffocationAbility extends AbstractEventAbility
 				}
 			}
 		}
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 }

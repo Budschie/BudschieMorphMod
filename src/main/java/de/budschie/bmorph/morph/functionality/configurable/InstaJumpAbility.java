@@ -1,5 +1,7 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
+import java.util.List;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -24,15 +26,19 @@ public class InstaJumpAbility extends Ability
 	}
 	
 	@Override
-	public void enableAbility(Player player, MorphItem enabledItem)
+	public void enableAbility(Player player, MorphItem enabledItem, MorphItem oldMorph, List<Ability> oldAbilities, AbilityChangeReason reason)
 	{
+		super.enableAbility(player, enabledItem, oldMorph, oldAbilities, reason);
+		
 //		player.stepHeight = 1.45f;
 		player.maxUpStep = this.stepHeight;
 	}
-
+	
 	@Override
-	public void disableAbility(Player player, MorphItem disabledItem)
+	public void disableAbility(Player player, MorphItem disabledItem, MorphItem newMorph, List<Ability> newAbilities, AbilityChangeReason reason)
 	{
+		super.disableAbility(player, disabledItem, newMorph, newAbilities, reason);
+		
 		player.maxUpStep = 0.6f;
 	}
 

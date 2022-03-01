@@ -5,17 +5,17 @@ import java.util.ArrayList;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.sounds.SoundSource;
+import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class AttackYeetAbility extends AbstractEventAbility
+public class AttackYeetAbility extends Ability
 {	
 	public static final Codec<AttackYeetAbility> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(Codec.FLOAT.optionalFieldOf("yeet_amount", 1.0f).forGetter(AttackYeetAbility::getYeetAmount))
@@ -84,5 +84,11 @@ public class AttackYeetAbility extends AbstractEventAbility
 			delayedAttacks.clear();
 			lock = false;
 		}
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 }

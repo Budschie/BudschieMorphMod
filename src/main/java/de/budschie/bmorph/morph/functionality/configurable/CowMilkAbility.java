@@ -6,7 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.MorphItem;
-import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
+import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.codec_addition.AudioVisualEffect;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -16,7 +16,7 @@ import net.minecraft.world.item.Items;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class CowMilkAbility extends AbstractEventAbility
+public class CowMilkAbility extends Ability
 {
 	public static final Codec<CowMilkAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.INT.fieldOf("food_level_cost").forGetter(CowMilkAbility::getFoodLevelCost),
@@ -104,5 +104,11 @@ public class CowMilkAbility extends AbstractEventAbility
 	public Optional<AudioVisualEffect> getMilkedEntityEffect()
 	{
 		return milkedEntityEffect;
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 }

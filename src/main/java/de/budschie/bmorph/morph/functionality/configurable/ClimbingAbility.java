@@ -3,14 +3,14 @@ package de.budschie.bmorph.morph.functionality.configurable;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
+import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class ClimbingAbility extends AbstractEventAbility
+public class ClimbingAbility extends Ability
 {
 	public static final Codec<ClimbingAbility> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(Codec.FLOAT.optionalFieldOf("climbing_speed_acceleration", .1f).forGetter(ClimbingAbility::getClimbingSpeedAcceleration),
@@ -50,5 +50,11 @@ public class ClimbingAbility extends AbstractEventAbility
 				player.setDeltaMovement(new Vec3(toSet.x, Math.min(toSet.y, getMaxClimbingSpeed()), toSet.z));
 			}
 		}
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 }

@@ -10,6 +10,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityHandler;
 import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityInstance;
 import de.budschie.bmorph.morph.MorphItem;
+import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.StunAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import de.budschie.bmorph.util.SoundInstance;
@@ -19,7 +20,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -138,25 +138,7 @@ public class PufferfishAbility extends StunAbility
 			}
 		}
 	}
-	
-	@Override
-	public void onRegister()
-	{
-		MinecraftForge.EVENT_BUS.register(this);
-	}
-	
-	@Override
-	public void onUnregister()
-	{
-		MinecraftForge.EVENT_BUS.unregister(this);
-	}
-	
-	@Override
-	public void enableAbility(Player player, MorphItem enabledItem)
-	{
-		trackedPlayers.add(player.getUUID());
-	}
-	
+		
 	@Override
 	public void onUsedAbility(Player player, MorphItem currentMorph)
 	{		
@@ -170,12 +152,19 @@ public class PufferfishAbility extends StunAbility
 	}
 	
 	@Override
-	public void disableAbility(Player player, MorphItem disabledItem)
+	public void disableAbility(Player player, MorphItem disabledItem, MorphItem newMorph, List<Ability> newAbilities, AbilityChangeReason reason)
 	{
+		super.disableAbility(player, disabledItem, newMorph, newAbilities, reason);
+		
 		player.getCapability(PufferfishCapabilityInstance.PUFFER_CAP).ifPresent(cap ->
 		{
 			cap.puff(0);
 		});
-		trackedPlayers.remove(player.getUUID());
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 }

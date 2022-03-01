@@ -1,5 +1,7 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
+import java.util.List;
+
 import com.mojang.serialization.Codec;
 
 import de.budschie.bmorph.morph.MorphItem;
@@ -16,14 +18,18 @@ public class MobAttackAbility extends Ability
 	**/
 	
 	@Override
-	public void enableAbility(Player player, MorphItem enabledItem)
+	public void enableAbility(Player player, MorphItem enabledItem, MorphItem oldMorph, List<Ability> oldAbilities, AbilityChangeReason reason)
 	{
+		super.enableAbility(player, enabledItem, oldMorph, oldAbilities, reason);
+		
 		MorphUtil.processCap(player, cap -> cap.setMobAttack(true));
 	}
-
+	
 	@Override
-	public void disableAbility(Player player, MorphItem disabledItem)
+	public void disableAbility(Player player, MorphItem disabledItem, MorphItem newMorph, List<Ability> newAbilities, AbilityChangeReason reason)
 	{
+		super.disableAbility(player, disabledItem, newMorph, newAbilities, reason);
+		
 		MorphUtil.processCap(player, cap -> cap.setMobAttack(false));
 	}
 }

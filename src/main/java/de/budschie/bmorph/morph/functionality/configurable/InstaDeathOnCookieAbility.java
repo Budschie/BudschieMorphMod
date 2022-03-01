@@ -3,7 +3,7 @@ package de.budschie.bmorph.morph.functionality.configurable;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
+import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.network.chat.TextComponent;
@@ -15,7 +15,7 @@ import net.minecraft.world.item.Items;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class InstaDeathOnCookieAbility extends AbstractEventAbility
+public class InstaDeathOnCookieAbility extends Ability
 {
 	public static final Codec<InstaDeathOnCookieAbility> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(Codec.BOOL.optionalFieldOf("painful", false).forGetter(InstaDeathOnCookieAbility::isPainfulDeath))
@@ -66,5 +66,11 @@ public class InstaDeathOnCookieAbility extends AbstractEventAbility
 				}
 			}
 		}
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 }

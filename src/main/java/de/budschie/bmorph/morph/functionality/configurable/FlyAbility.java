@@ -1,17 +1,19 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
+import java.util.List;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.MorphItem;
-import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
+import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class FlyAbility extends AbstractEventAbility
+public class FlyAbility extends Ability
 {
 	public static final Codec<FlyAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.FLOAT.optionalFieldOf("flying_speed", 0.05f).forGetter(FlyAbility::getFlyingSpeed))
@@ -25,17 +27,19 @@ public class FlyAbility extends AbstractEventAbility
 	}
 	
 	@Override
-	public void enableAbility(Player player, MorphItem enabledItem)
+	public void enableAbility(Player player, MorphItem enabledItem, MorphItem oldMorph, List<Ability> oldAbilities, AbilityChangeReason reason)
 	{
-		super.enableAbility(player, enabledItem);
-
+		super.enableAbility(player, enabledItem, oldMorph, oldAbilities, reason);
+		
 		player.getAbilities().mayfly = true;
 		player.getAbilities().setFlyingSpeed(flyingSpeed);
 	}
-
+	
 	@Override
-	public void disableAbility(Player player, MorphItem disabledItem)
+	public void disableAbility(Player player, MorphItem disabledItem, MorphItem newMorph, List<Ability> newAbilities, AbilityChangeReason reason)
 	{
+		super.disableAbility(player, disabledItem, newMorph, newAbilities, reason);
+		
 		if(!player.isCreative() && !player.isSpectator())
 		{
 			player.getAbilities().mayfly = false;
@@ -43,8 +47,6 @@ public class FlyAbility extends AbstractEventAbility
 		}
 		
 		player.getAbilities().setFlyingSpeed(0.05f);
-
-		super.disableAbility(player, disabledItem);
 	}
 	
 	@SubscribeEvent
@@ -75,5 +77,11 @@ public class FlyAbility extends AbstractEventAbility
 	public float getFlyingSpeed()
 	{
 		return flyingSpeed;
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 }

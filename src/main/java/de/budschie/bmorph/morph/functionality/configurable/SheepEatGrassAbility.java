@@ -1,8 +1,6 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -16,7 +14,6 @@ import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import de.budschie.bmorph.util.SoundInstance;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -29,7 +26,6 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvi
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -46,8 +42,6 @@ public class SheepEatGrassAbility extends StunAbility
 			Codec.INT.fieldOf("gain_food_level").forGetter(SheepEatGrassAbility::getGainFoodLevel),
 			Codec.FLOAT.fieldOf("gain_saturation").forGetter(SheepEatGrassAbility::getGainSaturation))
 	.apply(instance, SheepEatGrassAbility::new));
-
-	private HashSet<UUID> trackedPlayers = new HashSet<>();
 	
 	private SoundInstance shearSound;
 	private SoundInstance consumeGrassSound;
@@ -69,35 +63,6 @@ public class SheepEatGrassAbility extends StunAbility
 		
 		this.gainFoodLevel = gainFoodLevel;
 		this.gainSaturation = gainSaturation;
-	}
-	
-	@Override
-	public void enableAbility(Player player, MorphItem enabledItem)
-	{
-		trackedPlayers.add(player.getUUID());
-	}
-	
-	@Override
-	public void disableAbility(Player player, MorphItem disabledItem)
-	{
-		trackedPlayers.remove(player.getUUID());
-	}
-	
-	@Override
-	public void onRegister()
-	{
-		MinecraftForge.EVENT_BUS.register(this);
-	}
-	
-	@Override
-	public void onUnregister()
-	{
-		MinecraftForge.EVENT_BUS.unregister(this);
-	}
-	
-	public boolean isTracked(Entity entity)
-	{
-		return trackedPlayers.contains(entity.getUUID());
 	}
 	
 	@SubscribeEvent
@@ -220,5 +185,11 @@ public class SheepEatGrassAbility extends StunAbility
 	public float getGainSaturation()
 	{
 		return gainSaturation;
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 }

@@ -3,13 +3,13 @@ package de.budschie.bmorph.morph.functionality.configurable;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
+import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class WaterDislikeAbility extends AbstractEventAbility
+public class WaterDislikeAbility extends Ability
 {
 	public static final Codec<WaterDislikeAbility> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(Codec.FLOAT.optionalFieldOf("damage_amount", 1.0f).forGetter(WaterDislikeAbility::getDamageAmount))
@@ -38,5 +38,11 @@ public class WaterDislikeAbility extends AbstractEventAbility
 				event.player.hurt(DamageSource.DROWN, damageAmount);
 			}
 		}
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 }

@@ -8,12 +8,11 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.json_integration.NBTPath;
-import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
+import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.codec_addition.AudioVisualEffect;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import de.budschie.bmorph.morph.functionality.data_transformers.DataTransformer;
 import de.budschie.bmorph.util.EntityUtil;
-import de.budschie.bmorph.util.SoundInstance;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -21,7 +20,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class TransformEntityOnDeath extends AbstractEventAbility
+public class TransformEntityOnDeath extends Ability
 {	
 	public static Codec<TransformEntityOnDeath> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			ModCodecs.ENTITIES.fieldOf("transform_from").forGetter(TransformEntityOnDeath::getEntityToTransformFrom),
@@ -130,6 +129,12 @@ public class TransformEntityOnDeath extends AbstractEventAbility
 	public Optional<AudioVisualEffect> getTransformerEntityEffect()
 	{
 		return transformerAudioVisualEffect;
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 
 	public static class NbtMappings

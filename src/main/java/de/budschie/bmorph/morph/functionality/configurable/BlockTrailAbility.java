@@ -3,7 +3,7 @@ package de.budschie.bmorph.morph.functionality.configurable;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
+import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -14,7 +14,7 @@ import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 
-public class BlockTrailAbility extends AbstractEventAbility
+public class BlockTrailAbility extends Ability
 {
 	public static final Codec<BlockTrailAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BlockStateProvider.CODEC.fieldOf("trail_block").forGetter(BlockTrailAbility::getTrailBlock),
@@ -68,5 +68,11 @@ public class BlockTrailAbility extends AbstractEventAbility
 				player.level.setBlockAndUpdate(blockPos, trailBlock.getState(player.getRandom(), blockPos));
 			}
 		}
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 }

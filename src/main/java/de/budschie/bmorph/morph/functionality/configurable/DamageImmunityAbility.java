@@ -3,12 +3,12 @@ package de.budschie.bmorph.morph.functionality.configurable;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
+import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class DamageImmunityAbility extends AbstractEventAbility
+public class DamageImmunityAbility extends Ability
 {
 	public static final Codec<DamageImmunityAbility> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(Codec.STRING.fieldOf("immune_to_damage").forGetter(DamageImmunityAbility::getImmuneTo))
@@ -33,5 +33,11 @@ public class DamageImmunityAbility extends AbstractEventAbility
 		{
 			event.setCanceled(true);
 		}
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 }

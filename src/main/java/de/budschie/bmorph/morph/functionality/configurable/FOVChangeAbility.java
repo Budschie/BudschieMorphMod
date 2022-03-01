@@ -3,11 +3,11 @@ package de.budschie.bmorph.morph.functionality.configurable;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
+import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraftforge.client.event.FOVModifierEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class FOVChangeAbility extends AbstractEventAbility
+public class FOVChangeAbility extends Ability
 {
 	public static Codec<FOVChangeAbility> CODEC = RecordCodecBuilder.create(instance -> instance
 			.group(Codec.FLOAT.fieldOf("fov_change_multiplier").forGetter(FOVChangeAbility::getAmount))
@@ -30,5 +30,11 @@ public class FOVChangeAbility extends AbstractEventAbility
 	{
 		if(isTracked(event.getEntity()))
 			event.setNewfov(event.getFov() * (event.getEntity().isSprinting() ? amount : 1));
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 }

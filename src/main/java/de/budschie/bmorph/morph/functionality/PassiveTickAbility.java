@@ -12,7 +12,7 @@ import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class PassiveTickAbility extends AbstractEventAbility 
+public class PassiveTickAbility extends Ability 
 {
 	private int updateDuration = 0;
 	private int lastUpdate = 0;
@@ -57,5 +57,11 @@ public class PassiveTickAbility extends AbstractEventAbility
 				}
 			}
 		}
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 }

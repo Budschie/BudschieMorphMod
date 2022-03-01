@@ -15,7 +15,6 @@ import de.budschie.bmorph.capabilities.phantom_glide.IGlideCapability;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.morph.functionality.Ability;
-import de.budschie.bmorph.morph.functionality.AbstractEventAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -31,7 +30,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 // 2. After gliding, stay in the air on the same y level
 // 3. Glide
 // 4. Repeat
-public class PhantomAbility extends AbstractEventAbility
+public class PhantomAbility extends Ability
 {
 	public static final Codec<PhantomAbility> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Codec.FLOAT.fieldOf("charging_speed").forGetter(PhantomAbility::getChargingSpeed),
@@ -80,9 +79,9 @@ public class PhantomAbility extends AbstractEventAbility
 	}
 	
 	@Override
-	public void enableAbility(Player player, MorphItem enabledItem)
+	public void enableAbility(Player player, MorphItem enabledItem, MorphItem oldMorph, List<Ability> oldAbilities, AbilityChangeReason reason)
 	{
-		super.enableAbility(player, enabledItem);
+		super.enableAbility(player, enabledItem, oldMorph, oldAbilities, reason);
 		
 		player.getCapability(GlideCapabilityInstance.GLIDE_CAP).ifPresent(cap ->
 		{
@@ -257,5 +256,11 @@ public class PhantomAbility extends AbstractEventAbility
 	public int getTransitionTicks()
 	{
 		return transitionTicks;
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 }
