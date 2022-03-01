@@ -1,5 +1,6 @@
 package de.budschie.bmorph.events;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -115,7 +116,7 @@ public class Events
 				cap.resolve().get().syncWithClients(player);
 				
 				cap.resolve().get().applyHealthOnPlayer(player);
-				cap.resolve().get().applyAbilities(player);
+				cap.resolve().get().applyAbilities(player, null, Arrays.asList());
 				
 				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Post(player, cap.resolve().get(), cap.resolve().get().getCurrentMorph().orElse(null)));
 				
@@ -350,7 +351,7 @@ public class Events
 				
 				resolved.syncWithClients(event.getPlayer());
 				resolved.applyHealthOnPlayer(event.getPlayer());
-				resolved.applyAbilities(event.getPlayer());
+				resolved.applyAbilities(event.getPlayer(), null, Arrays.asList());
 			}
 		}
 	}
@@ -368,7 +369,7 @@ public class Events
 			{
 				IMorphCapability resolved = cap.resolve().get();
 				
-				resolved.deapplyAbilities(player);
+				resolved.deapplyAbilities(player, null, Arrays.asList());
 				
 				if(!ServerSetup.server.getGameRules().getBoolean(BMorphMod.KEEP_MORPH_INVENTORY))
 				{

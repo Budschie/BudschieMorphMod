@@ -2,6 +2,8 @@ package de.budschie.bmorph.morph;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -79,7 +81,14 @@ public class MorphUtil
 			
 			if(!(isCanceled && !force))
 			{
-				resolved.deapplyAbilities(player);
+				List<Ability> newAbilities = null;
+				List<Ability> oldAbilities = resolved.getCurrentAbilities();
+				MorphItem oldMorphItem = resolved.getCurrentMorph().orElse(null);
+				
+				if(aboutToMorphTo != null)
+					newAbilities = Events.MORPH_ABILITY_MANAGER.getAbilitiesFor(aboutToMorphTo);
+				
+				resolved.deapplyAbilities(player, aboutToMorphTo, newAbilities == null ? Arrays.asList() : newAbilities);
 				
 				if(morphIndex.isPresent())
 					resolved.setMorph(morphIndex.get());
@@ -89,12 +98,10 @@ public class MorphUtil
 					resolved.demorph();
 				
 				//resolved.getCurrentMorph().ifPresentOrElse(morph -> resolved.setCurrentAbilities(AbilityLookupTableHandler.getAbilitiesFor(morph)), () -> resolved.setCurrentAbilities(new ArrayList<>()));
-				if(resolved.getCurrentMorph().isPresent())
-					resolved.setCurrentAbilities(Events.MORPH_ABILITY_MANAGER.getAbilitiesFor(resolved.getCurrentMorph().get()));
-				else
-					resolved.setCurrentAbilities(null);
 				
-				resolved.applyAbilities(player);
+				resolved.setCurrentAbilities(newAbilities);
+				
+				resolved.applyAbilities(player, oldMorphItem, oldAbilities == null ? Arrays.asList() : oldAbilities);
 				resolved.syncMorphChange(player);
 				resolved.applyHealthOnPlayer(player);
 				
@@ -114,7 +121,10 @@ public class MorphUtil
 			{
 				IMorphCapability resolved = cap.resolve().get();
 				
-				MorphItem aboutToMorphTo = null;					
+				MorphItem aboutToMorphTo = null;
+				
+				List<Ability> oldAbilities = resolved.getCurrentAbilities();
+				MorphItem oldMorphItem = resolved.getCurrentMorph().orElse(null);
 				
 				if(morphItem.isPresent())
 					aboutToMorphTo = morphItem.get();
@@ -135,15 +145,6 @@ public class MorphUtil
 					synchronizersOld.clear();
 				}
 				
-				resolved.deapplyAbilities(player);
-				
-				if(morphIndex.isPresent())
-					resolved.setMorph(morphIndex.get());
-				else if(morphItem.isPresent())
-					resolved.setMorph(morphItem.get());
-				else
-					resolved.demorph();
-				
 				ArrayList<Ability> resolvedAbilities = new ArrayList<>();
 				
 				// IForgeRegistry<Ability> registry = GameRegistry.findRegistry(Ability.class);
@@ -161,6 +162,15 @@ public class MorphUtil
 						resolvedAbilities.add(foundAbility);
 				}
 				
+				resolved.deapplyAbilities(player, aboutToMorphTo, resolvedAbilities);
+				
+				if(morphIndex.isPresent())
+					resolved.setMorph(morphIndex.get());
+				else if(morphItem.isPresent())
+					resolved.setMorph(morphItem.get());
+				else
+					resolved.demorph();
+					
 				MorphItem javaSucks = aboutToMorphTo;
 				
 				resolved.setCurrentAbilities(resolvedAbilities);
@@ -168,7 +178,7 @@ public class MorphUtil
 				// Create entity right before we apply the abilities
 				DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> RenderHandler.onBuildNewEntity(player, resolved, javaSucks));
 				
-				resolved.applyAbilities(player);
+				resolved.applyAbilities(player, oldMorphItem, oldAbilities == null ? Arrays.asList() : oldAbilities);
 				
 				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Client.Post(player, resolved, aboutToMorphTo));
 				

@@ -11,6 +11,7 @@ import de.budschie.bmorph.morph.FavouriteList;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
 import de.budschie.bmorph.morph.functionality.Ability;
+import de.budschie.bmorph.morph.functionality.Ability.AbilityChangeReason;
 import de.budschie.bmorph.network.AdditionalAbilitySynchronization;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.network.MorphAddedSynchronizer;
@@ -261,7 +262,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	}
 
 	@Override
-	public void applyAbilities(Player player)
+	public void applyAbilities(Player player, MorphItem oldMorphItem, List<Ability> oldAbilities)
 	{
 		// This could be solved more efficiently, but I am not in the mood to do that, so I rely on quick, dirty and memory inefficient ways instead :kekw:
 //		if(getCurrentAbilities() != null && getCurrentMorph().isPresent())
@@ -274,18 +275,18 @@ public class DefaultMorphCapability implements IMorphCapability
 		if(getCurrentAbilities() != null && getCurrentMorph().isPresent())
 		{
 			currentAbilities.lock();
-			currentAbilities.getList().forEach(ability -> ability.enableAbility(player, getCurrentMorph().get()));
+			currentAbilities.getList().forEach(ability -> ability.enableAbility(player, getCurrentMorph().get(), oldMorphItem, oldAbilities, AbilityChangeReason.MORPHED));
 			currentAbilities.unlock();
 		}
 	}
 
 	@Override
-	public void deapplyAbilities(Player player)
+	public void deapplyAbilities(Player player, MorphItem aboutToMorphTo, List<Ability> newAbilities)
 	{
 		if(getCurrentAbilities() != null)
 		{
 			currentAbilities.lock();
-			currentAbilities.getList().forEach(ability -> ability.disableAbility(player, getCurrentMorph().get()));
+			currentAbilities.getList().forEach(ability -> ability.disableAbility(player, getCurrentMorph().get(), aboutToMorphTo, newAbilities, AbilityChangeReason.MORPHED));
 			currentAbilities.unlock();
 		}
 	}
@@ -349,6 +350,7 @@ public class DefaultMorphCapability implements IMorphCapability
 		this.mobAttack = value;
 	}
 
+	/** Invokes a dynamic addition of an ability. **/
 	@Override
 	public void applyAbility(Player player, Ability ability)
 	{
@@ -357,9 +359,10 @@ public class DefaultMorphCapability implements IMorphCapability
 		else
 			currentAbilities.safeAdd(ability);
 		
-		ability.enableAbility(player, getCurrentMorph().orElse(null));
+		ability.enableAbility(player, getCurrentMorph().orElse(null), null, Arrays.asList(), AbilityChangeReason.DYNAMIC);
 	}
 
+	/** Invokes a dynamic removal of an ability. **/
 	@Override
 	public void deapplyAbility(Player player, Ability ability)
 	{
@@ -367,7 +370,7 @@ public class DefaultMorphCapability implements IMorphCapability
 		{
 			currentAbilities.safeRemove(ability);
 			
-			ability.disableAbility(player, getCurrentMorph().orElse(null));
+			ability.disableAbility(player, getCurrentMorph().orElse(null), null, Arrays.asList(), AbilityChangeReason.DYNAMIC);
 		}
 	}
 }

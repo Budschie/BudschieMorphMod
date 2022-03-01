@@ -86,9 +86,9 @@ public interface IMorphCapability
 	public void setCurrentAbilities(List<Ability> abilities);
 	
 	/** This applies abilities, meaning that we iterate over the list of abilities and call the apply method on them. **/
-	public void applyAbilities(Player player);
+	public void applyAbilities(Player player, MorphItem oldMorphItem, List<Ability> oldAbilities);
 	/** This method deapplies all abilities by once again iterating over every old ability and deapplying it. **/
-	public void deapplyAbilities(Player player);
+	public void deapplyAbilities(Player player, MorphItem aboutToMorphTo, List<Ability> newAbilities);
 	
 	/** This method adds a single ability to the list of abilities and enables it. **/
 	public void applyAbility(Player player, Ability ability);
