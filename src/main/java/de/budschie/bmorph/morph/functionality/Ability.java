@@ -38,6 +38,9 @@ public abstract class Ability implements IDynamicRegistryObject
 	public void enableAbility(Player player, MorphItem enabledItem) { }
 	
 	/**
+	 * If you plan on overriding this method, you will NEED to call the super method
+	 * as this method actually contains some code by default
+	 * 
 	 * Called when an ability is added to a player.
 	 * 
 	 * @param player       This is the player to which this ability was added.
@@ -70,6 +73,9 @@ public abstract class Ability implements IDynamicRegistryObject
 	public void disableAbility(Player player, MorphItem disabledItem) {}
 	
 	/**
+	 * If you plan on overriding this method, you will NEED to call the super method
+	 * as this method actually contains some code by default
+	 * 
 	 * Called when an ability is removed from a player.
 	 * 
 	 * @param player       This is the player from which this ability was removed.
@@ -93,6 +99,9 @@ public abstract class Ability implements IDynamicRegistryObject
 	public void onUsedAbility(Player player, MorphItem currentMorph) {}
 	
 	/**
+	 * If you plan on overriding this method, you will NEED to call the super method
+	 * as this method actually contains some code by default
+	 * 
 	 * This method gets invoked once when an instance of this ability gets
 	 * registered. An example use case of this would be in
 	 * {@link AbstractEventAbility}. Here, this method is used to register this
@@ -108,8 +117,10 @@ public abstract class Ability implements IDynamicRegistryObject
 	}
 	
 	/**
-	 * This method is like {@link Ability#onRegister()}, except it is called when
-	 * this ability is removed from the dynamic registry.
+	 * If you plan on overriding this method, you will NEED to call the super method
+	 * as this method actually contains some code by default This method is like
+	 * {@link Ability#onRegister()}, except it is called when this ability is
+	 * removed from the dynamic registry.
 	 **/
 	public void onUnregister() 
 	{
