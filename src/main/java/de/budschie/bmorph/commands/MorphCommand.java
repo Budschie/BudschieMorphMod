@@ -164,7 +164,7 @@ public class MorphCommand
 				entity.sendMessage(new TextComponent("Added " + rs.toString() + " with its NBT data to your morph list."), new UUID(0, 0));
 				
 				capability.addToMorphList(morphItemToAdd);
-				capability.syncMorphAcquisition(entity, morphItemToAdd);
+				capability.syncMorphAcquisition(morphItemToAdd);
 			}
 		}
 		

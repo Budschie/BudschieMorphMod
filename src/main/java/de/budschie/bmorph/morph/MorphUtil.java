@@ -88,7 +88,7 @@ public class MorphUtil
 				if(aboutToMorphTo != null)
 					newAbilities = Events.MORPH_ABILITY_MANAGER.getAbilitiesFor(aboutToMorphTo);
 				
-				resolved.deapplyAbilities(player, aboutToMorphTo, newAbilities == null ? Arrays.asList() : newAbilities);
+				resolved.deapplyAbilities(aboutToMorphTo, newAbilities == null ? Arrays.asList() : newAbilities);
 				
 				if(morphIndex.isPresent())
 					resolved.setMorph(morphIndex.get());
@@ -101,9 +101,9 @@ public class MorphUtil
 				
 				resolved.setCurrentAbilities(newAbilities);
 				
-				resolved.applyAbilities(player, oldMorphItem, oldAbilities == null ? Arrays.asList() : oldAbilities);
-				resolved.syncMorphChange(player);
-				resolved.applyHealthOnPlayer(player);
+				resolved.applyAbilities(oldMorphItem, oldAbilities == null ? Arrays.asList() : oldAbilities);
+				resolved.syncMorphChange();
+				resolved.applyHealthOnPlayer();
 				
 				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Post(player, resolved, aboutToMorphTo));
 			}
@@ -162,7 +162,7 @@ public class MorphUtil
 						resolvedAbilities.add(foundAbility);
 				}
 				
-				resolved.deapplyAbilities(player, aboutToMorphTo, resolvedAbilities);
+				resolved.deapplyAbilities(aboutToMorphTo, resolvedAbilities);
 				
 				if(morphIndex.isPresent())
 					resolved.setMorph(morphIndex.get());
@@ -178,7 +178,7 @@ public class MorphUtil
 				// Create entity right before we apply the abilities
 				DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> RenderHandler.onBuildNewEntity(player, resolved, javaSucks));
 				
-				resolved.applyAbilities(player, oldMorphItem, oldAbilities == null ? Arrays.asList() : oldAbilities);
+				resolved.applyAbilities(oldMorphItem, oldAbilities == null ? Arrays.asList() : oldAbilities);
 				
 				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Client.Post(player, resolved, aboutToMorphTo));
 				

@@ -34,7 +34,7 @@ public class MorphRequestAbilityUsage implements ISimpleImplPacket<MorphRequestA
 			{
 				IMorphCapability resolved = cap.resolve().get();
 				
-				resolved.useAbility(ctx.get().getSender());
+				resolved.useAbility();
 				
 				ctx.get().setPacketHandled(true);
 			}

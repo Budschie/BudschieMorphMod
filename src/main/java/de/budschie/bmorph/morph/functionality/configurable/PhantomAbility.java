@@ -65,7 +65,7 @@ public class PhantomAbility extends Ability
 		MorphUtil.processCap(player, cap ->
 		{
 			for(LazyOptional<Ability> ability : glidingAbilities)
-				ability.ifPresent(resolved -> cap.applyAbility(player, resolved));
+				ability.ifPresent(resolved -> cap.applyAbility(resolved));
 		});
 	}
 	
@@ -74,7 +74,7 @@ public class PhantomAbility extends Ability
 		MorphUtil.processCap(player, cap ->
 		{
 			for(LazyOptional<Ability> ability : glidingAbilities)
-				ability.ifPresent(resolved -> cap.deapplyAbility(player, resolved));
+				ability.ifPresent(resolved -> cap.deapplyAbility(resolved));
 		});
 	}
 	

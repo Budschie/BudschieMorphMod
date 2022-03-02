@@ -97,7 +97,7 @@ public class MorphEntity extends Entity
 								if(this.entityData.get(MORPH_ITEM).isAllowedToPickUp(player) && !resolvedCaps.getMorphList().contains(getMorphItem()))
 								{
 									resolvedCaps.getMorphList().addToMorphList(getMorphItem());
-									resolvedCaps.syncMorphAcquisition(player, getMorphItem());
+									resolvedCaps.syncMorphAcquisition(getMorphItem());
 									this.remove(RemovalReason.DISCARDED);
 									
 									this.level.playSound(null, blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.AMBIENT, 2, (this.random.nextFloat() - 0.5f) + 1);

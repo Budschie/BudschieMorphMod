@@ -113,10 +113,10 @@ public class Events
 //				ServerSetup.server.getPlayerList().getPlayers().forEach(serverPlayer -> cap.resolve().get().syncWithClient(event.getPlayer(), serverPlayer));
 //				ServerSetup.server.getPlayerList().getPlayers().forEach(serverPlayer -> cap.resolve().get().syncWithClient(serverPlayer, (ServerPlayerEntity) event.getPlayer()));
 				cap.resolve().get().getCurrentMorph().ifPresent(morph -> cap.resolve().get().setCurrentAbilities(MORPH_ABILITY_MANAGER.getAbilitiesFor(morph)));
-				cap.resolve().get().syncWithClients(player);
+				cap.resolve().get().syncWithClients();
 				
-				cap.resolve().get().applyHealthOnPlayer(player);
-				cap.resolve().get().applyAbilities(player, null, Arrays.asList());
+				cap.resolve().get().applyHealthOnPlayer();
+				cap.resolve().get().applyAbilities(null, Arrays.asList());
 				
 				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Post(player, cap.resolve().get(), cap.resolve().get().getCurrentMorph().orElse(null)));
 				
@@ -172,7 +172,7 @@ public class Events
 		if(event.getTarget() instanceof Player)
 		{
 			Player player = (Player) event.getTarget();
-			MorphUtil.processCap(player, resolved -> resolved.syncWithClient(player, (ServerPlayer) event.getPlayer()));
+			MorphUtil.processCap(player, resolved -> resolved.syncWithClient((ServerPlayer) event.getPlayer()));
 			
 			PufferfishCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 			GuardianBeamCapabilityHandler.INSTANCE.synchronizeWithClients(player);
@@ -300,7 +300,7 @@ public class Events
 		{
 			MorphUtil.processCap(event.getPlayer(), resolved ->
 			{
-				resolved.syncWithClients(event.getPlayer());
+				resolved.syncWithClients();
 			});
 		}
 	}
@@ -349,9 +349,9 @@ public class Events
 			{
 				IMorphCapability resolved = cap.resolve().get();
 				
-				resolved.syncWithClients(event.getPlayer());
-				resolved.applyHealthOnPlayer(event.getPlayer());
-				resolved.applyAbilities(event.getPlayer(), null, Arrays.asList());
+				resolved.syncWithClients();
+				resolved.applyHealthOnPlayer();
+				resolved.applyAbilities(null, Arrays.asList());
 			}
 		}
 	}
@@ -369,7 +369,7 @@ public class Events
 			{
 				IMorphCapability resolved = cap.resolve().get();
 				
-				resolved.deapplyAbilities(player, null, Arrays.asList());
+				resolved.deapplyAbilities(null, Arrays.asList());
 				
 				if(!ServerSetup.server.getGameRules().getBoolean(BMorphMod.KEEP_MORPH_INVENTORY))
 				{

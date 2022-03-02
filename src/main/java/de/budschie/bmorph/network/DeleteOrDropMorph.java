@@ -62,7 +62,7 @@ public class DeleteOrDropMorph implements ISimpleImplPacket<DeleteOrDropMorphPac
 					MorphUtil.morphToServer(Optional.empty(), Optional.empty(), ctx.get().getSender());
 				
 				cap.getMorphList().removeFromMorphList(packet.getIndex());
-				cap.syncMorphRemoval(ctx.get().getSender(), packet.getIndex());
+				cap.syncMorphRemoval(packet.getIndex());
 				
 				if(packet.shouldDrop())
 				{

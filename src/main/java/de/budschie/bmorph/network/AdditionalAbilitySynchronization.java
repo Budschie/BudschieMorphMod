@@ -85,11 +85,11 @@ public class AdditionalAbilitySynchronization implements ISimpleImplPacket<Addit
 						{
 							if(packet.add)
 							{
-								cap.applyAbility(player, ability);
+								cap.applyAbility(ability);
 							}
 							else
 							{
-								cap.deapplyAbility(player, ability);
+								cap.deapplyAbility(ability);
 							}
 						}
 						
