@@ -65,6 +65,8 @@ public class MorphCapabilityAttacher implements ICapabilitySerializable<Compound
 		
 		capTag.putInt("aggroDuration", Math.max(0, instance.getLastAggroDuration() - (ServerSetup.server.getTickCount() - instance.getLastAggroTimestamp())));
 		
+		capTag.put("savableAbilities", instance.serializeSavableAbilityData());
+		
 		return capTag;
 	}
 
@@ -92,5 +94,7 @@ public class MorphCapabilityAttacher implements ICapabilitySerializable<Compound
 		instance.getFavouriteList().deserialize(capTag.getCompound("favouriteList"));
 		
 		instance.setLastAggroDuration(capTag.getInt("aggroDuration"));
+		
+		instance.setAbilitySerializationContext(AbilitySerializationContext.deserialize(capTag.getCompound("savableAbilities")));
 	}
 }

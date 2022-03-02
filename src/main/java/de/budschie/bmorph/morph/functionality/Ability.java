@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.budschie.bmorph.capabilities.AbilitySerializationContext;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.configurable.ConfigurableAbility;
 import de.budschie.bmorph.util.IDynamicRegistryObject;
@@ -194,6 +195,27 @@ public abstract class Ability implements IDynamicRegistryObject
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Seerialize player-specific data of this ability in the given compound tag.
+	 * 
+	 * @param player               The player to whom this ability belongs.
+	 * @param context              This context can be used to retrieve the compound
+	 *                             tags to which this ability can be saved to.
+	 * @param canSaveTransientData Only save transient data if this flag is set to
+	 *                             {@code true} to avoid wasting unneccessary CPU
+	 *                             cycles.
+	 **/
+	public void serialize(Player player, AbilitySerializationContext context, boolean canSaveTransientData)
+	{
+		
+	}
+	
+	/** Load data for the specific player from the compound tag. **/
+	public void deserialize(Player player, AbilitySerializationContext context)
+	{
+		
 	}
 	
 	/**

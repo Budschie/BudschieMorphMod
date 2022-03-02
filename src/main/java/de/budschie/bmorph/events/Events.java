@@ -97,6 +97,7 @@ public class Events
 		event.register(IRenderDataCapability.class);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@SubscribeEvent
 	public static void onPlayerJoined(PlayerLoggedInEvent event)
 	{	

@@ -45,6 +45,20 @@ public class DefaultMorphCapability implements IMorphCapability
 	
 	LockableList<Ability> currentAbilities = new LockableList<>();
 	
+	AbilitySerializationContext context = new AbilitySerializationContext();
+	
+	@Override
+	public AbilitySerializationContext getAbilitySerializationContext()
+	{
+		return context;
+	}
+
+	@Override
+	public void setAbilitySerializationContext(AbilitySerializationContext context)
+	{
+		this.context = context;
+	}
+	
 	public DefaultMorphCapability(Player owner)
 	{
 		this.owner = owner;
@@ -289,7 +303,11 @@ public class DefaultMorphCapability implements IMorphCapability
 		if(getCurrentAbilities() != null && getCurrentMorph().isPresent())
 		{
 			currentAbilities.lock();
-			currentAbilities.getList().forEach(ability -> ability.enableAbility(getOwner(), getCurrentMorph().get(), oldMorphItem, oldAbilities, AbilityChangeReason.MORPHED));
+			currentAbilities.getList().forEach(ability ->
+			{
+				ability.deserialize(getOwner(), context);
+				ability.enableAbility(getOwner(), getCurrentMorph().get(), oldMorphItem, oldAbilities, AbilityChangeReason.MORPHED);
+			});
 			currentAbilities.unlock();
 		}
 	}
@@ -300,7 +318,11 @@ public class DefaultMorphCapability implements IMorphCapability
 		if(getCurrentAbilities() != null)
 		{
 			currentAbilities.lock();
-			currentAbilities.getList().forEach(ability -> ability.disableAbility(getOwner(), getCurrentMorph().get(), aboutToMorphTo, newAbilities, AbilityChangeReason.MORPHED));
+			currentAbilities.getList().forEach(ability ->
+			{
+				ability.serialize(getOwner(), context, false);
+				ability.disableAbility(getOwner(), getCurrentMorph().get(), aboutToMorphTo, newAbilities, AbilityChangeReason.MORPHED);
+			});
 			currentAbilities.unlock();
 		}
 	}
@@ -373,6 +395,8 @@ public class DefaultMorphCapability implements IMorphCapability
 		else
 			currentAbilities.safeAdd(ability);
 		
+		// Deserialize the ability and then enable it
+		ability.deserialize(getOwner(), context);
 		ability.enableAbility(getOwner(), getCurrentMorph().orElse(null), null, Arrays.asList(), AbilityChangeReason.DYNAMIC);
 	}
 
@@ -384,19 +408,31 @@ public class DefaultMorphCapability implements IMorphCapability
 		{
 			currentAbilities.safeRemove(ability);
 			
+			// Serialize the ability and then disable it. Transient data shall not be saved.
+			ability.serialize(owner, context, false);
 			ability.disableAbility(getOwner(), getCurrentMorph().orElse(null), null, Arrays.asList(), AbilityChangeReason.DYNAMIC);
+			context.clearTransientDataFor(ability);
 		}
 	}
 
 	@Override
 	public CompoundTag serializeSavableAbilityData()
-	{
-		return null;
+	{		
+		currentAbilities.lock();
+		
+		for(Ability ability : currentAbilities.getList())
+		{
+			ability.serialize(getOwner(), context, true);
+		}
+		
+		currentAbilities.unlock();
+		
+		return context.serialize();
 	}
 
 	@Override
 	public void deserializeSavableAbilityData(CompoundTag compoundTag)
 	{
-		
+		this.context = AbilitySerializationContext.deserialize(compoundTag);
 	}
 }

@@ -18,6 +18,17 @@ public interface IMorphCapability
 {
 	public Player getOwner();
 	
+	/**
+	 * Returns the {@link AbilitySerializationContext} which is used in
+	 * {@link IMorphCapability#serializeSavableAbilityData()} and
+	 * {@link IMorphCapability#deserializeSavableAbilityData(CompoundTag)} to save
+	 * and load ability data.
+	 **/
+	public AbilitySerializationContext getAbilitySerializationContext();
+	
+	/** Getter for the value returned in {@link IMorphCapability#getAbilitySerializationContext()} **/
+	public void setAbilitySerializationContext(AbilitySerializationContext context);
+	
 	/** Returns an optional with the current morph item. This optional will be empty, except when you are morphed with the /morph command. **/
 	public Optional<MorphItem> getCurrentMorphItem();
 	/** Returns an integer representing the current morph index of the morph item you are currently morphed in. Note that this does not apply to the /morph command. **/
