@@ -5,6 +5,8 @@ import java.util.List;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import de.budschie.bmorph.capabilities.AbilitySerializationContext;
+import de.budschie.bmorph.capabilities.AbilitySerializationContext.AbilitySerializationObject;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.world.entity.Pose;
@@ -83,6 +85,28 @@ public class FlyAbility extends Ability
 				if(!event.player.getAbilities().mayfly)
 					event.player.getAbilities().mayfly = true;
 			}
+		}
+	}
+	
+	@Override
+	public void serialize(Player player, AbilitySerializationContext context, boolean canSaveTransientData)
+	{
+		super.serialize(player, context, canSaveTransientData);
+		
+		if(canSaveTransientData)
+			context.getOrCreateSerializationObjectForAbility(this).createTransientTag().putBoolean("player_flying", player.getAbilities().flying);
+	}
+	
+	@Override
+	public void deserialize(Player player, AbilitySerializationContext context)
+	{
+		super.deserialize(player, context);
+		
+		AbilitySerializationObject object = context.getSerializationObjectForAbilityOrNull(this);
+		
+		if(object != null && object.getTransientTag().isPresent())
+		{
+			player.getAbilities().flying = player.getAbilities().flying || object.getTransientTag().get().getBoolean("player_flying");
 		}
 	}
 	
