@@ -5,6 +5,7 @@ import de.budschie.bmorph.network.AdditionalAbilitySynchronization.AdditionalAbi
 import de.budschie.bmorph.network.ConfiguredAbilitySynchronizer.ConfiguredAbilityPacket;
 import de.budschie.bmorph.network.DataTransformerSynchronizer.DataTransfomerSynchronizerPacket;
 import de.budschie.bmorph.network.DeleteOrDropMorph.DeleteOrDropMorphPacket;
+import de.budschie.bmorph.network.Flight.FlightPacket;
 import de.budschie.bmorph.network.GlideStatusChange.GlideStatusChangePacket;
 import de.budschie.bmorph.network.GuardianBeamAttack.GuardianBeamAttackPacket;
 import de.budschie.bmorph.network.MorphAddedSynchronizer.MorphAddedPacket;
@@ -55,6 +56,7 @@ public class MainNetworkChannel
 		registerSimpleImplPacket(ParrotDanceSyncPacket.class, new ParrotDanceSync());
 		registerSimpleImplPacket(MorphSheepShearedPacket.class, new MorphSheepSheared());
 		registerSimpleImplPacket(DataTransfomerSynchronizerPacket.class, new DataTransformerSynchronizer());
+		registerSimpleImplPacket(FlightPacket.class, new Flight());
 	}
 	
 	public static <T> void registerSimpleImplPacket(Class<T> packetClass, ISimpleImplPacket<T> packet)

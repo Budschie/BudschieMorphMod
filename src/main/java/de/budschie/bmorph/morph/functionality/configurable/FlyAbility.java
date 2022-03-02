@@ -9,11 +9,15 @@ import de.budschie.bmorph.capabilities.AbilitySerializationContext;
 import de.budschie.bmorph.capabilities.AbilitySerializationContext.AbilitySerializationObject;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
+import de.budschie.bmorph.network.Flight;
+import de.budschie.bmorph.network.MainNetworkChannel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.network.PacketDistributor;
 
 public class FlyAbility extends Ability
 {
@@ -104,9 +108,11 @@ public class FlyAbility extends Ability
 		
 		AbilitySerializationObject object = context.getSerializationObjectForAbilityOrNull(this);
 		
-		if(object != null && object.getTransientTag().isPresent())
+		if(object != null && object.getTransientTag().isPresent() && object.getTransientTag().get().contains("player_flying"))
 		{
 			player.getAbilities().flying = player.getAbilities().flying || object.getTransientTag().get().getBoolean("player_flying");
+			
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player), new Flight.FlightPacket(player.getAbilities().flying));
 		}
 	}
 	
