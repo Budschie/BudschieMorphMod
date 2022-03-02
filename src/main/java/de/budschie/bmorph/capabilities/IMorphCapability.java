@@ -9,12 +9,15 @@ import de.budschie.bmorph.morph.FavouriteList;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
 import de.budschie.bmorph.morph.functionality.Ability;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 public interface IMorphCapability
 {
+	public Player getOwner();
+	
 	/** Returns an optional with the current morph item. This optional will be empty, except when you are morphed with the /morph command. **/
 	public Optional<MorphItem> getCurrentMorphItem();
 	/** Returns an integer representing the current morph index of the morph item you are currently morphed in. Note that this does not apply to the /morph command. **/
@@ -43,7 +46,7 @@ public interface IMorphCapability
 	**/
 	public void demorph();
 	
-	public void applyHealthOnPlayer(Player player);
+	public void applyHealthOnPlayer();
 	
 	/**
 	 * By calling this method, you sync the capability data with every player that is tracking this player.
@@ -51,26 +54,26 @@ public interface IMorphCapability
 	 * change across every client. Use
 	 * {@link IMorphCapability#syncMorphChange(PlayerEntity)} to do this.
 	 **/
-	public void syncWithClients(Player player);
+	public void syncWithClients();
 	
 	/** This method is used to synchronize this capability with a specific target. **/
-	public void syncWithClient(Player player, ServerPlayer syncTo);
+	public void syncWithClient(ServerPlayer syncTo);
 	
 	/** This method is much like the method described above, just with an network manager as a target instead of a player as a target. **/
-	public void syncWithConnection(Player player, Connection connection);
+	public void syncWithConnection(Connection connection);
 	
 	/** This method synchronizes a morph change to all players. **/
-	public void syncMorphChange(Player player);
+	public void syncMorphChange();
 	/** This method synchronizes the acquisition of a morph to all players. **/
-	public void syncMorphAcquisition(Player player, MorphItem item);
+	public void syncMorphAcquisition(MorphItem item);
 	/** This method synchronizes the removal of a morph to all players. **/
-	public void syncMorphRemoval(Player player, int index);
+	public void syncMorphRemoval(int index);
 	
 	/** This method syncs the addition of one or more abilities. **/
-	public void syncAbilityAddition(Player player, Ability...abilities);
+	public void syncAbilityAddition(Ability...abilities);
 	
 	/** This method syncs the removal of one or more abilities. **/
-	public void syncAbilityRemoval(Player player, Ability...abilities);
+	public void syncAbilityRemoval(Ability...abilities);
 	
 	/** Returns the value of the flag mentioned in {@link IMorphCapability#setMobAttack(boolean)}. **/
 	public boolean shouldMobsAttack();
@@ -86,18 +89,31 @@ public interface IMorphCapability
 	public void setCurrentAbilities(List<Ability> abilities);
 	
 	/** This applies abilities, meaning that we iterate over the list of abilities and call the apply method on them. **/
-	public void applyAbilities(Player player, MorphItem oldMorphItem, List<Ability> oldAbilities);
+	public void applyAbilities(MorphItem oldMorphItem, List<Ability> oldAbilities);
 	/** This method deapplies all abilities by once again iterating over every old ability and deapplying it. **/
-	public void deapplyAbilities(Player player, MorphItem aboutToMorphTo, List<Ability> newAbilities);
+	public void deapplyAbilities(MorphItem aboutToMorphTo, List<Ability> newAbilities);
 	
 	/** This method adds a single ability to the list of abilities and enables it. **/
-	public void applyAbility(Player player, Ability ability);
+	public void applyAbility(Ability ability);
 	
 	/** This method searches for the given ability and removes + deapplies it when it was found. **/
-	public void deapplyAbility(Player player, Ability ability);
+	public void deapplyAbility(Ability ability);
 	
 	/** This will iterate over every ability and signal them that the button to use an ability has been pressed. **/
-	public void useAbility(Player player);
+	public void useAbility();
+	
+	/**
+	 * Calling this method will iterate over every currently active ability and try
+	 * to serialize data of said ability.
+	 * 
+	 * @return A compound that can be saved to disk.
+	 **/	
+	public CompoundTag serializeSavableAbilityData();
+	
+	/**
+	 * Calling this method will load all savable ability data.
+	 */
+	public void deserializeSavableAbilityData(CompoundTag compoundTag);
 	
 	// Aggro timestamps are measured in ints. Aggro timestamp => not saved, aggro duration => saved (indicates how long mobs will be aggro)
 	public int getLastAggroTimestamp();

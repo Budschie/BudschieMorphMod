@@ -19,6 +19,7 @@ import de.budschie.bmorph.network.MorphCapabilityFullSynchronizer;
 import de.budschie.bmorph.network.MorphChangedSynchronizer;
 import de.budschie.bmorph.network.MorphRemovedSynchronizer.MorphRemovedPacket;
 import de.budschie.bmorph.util.LockableList;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -29,6 +30,8 @@ import net.minecraftforge.network.PacketDistributor;
 
 public class DefaultMorphCapability implements IMorphCapability
 {
+	Player owner;
+	
 	boolean mobAttack = false;
 	
 	int aggroTimestamp = 0;
@@ -42,85 +45,96 @@ public class DefaultMorphCapability implements IMorphCapability
 	
 	LockableList<Ability> currentAbilities = new LockableList<>();
 	
-	@Override
-	public void syncWithClients(Player player)
+	public DefaultMorphCapability(Player owner)
 	{
-		if(player.level.isClientSide)
+		this.owner = owner;
+	}
+	
+	@Override
+	public Player getOwner()
+	{
+		return owner;
+	}
+	
+	@Override
+	public void syncWithClients()
+	{
+		if(getOwner().level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, favouriteList, serializeAbilities(), player.getUUID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> getOwner()), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, favouriteList, serializeAbilities(), getOwner().getUUID()));
 		}
 	}
 	
 	@Override
-	public void syncWithClient(Player player, ServerPlayer syncTo)
+	public void syncWithClient(ServerPlayer syncTo)
 	{
-		if(player.level.isClientSide)
+		if(getOwner().level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTo), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, favouriteList, serializeAbilities(), player.getUUID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTo), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, favouriteList, serializeAbilities(), getOwner().getUUID()));
 		}
 	}
 	
 	@Override
-	public void syncWithConnection(Player player, Connection connection)
+	public void syncWithConnection(Connection connection)
 	{
-		if(player.level.isClientSide)
+		if(getOwner().level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.NMLIST.with(() -> Lists.newArrayList(connection)), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, favouriteList, serializeAbilities(), player.getUUID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.NMLIST.with(() -> Lists.newArrayList(connection)), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, favouriteList, serializeAbilities(), getOwner().getUUID()));
 		}
 	}
 	
 	@Override
-	public void syncMorphChange(Player player)
+	public void syncMorphChange()
 	{
-		if(player.level.isClientSide)
+		if(getOwner().level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphChangedSynchronizer.MorphChangedPacket(player.getUUID(), currentMorphIndex, morph, serializeAbilities()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphChangedSynchronizer.MorphChangedPacket(getOwner().getUUID(), currentMorphIndex, morph, serializeAbilities()));
 	}
 
 	@Override
-	public void syncMorphAcquisition(Player player, MorphItem item)
+	public void syncMorphAcquisition(MorphItem item)
 	{
-		if(player.level.isClientSide)
+		if(getOwner().level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player), new MorphAddedSynchronizer.MorphAddedPacket(player.getUUID(), item));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)getOwner()), new MorphAddedSynchronizer.MorphAddedPacket(getOwner().getUUID(), item));
 	}
 
 	@Override
-	public void syncMorphRemoval(Player player, int index)
+	public void syncMorphRemoval(int index)
 	{
-		if(player.level.isClientSide)
+		if(getOwner().level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player), new MorphRemovedPacket(player.getUUID(), index));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)getOwner()), new MorphRemovedPacket(getOwner().getUUID(), index));
 	}
 	
 	@Override
-	public void syncAbilityAddition(Player player, Ability... abilities)
+	public void syncAbilityAddition(Ability... abilities)
 	{
-		if(player.level.isClientSide)
+		if(getOwner().level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new AdditionalAbilitySynchronization.AdditionalAbilitySynchronizationPacket(player.getUUID(), true, abilities));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> getOwner()), new AdditionalAbilitySynchronization.AdditionalAbilitySynchronizationPacket(getOwner().getUUID(), true, abilities));
 		}
 	}
 
 	@Override
-	public void syncAbilityRemoval(Player player, Ability... abilities)
+	public void syncAbilityRemoval(Ability... abilities)
 	{
-		if(player.level.isClientSide)
+		if(getOwner().level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new AdditionalAbilitySynchronization.AdditionalAbilitySynchronizationPacket(player.getUUID(), false, abilities));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> getOwner()), new AdditionalAbilitySynchronization.AdditionalAbilitySynchronizationPacket(getOwner().getUUID(), false, abilities));
 		}
 	}
 	
@@ -170,32 +184,32 @@ public class DefaultMorphCapability implements IMorphCapability
 	}
 
 	@Override
-	public void applyHealthOnPlayer(Player player)
+	public void applyHealthOnPlayer()
 	{
 		// Not really implemented yet...
-		float playerHealthPercentage = player.getHealth() / player.getMaxHealth();
+		float playerHealthPercentage = getOwner().getHealth() / getOwner().getMaxHealth();
 		
 		if(!getCurrentMorph().isPresent())
 		{
-			player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20);
-			player.setHealth(20f * playerHealthPercentage);
+			getOwner().getAttribute(Attributes.MAX_HEALTH).setBaseValue(20);
+			getOwner().setHealth(20f * playerHealthPercentage);
 		}
 		else
 		{
 			// xD why is this a legal identifier
-			Entity thisisnotveryperformantoranythinglikethisbutidontcarealsothisnameisverystupidsoidkmaybeishouldhchangethislaterbutontheotherhandthisisalsobtwyouhavejustfoundaneasteregginmycode = getCurrentMorph().get().createEntity(player.level);
+			Entity thisisnotveryperformantoranythinglikethisbutidontcarealsothisnameisverystupidsoidkmaybeishouldhchangethislaterbutontheotherhandthisisalsobtwyouhavejustfoundaneasteregginmycode = getCurrentMorph().get().createEntity(getOwner().level);
 			
 			if(thisisnotveryperformantoranythinglikethisbutidontcarealsothisnameisverystupidsoidkmaybeishouldhchangethislaterbutontheotherhandthisisalsobtwyouhavejustfoundaneasteregginmycode instanceof LivingEntity)
 			{
 				float maxHealthOfEntity = ((LivingEntity)thisisnotveryperformantoranythinglikethisbutidontcarealsothisnameisverystupidsoidkmaybeishouldhchangethislaterbutontheotherhandthisisalsobtwyouhavejustfoundaneasteregginmycode).getMaxHealth();
-				player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHealthOfEntity);
-				player.setHealth(maxHealthOfEntity * playerHealthPercentage);
+				getOwner().getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHealthOfEntity);
+				getOwner().setHealth(maxHealthOfEntity * playerHealthPercentage);
 			}
 			else
 			{
 				// This is some bad copy pasta right here, which is f*cking bad, but i dont wanna think right now
-				player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20);
-				player.setHealth(20f * playerHealthPercentage);
+				getOwner().getAttribute(Attributes.MAX_HEALTH).setBaseValue(20);
+				getOwner().setHealth(20f * playerHealthPercentage);
 			}
 		}
 		
@@ -262,7 +276,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	}
 
 	@Override
-	public void applyAbilities(Player player, MorphItem oldMorphItem, List<Ability> oldAbilities)
+	public void applyAbilities(MorphItem oldMorphItem, List<Ability> oldAbilities)
 	{
 		// This could be solved more efficiently, but I am not in the mood to do that, so I rely on quick, dirty and memory inefficient ways instead :kekw:
 //		if(getCurrentAbilities() != null && getCurrentMorph().isPresent())
@@ -275,29 +289,29 @@ public class DefaultMorphCapability implements IMorphCapability
 		if(getCurrentAbilities() != null && getCurrentMorph().isPresent())
 		{
 			currentAbilities.lock();
-			currentAbilities.getList().forEach(ability -> ability.enableAbility(player, getCurrentMorph().get(), oldMorphItem, oldAbilities, AbilityChangeReason.MORPHED));
+			currentAbilities.getList().forEach(ability -> ability.enableAbility(getOwner(), getCurrentMorph().get(), oldMorphItem, oldAbilities, AbilityChangeReason.MORPHED));
 			currentAbilities.unlock();
 		}
 	}
 
 	@Override
-	public void deapplyAbilities(Player player, MorphItem aboutToMorphTo, List<Ability> newAbilities)
+	public void deapplyAbilities(MorphItem aboutToMorphTo, List<Ability> newAbilities)
 	{
 		if(getCurrentAbilities() != null)
 		{
 			currentAbilities.lock();
-			currentAbilities.getList().forEach(ability -> ability.disableAbility(player, getCurrentMorph().get(), aboutToMorphTo, newAbilities, AbilityChangeReason.MORPHED));
+			currentAbilities.getList().forEach(ability -> ability.disableAbility(getOwner(), getCurrentMorph().get(), aboutToMorphTo, newAbilities, AbilityChangeReason.MORPHED));
 			currentAbilities.unlock();
 		}
 	}
 
 	@Override
-	public void useAbility(Player player)
+	public void useAbility()
 	{
 		if(getCurrentAbilities() != null)
 		{
 			currentAbilities.lock();
-			currentAbilities.getList().forEach(ability -> ability.onUsedAbility(player, getCurrentMorph().get()));
+			currentAbilities.getList().forEach(ability -> ability.onUsedAbility(getOwner(), getCurrentMorph().get()));
 			currentAbilities.unlock();
 		}
 	}
@@ -352,25 +366,37 @@ public class DefaultMorphCapability implements IMorphCapability
 
 	/** Invokes a dynamic addition of an ability. **/
 	@Override
-	public void applyAbility(Player player, Ability ability)
+	public void applyAbility(Ability ability)
 	{
 		if(this.getCurrentAbilities() == null)
 			currentAbilities = new LockableList<>(Arrays.asList(ability));
 		else
 			currentAbilities.safeAdd(ability);
 		
-		ability.enableAbility(player, getCurrentMorph().orElse(null), null, Arrays.asList(), AbilityChangeReason.DYNAMIC);
+		ability.enableAbility(getOwner(), getCurrentMorph().orElse(null), null, Arrays.asList(), AbilityChangeReason.DYNAMIC);
 	}
 
 	/** Invokes a dynamic removal of an ability. **/
 	@Override
-	public void deapplyAbility(Player player, Ability ability)
+	public void deapplyAbility(Ability ability)
 	{
 		if(this.getCurrentAbilities() != null)
 		{
 			currentAbilities.safeRemove(ability);
 			
-			ability.disableAbility(player, getCurrentMorph().orElse(null), null, Arrays.asList(), AbilityChangeReason.DYNAMIC);
+			ability.disableAbility(getOwner(), getCurrentMorph().orElse(null), null, Arrays.asList(), AbilityChangeReason.DYNAMIC);
 		}
+	}
+
+	@Override
+	public CompoundTag serializeSavableAbilityData()
+	{
+		return null;
+	}
+
+	@Override
+	public void deserializeSavableAbilityData(CompoundTag compoundTag)
+	{
+		
 	}
 }

@@ -28,15 +28,17 @@ public class MorphCapabilityAttacher implements ICapabilitySerializable<Compound
 	public static void onAttachCapsOnPlayer(AttachCapabilitiesEvent<Entity> event)
 	{
 		if(event.getObject() instanceof Player)
-			event.addCapability(CAPABILITY_NAME, new MorphCapabilityAttacher());
+			event.addCapability(CAPABILITY_NAME, new MorphCapabilityAttacher((Player) event.getObject()));
 	}
 	
-	public MorphCapabilityAttacher()
+	private Player owner;
+	
+	public MorphCapabilityAttacher(Player owner)
 	{
-		
+		this.owner = owner;
 	}
 		
-	LazyOptional<IMorphCapability> cap = LazyOptional.of(() -> new DefaultMorphCapability());
+	LazyOptional<IMorphCapability> cap = LazyOptional.of(() -> new DefaultMorphCapability(owner));
 	
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side)
