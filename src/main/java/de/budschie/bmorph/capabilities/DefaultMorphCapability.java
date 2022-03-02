@@ -305,7 +305,8 @@ public class DefaultMorphCapability implements IMorphCapability
 			currentAbilities.lock();
 			currentAbilities.getList().forEach(ability ->
 			{
-				ability.deserialize(getOwner(), context);
+				if(!getOwner().level.isClientSide())
+					ability.deserialize(getOwner(), context);
 				ability.enableAbility(getOwner(), getCurrentMorph().get(), oldMorphItem, oldAbilities, AbilityChangeReason.MORPHED);
 			});
 			currentAbilities.unlock();
@@ -320,10 +321,14 @@ public class DefaultMorphCapability implements IMorphCapability
 			currentAbilities.lock();
 			currentAbilities.getList().forEach(ability ->
 			{
-				ability.serialize(getOwner(), context, false);
+				if(!getOwner().level.isClientSide())
+					ability.serialize(getOwner(), context, false);
 				ability.disableAbility(getOwner(), getCurrentMorph().get(), aboutToMorphTo, newAbilities, AbilityChangeReason.MORPHED);
 			});
 			currentAbilities.unlock();
+			
+			if(!getOwner().level.isClientSide())
+				context.clearTransientData();
 		}
 	}
 
@@ -396,7 +401,8 @@ public class DefaultMorphCapability implements IMorphCapability
 			currentAbilities.safeAdd(ability);
 		
 		// Deserialize the ability and then enable it
-		ability.deserialize(getOwner(), context);
+		if(!getOwner().level.isClientSide())
+			ability.deserialize(getOwner(), context);
 		ability.enableAbility(getOwner(), getCurrentMorph().orElse(null), null, Arrays.asList(), AbilityChangeReason.DYNAMIC);
 	}
 
@@ -409,9 +415,11 @@ public class DefaultMorphCapability implements IMorphCapability
 			currentAbilities.safeRemove(ability);
 			
 			// Serialize the ability and then disable it. Transient data shall not be saved.
-			ability.serialize(owner, context, false);
+			if(!getOwner().level.isClientSide())
+				ability.serialize(owner, context, false);
 			ability.disableAbility(getOwner(), getCurrentMorph().orElse(null), null, Arrays.asList(), AbilityChangeReason.DYNAMIC);
-			context.clearTransientDataFor(ability);
+			if(!getOwner().level.isClientSide())
+				context.clearTransientDataFor(ability);
 		}
 	}
 

@@ -28,7 +28,7 @@ public abstract class StunAbility extends Ability
 	
 	public int getStunTimeLeftFor(Player player)
 	{
-		return delayHashMap.getOrDefault(player.getUUID(), 0) - ServerSetup.server.getTickCount();
+		return delayHashMap.containsKey(player.getUUID()) ? delayHashMap.get(player.getUUID()) - ServerSetup.server.getTickCount() : 0;
 	}
 	
 	public boolean isCurrentlyStunned(UUID player)
