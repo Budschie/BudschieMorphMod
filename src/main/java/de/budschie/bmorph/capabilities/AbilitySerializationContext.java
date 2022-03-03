@@ -17,21 +17,29 @@ import net.minecraft.resources.ResourceLocation;
  **/
 public class AbilitySerializationContext
 {
-	private HashMap<Ability, AbilitySerializationObject> abilityMap = new HashMap<>();
+	private HashMap<ResourceLocation, AbilitySerializationObject> abilityMap = new HashMap<>();
 	
 	public AbilitySerializationObject getOrCreateSerializationObjectForAbility(Ability ability)
 	{
-		return abilityMap.computeIfAbsent(ability, rl -> new AbilitySerializationObject());
+		AbilitySerializationObject object = new AbilitySerializationObject();
+		abilityMap.put(ability.getResourceLocation(), object);
+		
+		return object;
 	}
 	
 	public AbilitySerializationObject getSerializationObjectForAbilityOrNull(Ability ability)
 	{
-		return abilityMap.get(ability);
+		return abilityMap.get(ability.getResourceLocation());
+	}
+	
+	public Optional<AbilitySerializationObject> getSerializationObjectForAbility(Ability ability)
+	{
+		return Optional.ofNullable(abilityMap.get(ability.getResourceLocation()));
 	}
 	
 	public void deleteSerializationObjectForAbility(Ability ability)
 	{
-		abilityMap.remove(ability);
+		abilityMap.remove(ability.getResourceLocation());
 	}
 	
 	/** Clears all transient data. **/
@@ -43,7 +51,7 @@ public class AbilitySerializationContext
 	/** Clears transient data for specific ability. **/
 	public void clearTransientDataFor(Ability ability)
 	{
-		AbilitySerializationObject object = abilityMap.get(ability);
+		AbilitySerializationObject object = abilityMap.get(ability.getResourceLocation());
 		
 		if(object != null)
 			object.setTransientTag(Optional.empty());
@@ -54,7 +62,7 @@ public class AbilitySerializationContext
 	{
 		CompoundTag rootTag = new CompoundTag();
 		
-		for(Map.Entry<Ability, AbilitySerializationObject> entries : abilityMap.entrySet())
+		for(Map.Entry<ResourceLocation, AbilitySerializationObject> entries : abilityMap.entrySet())
 		{
 			// Create the tag for the ability to be serialized
 			CompoundTag entryTag = new CompoundTag();
@@ -64,7 +72,7 @@ public class AbilitySerializationContext
 			entries.getValue().getTransientTag().ifPresent(transientTag -> entryTag.put("transient", transientTag));
 			
 			// Add the entry tag to the root tag using the name of the ability as the key
-			rootTag.put(entries.getKey().getResourceLocation().toString(), entryTag);
+			rootTag.put(entries.getKey().toString(), entryTag);
 		}
 		
 		return rootTag;
@@ -93,7 +101,7 @@ public class AbilitySerializationContext
 			if(entryTag.contains("persistent"))
 				object.setPersistentTag(Optional.of(entryTag.getCompound("persistent")));
 			
-			context.abilityMap.put(foundAbility, object);
+			context.abilityMap.put(foundAbility.getResourceLocation(), object);
 		}
 		
 		return context;

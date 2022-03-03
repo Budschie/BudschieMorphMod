@@ -16,6 +16,8 @@ import com.mojang.serialization.Encoder;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.main.BMorphMod;
+import de.budschie.bmorph.main.ServerSetup;
+import de.budschie.bmorph.morph.LazyRegistryWrapper;
 import de.budschie.bmorph.morph.LazyTag;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.codec_addition.CommandProvider.Selector;
@@ -37,11 +39,14 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
+// This class is a fucking mess
+/** Contains useful codecs for the abilities **/
 public class ModCodecs
 {	
 	public static final Codec<SoundEvent> SOUND_EVENT_CODEC = Codec.of(new Encoder<SoundEvent>()
@@ -76,11 +81,11 @@ public class ModCodecs
 		}
 	});
 	
-	public static final Codec<Attribute> ATTRIBUTE = getRegistryCodec(ForgeRegistries.ATTRIBUTES::getValue);
-	public static final Codec<MobEffect> EFFECTS = getRegistryCodec(ForgeRegistries.MOB_EFFECTS::getValue);
-	public static final Codec<EntityType<?>> ENTITIES = getRegistryCodec(ForgeRegistries.ENTITIES::getValue);
-	public static final Codec<Block> BLOCKS = getRegistryCodec(ForgeRegistries.BLOCKS::getValue);
-	public static final Codec<ParticleType<?>> PARTICLE_TYPE = getRegistryCodec(ForgeRegistries.PARTICLE_TYPES::getValue);
+	public static final Codec<Attribute> ATTRIBUTE = getForgeRegistryCodec(ForgeRegistries.ATTRIBUTES::getValue);
+	public static final Codec<MobEffect> EFFECTS = getForgeRegistryCodec(ForgeRegistries.MOB_EFFECTS::getValue);
+	public static final Codec<EntityType<?>> ENTITIES = getForgeRegistryCodec(ForgeRegistries.ENTITIES::getValue);
+	public static final Codec<Block> BLOCKS = getForgeRegistryCodec(ForgeRegistries.BLOCKS::getValue);
+	public static final Codec<ParticleType<?>> PARTICLE_TYPE = getForgeRegistryCodec(ForgeRegistries.PARTICLE_TYPES::getValue);
 	
 	public static final Codec<Selector> SELECTOR_ENUM = getEnumCodec(Selector.class, Selector::values);
 	public static final Codec<Direction> DIRECTION_ENUM = getEnumCodec(Direction.class, Direction::values);
@@ -92,6 +97,8 @@ public class ModCodecs
 	public static final Codec<LazyOptional<Ability>> ABILITY = getLazyDynamicRegistry(() -> BMorphMod.DYNAMIC_ABILITY_REGISTRY, "ability");
 	public static final Codec<LazyOptional<DataTransformer>> DATA_TRANSFORMER = getLazyDynamicRegistry(() -> BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY, "data transformer");
 	
+	public static final Codec<LazyRegistryWrapper<LootItemCondition>> PREDICATE = getLazyMCRegistryObjectCodec(rl -> ServerSetup.server.getPredicateManager().get(rl), "predicate");
+		
 	public static final Codec<net.minecraft.nbt.Tag> NBT_TAG = Codec.STRING.flatXmap(str ->
 	{
 		net.minecraft.nbt.Tag tag;
@@ -165,7 +172,41 @@ public class ModCodecs
 			.create(instance -> instance.group(Codec.STRING.fieldOf("command").forGetter(CommandProvider::getCommand), SELECTOR_ENUM.optionalFieldOf("selector", Selector.SELF).forGetter(CommandProvider::getSelector))
 					.apply(instance, CommandProvider::new));
 	
-	public static final <T> Codec<LazyTag<T>> getLazyTagCodec(Function<ResourceLocation, Tag<T>> resolveFunction)
+//	public static final <T> Codec<LazyTag<T>> getLazyTagCodec(Function<ResourceLocation, Tag<T>> resolveFunction)
+//	{
+//		return ResourceLocation.CODEC.flatXmap((resourceLocation) ->
+//		{
+//			if(resourceLocation == null)
+//			{
+//				return DataResult.error("The resource location was null; thus there was no tag present.");
+//			}
+//			
+//			return DataResult.success(new LazyTag<>(resourceLocation, resolveFunction));
+//		}, (fromLazyTag) ->
+//		{
+//			return DataResult.success(fromLazyTag.getTagName());
+//		});
+//	}
+	
+	/** Creates a codec that can convert any given resource location to an object and vice versa (all in a lazy manner so that registry entries can be loaded in properly) **/
+	public static final <T> Codec<LazyRegistryWrapper<T>> getLazyMCRegistryObjectCodec(Function<ResourceLocation, T> toObject, String name)
+	{
+		return ResourceLocation.CODEC.flatXmap((resourceLocation) ->
+		{
+			if(resourceLocation == null)
+			{
+				return DataResult.error("The resource location was null; thus there was no " + name + " present.");
+			}
+			
+			return DataResult.success(new LazyRegistryWrapper<>(resourceLocation, toObject));
+		}, (fromLazyOptional) ->
+		{
+			return DataResult.success(fromLazyOptional.getResourceLocation());
+		});
+	}
+	
+	/** Creates a codec that can convert any given resource location to an object and vice versa (all in a lazy manner so that registry entries can be loaded in properly) **/
+	public static final <T> Codec<LazyTag<T>> getLazyTagCodec(Function<ResourceLocation, Tag<T>> toObject)
 	{
 		return ResourceLocation.CODEC.flatXmap((resourceLocation) ->
 		{
@@ -174,12 +215,13 @@ public class ModCodecs
 				return DataResult.error("The resource location was null; thus there was no tag present.");
 			}
 			
-			return DataResult.success(new LazyTag<>(resourceLocation, resolveFunction));
-		}, (fromLazyTag) ->
+			return DataResult.success(new LazyTag<>(resourceLocation, toObject));
+		}, (fromLazyOptional) ->
 		{
-			return DataResult.success(fromLazyTag.getTagName());
+			return DataResult.success(fromLazyOptional.getResourceLocation());
 		});
 	}
+
 	 
 	public static final <A extends Enum<A>> Codec<A> getEnumCodec(Class<A> clazz, Supplier<A[]> values)
 	{		
@@ -269,8 +311,9 @@ public class ModCodecs
 //			}
 //		};
 //	}
+
 	
-	private static <A extends IForgeRegistryEntry<A>> Codec<A> getRegistryCodec(Function<ResourceLocation, A> registryRetrieval)
+	private static <A extends IForgeRegistryEntry<A>> Codec<A> getForgeRegistryCodec(Function<ResourceLocation, A> registryRetrieval)
 	{
 		return new Codec<>()
 		{

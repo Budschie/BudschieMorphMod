@@ -7,7 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class AttackAbility extends AbstractEventAbility
+public class AttackAbility extends Ability
 {
 	private Consumer<LivingHurtEvent> attackCode;
 	
@@ -29,5 +29,11 @@ public class AttackAbility extends AbstractEventAbility
 	public void onUsedAbility(Player player, MorphItem currentMorph)
 	{
 		
+	}
+	
+	@Override
+	public boolean isAbleToReceiveEvents()
+	{
+		return true;
 	}
 }

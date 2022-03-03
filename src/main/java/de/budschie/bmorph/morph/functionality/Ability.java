@@ -209,7 +209,8 @@ public abstract class Ability implements IDynamicRegistryObject
 	 **/
 	public void serialize(Player player, AbilitySerializationContext context, boolean canSaveTransientData)
 	{
-		
+		// Always delete the object before we serialize it so that there are no left-overs of the previous serialization
+		context.deleteSerializationObjectForAbility(this);
 	}
 	
 	/** Load data for the specific player from the compound tag. **/
