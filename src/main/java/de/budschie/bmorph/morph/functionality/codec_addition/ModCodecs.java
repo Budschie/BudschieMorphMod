@@ -115,6 +115,23 @@ public class ModCodecs
 		return DataResult.success(tag);
 	}, tag -> DataResult.success(tag.toString()));
 	
+	public static final Codec<net.minecraft.nbt.CompoundTag> NBT_COMPOUND_TAG = Codec.STRING.flatXmap(str ->
+	{
+		net.minecraft.nbt.CompoundTag tag;
+		
+		try
+		{
+			tag = new TagParser(new StringReader(str)).readStruct();
+		}
+		catch(CommandSyntaxException ex)
+		{
+			return DataResult.error("Could not parse NBT compound data: " + ex.getMessage());
+		}
+		
+		return DataResult.success(tag);
+	}, tag -> DataResult.success(tag.toString()));
+
+	
 	/**
 	 * This method creates a codec for a lazy optional for loading in dynamic
 	 * registries.

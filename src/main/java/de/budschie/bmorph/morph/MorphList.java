@@ -60,10 +60,12 @@ public class MorphList
 		}
 	}
 	
-	public void addToMorphList(MorphItem item)
+	public int addToMorphList(MorphItem item)
 	{
 		playerMorphItems.add(item);
 		morphArrayList.add(item);
+		
+		return morphArrayList.size() - 1;
 	}
 	
 	public void removeFromMorphList(int index)

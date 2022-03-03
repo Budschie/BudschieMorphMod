@@ -25,11 +25,13 @@ import de.budschie.bmorph.morph.functionality.configurable.InstaDeathOnCookieAbi
 import de.budschie.bmorph.morph.functionality.configurable.InstaJumpAbility;
 import de.budschie.bmorph.morph.functionality.configurable.InstaRegenAbility;
 import de.budschie.bmorph.morph.functionality.configurable.MobAttackAbility;
+import de.budschie.bmorph.morph.functionality.configurable.MorphAbility;
 import de.budschie.bmorph.morph.functionality.configurable.NoKnockbackAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ParrotDanceAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PassiveEffectAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PassiveTickCommandAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PhantomAbility;
+import de.budschie.bmorph.morph.functionality.configurable.PredicateAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ProjectileShootingAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PufferfishAbility;
 import de.budschie.bmorph.morph.functionality.configurable.RandomDelegatingOnUseAbility;
@@ -93,4 +95,6 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<BlockTrailAbility>> BLOCK_TRAIL = ABILITY_REGISTRY.register("block_trail", () -> new ConfigurableAbility<>(BlockTrailAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<SheepEatGrassAbility>> SHEEP_EAT_GRASS = ABILITY_REGISTRY.register("sheep_eat_grass", () -> new ConfigurableAbility<>(SheepEatGrassAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<CowMilkAbility>> COW_MILK = ABILITY_REGISTRY.register("cow_milk", () -> new ConfigurableAbility<>(CowMilkAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<MorphAbility>> MORPH_ABILITY = ABILITY_REGISTRY.register("morph_ability", () -> new ConfigurableAbility<>(MorphAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<PredicateAbility>> PREDICATE_ABILITY = ABILITY_REGISTRY.register("predicate_ability", () -> new ConfigurableAbility<>(PredicateAbility.CODEC));
 }

@@ -37,8 +37,8 @@ public interface IMorphCapability
 	/** This sort of combines {@link IMorphCapability#getCurrentMorphIndex()} and {@link IMorphCapability#getCurrentMorphItem()} by checking if one of these methods doesn't return an empty Optional, and returns the result. **/
 	public Optional<MorphItem> getCurrentMorph();
 	
-	/** This method adds the given morph item to the morph list. **/
-	public void addToMorphList(MorphItem morphItem);
+	/** This method adds the given morph item to the morph list and returns the index of the added morph. **/
+	public int addToMorphList(MorphItem morphItem);
 	/** This method removes the given index from the morph list. **/
 	public void removeFromMorphList(int index);
 	/** This method returns the morph list as an object. **/

@@ -170,9 +170,9 @@ public class DefaultMorphCapability implements IMorphCapability
 	}
 	
 	@Override
-	public void addToMorphList(MorphItem morphItem)
+	public int addToMorphList(MorphItem morphItem)
 	{
-		morphList.addToMorphList(morphItem);
+		return morphList.addToMorphList(morphItem);
 	}
 
 	@Override
