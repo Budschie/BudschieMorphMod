@@ -153,7 +153,10 @@ public class PredicateAbility extends StunAbility
 	{
 		super.serialize(player, context, canSaveTransientData);
 		
-		CompoundTag tag = context.getOrCreateSerializationObjectForAbility(this).getOrCreatePersistentTag();
+		if(!canSaveTransientData)
+			return;
+		
+		CompoundTag tag = context.getOrCreateSerializationObjectForAbility(this).getOrCreateTransientTag();
 		
 		if(players.containsKey(player.getUUID()))
 		{
@@ -171,7 +174,7 @@ public class PredicateAbility extends StunAbility
 	{
 		super.deserialize(player, context);
 		
-		context.getSerializationObjectForAbility(this).ifPresent(obj -> obj.getPersistentTag().ifPresent(tag ->
+		context.getSerializationObjectForAbility(this).ifPresent(obj -> obj.getTransientTag().ifPresent(tag ->
 		{
 			if(tag.contains("predicate_ability_time_until_ability"))
 			{
