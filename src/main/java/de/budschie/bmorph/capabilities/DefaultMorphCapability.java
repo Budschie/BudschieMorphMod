@@ -425,7 +425,10 @@ public class DefaultMorphCapability implements IMorphCapability
 
 	@Override
 	public CompoundTag serializeSavableAbilityData()
-	{		
+	{
+		if(currentAbilities == null || currentAbilities.getList() == null)
+			return context.serialize();
+		
 		currentAbilities.lock();
 		
 		for(Ability ability : currentAbilities.getList())
