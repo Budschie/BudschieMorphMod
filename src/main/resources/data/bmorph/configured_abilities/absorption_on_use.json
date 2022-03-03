@@ -1,0 +1,26 @@
+{
+    "ability": "bmorph:effect_on_use",
+    "config":
+    {
+        "stun": 1000,
+        "effect_instance":
+        {
+            "potion_effect": "minecraft:absorption",
+            "amplifier": 2,
+            "duration": 400,
+            "ambient": false,
+            "show_particles": true,
+            "show_icon": false
+        },
+        "audio_visual_effect":
+        {
+            "sounds":
+            [
+                {
+                    "sound": "minecraft:entity.witch.drink",
+                    "pitch": 0
+                }
+            ]
+        }
+    }
+}

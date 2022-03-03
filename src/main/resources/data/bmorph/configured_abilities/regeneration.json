@@ -1,0 +1,15 @@
+{
+    "ability": "bmorph:passive_effect",
+    "config":
+    {
+        "effect_instance":
+        {
+            "potion_effect": "minecraft:regeneration",
+            "amplifier": 0,
+            "duration": 250,
+            "ambient": true,
+            "show_particles": false,
+            "show_icon": false
+        }
+    }
+}

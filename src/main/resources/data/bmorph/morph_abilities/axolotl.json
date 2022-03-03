@@ -4,7 +4,7 @@
     [
         "bmorph:water_breathing",
         "bmorph:water_sanic",
-        "bmorph:extreme_regeneration",
+        "bmorph:absorption_on_use",
         "bmorph:extreme_slowness"
     ],
     "revoke":
