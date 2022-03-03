@@ -1,9 +1,12 @@
 package de.budschie.bmorph.morph;
 
 import java.util.function.Function;
-import java.util.function.Predicate;
 
-import net.minecraft.tags.Tag;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.ibm.icu.text.MessageFormat;
+
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -12,9 +15,12 @@ import net.minecraft.resources.ResourceLocation;
  **/
 public class LazyRegistryWrapper<T>
 {	
+	private static final Logger LOGGER = LogManager.getLogger();
+	
 	private ResourceLocation tagName;
 	private Function<ResourceLocation, T> tagSupplier;
 	private boolean hasTag = true;
+	private boolean hasErrored = false;
 	private T cachedTag;
 	
 	/**
@@ -45,7 +51,15 @@ public class LazyRegistryWrapper<T>
 			this.cachedTag = tagSupplier.apply(tagName);
 			
 			if(this.cachedTag == null)
+			{
 				this.hasTag = false;
+				
+				if(!hasErrored)
+				{
+					LOGGER.warn(MessageFormat.format("The resource location {0} could not be resolved to a registry type.", tagName.toDebugFileName()));
+					hasErrored = true;
+				}
+			}
 		}
 	}
 	
