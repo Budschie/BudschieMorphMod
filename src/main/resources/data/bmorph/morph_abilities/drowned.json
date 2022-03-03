@@ -3,7 +3,8 @@
     "grant":
     [
         "bmorph:water_breathing",
-        "bmorph:burn_in_sun"
+        "bmorph:burn_in_sun",
+        "bmorph:turn_to_zombie_as_drowned"
     ],
     "revoke":
     [

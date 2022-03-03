@@ -1,20 +1,16 @@
 {
     "ability": "bmorph:transform_on_kill",
-    "config":
-    {
+    "config": {
         "transform_from": "minecraft:villager",
         "transform_to": "minecraft:zombie_villager",
-        "transformed_entity_effect":
-	{
-	    "sounds":
-	    [
-		{
-		    "sound": "minecraft:entity.zombie.infect"
-		}
-	    ]
-	},
-        "nbt_mappings":
-        [
+        "transformed_entity_effect": {
+            "sounds": [
+                {
+                    "sound": "minecraft:entity.zombie.infect"
+                }
+            ]
+        },
+        "nbt_mappings": [
             {
                 "copy_nbt_source": "VillagerData;level",
                 "copy_nbt_dest": "VillagerData;level"
@@ -32,6 +28,8 @@
                 "copy_nbt_dest": "VillagerData;type"
             }
         ],
-	"data_transformers": [ "bmorph:age_to_is_baby" ]
+        "data_transformers": [
+            "bmorph:age_to_is_baby"
+        ]
     }
 }

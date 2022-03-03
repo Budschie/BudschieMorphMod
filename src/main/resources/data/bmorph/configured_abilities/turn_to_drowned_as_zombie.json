@@ -1,0 +1,11 @@
+{
+    "ability": "bmorph:predicate_ability",
+    "config":
+    {
+        "stun": 0,
+        "predicates": [[ "bmorph:water_check" ]],
+        "execute_once": false,
+        "predicate_true_for_time": 300,
+        "ability_to_execute": "bmorph:turn_to_drowned"
+    }
+}
