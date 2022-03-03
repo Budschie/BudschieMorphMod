@@ -50,6 +50,7 @@ public class MorphAbility extends Ability
 		this.nbtMappings = nbtMappings;
 		this.dataTransformers = dataTransformers;
 		this.effectOnMorph = effectOnMorph;
+		this.defaultNbt = defaultNbt;
 	}
 
 	private MorphMode morphMode;
