@@ -1,0 +1,18 @@
+{
+    "ability": "bmorph:morph_ability",
+    "config":
+    {
+        "morph_mode": "both",
+        "entity_to_morph_to": "minecraft:zombified_piglin",
+        "data_transformers": [ "bmorph:age_to_is_baby" ],
+        "effect_on_morph":
+        {
+            "sounds":
+            [
+                {
+                    "sound": "minecraft:entity.zombie.infect"
+                }
+            ]
+        }
+    }
+}

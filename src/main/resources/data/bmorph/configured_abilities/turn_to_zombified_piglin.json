@@ -1,0 +1,24 @@
+{
+    "ability": "bmorph:morph_ability",
+    "config":
+    {
+        "morph_mode": "both",
+        "entity_to_morph_to": "minecraft:zombified_piglin",
+        "nbt_mappings":
+        [
+            {
+                "copy_nbt_source": "IsBaby",
+                "copy_nbt_dest": "IsBaby"
+            }
+        ],
+        "effect_on_morph":
+        {
+            "sounds":
+            [
+                {
+                    "sound": "minecraft:entity.piglin.converted_to_zombified"
+                }
+            ]
+        }
+    }
+}

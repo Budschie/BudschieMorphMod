@@ -1,0 +1,17 @@
+{
+    "ability": "bmorph:morph_ability",
+    "config":
+    {
+        "morph_mode": "both",
+        "entity_to_morph_to": "minecraft:witch",
+        "effect_on_morph":
+        {
+            "sounds":
+            [
+                {
+                    "sound": "minecraft:entity.zombie.infect"
+                }
+            ]
+        }
+    }
+}

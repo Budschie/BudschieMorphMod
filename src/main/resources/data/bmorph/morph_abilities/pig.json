@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:pig",
+    "grant":
+    [
+        "bmorph:transform_to_zombified_piglin_on_lightning_hit"
+    ],
+    "revoke":
+    [
+
+    ]
+}

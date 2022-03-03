@@ -2,7 +2,8 @@
     "entity_type": "minecraft:villager",
     "grant":
     [
-        "bmorph:mob_attack"
+        "bmorph:mob_attack",
+        "bmorph:transform_to_witch_on_lightning_hit"
     ],
     "revoke":
     [

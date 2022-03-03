@@ -1,0 +1,8 @@
+{
+    "ability": "bmorph:delegate_on_damage",
+    "config":
+    {
+        "delegate_on_damage": "lightningBolt",
+        "delegate_to": "bmorph:turn_to_witch"
+    }
+}
