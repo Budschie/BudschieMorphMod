@@ -19,6 +19,7 @@ import de.budschie.bmorph.morph.functionality.configurable.CowMilkAbility;
 import de.budschie.bmorph.morph.functionality.configurable.DamageImmunityAbility;
 import de.budschie.bmorph.morph.functionality.configurable.DelegateOnDamageAbility;
 import de.budschie.bmorph.morph.functionality.configurable.EffectOnAttackEntity;
+import de.budschie.bmorph.morph.functionality.configurable.EffectOnUseAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ElderGuardianJumpscareAbility;
 import de.budschie.bmorph.morph.functionality.configurable.FlyAbility;
 import de.budschie.bmorph.morph.functionality.configurable.GuardianAbility;
@@ -99,4 +100,6 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<MorphAbility>> MORPH_ABILITY = ABILITY_REGISTRY.register("morph_ability", () -> new ConfigurableAbility<>(MorphAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<PredicateAbility>> PREDICATE_ABILITY = ABILITY_REGISTRY.register("predicate_ability", () -> new ConfigurableAbility<>(PredicateAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<DelegateOnDamageAbility>> DELEGATE_ON_DAMAGE_ABILITY = ABILITY_REGISTRY.register("delegate_on_damage", () -> new ConfigurableAbility<>(DelegateOnDamageAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<EffectOnUseAbility>> EFFECT_ON_USE_ABILITY = ABILITY_REGISTRY.register("effect_on_use", () -> new ConfigurableAbility<>(EffectOnUseAbility.CODEC));
 }
+
