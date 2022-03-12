@@ -49,7 +49,7 @@ public class BMorphMod
 	public static VisualMorphDataRegistry VISUAL_MORPH_DATA;
 	
 	public static final MorphedTrigger ACQUIRED_MORPH = new MorphedTrigger(new ResourceLocation(References.MODID, "acquired_morph"));
-	public static final MorphedTrigger MORPHED_TO = new MorphedTrigger(new ResourceLocation(References.MODID, "morphed_to"));
+	public static final MorphedTrigger MORPHED_INTO = new MorphedTrigger(new ResourceLocation(References.MODID, "morphed_into"));
 	public static final MorphedTrigger DEMORPHED_FROM = new MorphedTrigger(new ResourceLocation(References.MODID, "demorphed_from"));
 	
 	public BMorphMod()
@@ -95,7 +95,7 @@ public class BMorphMod
 		
 		// I hope this is thread safe (it isn't probably)
 		CriteriaTriggers.register(ACQUIRED_MORPH);
-		CriteriaTriggers.register(MORPHED_TO);
+		CriteriaTriggers.register(MORPHED_INTO);
 		CriteriaTriggers.register(DEMORPHED_FROM);
 	}	
 }
