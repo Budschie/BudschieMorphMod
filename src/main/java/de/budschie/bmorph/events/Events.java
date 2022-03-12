@@ -486,6 +486,9 @@ public class Events
 	{
 		event.getPlayer().refreshDimensions();
 		
+		if(event.getAboutToMorphTo() == null)
+			return;
+		
 		BMorphMod.MORPHED_INTO.trigger(event.getAboutToMorphTo(), (ServerPlayer) event.getPlayer());
 	}
 	
