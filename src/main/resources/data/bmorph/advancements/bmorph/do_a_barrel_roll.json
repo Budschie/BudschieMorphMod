@@ -1,0 +1,24 @@
+{
+    "display": {
+      "icon": {
+        "item": "minecraft:phantom_membrane"
+      },
+      "title": "§fDo a barrel roll!",
+      "description": "§7Morph into a phantom",
+      "frame": "challenge",
+      "show_toast": true,
+      "announce_to_chat": true,
+      "hidden": false
+    },
+    "parent": "bmorph:bmorph/shapeshifter",
+    "criteria": {
+      "requirement": {
+        "trigger": "bmorph:morphed_into",
+        "conditions":
+        {
+            "entity_type": "minecraft:phantom"
+        }
+      }
+    }
+  }
+  

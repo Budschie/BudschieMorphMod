@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:golden_sword"
+    },
+    "title": "§cCat-astrophic!",
+    "description": "§cKill a cat and collect its soul.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "bmorph:bmorph/root",
+  "criteria": {
+    "requirement": {
+      "trigger": "bmorph:acquired_morph",
+      "conditions": {
+        "entity_type": "minecraft:cat"
+      }
+    }
+  }
+}

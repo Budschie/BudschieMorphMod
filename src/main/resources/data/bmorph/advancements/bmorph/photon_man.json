@@ -1,0 +1,22 @@
+{
+    "display": {
+      "icon": {
+        "item": "minecraft:elder_guardian_spawn_egg"
+      },
+      "title": "§cphoton man",
+      "description": "§cAcquire the soul of an elder guardian. Btw I do not expect you to get this joke.",
+      "frame": "goal",
+      "show_toast": true,
+      "announce_to_chat": true,
+      "hidden": false
+    },
+    "parent": "bmorph:bmorph/root",
+    "criteria": {
+      "requirement": {
+        "trigger": "bmorph:acquired_morph",
+        "conditions": {
+          "entity_type": "minecraft:elder_guardian"
+        }
+      }
+    }
+  }

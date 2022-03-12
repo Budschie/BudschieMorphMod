@@ -1,0 +1,21 @@
+{
+    "display": {
+      "icon": {
+        "item": "minecraft:zombie_head",
+        "nbt": "{Enchantments:[{lvl:1s, id:\"minecraft:sharpness\"}]}"
+      },
+      "title": "§aShapeshifter",
+      "description": "§2Morph into a soul you collected.",
+      "frame": "goal",
+      "show_toast": true,
+      "announce_to_chat": true,
+      "hidden": false
+    },
+    "parent": "bmorph:bmorph/root",
+    "criteria": {
+      "requirement": {
+        "trigger": "bmorph:morphed_into"
+      }
+    }
+  }
+  

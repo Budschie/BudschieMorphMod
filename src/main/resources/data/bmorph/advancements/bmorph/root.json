@@ -1,0 +1,20 @@
+{
+    "display": {
+      "icon": {
+        "item": "minecraft:sheep_spawn_egg"
+      },
+      "title": "§bBudschie's Morph Advancements",
+      "description": "§3These are the advancements of this mod.",
+      "background": "minecraft:textures/block/blackstone.png",
+      "frame": "task",
+      "show_toast": false,
+      "announce_to_chat": false,
+      "hidden": false
+    },
+    "criteria": {
+      "requirement": {
+        "trigger": "minecraft:tick"
+      }
+    }
+  }
+  

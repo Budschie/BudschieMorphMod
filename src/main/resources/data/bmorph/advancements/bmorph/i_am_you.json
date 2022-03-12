@@ -1,0 +1,25 @@
+{
+    "display": {
+      "icon": {
+        "item": "minecraft:player_head",
+        "nbt": "{Enchantments:[{lvl:1s, id:\"minecraft:sharpness\"}]}"
+      },
+      "title": "§dI am you!",
+      "description": "§5Morph into a player.",
+      "frame": "challenge",
+      "show_toast": true,
+      "announce_to_chat": true,
+      "hidden": false
+    },
+    "parent": "bmorph:bmorph/shapeshifter",
+    "criteria": {
+      "requirement": {
+        "trigger": "bmorph:morphed_into",
+        "conditions":
+        {
+            "entity_type": "minecraft:player"
+        }
+      }
+    }
+  }
+  

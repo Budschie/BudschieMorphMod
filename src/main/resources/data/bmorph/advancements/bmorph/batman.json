@@ -1,0 +1,25 @@
+{
+    "display": {
+      "icon": {
+        "item": "minecraft:bat_spawn_egg",
+        "nbt": "{Enchantments:[{lvl:1s, id:\"minecraft:sharpness\"}]}"
+      },
+      "title": "§7Batman",
+      "description": "§0I am batman.",
+      "frame": "goal",
+      "show_toast": true,
+      "announce_to_chat": true,
+      "hidden": false
+    },
+    "parent": "bmorph:bmorph/shapeshifter",
+    "criteria": {
+      "requirement": {
+        "trigger": "bmorph:morphed_into",
+        "conditions":
+        {
+            "entity_type": "minecraft:bat"
+        }
+      }
+    }
+  }
+  
