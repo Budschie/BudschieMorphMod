@@ -43,8 +43,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -59,6 +62,7 @@ import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
@@ -97,6 +101,41 @@ public class Events
 		event.register(IRenderDataCapability.class);
 	}
 	
+	// Add additional target selector to iron golem entity
+	@SubscribeEvent
+	public static void onEntityCreated(EntityJoinWorldEvent event)
+	{
+		if(event.getWorld().isClientSide())
+			return;
+		
+		if(event.getEntity() instanceof IronGolem ironGolem)
+		{
+			ironGolem.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(ironGolem, Player.class, 5, false, false, player ->
+			{
+				IMorphCapability cap = MorphUtil.getCapOrNull((Player) player);
+
+				if(cap != null)
+				{
+					Optional<MorphItem> morphItem = cap.getCurrentMorph();
+
+					if(morphItem.isPresent())
+					{
+						MorphItem morphItemResolved = morphItem.get();
+						
+						// We should probably ignore players when accessing the cache.
+						if(morphItemResolved.getEntityType() == EntityType.PLAYER || morphItemResolved.getEntityType() == EntityType.CREEPER)
+							return false;
+						
+						Class<? extends Entity> entityClass = EntityClassByTypeCache.getClassForEntityType(morphItemResolved.getEntityType());
+						return Enemy.class.isAssignableFrom(entityClass);
+					}
+				}
+
+				return false;
+			}));
+		}
+	}
+	
 	@SuppressWarnings("deprecation")
 	@SubscribeEvent
 	public static void onPlayerJoined(PlayerLoggedInEvent event)
@@ -115,7 +154,6 @@ public class Events
 //				ServerSetup.server.getPlayerList().getPlayers().forEach(serverPlayer -> cap.resolve().get().syncWithClient(serverPlayer, (ServerPlayerEntity) event.getPlayer()));
 				cap.resolve().get().getCurrentMorph().ifPresent(morph -> cap.resolve().get().setCurrentAbilities(MORPH_ABILITY_MANAGER.getAbilitiesFor(morph)));
 				cap.resolve().get().syncWithClients();
-				
 				cap.resolve().get().applyHealthOnPlayer();
 				cap.resolve().get().applyAbilities(null, Arrays.asList());
 				
@@ -452,7 +490,8 @@ public class Events
 	@SubscribeEvent
 	public static void onTargetBeingSet(LivingSetAttackTargetEvent event)
 	{
-		if(event.getEntityLiving() instanceof Mob && event.getTarget() instanceof Player && event.getTarget() != event.getEntityLiving().getLastHurtByMob())
+		// This iron golem exception is needed because we don't want players morphed as zombies to sneak around iron golems 
+		if(event.getEntityLiving() instanceof Mob && event.getTarget() instanceof Player && event.getTarget() != event.getEntityLiving().getLastHurtByMob() && !(event.getEntity() instanceof IronGolem))
 		{
 			Player player = (Player) event.getTarget();
 			Mob aggressor = (Mob) event.getEntityLiving();

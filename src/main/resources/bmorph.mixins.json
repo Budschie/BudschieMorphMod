@@ -11,7 +11,8 @@
 		"LookAtGoalMixin",
 		"MotionMultiplierMixin",
 		"PowderSnowBlockMixin",
-		"ServerGamePacketListenerImplMixin"
+		"ServerGamePacketListenerImplMixin",
+		"IsHostileMixin"
 	],
 	"minVersion": "0.8"
 }
