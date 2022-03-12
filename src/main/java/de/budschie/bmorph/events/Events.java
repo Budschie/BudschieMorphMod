@@ -90,6 +90,12 @@ public class Events
 	public static final VisualMorphDataHandler VISUAL_MORPH_DATA_HANDLER = new VisualMorphDataHandler();
 	
 	@SubscribeEvent
+	public static void onAcquiredMorph(AcquiredMorphEvent.Post event)
+	{
+		BMorphMod.ACQUIRED_MORPH.trigger(event.getMorph(), (ServerPlayer) event.getPlayer());
+	}
+	
+	@SubscribeEvent
 	public static void onRegisterCapabilities(RegisterCapabilitiesEvent event)
 	{
 		event.register(IMorphCapability.class);
@@ -479,6 +485,14 @@ public class Events
 	public static void onMorphedServer(PlayerMorphEvent.Server.Post event)
 	{
 		event.getPlayer().refreshDimensions();
+		
+		BMorphMod.MORPHED_TO.trigger(event.getAboutToMorphTo(), (ServerPlayer) event.getPlayer());
+	}
+	
+	@SubscribeEvent
+	public static void onMorphingServer(PlayerMorphEvent.Server.Pre event)
+	{
+		MorphUtil.getCapOrNull(event.getPlayer()).getCurrentMorph().ifPresent(currentMorph -> BMorphMod.DEMORPHED_FROM.trigger(currentMorph, (ServerPlayer) event.getPlayer()));
 	}
 	
 	private static void aggro(IMorphCapability capability, int aggroDuration)

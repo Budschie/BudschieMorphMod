@@ -1,5 +1,6 @@
 package de.budschie.bmorph.main;
 
+import de.budschie.bmorph.advancements.MorphedTrigger;
 import de.budschie.bmorph.api_interact.ShrinkAPIInteractor;
 import de.budschie.bmorph.attributes.BMorphAttributes;
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
@@ -16,6 +17,8 @@ import de.budschie.bmorph.morph.functionality.data_transformers.DataModifierRegi
 import de.budschie.bmorph.morph.functionality.data_transformers.DynamicDataTransformerRegistry;
 import de.budschie.bmorph.morph.player.PlayerMorphItem;
 import de.budschie.bmorph.network.MainNetworkChannel;
+import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameRules.BooleanValue;
 import net.minecraft.world.level.GameRules.Category;
@@ -44,6 +47,10 @@ public class BMorphMod
 	public static DynamicAbilityRegistry DYNAMIC_ABILITY_REGISTRY;
 	public static DynamicDataTransformerRegistry DYNAMIC_DATA_TRANSFORMER_REGISTRY;
 	public static VisualMorphDataRegistry VISUAL_MORPH_DATA;
+	
+	public static final MorphedTrigger ACQUIRED_MORPH = new MorphedTrigger(new ResourceLocation(References.MODID, "acquired_morph"));
+	public static final MorphedTrigger MORPHED_TO = new MorphedTrigger(new ResourceLocation(References.MODID, "morphed_to"));
+	public static final MorphedTrigger DEMORPHED_FROM = new MorphedTrigger(new ResourceLocation(References.MODID, "demorphed_from"));
 	
 	public BMorphMod()
 	{
@@ -85,5 +92,10 @@ public class BMorphMod
 		DYNAMIC_ABILITY_REGISTRY = new DynamicAbilityRegistry();
 		DYNAMIC_DATA_TRANSFORMER_REGISTRY = new DynamicDataTransformerRegistry();
 		VISUAL_MORPH_DATA = new VisualMorphDataRegistry();
+		
+		// I hope this is thread safe (it isn't probably)
+		CriteriaTriggers.register(ACQUIRED_MORPH);
+		CriteriaTriggers.register(MORPHED_TO);
+		CriteriaTriggers.register(DEMORPHED_FROM);
 	}	
 }

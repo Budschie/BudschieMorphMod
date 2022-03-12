@@ -1,14 +1,18 @@
 package de.budschie.bmorph.morph;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.EntityType;
 
 public class MorphList
 {
+	private HashMap<EntityType<?>, Integer> entityCount = new HashMap<>();
+	
 	private HashSet<MorphItem> playerMorphItems = new HashSet<>();
 	private ArrayList<MorphItem> morphArrayList = new ArrayList<>();
 	
@@ -35,6 +39,7 @@ public class MorphList
 			MorphItem item = MorphHandler.deserializeMorphItem(morphTag);
 			playerMorphItems.add(item);
 			morphArrayList.add(item);
+			incrementEntityCount(item.getEntityType());
 		}
 	}
 	
@@ -65,6 +70,8 @@ public class MorphList
 		playerMorphItems.add(item);
 		morphArrayList.add(item);
 		
+		incrementEntityCount(item.getEntityType());
+				
 		return morphArrayList.size() - 1;
 	}
 	
@@ -72,6 +79,13 @@ public class MorphList
 	{
 		MorphItem item = morphArrayList.remove(index);
 		playerMorphItems.remove(item);
+		
+		decrementEntityCount(item.getEntityType());
+	}
+	
+	public int getEntityCount(EntityType<?> ofType)
+	{
+		return entityCount.getOrDefault(ofType, 0);
 	}
 	
 	public boolean contains(MorphItem item)
@@ -83,4 +97,25 @@ public class MorphList
 	{
 		return morphArrayList;
 	}	
+	
+	private void decrementEntityCount(EntityType<?> type)
+	{
+		if(entityCount.containsKey(type))
+		{
+			int currentValue = entityCount.get(type);
+			
+			if(currentValue <= 1)
+				entityCount.remove(type);
+			else
+				entityCount.put(type, currentValue - 1);
+		}
+	}
+	
+	private void incrementEntityCount(EntityType<?> type)
+	{
+		if(entityCount.containsKey(type))
+			entityCount.put(type, entityCount.get(type) + 1);
+		else
+			entityCount.put(type, 1);
+	}
 }

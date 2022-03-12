@@ -7,6 +7,9 @@ import com.mojang.authlib.GameProfile;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
+import de.budschie.bmorph.events.AcquiredMorphEvent;
+import de.budschie.bmorph.events.AcquiredMorphEvent.Post;
+import de.budschie.bmorph.events.AcquiredMorphEvent.Pre;
 import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
@@ -26,6 +29,7 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.NetworkHooks;
 
@@ -96,11 +100,19 @@ public class MorphEntity extends Entity
 								
 								if(this.entityData.get(MORPH_ITEM).isAllowedToPickUp(player) && !resolvedCaps.getMorphList().contains(getMorphItem()))
 								{
-									resolvedCaps.getMorphList().addToMorphList(getMorphItem());
-									resolvedCaps.syncMorphAcquisition(getMorphItem());
-									this.remove(RemovalReason.DISCARDED);
+									AcquiredMorphEvent.Pre acquiredMorphPre = new Pre(player, resolvedCaps, getMorphItem());
 									
-									this.level.playSound(null, blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.AMBIENT, 2, (this.random.nextFloat() - 0.5f) + 1);
+									if(!MinecraftForge.EVENT_BUS.post(acquiredMorphPre))
+									{
+										resolvedCaps.getMorphList().addToMorphList(getMorphItem());
+										resolvedCaps.syncMorphAcquisition(getMorphItem());
+										this.remove(RemovalReason.DISCARDED);
+										
+										this.level.playSound(null, blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.AMBIENT, 2, (this.random.nextFloat() - 0.5f) + 1);
+										
+										AcquiredMorphEvent.Post acquiredMorphEventPost = new Post(player, resolvedCaps, getMorphItem());
+										MinecraftForge.EVENT_BUS.post(acquiredMorphEventPost);
+									}									
 								}
 							}
 						}
