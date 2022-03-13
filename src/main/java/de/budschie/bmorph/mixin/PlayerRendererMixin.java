@@ -10,6 +10,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.capabilities.client.render_data.RenderDataCapabilityProvider;
+import de.budschie.bmorph.util.ProtectedFieldAccess;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.PlayerModel;
@@ -34,6 +35,12 @@ import net.minecraft.world.entity.player.Player;
 @Mixin(value = PlayerRenderer.class)
 public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>>
 {
+	// Fuck java. I cannot use generics without using weird looking casting shit.
+	@SuppressWarnings("rawtypes")
+	private static ProtectedFieldAccess<ModelPart, QuadrupedModel> LEFT_FRONT_LEG_ACCESSOR = new ProtectedFieldAccess<>(QuadrupedModel.class, "f_170855_");
+	@SuppressWarnings("rawtypes")
+	private static ProtectedFieldAccess<ModelPart, QuadrupedModel> RIGHT_FRONT_LEG_ACCESSOR = new ProtectedFieldAccess<>(QuadrupedModel.class, "f_170854_");
+	
 	public PlayerRendererMixin(EntityRendererProvider.Context rendererManager,
 			PlayerModel<AbstractClientPlayer> entityModelIn, float shadowSizeIn)
 	{
@@ -58,11 +65,11 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
 
 				LivingEntityRenderer<? super LivingEntity, ?> living = (LivingEntityRenderer<? super LivingEntity, ?>) renderer;
 				
-				if(living.model instanceof HumanoidModel<?>)
-					armRenderer = ((HumanoidModel<?>)living.model).rightArm;
+				if(living.getModel() instanceof HumanoidModel<?>)
+					armRenderer = ((HumanoidModel<?>)living.getModel()).rightArm;
 				
-				if(living.model instanceof QuadrupedModel<?>)
-					armRenderer = ((QuadrupedModel<?>)living.model).leftHindLeg;
+				if(living.getModel() instanceof QuadrupedModel<?>)
+					armRenderer = LEFT_FRONT_LEG_ACCESSOR.getValue((QuadrupedModel<?>)living.getModel());
 				
 				if(armRenderer != null)
 					renderArm(false, playerIn, armRenderer, matrixStackIn, combinedLightIn, bufferIn, living, (LivingEntity)cachedEntity, combinedLightIn);
@@ -88,11 +95,11 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
 
 				LivingEntityRenderer<? super LivingEntity, ?> living = (LivingEntityRenderer<? super LivingEntity, ?>) renderer;
 				
-				if(living.model instanceof HumanoidModel<?>)
-					armRenderer = ((HumanoidModel<?>)living.model).rightArm;
+				if(living.getModel() instanceof HumanoidModel<?>)
+					armRenderer = ((HumanoidModel<?>)living.getModel()).rightArm;
 				
-				if(living.model instanceof QuadrupedModel<?>)
-					armRenderer = ((QuadrupedModel<?>)living.model).rightFrontLeg;
+				if(living.getModel() instanceof QuadrupedModel<?>)
+					armRenderer = RIGHT_FRONT_LEG_ACCESSOR.getValue((QuadrupedModel<?>)living.getModel());
 				
 				if(armRenderer != null)
 					renderArm(true, playerIn, armRenderer, matrixStackIn, combinedLightIn, bufferIn, living, (LivingEntity)cachedEntity, combinedLightIn);
@@ -110,18 +117,18 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
 		matrixStack.pushPose();
 
 		// Fix for sheep and stuff like that
-		if(renderer.model instanceof QuadrupedModel<?>)
+		if(renderer.getModel() instanceof QuadrupedModel<?>)
 			matrixStack.translate(isLeft ? .1 : -.1, -.6, .5);
 
 		setModelProperties(player);
 		
-		renderer.model.attackTime = 0.0f;
+		renderer.getModel().attackTime = 0.0f;
 		
 		if(renderer instanceof HumanoidMobRenderer<?, ?>)
 		{
 			HumanoidMobRenderer<? super Mob, ?> casted = (HumanoidMobRenderer<? super Mob, ?>) renderer;
-			casted.model.swimAmount = 0.0f;
-			casted.model.crouching = false;
+			casted.getModel().swimAmount = 0.0f;
+			casted.getModel().crouching = false;
 						
 			//Temp.translateShitAndStuff(isLeft ? , matrixStack);
 		}
@@ -132,7 +139,7 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
 			matrixStack.translate(.65, 0, 0);
 
 		
-		renderer.model.setupAnim(entity, 0, 0, 0, 0, 0);
+		renderer.getModel().setupAnim(entity, 0, 0, 0, 0, 0);
 		
 		arm.xRot = 0;
 		arm.render(matrixStack, buffer.getBuffer(RenderType.entityCutout(renderer.getTextureLocation(entity))), combinedLightIn, OverlayTexture.NO_OVERLAY);
