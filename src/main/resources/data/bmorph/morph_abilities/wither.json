@@ -1,0 +1,17 @@
+{
+    "entity_type": "minecraft:wither",
+    "grant":
+    [
+        "bmorph:slow_flying",
+        "bmorph:no_on_fire_damage",
+        "bmorph:no_in_fire_damage",
+        "bmorph:no_hot_floor_damage",
+        "bmorph:no_lava_damage",
+        "bmorph:wither_skull_yeet",
+        "bmorph:wither_on_hit"
+    ],
+    "revoke":
+    [
+
+    ]
+}

@@ -1,0 +1,14 @@
+{
+    "ability": "bmorph:shoot_projectile",
+    "config":
+    {
+        "projectile_entity": "minecraft:wither_skull",
+        "stun": 5,
+        "acceleration": 0.2,
+        "motion": 0.2,
+        "sound":
+        {
+            "sound": "minecraft:entity.wither.shoot"
+        }
+    }
+}
