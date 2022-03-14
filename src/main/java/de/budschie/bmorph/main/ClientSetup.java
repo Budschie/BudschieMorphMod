@@ -20,6 +20,7 @@ import de.budschie.bmorph.render_handler.PufferfishSynchronizer;
 import de.budschie.bmorph.render_handler.SheepSynchronizer;
 import de.budschie.bmorph.render_handler.SquidSynchronizer;
 import de.budschie.bmorph.render_handler.TamableSynchronizer;
+import de.budschie.bmorph.render_handler.WitherSynchronizer;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -87,6 +88,7 @@ public class ClientSetup
 		EntitySynchronizerRegistry.addEntitySynchronizer(new PhantomSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new TamableSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new SheepSynchronizer());
+		EntitySynchronizerRegistry.addEntitySynchronizer(new WitherSynchronizer());
 				
 		UglyHackThatDoesntWork.thisisstupid = (gameProfile, world) ->
 		{
