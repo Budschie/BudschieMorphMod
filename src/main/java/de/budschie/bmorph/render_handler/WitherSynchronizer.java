@@ -1,5 +1,6 @@
 package de.budschie.bmorph.render_handler;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
@@ -27,13 +28,16 @@ public class WitherSynchronizer implements IEntitySynchronizer
 			boss.yRotOHeads[i] = player.yRotO;
 		}
 		
-		for(int headIndex = 0; headIndex < 3; ++headIndex)
+		if(!Minecraft.getInstance().options.getCameraType().isFirstPerson())
 		{
-			double headX = boss.getHeadX(headIndex);
-			double headY = boss.getHeadY(headIndex);
-			double headZ = boss.getHeadZ(headIndex);
-			boss.level.addParticle(ParticleTypes.SMOKE, headX + boss.getRandom().nextGaussian() * 0.3f, headY + boss.getRandom().nextGaussian() * 0.3f,
-					headZ + boss.getRandom().nextGaussian() * 0.3f, 0.0d, 0.0d, 0.0d);
+			for(int headIndex = 0; headIndex < 3; ++headIndex)
+			{
+				double headX = boss.getHeadX(headIndex);
+				double headY = boss.getHeadY(headIndex);
+				double headZ = boss.getHeadZ(headIndex);
+				boss.level.addParticle(ParticleTypes.SMOKE, headX + boss.getRandom().nextGaussian() * 0.3f, headY + boss.getRandom().nextGaussian() * 0.3f,
+						headZ + boss.getRandom().nextGaussian() * 0.3f, 0.0d, 0.0d, 0.0d);
+			}
 		}
 	}
 }
