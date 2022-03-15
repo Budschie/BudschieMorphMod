@@ -107,7 +107,7 @@ public abstract class MorphItem
 			
 			if(abilities == null)
 			{
-				LOGGER.warn(MessageFormat.format("The custom ability list {0} for the entity type {1} does not exist. Defaulting to an empty list of abilities.", customAbilityList.get().toString(), getEntityType()));
+				LOGGER.warn(MessageFormat.format("The custom ability list {0} for the entity type {1} does not exist. Defaulting to an empty list of abilities.", customAbilityList.get().toString(), getEntityType().getRegistryName().toString()));
 				return Arrays.asList();
 			}
 			
