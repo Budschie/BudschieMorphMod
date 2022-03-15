@@ -32,8 +32,12 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final Gson GSON = (new GsonBuilder()).create();
-	private HashMap<EntityType<?>, List<Ability>> abilityLookup = new HashMap<>();
-	private Runnable lazyResolve;
+	private HashMap<EntityType<?>, List<Ability>> entityAbilityLookup = new HashMap<>();
+	
+	private HashMap<ResourceLocation, List<Ability>> customAbilityLookup = new HashMap<>();
+	
+	private Runnable lazyResolveEntity;
+	private Runnable lazyResolveCustom;
 	
 	public MorphAbilityManager()
 	{
@@ -42,29 +46,44 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 	
 	@Nullable
 	/** This method will return null if there is no ability for the given entity type. **/
-	public List<Ability> getAbilitiesFor(EntityType<?> entity)
+	public List<Ability> getAbilitiesForEntity(EntityType<?> entity)
 	{
-		if(lazyResolve != null)
+		if(lazyResolveEntity != null)
 		{
-			lazyResolve.run();
-			lazyResolve = null;
+			lazyResolveEntity.run();
+			lazyResolveEntity = null;
 		}
 		
-		return abilityLookup.get(entity);
+		return entityAbilityLookup.get(entity);
 	}
 	
 	@Nullable
-	/** This method will return null if there is no ability for the given entity type. **/
-	public List<Ability> getAbilitiesFor(MorphItem morphItem)
+	@Deprecated(forRemoval = true)
+	/** This method will return null if there is no ability for the given entity type.
+	 * @deprecated Use {@link MorphItem#getAbilities()} instead. This is the method this method calls now. **/
+	public List<Ability> getAbilitiesForItem(MorphItem morphItem)
 	{
-		return getAbilitiesFor(morphItem.getEntityType());
+		return morphItem.getAbilities();
+	}
+	
+	@Nullable
+	/** This method will return null if there is no list of abilities for the given custom ability list key. **/
+	public List<Ability> getAbilitiesForCustomAbilityList(ResourceLocation customAbilityListName)
+	{
+		if(lazyResolveCustom != null)
+		{
+			lazyResolveCustom.run();
+			lazyResolveCustom = null;
+		}
+		
+		return customAbilityLookup.get(customAbilityListName);
 	}
 	
 	@Override
 	protected void apply(Map<ResourceLocation, JsonElement> objectIn, ResourceManager resourceManagerIn,
 			ProfilerFiller profilerIn)
 	{
-		abilityLookup.clear();
+		entityAbilityLookup.clear();
 		
 		HashMap<String, MorphAbilityEntry> abilityEntries = new HashMap<>();
 		
@@ -97,7 +116,7 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 		});
 		
 		// Resolve the stored data
-		this.lazyResolve = () ->
+		this.lazyResolveEntity = () ->
 		{
 			abilityEntries.forEach((entity, entry) ->
 			{
@@ -112,7 +131,7 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 					else
 					{
 						List<Ability> resolvedAbilities = entry.resolve();
-						abilityLookup.put(entityType, resolvedAbilities);
+						entityAbilityLookup.put(entityType, resolvedAbilities);
 					}
 				}
 				catch(Exception ex)

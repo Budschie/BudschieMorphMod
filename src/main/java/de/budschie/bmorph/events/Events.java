@@ -142,7 +142,6 @@ public class Events
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	@SubscribeEvent
 	public static void onPlayerJoined(PlayerLoggedInEvent event)
 	{	
@@ -158,7 +157,7 @@ public class Events
 				
 //				ServerSetup.server.getPlayerList().getPlayers().forEach(serverPlayer -> cap.resolve().get().syncWithClient(event.getPlayer(), serverPlayer));
 //				ServerSetup.server.getPlayerList().getPlayers().forEach(serverPlayer -> cap.resolve().get().syncWithClient(serverPlayer, (ServerPlayerEntity) event.getPlayer()));
-				cap.resolve().get().getCurrentMorph().ifPresent(morph -> cap.resolve().get().setCurrentAbilities(MORPH_ABILITY_MANAGER.getAbilitiesFor(morph)));
+				cap.resolve().get().getCurrentMorph().ifPresent(morph -> cap.resolve().get().setCurrentAbilities(morph.getAbilities()));
 				cap.resolve().get().syncWithClients();
 				cap.resolve().get().applyHealthOnPlayer();
 				cap.resolve().get().applyAbilities(null, Arrays.asList());

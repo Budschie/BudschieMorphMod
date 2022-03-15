@@ -1,9 +1,20 @@
 package de.budschie.bmorph.morph;
 
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import de.budschie.bmorph.events.Events;
 import de.budschie.bmorph.main.ServerSetup;
+import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.util.BudschieUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -11,15 +22,24 @@ import net.minecraft.world.level.Level;
 
 public abstract class MorphItem
 {
+	protected final Logger LOGGER = LogManager.getLogger();
+	
 	private String morphItemId;
 	
 	// We will control this vars through a new ability
 	private int stunnedUntil = -1;
 	private int totalStunTime = 1;
 	
+	private Optional<ResourceLocation> customAbilityList = Optional.empty();
+	
 	protected MorphItem(String morphItemId)
 	{
 		this.morphItemId = morphItemId;
+	}
+	
+	public void setCustomAbilityList(ResourceLocation customAbilityList)
+	{
+		this.customAbilityList = Optional.of(customAbilityList);
 	}
 	
 	public CompoundTag serialize()
@@ -33,6 +53,11 @@ public abstract class MorphItem
 		{
 			nbt.putInt("stunned_until", BudschieUtils.convertToRelativeTime(stunnedUntil));
 			nbt.putInt("total_stun_time", totalStunTime);
+		}
+		
+		if(customAbilityList.isPresent())
+		{
+			nbt.putString("custom_ability_list", customAbilityList.get().toString());
 		}
 		
 		return nbt;
@@ -51,7 +76,37 @@ public abstract class MorphItem
 				stunnedUntil = BudschieUtils.convertToAbsoluteTime(nbt.getInt("stunned_until"));
 				totalStunTime = nbt.getInt("total_stun_time");
 			}
+			
+			if(nbt.contains("custom_ability_list", Tag.TAG_STRING))
+			{
+				setCustomAbilityList(new ResourceLocation(nbt.getString("custom_ability_list")));
+			}
 		}
+	}
+	
+	public List<Ability> getAbilities()
+	{
+		if(customAbilityList.isPresent())
+		{
+			List<Ability> abilities = Events.MORPH_ABILITY_MANAGER.getAbilitiesForCustomAbilityList(customAbilityList.get());
+			
+			if(abilities == null)
+			{
+				LOGGER.warn(MessageFormat.format("The custom ability list {0} for the entity type {1} does not exist. Defaulting to an empty list of abilities.", customAbilityList.get().toString(), getEntityType()));
+				return Arrays.asList();
+			}
+			
+			return abilities;
+		}
+		
+		List<Ability> defaultAbilities = Events.MORPH_ABILITY_MANAGER.getAbilitiesForEntity(getEntityType());
+		
+		return defaultAbilities == null ? Arrays.asList() : defaultAbilities;
+	}
+	
+	protected Optional<ResourceLocation> getCustomAbilityList()
+	{
+		return customAbilityList;
 	}
 	
 	public boolean isStunned()
