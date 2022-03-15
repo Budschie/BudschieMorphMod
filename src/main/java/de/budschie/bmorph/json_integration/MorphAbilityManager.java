@@ -85,7 +85,7 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 	{
 		entityAbilityLookup.clear();
 		
-		HashMap<String, MorphAbilityEntry> abilityEntries = new HashMap<>();
+		HashMap<MorphAbilityKey, MorphAbilityEntry> abilityEntries = new HashMap<>();
 		
 		// Load in all granted and revoked abilities and store this data in an HashMap with a String representing the entity resource location as a 
 		// key and a MorphAbilityEntry as a value.
@@ -94,11 +94,28 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 			try
 			{
 				JsonObject root = json.getAsJsonObject();
-				String entity = root.get("entity_type").getAsString();
+				
+				MorphAbilityKey key = null;
+				
+				// Dumb spaghetti code but idc
+				if(root.has("entity_type"))
+				{
+					key = new MorphAbilityKey(new ResourceLocation(root.get("entity_type").getAsString()), MorphAbilityEntryType.ENTITY);
+				}
+				else if(root.has("ability_list_name"))
+				{
+					key = new MorphAbilityKey(new ResourceLocation(root.get("ability_list_name").getAsString()), MorphAbilityEntryType.CUSTOM);
+				}
+				else
+				{
+					LOGGER.warn("There was neither an \"entity_type\" nor an \"ability_list_name\" present in " + resourceLocation.toString() + ".");
+				}
+				
 				JsonArray grantedAbilities = root.getAsJsonArray("grant");
 				JsonArray revokedAbilities = root.getAsJsonArray("revoke");
 
-				MorphAbilityEntry entry = abilityEntries.computeIfAbsent(entity, key -> new MorphAbilityEntry());
+				// Sorry for the naming lul
+				MorphAbilityEntry entry = abilityEntries.computeIfAbsent(key, keyLambda -> new MorphAbilityEntry());
 
 				for (int i = 0; i < grantedAbilities.size(); i++)
 				{
@@ -122,17 +139,23 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 			{
 				try
 				{
-					EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(entity));
-					
-					if(!ForgeRegistries.ENTITIES.containsKey(new ResourceLocation(entity)))
-					{
-						LOGGER.warn(String.format("The given entity %s is not known to the game. Skipping this entry. Please make sure to only load this when the mod for the entity is present. You can do this by putting this JSON file in \"data/<modname>/morph_abilities\".", entity));
+					if(entity.type == MorphAbilityEntryType.ENTITY)
+					{						
+						if(!ForgeRegistries.ENTITIES.containsKey(entity.name))
+						{
+							LOGGER.warn(String.format("The given entity %s is not known to the game. Skipping this entry. Please make sure to only load this when the mod for the entity is present. You can do this by putting this JSON file in \"data/<modname>/morph_abilities\".", entity));
+						}
+						else
+						{
+							EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(entity.name);
+							entityAbilityLookup.put(entityType, entry.resolve());
+						}
 					}
 					else
 					{
-						List<Ability> resolvedAbilities = entry.resolve();
-						entityAbilityLookup.put(entityType, resolvedAbilities);
+						customAbilityLookup.put(entity.name, entry.resolve());
 					}
+					
 				}
 				catch(Exception ex)
 				{
@@ -140,6 +163,11 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 				}
 			});
 		};
+	}
+	
+	private static enum MorphAbilityEntryType
+	{
+		ENTITY, CUSTOM
 	}
 	
 	private static class MorphAbilityEntry
@@ -169,6 +197,35 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 				
 				return true;
 			}).map(strRaw -> BMorphMod.DYNAMIC_ABILITY_REGISTRY.getEntry(new ResourceLocation(strRaw))).collect(Collectors.toList());
+		}
+	}
+	
+	private static class MorphAbilityKey
+	{
+		private ResourceLocation name;
+		private MorphAbilityEntryType type;
+		
+		public MorphAbilityKey(ResourceLocation name, MorphAbilityEntryType type)
+		{
+			this.name = name;
+			this.type = type;
+		}
+		
+		@Override
+		public boolean equals(Object obj)
+		{
+			if(obj instanceof MorphAbilityKey key)
+			{
+				return key.name.equals(this.name) && key.type == this.type;
+			}
+			
+			return false;
+		}
+		
+		@Override
+		public int hashCode()
+		{
+			return name.hashCode() ^ type.hashCode();
 		}
 	}
 }
