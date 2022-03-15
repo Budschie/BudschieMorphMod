@@ -24,6 +24,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -67,6 +68,9 @@ public class PredicateAbility extends StunAbility
 	@SubscribeEvent
 	public void onPlayersUpdated(ServerTickEvent event)
 	{
+		if(event.phase == Phase.START)
+			return;
+		
 		LootItemCondition[][] lootItemConditions = new LootItemCondition[predicates.size()][];
 		
 		for(int i = 0; i < predicates.size(); i++)
