@@ -19,6 +19,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public abstract class MorphItem
 {
@@ -31,6 +32,7 @@ public abstract class MorphItem
 	private int totalStunTime = 1;
 	
 	private Optional<ResourceLocation> customAbilityList = Optional.empty();
+	private Optional<EntityType<?>> abilityListFromEntity = Optional.empty();
 	
 	protected MorphItem(String morphItemId)
 	{
@@ -40,6 +42,11 @@ public abstract class MorphItem
 	public void setCustomAbilityList(ResourceLocation customAbilityList)
 	{
 		this.customAbilityList = Optional.of(customAbilityList);
+	}
+	
+	public void setAbilityListFromEntity(EntityType<?> abilityListFromEntity)
+	{
+		this.abilityListFromEntity = Optional.of(abilityListFromEntity);
 	}
 	
 	public CompoundTag serialize()
@@ -58,6 +65,10 @@ public abstract class MorphItem
 		if(customAbilityList.isPresent())
 		{
 			nbt.putString("custom_ability_list", customAbilityList.get().toString());
+		}
+		else if(abilityListFromEntity.isPresent())
+		{
+			nbt.putString("ability_list_from_entity", abilityListFromEntity.get().getRegistryName().toString());
 		}
 		
 		return nbt;
@@ -81,6 +92,10 @@ public abstract class MorphItem
 			{
 				setCustomAbilityList(new ResourceLocation(nbt.getString("custom_ability_list")));
 			}
+			else if(nbt.contains("ability_list_from_entity", Tag.TAG_STRING))
+			{
+				setAbilityListFromEntity(ForgeRegistries.ENTITIES.getValue(new ResourceLocation(nbt.getString("ability_list_from_entity"))));
+			}
 		}
 	}
 	
@@ -99,7 +114,9 @@ public abstract class MorphItem
 			return abilities;
 		}
 		
-		List<Ability> defaultAbilities = Events.MORPH_ABILITY_MANAGER.getAbilitiesForEntity(getEntityType());
+		EntityType<?> toGetAbilitiesFrom = abilityListFromEntity.isPresent() ? abilityListFromEntity.get() : getEntityType();
+		
+		List<Ability> defaultAbilities = Events.MORPH_ABILITY_MANAGER.getAbilitiesForEntity(toGetAbilitiesFrom);
 		
 		return defaultAbilities == null ? Arrays.asList() : defaultAbilities;
 	}
