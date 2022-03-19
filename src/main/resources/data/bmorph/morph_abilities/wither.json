@@ -8,7 +8,8 @@
         "bmorph:no_hot_floor_damage",
         "bmorph:no_lava_damage",
         "bmorph:wither_skull_yeet",
-        "bmorph:wither_on_hit"
+        "bmorph:wither_on_hit",
+        "bmorph:disable_wither"
     ],
     "revoke":
     [
