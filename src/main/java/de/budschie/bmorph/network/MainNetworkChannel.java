@@ -11,6 +11,7 @@ import de.budschie.bmorph.network.GuardianBeamAttack.GuardianBeamAttackPacket;
 import de.budschie.bmorph.network.MorphAddedSynchronizer.MorphAddedPacket;
 import de.budschie.bmorph.network.MorphCapabilityFullSynchronizer.MorphPacket;
 import de.budschie.bmorph.network.MorphChangedSynchronizer.MorphChangedPacket;
+import de.budschie.bmorph.network.MorphItemDisabled.MorphItemDisabledPacket;
 import de.budschie.bmorph.network.MorphRemovedSynchronizer.MorphRemovedPacket;
 import de.budschie.bmorph.network.MorphRequestAbilityUsage.MorphRequestAbilityUsagePacket;
 import de.budschie.bmorph.network.MorphRequestFavouriteChange.MorphRequestFavouriteChangePacket;
@@ -57,6 +58,7 @@ public class MainNetworkChannel
 		registerSimpleImplPacket(MorphSheepShearedPacket.class, new MorphSheepSheared());
 		registerSimpleImplPacket(DataTransfomerSynchronizerPacket.class, new DataTransformerSynchronizer());
 		registerSimpleImplPacket(FlightPacket.class, new Flight());
+		registerSimpleImplPacket(MorphItemDisabledPacket.class, new MorphItemDisabled());
 	}
 	
 	public static <T> void registerSimpleImplPacket(Class<T> packetClass, ISimpleImplPacket<T> packet)

@@ -1,11 +1,16 @@
 package de.budschie.bmorph.commands;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.BiFunction;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
@@ -14,7 +19,13 @@ import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.morph.functionality.Ability;
+import de.budschie.bmorph.network.MainNetworkChannel;
+import de.budschie.bmorph.network.MorphItemDisabled.MorphItemDisabledPacket;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.ints.IntLists;
 import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.CompoundTagArgument;
@@ -28,6 +39,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class MorphCommand
@@ -105,10 +117,102 @@ public class MorphCommand
 								)
 						));
 		
+		// This code is plain unreadable...
+		dispatcher.register(Commands.literal("disable_morph_item").requires(sender -> sender.hasPermission(2))
+				.then(Commands.argument("player", EntityArgument.players()).then(Commands.argument("disabled_for", IntegerArgumentType.integer(0))
+						.then(Commands.literal("current_morph_item").executes(ctx -> disableMorphItems(ctx, (sp, cap) ->
+						{
+							if (cap.getCurrentMorphIndex().isPresent())
+								return new int[] { cap.getCurrentMorphIndex().get() };
+							else
+								return null;
+						})))
+						.then(Commands.literal("everything")
+								.then(Commands.literal("matching").then(Commands.literal("entity_type").then(Commands.argument("entity_type", EntitySummonArgument.id())
+										.suggests(SuggestionProviders.SUMMONABLE_ENTITIES).executes(ctx -> disableMorphItems(ctx, (sp, cap) ->
+										{
+											EntityType<?> desiredEntityType = ForgeRegistries.ENTITIES.getValue(ctx.getArgument("entity_type", ResourceLocation.class));
+											
+											// If the given entity type doesn't exist, return null to indicate error
+											if(desiredEntityType == null)
+												return null;
+
+											// Create an dynamically resizable int array containing the indices of the found entities
+											IntArrayList intArrayList = new IntArrayList();
+
+											// Iterate over every single morph item and add those morph items to the array list that have the given entity type
+											for (int i = 0; i < cap.getMorphList().getMorphArrayList().size(); i++)
+											{
+												MorphItem currentItem = cap.getMorphList().getMorphArrayList().get(i);
+
+												if (currentItem.getEntityType() == desiredEntityType)
+													intArrayList.add(i);
+											}
+											
+											// Return the int array
+											return intArrayList.toIntArray();
+										})))))
+								.executes(ctx -> disableMorphItems(ctx, (sp, cap) ->
+								{
+									// We could greatly optimize this (memory-wise) but we would lose a lot of
+									// generalization, so I'm not gonna do it
+									int[] toDisable = new int[cap.getMorphList().getMorphArrayList().size()];
+
+									for (int i = 0; i < toDisable.length; i++)
+									{
+										toDisable[i] = i;
+									}
+
+									return toDisable;
+								}))))));
+		
 		dispatcher.register(Commands.literal("morph_list_ability")
 				.requires(sender -> sender.hasPermission(2))
 				.executes(ctx -> listAbilities(ctx.getSource(), ctx.getSource().getPlayerOrException()))
 				.then(Commands.argument("player", EntityArgument.player()).executes(ctx -> listAbilities(ctx.getSource(), EntityArgument.getPlayer(ctx, "player")))));
+	}
+	
+	private static int disableMorphItems(CommandContext<CommandSourceStack> ctx, BiFunction<ServerPlayer, IMorphCapability, int[]> morphItemSelectionFunction) throws CommandSyntaxException
+	{
+		List<ServerPlayer> players = ctx.getArgument("player", EntitySelector.class).findPlayers(ctx.getSource());
+		int disableFor = ctx.getArgument("disabled_for", Integer.class);
+		
+		int succeeded = 0;
+		
+		for(ServerPlayer player : players)
+		{
+			IMorphCapability cap = MorphUtil.getCapOrNull(player);
+			
+			if(cap != null)
+			{
+//				if(cap.getCurrentMorphIndex().isPresent())
+//				{
+//					cap.getCurrentMorph().get().disable(disableFor);
+//					
+//					MorphItemDisabledPacket packet = new MorphItemDisabledPacket(cap.getCurrentMorphIndex().get(), disableFor);
+//					MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
+//					
+//					succeeded++;
+//				}
+				
+				int[] selectedMorphs = morphItemSelectionFunction.apply(player, cap);
+				
+				if(selectedMorphs != null && selectedMorphs.length > 0)
+				{
+					for(int i : selectedMorphs)
+						cap.getMorphList().getMorphArrayList().get(i).disable(disableFor);
+					
+					MorphItemDisabledPacket packet = new MorphItemDisabledPacket(disableFor, selectedMorphs);
+					MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
+					
+					succeeded++;
+				}
+			}
+		}
+		
+		ctx.getSource().sendSuccess(new TextComponent(MessageFormat.format("{0}/{1} players' morphs were successfully disabled.", succeeded, players.size())), false);
+		
+		return 0;
 	}
 	
 	private static int listAbilities(CommandSourceStack sender, Player player)
