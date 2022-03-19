@@ -210,10 +210,10 @@ public class MorphGuiHandler
 	
 	@SubscribeEvent
 	public static void onRenderOverlayEvent(RenderGameOverlayEvent.Post event)
-	{
+	{		
 		if(canGuiBeDisplayed() && event.getType() == ElementType.TEXT && currentMorphGui.isPresent())
 		{
-			currentMorphGui.get().render(event.getMatrixStack());
+			currentMorphGui.get().render(event.getMatrixStack(), event.getPartialTicks());
 		}
 	}
 	

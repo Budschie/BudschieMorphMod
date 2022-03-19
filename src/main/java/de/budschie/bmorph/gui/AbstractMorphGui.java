@@ -31,12 +31,12 @@ public abstract class AbstractMorphGui implements IForgeRegistryEntry<AbstractMo
 	public abstract void showGui();
 	
 	/** This method is used to render everything related to this gui. **/
-	public void render(PoseStack matrixStack)
+	public void render(PoseStack matrixStack, float partialTicks)
 	{
-		renderWidgets(matrixStack);
+		renderWidgets(matrixStack, partialTicks);
 	}
 	
-	public abstract void renderWidgets(PoseStack matrixStack);
+	public abstract void renderWidgets(PoseStack matrixStack, float partialTicks);
 	
 	/** Scrolls around in the morph menu. When scrolling up, {@code amount} is negative, when scrolling down, {@code amount} is positive. **/
 	public abstract void scroll(int amount);

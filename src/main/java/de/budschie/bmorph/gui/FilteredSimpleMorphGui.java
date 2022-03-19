@@ -21,7 +21,9 @@ import de.budschie.bmorph.main.References;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.VisualMorphDataRegistry.VisualMorphData;
 import de.budschie.bmorph.util.Pair;
+import de.budschie.bmorph.util.UiUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
@@ -157,7 +159,7 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 	}
 	
 	@Override
-	public void renderWidgets(PoseStack matrixStack)
+	public void renderWidgets(PoseStack matrixStack, float partialTicks)
 	{							
 		int startY = Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2 - MorphWidget.getHeight() / 2
 				- scroll * MorphWidget.getHeight();
@@ -178,7 +180,7 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 				MorphWidget widget = morphWidgets.get(i);
 				matrixStack.pushPose();
 				matrixStack.translate(6 - scrollOffX, startY + advanceY, 0);
-				widget.render(matrixStack, i == scroll, horizontalScroll);
+				widget.render(matrixStack, i == scroll, horizontalScroll, partialTicks);
 	//			Minecraft.getInstance().fontRenderer.drawText(matrixStack, new StringTextComponent("Index " + i), 0, 0,
 	//					0xffffff);
 				matrixStack.popPose();
@@ -286,12 +288,12 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 		}
 		
 		// This is kinda dumb
-		public void render(PoseStack stack, boolean isSelected, int horizontalScroll)
+		public void render(PoseStack stack, boolean isSelected, int horizontalScroll, float partialTicks)
 		{
-			render(stack, isSelected, horizontalScroll, 0);
+			render(stack, isSelected, horizontalScroll, 0, partialTicks);
 		}
 		
-		public void render(PoseStack stack, boolean isSelected, int horizontalScroll, int currentDepth)
+		public void render(PoseStack stack, boolean isSelected, int horizontalScroll, int currentDepth, float partialTicks)
 		{
 			RenderSystem.enableBlend();
 			RenderSystem.setShaderTexture(0, (isSelected && currentDepth == horizontalScroll) ? MORPH_WINDOW_SELECTED : MORPH_WINDOW_NORMAL);
@@ -345,6 +347,15 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 					
 					stack.popPose();
 				}
+				
+				if(morphItem.isDisabled())
+				{
+					float calculatedHeight = getHeight() * morphItem.getDisabledProgress(partialTicks);
+					
+					// F this conversion bullshit with the ARGB format
+					// Also I think I might have trial-errored too much here but who cares
+					UiUtils.drawColoredRectangle(stack.last().pose(), 0, getHeight(), getWidth(), -calculatedHeight + getHeight(), 0, 0, 0, 0.8f);
+				}
 			}
 			
 			if(isFavourite)
@@ -358,7 +369,7 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 			{
 				stack.pushPose();
 				stack.translate(getWidth(), 0, 0);
-				child.render(stack, isSelected, horizontalScroll, currentDepth+1);
+				child.render(stack, isSelected, horizontalScroll, currentDepth+1, partialTicks);
 				stack.popPose();
 			}
 		}
