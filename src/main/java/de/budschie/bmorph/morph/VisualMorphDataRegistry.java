@@ -41,18 +41,14 @@ public class VisualMorphDataRegistry
 	
 	public void syncWithClient(ServerPlayer client)
 	{
-		if(!visualMorphDataRegistry.isEmpty() && !BudschieUtils.isLocalWorld())
+		if(!visualMorphDataRegistry.isEmpty())
 			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> client), new VisualMorphSynchronizer.VisualMorphPacket(visualMorphDataRegistry.values()));
-		else
-			System.out.println("Skipping visual data sync as world is local.");
 	}
 	
 	public void syncWithClients()
 	{
-		if(!visualMorphDataRegistry.isEmpty() && !BudschieUtils.isLocalWorld())
+		if(!visualMorphDataRegistry.isEmpty())
 			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new VisualMorphSynchronizer.VisualMorphPacket(visualMorphDataRegistry.values()));
-		else
-			System.out.println("Skipping visual data sync as world is local.");
 	}
 	
 	public static class VisualMorphData

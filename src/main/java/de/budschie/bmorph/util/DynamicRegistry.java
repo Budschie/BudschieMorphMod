@@ -55,17 +55,13 @@ public abstract class DynamicRegistry<T extends IDynamicRegistryObject, SP>
 	
 	public void syncWithClients()
 	{
-		if(!entries.isEmpty() && !BudschieUtils.isLocalWorld())
+		if(!entries.isEmpty())
 			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), getPacket());
-		else
-			logger.info("Skipping registry sync as world is local.");
 	}
 	
 	public void syncWithClient(ServerPlayer player)
 	{
-		if(!entries.isEmpty() && !BudschieUtils.isLocalWorld())
+		if(!entries.isEmpty())
 			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), getPacket());
-		else
-			logger.info("Skipping registry sync as world is local.");
 	}	
 }
