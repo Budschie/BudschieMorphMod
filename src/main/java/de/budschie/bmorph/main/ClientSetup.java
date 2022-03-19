@@ -11,6 +11,7 @@ import de.budschie.bmorph.morph.player.UglyHackThatDoesntWork;
 import de.budschie.bmorph.render_handler.AbstractPlayerSynchronizer;
 import de.budschie.bmorph.render_handler.ChickenSynchronizer;
 import de.budschie.bmorph.render_handler.CommonEntitySynchronizer;
+import de.budschie.bmorph.render_handler.EndermanSynchronizer;
 import de.budschie.bmorph.render_handler.EntitySynchronizerRegistry;
 import de.budschie.bmorph.render_handler.GuardianEntitySynchronizer;
 import de.budschie.bmorph.render_handler.LivingEntitySynchronzier;
@@ -89,6 +90,7 @@ public class ClientSetup
 		EntitySynchronizerRegistry.addEntitySynchronizer(new TamableSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new SheepSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new WitherSynchronizer());
+		EntitySynchronizerRegistry.addEntitySynchronizer(new EndermanSynchronizer());
 				
 		UglyHackThatDoesntWork.thisisstupid = (gameProfile, world) ->
 		{
