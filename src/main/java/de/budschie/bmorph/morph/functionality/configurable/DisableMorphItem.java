@@ -8,7 +8,6 @@ import java.util.UUID;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphUtil;
@@ -16,15 +15,11 @@ import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.StunAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.AudioVisualEffect;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
-import de.budschie.bmorph.network.MainNetworkChannel;
-import de.budschie.bmorph.network.MorphItemDisabled.MorphItemDisabledPacket;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.network.PacketDistributor;
 
 public class DisableMorphItem extends StunAbility
 {
