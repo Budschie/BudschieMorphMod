@@ -40,6 +40,7 @@ import de.budschie.bmorph.morph.functionality.configurable.RandomDelegatingOnUse
 import de.budschie.bmorph.morph.functionality.configurable.SheepEatGrassAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SoundOnUseAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SquidBoostAbility;
+import de.budschie.bmorph.morph.functionality.configurable.DisableMorphItem;
 import de.budschie.bmorph.morph.functionality.configurable.TeleportAbility;
 import de.budschie.bmorph.morph.functionality.configurable.TransformEntityOnDeath;
 import de.budschie.bmorph.morph.functionality.configurable.WalkOnPowderedSnowAbility;
@@ -101,5 +102,6 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<PredicateAbility>> PREDICATE_ABILITY = ABILITY_REGISTRY.register("predicate_ability", () -> new ConfigurableAbility<>(PredicateAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<DelegateOnDamageAbility>> DELEGATE_ON_DAMAGE_ABILITY = ABILITY_REGISTRY.register("delegate_on_damage", () -> new ConfigurableAbility<>(DelegateOnDamageAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<EffectOnUseAbility>> EFFECT_ON_USE_ABILITY = ABILITY_REGISTRY.register("effect_on_use", () -> new ConfigurableAbility<>(EffectOnUseAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<DisableMorphItem>> STUN_MORPH_ABILITY = ABILITY_REGISTRY.register("disable_morph_item", () -> new ConfigurableAbility<>(DisableMorphItem.CODEC));
 }
 
