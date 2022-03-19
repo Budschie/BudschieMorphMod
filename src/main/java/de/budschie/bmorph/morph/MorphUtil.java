@@ -53,6 +53,9 @@ public class MorphUtil
 	
 	public static IMorphCapability getCapOrNull(Player playerEntity)
 	{
+		if(playerEntity == null)
+			return null;
+		
 		LazyOptional<IMorphCapability> cap = playerEntity.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 		
 		if(cap.isPresent())
