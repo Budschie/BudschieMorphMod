@@ -494,7 +494,13 @@ public class Events
 	@SubscribeEvent
 	public static void onMorphingServer(PlayerMorphEvent.Server.Pre event)
 	{
-		MorphUtil.getCapOrNull(event.getPlayer()).getCurrentMorph().ifPresent(currentMorph -> BMorphMod.DEMORPHED_FROM.trigger(currentMorph, (ServerPlayer) event.getPlayer()));
+		if(event.getAboutToMorphTo() != null && event.getAboutToMorphTo().isDisabled())
+		{
+			event.setCanceled(true);
+			return;
+		}
+		
+		event.getMorphCapability().getCurrentMorph().ifPresent(currentMorph -> BMorphMod.DEMORPHED_FROM.trigger(currentMorph, (ServerPlayer) event.getPlayer()));
 	}
 	
 	private static void aggro(IMorphCapability capability, int aggroDuration)
