@@ -1,10 +1,6 @@
 package de.budschie.bmorph.util;
 
 import de.budschie.bmorph.main.ServerSetup;
-import net.minecraft.client.Minecraft;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 
 public class BudschieUtils
 {
