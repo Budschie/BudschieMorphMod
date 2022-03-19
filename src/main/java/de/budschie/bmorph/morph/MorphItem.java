@@ -12,6 +12,7 @@ import de.budschie.bmorph.events.Events;
 import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.util.BudschieUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -28,8 +29,8 @@ public abstract class MorphItem
 	private String morphItemId;
 	
 	// We will control this vars through a new ability
-	private int stunnedUntil = -1;
-	private int totalStunTime = 1;
+	private int disabledUntil = -1;
+	private int totalDisableTime = 1;
 	
 	private Optional<ResourceLocation> customAbilityList = Optional.empty();
 	private Optional<EntityType<?>> abilityListFromEntity = Optional.empty();
@@ -56,10 +57,10 @@ public abstract class MorphItem
 		nbt.put("additional", serializeAdditional());
 		
 		// If we are stunned, save all of this stun stuff
-		if(isStunned())
+		if(isDisabled())
 		{
-			nbt.putInt("stunned_until", BudschieUtils.convertToRelativeTime(stunnedUntil));
-			nbt.putInt("total_stun_time", totalStunTime);
+			nbt.putInt("disabled_until", BudschieUtils.convertToRelativeTime(disabledUntil));
+			nbt.putInt("total_stun_time", totalDisableTime);
 		}
 		
 		if(customAbilityList.isPresent())
@@ -82,10 +83,10 @@ public abstract class MorphItem
 		{
 			deserializeAdditional(nbt.getCompound("additional"));
 			
-			if(nbt.contains("stunned_until", Tag.TAG_INT))
+			if(nbt.contains("disabled_until", Tag.TAG_INT))
 			{
-				stunnedUntil = BudschieUtils.convertToAbsoluteTime(nbt.getInt("stunned_until"));
-				totalStunTime = nbt.getInt("total_stun_time");
+				disabledUntil = BudschieUtils.convertToAbsoluteTime(nbt.getInt("disabled_until"));
+				totalDisableTime = nbt.getInt("total_stun_time");
 			}
 			
 			if(nbt.contains("custom_ability_list", Tag.TAG_STRING))
@@ -126,14 +127,29 @@ public abstract class MorphItem
 		return customAbilityList;
 	}
 	
-	public boolean isStunned()
+	public void disable(int forTicks)
 	{
-		return ServerSetup.server.getTickCount() < stunnedUntil;
+		this.totalDisableTime = forTicks;
+		this.disabledUntil = BudschieUtils.convertToAbsoluteTime(forTicks);
 	}
 	
-	public float getStunProgress()
+	public boolean isDisabled()
 	{
-		return 1f - (BudschieUtils.convertToRelativeTime(stunnedUntil) / ((float)totalStunTime));
+		return ServerSetup.server.getTickCount() < disabledUntil;
+	}
+	
+	// This calc might be wrong lol
+	public float getDisabledProgress(float partialTicks)
+	{
+		float timeLeft = BudschieUtils.convertToRelativeTime(disabledUntil);
+		float totalTime = totalDisableTime;
+		
+		return (timeLeft - partialTicks) / totalTime;
+	}
+	
+	public float getDisabledProgress()
+	{
+		return getDisabledProgress(0);
 	}
 	
 	public abstract void deserializeAdditional(CompoundTag nbt);
