@@ -9,6 +9,7 @@ import de.budschie.bmorph.morph.functionality.configurable.AttributeModifierAbil
 import de.budschie.bmorph.morph.functionality.configurable.BlockPassthroughAbility;
 import de.budschie.bmorph.morph.functionality.configurable.BlockTrailAbility;
 import de.budschie.bmorph.morph.functionality.configurable.Boom;
+import de.budschie.bmorph.morph.functionality.configurable.BossbarAbility;
 import de.budschie.bmorph.morph.functionality.configurable.BurnInSunAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ClimbingAbility;
 import de.budschie.bmorph.morph.functionality.configurable.CommandOnDisable;
@@ -103,5 +104,6 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<DelegateOnDamageAbility>> DELEGATE_ON_DAMAGE_ABILITY = ABILITY_REGISTRY.register("delegate_on_damage", () -> new ConfigurableAbility<>(DelegateOnDamageAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<EffectOnUseAbility>> EFFECT_ON_USE_ABILITY = ABILITY_REGISTRY.register("effect_on_use", () -> new ConfigurableAbility<>(EffectOnUseAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<DisableMorphItem>> STUN_MORPH_ABILITY = ABILITY_REGISTRY.register("disable_morph_item", () -> new ConfigurableAbility<>(DisableMorphItem.CODEC));
+	public static RegistryObject<ConfigurableAbility<BossbarAbility>> BOSSBAR_ABILITY = ABILITY_REGISTRY.register("bossbar", () -> new ConfigurableAbility<>(BossbarAbility.CODEC));
 }
 

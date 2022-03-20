@@ -32,6 +32,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.world.BossEvent.BossBarColor;
+import net.minecraft.world.BossEvent.BossBarOverlay;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
@@ -89,6 +91,9 @@ public class ModCodecs
 	
 	public static final Codec<Selector> SELECTOR_ENUM = getEnumCodec(Selector.class, Selector::values);
 	public static final Codec<Direction> DIRECTION_ENUM = getEnumCodec(Direction.class, Direction::values);
+	
+	public static final Codec<BossBarColor> BOSSBAR_COLOR_ENUM = getEnumCodec(BossBarColor.class, BossBarColor::values);
+	public static final Codec<BossBarOverlay> BOSSBAR_OVERLAY_ENUM = getEnumCodec(BossBarOverlay.class, BossBarOverlay::values);
 	
 	public static final Codec<LazyTag<Block>> LAZY_BLOCK_TAGS = getLazyTagCodec(rl -> BlockTags.getAllTags().getTag(rl));
 	
