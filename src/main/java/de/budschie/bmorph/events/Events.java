@@ -167,22 +167,22 @@ public class Events
 				cap.resolve().get().applyHealthOnPlayer();
 				cap.resolve().get().applyAbilities(null, Arrays.asList());
 				
-				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Post(player, cap.resolve().get(), cap.resolve().get().getCurrentMorph().orElse(null)));
-				
-				PufferfishCapabilityHandler.INSTANCE.synchronizeWithClients(player);
-				GuardianBeamCapabilityHandler.INSTANCE.synchronizeWithClients(player);
-				GlideCapabilityHandler.INSTANCE.synchronizeWithClients(player);
-				ParrotDanceCapabilityHandler.INSTANCE.synchronizeWithClients(player);
-				SheepCapabilityHandler.INSTANCE.synchronizeWithClients(player);
-				
-				event.getPlayer().getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(bossbarCap ->
-				{
-					bossbarCap.getBossbar().ifPresent(bossbar ->
-					{
-						BudschieUtils.getPlayersTrackingEntityAndSelf((ServerPlayer) event.getPlayer()).forEach(trackingPlayer -> bossbar.addPlayer(trackingPlayer));
-					});
-				});
+				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Post(player, cap.resolve().get(), cap.resolve().get().getCurrentMorph().orElse(null)));				
 			}
+			
+			PufferfishCapabilityHandler.INSTANCE.synchronizeWithClients(player);
+			GuardianBeamCapabilityHandler.INSTANCE.synchronizeWithClients(player);
+			GlideCapabilityHandler.INSTANCE.synchronizeWithClients(player);
+			ParrotDanceCapabilityHandler.INSTANCE.synchronizeWithClients(player);
+			SheepCapabilityHandler.INSTANCE.synchronizeWithClients(player);
+			
+			event.getPlayer().getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(bossbarCap ->
+			{
+				bossbarCap.getBossbar().ifPresent(bossbar ->
+				{
+					BudschieUtils.getPlayersTrackingEntityAndSelf((ServerPlayer) event.getPlayer()).forEach(trackingPlayer -> bossbar.addPlayer(trackingPlayer));
+				});
+			});
 		}
 	}
 	
