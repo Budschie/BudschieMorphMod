@@ -39,8 +39,8 @@ public class ImmuneToDamageIfAbility extends Ability
 	
 	@SubscribeEvent
 	public void onPlayerAttacked(LivingAttackEvent event)
-	{
-		if(!isTracked(event.getEntity()))
+	{		
+		if(event.getEntity().level.isClientSide() || !isTracked(event.getEntity()))
 			return;
 		
 		Player player = (Player) event.getEntity();
