@@ -35,10 +35,10 @@ public class MorphPredicate
 		if(entityType != null && !entityType.matches(morphItem.getEntityType()))
 			return false;
 		
-		if(count != null && !count.matches(cap.getMorphList().getEntityCount(morphItem.getEntityType())))
+		if(count != null && morphItem != null && cap != null && !count.matches(cap.getMorphList().getEntityCount(morphItem.getEntityType())))
 			return false;
 		
-		if(nbtPredicate != null && !nbtPredicate.matches(morphItem.serializeAdditional()))
+		if(nbtPredicate != null && morphItem != null && !nbtPredicate.matches(morphItem.serializeAdditional()))
 			return false;
 		
 		return true;
