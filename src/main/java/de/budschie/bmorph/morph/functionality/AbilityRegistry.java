@@ -6,6 +6,7 @@ import de.budschie.bmorph.main.References;
 import de.budschie.bmorph.morph.functionality.configurable.AirSuffocationAbility;
 import de.budschie.bmorph.morph.functionality.configurable.AttackYeetAbility;
 import de.budschie.bmorph.morph.functionality.configurable.AttributeModifierAbility;
+import de.budschie.bmorph.morph.functionality.configurable.AudiovisualEffectOnEnableAbility;
 import de.budschie.bmorph.morph.functionality.configurable.BlockPassthroughAbility;
 import de.budschie.bmorph.morph.functionality.configurable.BlockTrailAbility;
 import de.budschie.bmorph.morph.functionality.configurable.Boom;
@@ -19,11 +20,13 @@ import de.budschie.bmorph.morph.functionality.configurable.ConfigurableAbility;
 import de.budschie.bmorph.morph.functionality.configurable.CowMilkAbility;
 import de.budschie.bmorph.morph.functionality.configurable.DamageImmunityAbility;
 import de.budschie.bmorph.morph.functionality.configurable.DelegateOnDamageAbility;
+import de.budschie.bmorph.morph.functionality.configurable.DisableMorphItem;
 import de.budschie.bmorph.morph.functionality.configurable.EffectOnAttackEntity;
 import de.budschie.bmorph.morph.functionality.configurable.EffectOnUseAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ElderGuardianJumpscareAbility;
 import de.budschie.bmorph.morph.functionality.configurable.FlyAbility;
 import de.budschie.bmorph.morph.functionality.configurable.GuardianAbility;
+import de.budschie.bmorph.morph.functionality.configurable.ImmuneToDamageIfAbility;
 import de.budschie.bmorph.morph.functionality.configurable.InstaDeathOnCookieAbility;
 import de.budschie.bmorph.morph.functionality.configurable.InstaJumpAbility;
 import de.budschie.bmorph.morph.functionality.configurable.InstaRegenAbility;
@@ -41,8 +44,8 @@ import de.budschie.bmorph.morph.functionality.configurable.RandomDelegatingOnUse
 import de.budschie.bmorph.morph.functionality.configurable.SheepEatGrassAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SoundOnUseAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SquidBoostAbility;
-import de.budschie.bmorph.morph.functionality.configurable.DisableMorphItem;
 import de.budschie.bmorph.morph.functionality.configurable.TeleportAbility;
+import de.budschie.bmorph.morph.functionality.configurable.TeleportOnProjectileContactAbility;
 import de.budschie.bmorph.morph.functionality.configurable.TransformEntityOnDeath;
 import de.budschie.bmorph.morph.functionality.configurable.WalkOnPowderedSnowAbility;
 import de.budschie.bmorph.morph.functionality.configurable.WaterBreathingAbility;
@@ -105,5 +108,9 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<EffectOnUseAbility>> EFFECT_ON_USE_ABILITY = ABILITY_REGISTRY.register("effect_on_use", () -> new ConfigurableAbility<>(EffectOnUseAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<DisableMorphItem>> STUN_MORPH_ABILITY = ABILITY_REGISTRY.register("disable_morph_item", () -> new ConfigurableAbility<>(DisableMorphItem.CODEC));
 	public static RegistryObject<ConfigurableAbility<BossbarAbility>> BOSSBAR_ABILITY = ABILITY_REGISTRY.register("bossbar", () -> new ConfigurableAbility<>(BossbarAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<AudiovisualEffectOnEnableAbility>> AUDIOVISUAL_EFFECT_ON_ENABLE = ABILITY_REGISTRY.register("audiovisual_effect_on_enable", () -> new ConfigurableAbility<>(AudiovisualEffectOnEnableAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<TeleportOnProjectileContactAbility>> TELEPORT_ON_PROJECTILE_CONTACT = ABILITY_REGISTRY.register("teleport_on_projectile_contact", () -> new ConfigurableAbility<>(TeleportOnProjectileContactAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<ImmuneToDamageIfAbility>> IMMUNE_TO_DAMAGE_IF = ABILITY_REGISTRY.register("immune_to_damage_if", () -> new ConfigurableAbility<>(ImmuneToDamageIfAbility.CODEC));
+
 }
 
