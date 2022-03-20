@@ -150,7 +150,7 @@ public class Events
 	@SubscribeEvent
 	public static void onPlayerJoined(PlayerLoggedInEvent event)
 	{	
-		if(!event.getEntity().level.isClientSide)
+		if(!event.getEntity().level.isClientSide())
 		{
 			Player player = event.getPlayer();
 			
@@ -183,6 +183,15 @@ public class Events
 					BudschieUtils.getPlayersTrackingEntityAndSelf((ServerPlayer) event.getPlayer()).forEach(trackingPlayer -> bossbar.addPlayer(trackingPlayer));
 				});
 			});
+		}
+	}
+	
+	@SubscribeEvent
+	public static void onPlayerLeft(PlayerLoggedOutEvent event)
+	{
+		if(!event.getPlayer().level.isClientSide())
+		{
+			event.getPlayer().getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(bossbarCap -> bossbarCap.clearBossbar());
 		}
 	}
 	
