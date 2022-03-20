@@ -10,7 +10,7 @@ public class StandOnFluidCapability implements IStandOnFluidCapability
 	private ArrayList<Fluid> fluids = new ArrayList<>();
 	
 	@Override
-	public List<Fluid> getAllowedFluid()
+	public List<Fluid> getAllowedFluids()
 	{
 		return fluids;
 	}

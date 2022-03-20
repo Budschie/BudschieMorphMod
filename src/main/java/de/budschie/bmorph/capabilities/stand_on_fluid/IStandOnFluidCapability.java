@@ -6,7 +6,7 @@ import net.minecraft.world.level.material.Fluid;
 
 public interface IStandOnFluidCapability
 {
-	List<Fluid> getAllowedFluid();
+	List<Fluid> getAllowedFluids();
 	void addAllowedFluid(Fluid fluid);
 	void removeAllowedFluid(Fluid fluid);
 }
