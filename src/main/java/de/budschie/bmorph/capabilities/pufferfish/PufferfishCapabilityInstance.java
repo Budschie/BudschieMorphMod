@@ -1,6 +1,6 @@
 package de.budschie.bmorph.capabilities.pufferfish;
 
-import de.budschie.bmorph.capabilities.common.CommonCapabilityInstance;
+import de.budschie.bmorph.capabilities.common.CommonCapabilityInstanceSerializable;
 import de.budschie.bmorph.main.References;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @EventBusSubscriber(bus = Bus.FORGE)
-public class PufferfishCapabilityInstance extends CommonCapabilityInstance<IPufferfishCapability>
+public class PufferfishCapabilityInstance extends CommonCapabilityInstanceSerializable<IPufferfishCapability>
 {
 	public static final ResourceLocation CAPABILITY_NAME = new ResourceLocation(References.MODID, "puffer_cap");
 	

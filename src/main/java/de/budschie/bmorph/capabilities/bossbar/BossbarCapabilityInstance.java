@@ -1,6 +1,6 @@
 package de.budschie.bmorph.capabilities.bossbar;
 
-import de.budschie.bmorph.capabilities.common.CommonCapabilityInstance;
+import de.budschie.bmorph.capabilities.common.CommonCapabilityInstanceSerializable;
 import de.budschie.bmorph.main.References;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -18,7 +18,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber
-public class BossbarCapabilityInstance extends CommonCapabilityInstance<IBossbarCapability>
+public class BossbarCapabilityInstance extends CommonCapabilityInstanceSerializable<IBossbarCapability>
 {
 	public static final ResourceLocation BOSSBAR_CAP_ID = new ResourceLocation(References.MODID, "bossbar_cap");
 	public static final Capability<IBossbarCapability> BOSSBAR_CAP = CapabilityManager.get(new CapabilityToken<>(){});

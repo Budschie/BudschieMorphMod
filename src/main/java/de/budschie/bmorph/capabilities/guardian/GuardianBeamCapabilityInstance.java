@@ -2,7 +2,7 @@ package de.budschie.bmorph.capabilities.guardian;
 
 import java.util.Optional;
 
-import de.budschie.bmorph.capabilities.common.CommonCapabilityInstance;
+import de.budschie.bmorph.capabilities.common.CommonCapabilityInstanceSerializable;
 import de.budschie.bmorph.main.References;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @EventBusSubscriber(bus = Bus.FORGE)
-public class GuardianBeamCapabilityInstance extends CommonCapabilityInstance<IGuardianBeamCapability>
+public class GuardianBeamCapabilityInstance extends CommonCapabilityInstanceSerializable<IGuardianBeamCapability>
 {
 	public static final ResourceLocation CAPABILITY_NAME = new ResourceLocation(References.MODID, "guardian_beam_cap");
 	

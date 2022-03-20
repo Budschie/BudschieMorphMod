@@ -1,6 +1,6 @@
 package de.budschie.bmorph.capabilities.sheep;
 
-import de.budschie.bmorph.capabilities.common.CommonCapabilityInstance;
+import de.budschie.bmorph.capabilities.common.CommonCapabilityInstanceSerializable;
 import de.budschie.bmorph.main.References;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +14,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber
-public class SheepCapabilityInstance extends CommonCapabilityInstance<ISheepCapability>
+public class SheepCapabilityInstance extends CommonCapabilityInstanceSerializable<ISheepCapability>
 {
 	public static final ResourceLocation CAPABILITY_NAME = new ResourceLocation(References.MODID, "sheep_cap");
 	

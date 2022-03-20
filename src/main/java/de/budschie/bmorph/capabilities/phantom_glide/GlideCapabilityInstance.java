@@ -1,6 +1,6 @@
 package de.budschie.bmorph.capabilities.phantom_glide;
 
-import de.budschie.bmorph.capabilities.common.CommonCapabilityInstance;
+import de.budschie.bmorph.capabilities.common.CommonCapabilityInstanceSerializable;
 import de.budschie.bmorph.main.References;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 @EventBusSubscriber(bus = Bus.FORGE)
-public class GlideCapabilityInstance extends CommonCapabilityInstance<IGlideCapability>
+public class GlideCapabilityInstance extends CommonCapabilityInstanceSerializable<IGlideCapability>
 {
 	public static final ResourceLocation CAPABILITY_NAME = new ResourceLocation(References.MODID, "glide_cap");
 	

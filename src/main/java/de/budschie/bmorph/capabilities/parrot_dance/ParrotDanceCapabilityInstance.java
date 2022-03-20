@@ -1,6 +1,6 @@
 package de.budschie.bmorph.capabilities.parrot_dance;
 
-import de.budschie.bmorph.capabilities.common.CommonCapabilityInstance;
+import de.budschie.bmorph.capabilities.common.CommonCapabilityInstanceSerializable;
 import de.budschie.bmorph.main.References;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +14,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber
-public class ParrotDanceCapabilityInstance extends CommonCapabilityInstance<IParrotDanceCapability>
+public class ParrotDanceCapabilityInstance extends CommonCapabilityInstanceSerializable<IParrotDanceCapability>
 {
 	public static final Capability<IParrotDanceCapability> PARROT_CAP = CapabilityManager.get(new CapabilityToken<>() {});
 	
