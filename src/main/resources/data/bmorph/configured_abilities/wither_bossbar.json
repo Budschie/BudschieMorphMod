@@ -1,0 +1,9 @@
+{
+    "ability": "bmorph:bossbar",
+    "config":
+    {
+        "bossbar_color": "purple",
+        "bossbar_overlay": "progress",
+        "darken_world": true
+    }
+}
