@@ -44,7 +44,7 @@ public class BossbarAbility extends Ability
 	{
 		super.enableAbility(player, enabledItem, oldMorph, oldAbilities, reason);
 		
-		player.getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(cap -> cap.setBossbar((ServerBossEvent) new ServerBossEvent(player.getName(), bossbarColor, bossbarOverlay)
+		player.getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(cap -> cap.setBossbar((ServerBossEvent) new ServerBossEvent(player.getDisplayName(), bossbarColor, bossbarOverlay)
 				.setCreateWorldFog(createWorldFog).setDarkenScreen(darkenWorld).setPlayBossMusic(playBossMusic)));
 	}
 	
