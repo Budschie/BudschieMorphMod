@@ -17,6 +17,7 @@ import de.budschie.bmorph.morph.functionality.data_transformers.DataModifierRegi
 import de.budschie.bmorph.morph.functionality.data_transformers.DynamicDataTransformerRegistry;
 import de.budschie.bmorph.morph.player.PlayerMorphItem;
 import de.budschie.bmorph.network.MainNetworkChannel;
+import de.budschie.bmorph.predicates.PlayerAttributesPredicate;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.GameRules;
@@ -24,6 +25,7 @@ import net.minecraft.world.level.GameRules.BooleanValue;
 import net.minecraft.world.level.GameRules.Category;
 import net.minecraft.world.level.GameRules.IntegerValue;
 import net.minecraft.world.level.GameRules.Key;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -98,6 +100,8 @@ public class BMorphMod
 			CriteriaTriggers.register(ACQUIRED_MORPH);
 			CriteriaTriggers.register(MORPHED_INTO);
 			CriteriaTriggers.register(DEMORPHED_FROM);
+			
+			LootItemConditions.register(References.MODID + ":player_attributes", new PlayerAttributesPredicate.Serializer());
 		});
 	}	
 }
