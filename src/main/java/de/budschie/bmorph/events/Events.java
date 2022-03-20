@@ -231,11 +231,11 @@ public class Events
 			Player player = (Player) event.getTarget();
 			MorphUtil.processCap(player, resolved -> resolved.syncWithClient((ServerPlayer) event.getPlayer()));
 			
-			PufferfishCapabilityHandler.INSTANCE.synchronizeWithClients(player);
-			GuardianBeamCapabilityHandler.INSTANCE.synchronizeWithClients(player);
-			GlideCapabilityHandler.INSTANCE.synchronizeWithClients(player);
-			ParrotDanceCapabilityHandler.INSTANCE.synchronizeWithClients(player);
-			SheepCapabilityHandler.INSTANCE.synchronizeWithClients(player);
+			PufferfishCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
+			GuardianBeamCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
+			GlideCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
+			ParrotDanceCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
+			SheepCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
 			
 			event.getTarget().getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(bossbarCap ->
 			{
