@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 @EventBusSubscriber
 public class PufferfishCapabilityHandler extends CommonCapabilityHandler<IPufferfishCapability, PufferfishPuffPacket>
 {
-	public static PufferfishCapabilityHandler INSTANCE = new PufferfishCapabilityHandler();
+	public static final PufferfishCapabilityHandler INSTANCE = new PufferfishCapabilityHandler();
 	
 	public PufferfishCapabilityHandler()
 	{
