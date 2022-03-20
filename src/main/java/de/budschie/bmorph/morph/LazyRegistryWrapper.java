@@ -56,7 +56,7 @@ public class LazyRegistryWrapper<T>
 				
 				if(!hasErrored)
 				{
-					LOGGER.warn(MessageFormat.format("The resource location {0} could not be resolved to a registry type.", tagName.toDebugFileName()));
+					LOGGER.warn(MessageFormat.format("The resource location {0} could not be resolved to a registry type.", tagName.toString()));
 					hasErrored = true;
 				}
 			}
