@@ -93,9 +93,11 @@ public class BMorphMod
 		DYNAMIC_DATA_TRANSFORMER_REGISTRY = new DynamicDataTransformerRegistry();
 		VISUAL_MORPH_DATA = new VisualMorphDataRegistry();
 		
-		// I hope this is thread safe (it isn't probably)
-		CriteriaTriggers.register(ACQUIRED_MORPH);
-		CriteriaTriggers.register(MORPHED_INTO);
-		CriteriaTriggers.register(DEMORPHED_FROM);
+		event.enqueueWork(() ->
+		{
+			CriteriaTriggers.register(ACQUIRED_MORPH);
+			CriteriaTriggers.register(MORPHED_INTO);
+			CriteriaTriggers.register(DEMORPHED_FROM);
+		});
 	}	
 }
