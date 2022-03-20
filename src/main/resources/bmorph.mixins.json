@@ -12,7 +12,8 @@
 		"MotionMultiplierMixin",
 		"PowderSnowBlockMixin",
 		"ServerGamePacketListenerImplMixin",
-		"IsHostileMixin"
+		"IsHostileMixin",
+		"EntityCollisionContextMixin"
 	],
 	"minVersion": "0.8"
 }
