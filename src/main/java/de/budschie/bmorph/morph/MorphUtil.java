@@ -89,7 +89,7 @@ public class MorphUtil
 				MorphItem oldMorphItem = resolved.getCurrentMorph().orElse(null);
 				
 				if(aboutToMorphTo != null)
-					newAbilities = Events.MORPH_ABILITY_MANAGER.getAbilitiesForItem(aboutToMorphTo);
+					newAbilities = aboutToMorphTo.getAbilities();
 				
 				resolved.deapplyAbilities(aboutToMorphTo, newAbilities == null ? Arrays.asList() : newAbilities);
 				
