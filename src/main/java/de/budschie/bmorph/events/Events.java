@@ -26,6 +26,7 @@ import de.budschie.bmorph.capabilities.pufferfish.IPufferfishCapability;
 import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityHandler;
 import de.budschie.bmorph.capabilities.sheep.ISheepCapability;
 import de.budschie.bmorph.capabilities.sheep.SheepCapabilityHandler;
+import de.budschie.bmorph.capabilities.stand_on_fluid.IStandOnFluidCapability;
 import de.budschie.bmorph.entity.MorphEntity;
 import de.budschie.bmorph.json_integration.AbilityConfigurationHandler;
 import de.budschie.bmorph.json_integration.DataTransformerHandler;
@@ -110,6 +111,7 @@ public class Events
 		event.register(ISheepCapability.class);
 		event.register(IRenderDataCapability.class);
 		event.register(IBossbarCapability.class);
+		event.register(IStandOnFluidCapability.class);
 	}
 	
 	// Add additional target selector to iron golem entity
