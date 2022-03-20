@@ -11,7 +11,8 @@
         "bmorph:wither_on_hit",
         "bmorph:disable_wither",
         "bmorph:wither_bossbar",
-        "bmorph:no_wither_damage"
+        "bmorph:no_wither_damage",
+        "bmorph:wither_enabled_visuals"
     ],
     "revoke":
     [

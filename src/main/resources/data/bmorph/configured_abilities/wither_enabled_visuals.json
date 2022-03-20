@@ -1,0 +1,41 @@
+{
+    "ability": "bmorph:audiovisual_effect_on_enable",
+    "config":
+    {
+        "audiovisual_effect":
+        {
+            "sounds":
+            [
+                {
+                    "sound": "minecraft:entity.wither.spawn",
+                    "volume": 10
+                }
+            ],
+            "particles":
+            [
+                {
+                    "particle_type": "minecraft:large_smoke",
+                    "delta":
+                    {
+                        "x": 1,
+                        "y": 1,
+                        "z": 1
+                    },
+                    "count": 1000,
+                    "speed": 0.005
+                },
+                {
+                    "particle_type": "minecraft:portal",
+                    "delta":
+                    {
+                        "x": 1,
+                        "y": 1,
+                        "z": 1
+                    },
+                    "count": 1000,
+                    "speed": 0.0
+                }
+            ]
+        }
+    }
+}
