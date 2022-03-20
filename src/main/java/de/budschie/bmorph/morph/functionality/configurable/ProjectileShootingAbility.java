@@ -24,23 +24,20 @@ public class ProjectileShootingAbility extends StunAbility
 					ModCodecs.ENTITIES.fieldOf("projectile_entity").forGetter(ProjectileShootingAbility::getProjectileEntityType),
 					Codec.INT.optionalFieldOf("stun", 40).forGetter(ProjectileShootingAbility::getStun),
 					Codec.DOUBLE.optionalFieldOf("motion", 0.0D).forGetter(ProjectileShootingAbility::getMotion),
-					Codec.DOUBLE.optionalFieldOf("acceleration", 0.0D).forGetter(ProjectileShootingAbility::getAcceleration),
 					CompoundTag.CODEC.optionalFieldOf("nbt", new CompoundTag()).forGetter(ProjectileShootingAbility::getNbtData),
 					SoundInstance.CODEC.optionalFieldOf("sound").forGetter(ProjectileShootingAbility::getSoundInstance)
 					).apply(instance, ProjectileShootingAbility::new));
 	
 	private EntityType<?> projectileEntityType;
 	private double motion;
-	private double acceleration;
 	private CompoundTag nbtData;
 	private Optional<SoundInstance> soundInstance;
 	
-	public ProjectileShootingAbility(EntityType<?> projectileEntityType, int stun, double motion, double acceleration, CompoundTag nbtData, Optional<SoundInstance> soundInstance)
+	public ProjectileShootingAbility(EntityType<?> projectileEntityType, int stun, double motion, CompoundTag nbtData, Optional<SoundInstance> soundInstance)
 	{
 		super(stun);
 		this.motion = motion;
 		this.projectileEntityType = projectileEntityType;
-		this.acceleration = acceleration;
 		this.nbtData = nbtData;
 		this.soundInstance = soundInstance;
 	}
@@ -53,11 +50,6 @@ public class ProjectileShootingAbility extends StunAbility
 	public double getMotion()
 	{
 		return motion;
-	}
-	
-	public double getAcceleration()
-	{
-		return acceleration;
 	}
 	
 	public CompoundTag getNbtData()
@@ -78,28 +70,29 @@ public class ProjectileShootingAbility extends StunAbility
 //			Entity createdEntity = projectileSupplier.apply(player, Vector3d.fromPitchYaw(player.getPitchYaw()));
 			
 			Entity createdEntity = projectileEntityType.create(player.getCommandSenderWorld());
-			
+						
 			createdEntity.load(nbtData);
-			
-			Vec3 dir = Vec3.directionFromRotation(player.getRotationVector());
+						
+			Vec3 dir = Vec3.directionFromRotation(player.getRotationVector()).normalize();
 			
 			createdEntity.setDeltaMovement(dir.x * motion, dir.y * motion, dir.z * motion);
-			
-			createdEntity.setPos(player.getX(), player.getY() + player.getEyeHeight(), player.getZ());
+			createdEntity.moveTo(player.getX(), player.getY() + player.getEyeHeight(), player.getZ(), player.getYHeadRot(), player.getXRot());
 			
 			if(createdEntity instanceof Projectile proj)
 			{
-				proj.setOwner(player);
+				proj.setOwner(player);			
 			}
-			
+						
 			if(createdEntity instanceof AbstractHurtingProjectile dmgProjectile)
 			{
-				dmgProjectile.xPower = dir.x * acceleration;
-				dmgProjectile.yPower = dir.y * acceleration;
-				dmgProjectile.zPower = dir.z * acceleration;
-			}
+				dmgProjectile.xPower = dir.x * 0.1D;
+				dmgProjectile.yPower = dir.y * 0.1D;
+				dmgProjectile.zPower = dir.z * 0.1D;
+			}			
 			
-			player.level.addFreshEntity(createdEntity);
+			player.level.addFreshEntity(createdEntity);					
+
+			
 			stun(player.getUUID());
 			
 			if(this.soundInstance.isPresent())
