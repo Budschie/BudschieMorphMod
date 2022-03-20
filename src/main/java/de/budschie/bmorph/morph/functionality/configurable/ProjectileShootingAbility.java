@@ -69,7 +69,7 @@ public class ProjectileShootingAbility extends StunAbility
 		{
 //			Entity createdEntity = projectileSupplier.apply(player, Vector3d.fromPitchYaw(player.getPitchYaw()));
 			
-			Entity createdEntity = projectileEntityType.create(player.getCommandSenderWorld());
+			Entity createdEntity = projectileEntityType.create(player.level);
 						
 			createdEntity.load(nbtData);
 						
