@@ -16,10 +16,12 @@ import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.StunAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
+import de.budschie.bmorph.util.BudschieUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -71,23 +73,7 @@ public class PredicateAbility extends StunAbility
 		if(event.phase == Phase.START)
 			return;
 		
-		LootItemCondition[][] lootItemConditions = new LootItemCondition[predicates.size()][];
-		
-		for(int i = 0; i < predicates.size(); i++)
-		{
-			List<LazyRegistryWrapper<LootItemCondition>> innerList = predicates.get(i);
-			lootItemConditions[i] = new LootItemCondition[innerList.size()];
-			
-			for(int j = 0; j < innerList.size(); j++)
-			{
-				LootItemCondition resolved = innerList.get(j).getWrappedType();
-				
-				if(resolved == null)
-					return;
-				
-				lootItemConditions[i][j] = resolved;
-			}
-		}
+		LootItemCondition[][] lootItemConditions = BudschieUtils.resolveConditions(predicates);
 		
 		playerIteration:
 		for(UUID uuid : trackedPlayers)
@@ -103,22 +89,7 @@ public class PredicateAbility extends StunAbility
 			LootContext.Builder predicateContext = (new LootContext.Builder((ServerLevel)currentPlayer.level)).withParameter(LootContextParams.ORIGIN, currentPlayer.position())
 					.withOptionalParameter(LootContextParams.THIS_ENTITY, currentPlayer);
 			
-			boolean predicateTrue = true;
-			
-			iterateOverList:
-			for(LootItemCondition[] innerList : lootItemConditions)
-			{
-				for(LootItemCondition innerIteration : innerList)
-				{
-					// If we meet at least one predicate that is true, we can skip evaluating the others and go straight to the next set of predicates
-					if(innerIteration.test(predicateContext.create(LootContextParamSets.COMMAND)))
-							continue iterateOverList;
-				}
-				
-				// If we did not go to the next list of predicates, this means that there was no predicate true. This means that AND will return false => we set "predicateTrue" to false and break out of the loop.
-				predicateTrue = false;
-				break iterateOverList;
-			}
+			boolean predicateTrue = BudschieUtils.testPredicates(lootItemConditions, () -> predicateContext.create(LootContextParamSets.COMMAND));
 			
 			if(predicateTrue)
 			{

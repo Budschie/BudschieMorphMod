@@ -3,11 +3,15 @@ package de.budschie.bmorph.util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import de.budschie.bmorph.main.ServerSetup;
+import de.budschie.bmorph.morph.LazyRegistryWrapper;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerPlayerConnection;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 public class BudschieUtils
 {
@@ -30,6 +34,51 @@ public class BudschieUtils
 //	{
 //		
 //	}
+	
+	public static LootItemCondition[][] resolveConditions(List<List<LazyRegistryWrapper<LootItemCondition>>> unresolved)
+	{
+		LootItemCondition[][] lootItemConditions = new LootItemCondition[unresolved.size()][];
+
+		for (int i = 0; i < unresolved.size(); i++)
+		{
+			List<LazyRegistryWrapper<LootItemCondition>> innerList = unresolved.get(i);
+			lootItemConditions[i] = new LootItemCondition[innerList.size()];
+
+			for (int j = 0; j < innerList.size(); j++)
+			{
+				LootItemCondition resolved = innerList.get(j).getWrappedType();
+
+				if (resolved == null)
+					return null;
+
+				lootItemConditions[i][j] = resolved;
+			}
+		}
+		
+		return lootItemConditions;
+	}
+	
+	public static boolean testPredicates(LootItemCondition[][] conditions, Supplier<LootContext> context)
+	{
+		boolean predicateTrue = true;
+		
+		iterateOverList:
+		for(LootItemCondition[] innerList : conditions)
+		{
+			for(LootItemCondition innerIteration : innerList)
+			{
+				// If we meet at least one predicate that is true, we can skip evaluating the others and go straight to the next set of predicates
+				if(innerIteration.test(context.get()))
+						continue iterateOverList;
+			}
+			
+			// If we did not go to the next list of predicates, this means that there was no predicate true. This means that AND will return false => we set "predicateTrue" to false and break out of the loop.
+			predicateTrue = false;
+			break iterateOverList;
+		}
+		
+		return predicateTrue;
+	}
 	
 	public static float getPhantomEaseFunction(float currentTime, float maxTime)
 	{
