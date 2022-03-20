@@ -12,6 +12,8 @@ import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
+import de.budschie.bmorph.capabilities.bossbar.BossbarCapabilityInstance;
+import de.budschie.bmorph.capabilities.bossbar.IBossbarCapability;
 import de.budschie.bmorph.capabilities.client.render_data.IRenderDataCapability;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityHandler;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityInstance;
@@ -36,6 +38,7 @@ import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphUtil;
+import de.budschie.bmorph.util.BudschieUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -69,6 +72,7 @@ import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
@@ -105,6 +109,7 @@ public class Events
 		event.register(IGlideCapability.class);
 		event.register(ISheepCapability.class);
 		event.register(IRenderDataCapability.class);
+		event.register(IBossbarCapability.class);
 	}
 	
 	// Add additional target selector to iron golem entity
@@ -169,6 +174,14 @@ public class Events
 				GlideCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 				ParrotDanceCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 				SheepCapabilityHandler.INSTANCE.synchronizeWithClients(player);
+				
+				event.getPlayer().getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(bossbarCap ->
+				{
+					bossbarCap.getBossbar().ifPresent(bossbar ->
+					{
+						BudschieUtils.getPlayersTrackingEntityAndSelf((ServerPlayer) event.getPlayer()).forEach(trackingPlayer -> bossbar.addPlayer(trackingPlayer));
+					});
+				});
 			}
 		}
 	}
@@ -223,6 +236,11 @@ public class Events
 			GlideCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 			ParrotDanceCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 			SheepCapabilityHandler.INSTANCE.synchronizeWithClients(player);
+			
+			event.getTarget().getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(bossbarCap ->
+			{
+				bossbarCap.getBossbar().ifPresent(bossbar -> bossbar.addPlayer((ServerPlayer) event.getPlayer()));
+			});
 		}
 	}
 	
@@ -246,6 +264,14 @@ public class Events
 				GuardianBeamCapabilityHandler.INSTANCE.unattackServer(event.getPlayer());
 			}
 		});
+		
+		if(event.getTarget() instanceof Player player)
+		{
+			event.getTarget().getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(bossbarCap ->
+			{
+				bossbarCap.getBossbar().ifPresent(bossbar -> bossbar.removePlayer((ServerPlayer) event.getPlayer()));
+			});
+		}
 	}
 	
 	private static boolean mayUseTool(Player player)
