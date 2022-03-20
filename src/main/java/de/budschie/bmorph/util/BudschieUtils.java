@@ -60,6 +60,9 @@ public class BudschieUtils
 	
 	public static boolean testPredicates(LootItemCondition[][] conditions, Supplier<LootContext> context)
 	{
+		if(conditions == null)
+			return false;
+		
 		boolean predicateTrue = true;
 		
 		iterateOverList:
