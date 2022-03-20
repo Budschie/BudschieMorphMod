@@ -81,6 +81,8 @@ public class LivingEntitySynchronzier implements IEntitySynchronizer
 		entity.setSwimming(player.isSwimming());
 		
 		entity.setDeltaMovement(player.getDeltaMovement());
+		
+		entity.setHealth(player.getHealth());
 	}
 
 }
