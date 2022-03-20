@@ -10,6 +10,7 @@ import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent.BossBarColor;
 import net.minecraft.world.BossEvent.BossBarOverlay;
 import net.minecraft.world.entity.player.Player;
@@ -44,8 +45,14 @@ public class BossbarAbility extends Ability
 	{
 		super.enableAbility(player, enabledItem, oldMorph, oldAbilities, reason);
 		
-		player.getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(cap -> cap.setBossbar((ServerBossEvent) new ServerBossEvent(player.getDisplayName(), bossbarColor, bossbarOverlay)
-				.setCreateWorldFog(createWorldFog).setDarkenScreen(darkenWorld).setPlayBossMusic(playBossMusic)));
+		if(!player.level.isClientSide())
+		{
+			ServerBossEvent bossbar = (ServerBossEvent) new ServerBossEvent(player.getDisplayName(), bossbarColor, bossbarOverlay).setCreateWorldFog(createWorldFog)
+					.setDarkenScreen(darkenWorld).setPlayBossMusic(playBossMusic);
+			
+			player.getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(cap -> cap.setBossbar(bossbar));
+			bossbar.addPlayer((ServerPlayer) player);
+		}
 	}
 	
 	@Override
@@ -53,7 +60,8 @@ public class BossbarAbility extends Ability
 	{
 		super.disableAbility(player, disabledItem, newMorph, newAbilities, reason);
 		
-		player.getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(cap -> cap.clearBossbar());
+		if(!player.level.isClientSide())
+			player.getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(cap -> cap.clearBossbar());
 	}
 
 	public BossBarColor getBossbarColor()
