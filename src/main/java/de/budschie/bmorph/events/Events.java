@@ -210,7 +210,8 @@ public class Events
 				
 				if(cap != null)
 				{
-					MorphUtil.morphToServer(cap.getCurrentMorphItem(), cap.getCurrentMorphIndex(), player);
+					// We need to force it since we would otherwise not remorph when our current morph item has been disabled
+					MorphUtil.morphToServer(cap.getCurrentMorphItem(), cap.getCurrentMorphIndex(), player, true);
 				}
 			});
 		}
