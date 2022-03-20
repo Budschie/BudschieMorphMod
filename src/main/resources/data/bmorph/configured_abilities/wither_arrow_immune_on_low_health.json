@@ -1,0 +1,7 @@
+{
+    "ability": "bmorph:immune_to_damage_if",
+    "config":
+    {
+        "predicates": [["bmorph:hit_by_arrow_predicate", "bmorph:hit_by_trident_predicate"], ["bmorph:wither_half_health_predicate"]]
+    }
+}

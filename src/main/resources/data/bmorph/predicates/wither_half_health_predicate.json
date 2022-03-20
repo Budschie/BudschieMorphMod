@@ -1,11 +1,8 @@
 {
   "condition": "bmorph:player_attributes",
-  "entity": "this",
-  "predicate": {
     "player_health":
     {
       "min": 0,
       "max": 150
     }
-  }
 }

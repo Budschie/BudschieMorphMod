@@ -1,0 +1,13 @@
+{
+    "condition": "minecraft:damage_source_properties",
+    "predicate": {
+      "is_projectile": true,
+      "source_entity": {
+        "player": {}
+      },
+      "direct_entity": {
+        "type": "minecraft:trident"
+      }
+    }
+  }
+  

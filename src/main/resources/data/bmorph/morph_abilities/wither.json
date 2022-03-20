@@ -12,7 +12,8 @@
         "bmorph:disable_wither",
         "bmorph:wither_bossbar",
         "bmorph:no_wither_damage",
-        "bmorph:wither_enabled_visuals"
+        "bmorph:wither_enabled_visuals",
+        "bmorph:wither_arrow_immune_on_low_health"
     ],
     "revoke":
     [
