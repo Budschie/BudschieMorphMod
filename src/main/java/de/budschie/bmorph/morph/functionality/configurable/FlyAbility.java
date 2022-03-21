@@ -80,7 +80,7 @@ public class FlyAbility extends Ability
 					event.player.setForcedPose(null);
 					
 					// Give player full speed when flying in creative
-					if(event.player.isCreative())
+					if(event.player.isCreative() || event.player.isSpectator())
 						event.player.getAbilities().setFlyingSpeed(0.05F);
 					else
 						event.player.getAbilities().setFlyingSpeed(flyingSpeed);
