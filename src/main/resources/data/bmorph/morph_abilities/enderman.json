@@ -3,7 +3,8 @@
     "grant":
     [
         "bmorph:water_dislike",
-        "bmorph:enderman_teleport"
+        "bmorph:enderman_teleport",
+        "bmorph:enderman_teleport_on_projectile_contact"
     ],
     "revoke":
     [
