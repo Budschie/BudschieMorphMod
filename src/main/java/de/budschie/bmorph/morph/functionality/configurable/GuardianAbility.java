@@ -69,7 +69,7 @@ public class GuardianAbility extends Ability
 	private Optional<SoundInstance> cancelAbilitySound;
 	private Optional<SoundInstance> successfullyAttackedSound;
 	
-	private AttributeModifier am = new AttributeModifier(UUID.randomUUID(), "no movement guardian", -1, Operation.MULTIPLY_TOTAL);
+	private AttributeModifier am = new AttributeModifier(UUID.fromString("6605b0e2-98bf-4406-b7e7-39fa26ca9895"), "no movement guardian", -1, Operation.MULTIPLY_TOTAL);
 	
 	private GuardianClientAdapter adapter;
 		
