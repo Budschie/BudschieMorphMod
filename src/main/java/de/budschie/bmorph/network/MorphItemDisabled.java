@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.network.MorphItemDisabled.MorphItemDisabledPacket;
-import net.minecraft.client.Minecraft;
+import de.budschie.bmorph.util.ClientUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent.Context;
 
@@ -50,9 +50,10 @@ public class MorphItemDisabled implements ISimpleImplPacket<MorphItemDisabledPac
 	@Override
 	public void handle(MorphItemDisabledPacket packet, Supplier<Context> ctx)
 	{
+		// Why tf doesn't this work (but other shit like this did)?
 		ctx.get().enqueueWork(() ->
 		{
-			IMorphCapability cap = MorphUtil.getCapOrNull(Minecraft.getInstance().player);
+			IMorphCapability cap = MorphUtil.getCapOrNull(ClientUtils.getPlayer());
 			
 			if(cap != null)
 			{
