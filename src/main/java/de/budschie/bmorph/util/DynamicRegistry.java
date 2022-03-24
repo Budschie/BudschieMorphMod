@@ -1,5 +1,6 @@
 package de.budschie.bmorph.util;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +36,11 @@ public abstract class DynamicRegistry<T extends IDynamicRegistryObject, SP>
 	public T getEntry(ResourceLocation key)
 	{
 		return entries.get(key);
+	}
+	
+	public Collection<T> values()
+	{
+		return entries.values();
 	}
 	
 	public boolean hasEntry(ResourceLocation key)
