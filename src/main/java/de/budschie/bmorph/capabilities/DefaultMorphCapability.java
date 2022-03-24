@@ -398,12 +398,18 @@ public class DefaultMorphCapability implements IMorphCapability
 		if(this.getCurrentAbilities() == null)
 			currentAbilities = new LockableList<>(Arrays.asList(ability));
 		else
+		{
+			// May be inefficient
+			if(this.getCurrentAbilities().contains(ability))
+				return;
+			
 			currentAbilities.safeAdd(ability);
-		
-		// Deserialize the ability and then enable it
-		if(!getOwner().level.isClientSide())
-			ability.deserialize(getOwner(), context);
-		ability.enableAbility(getOwner(), getCurrentMorph().orElse(null), null, Arrays.asList(), AbilityChangeReason.DYNAMIC);
+			
+			// Deserialize the ability and then enable it
+			if(!getOwner().level.isClientSide())
+				ability.deserialize(getOwner(), context);
+			ability.enableAbility(getOwner(), getCurrentMorph().orElse(null), null, Arrays.asList(), AbilityChangeReason.DYNAMIC);
+		}
 	}
 
 	/** Invokes a dynamic removal of an ability. **/
