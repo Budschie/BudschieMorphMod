@@ -2,9 +2,7 @@
     "entity_type": "minecraft:cod",
     "grant":
     [
-        "bmorph:water_breathing",
-        "bmorph:water_sanic",
-        "bmorph:air_suffocation"
+        "#bmorph:normal_fish"
     ],
     "revoke":
     [
