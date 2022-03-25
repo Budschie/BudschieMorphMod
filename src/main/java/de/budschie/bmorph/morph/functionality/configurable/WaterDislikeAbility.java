@@ -1,12 +1,16 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
+import java.util.UUID;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
+import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class WaterDislikeAbility extends Ability
@@ -29,13 +33,18 @@ public class WaterDislikeAbility extends Ability
 	}
 	
 	@SubscribeEvent
-	public void onPlayerTick(PlayerTickEvent event)
+	public void onServerTick(ServerTickEvent event)
 	{
 		if(event.phase == Phase.START)
 		{
-			if(event.player.isInWaterRainOrBubble() && trackedPlayers.contains(event.player.getUUID()))
+			for(UUID playerId : trackedPlayers)
 			{
-				event.player.hurt(DamageSource.DROWN, damageAmount);
+				Player player = ServerSetup.server.getPlayerList().getPlayer(playerId);
+				
+				if(player.isInWaterRainOrBubble() && trackedPlayers.contains(player.getUUID()))
+				{
+					player.hurt(DamageSource.DROWN, damageAmount);
+				}
 			}
 		}
 	}

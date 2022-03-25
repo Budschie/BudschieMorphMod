@@ -1,13 +1,18 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
+import java.util.UUID;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
+import net.minecraftforge.event.TickEvent.Phase;
+import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class BurnInSunAbility extends Ability
@@ -44,39 +49,47 @@ public class BurnInSunAbility extends Ability
 	}
 	
 	@SubscribeEvent
-	public void onPlayerTick(PlayerTickEvent event)
+	public void onServerTick(ServerTickEvent event)
 	{
-		if(isTracked(event.player) && !event.player.isInvulnerable() && !event.player.getCommandSenderWorld().isClientSide)
+		if(event.phase == Phase.END)
+			return;
+		
+		for(UUID playerId : trackedPlayers)
 		{
-			// Check if entity shall burn
-			if (event.player.level.isDay() && !event.player.level.isClientSide)
+			Player player = ServerSetup.server.getPlayerList().getPlayer(playerId);
+
+			if(!player.isInvulnerable() && !player.level.isClientSide)
 			{
-				// Taken from Mob class and slightly changed
-				float currentBrightness = event.player.getBrightness();
-				BlockPos blockpos = new BlockPos(event.player.getEyePosition());
-				
-				boolean shallBeImmuneToFire = event.player.isInWaterRainOrBubble() || event.player.isInPowderSnow || event.player.wasInPowderSnow;
-				if (currentBrightness > 0.5F && event.player.getRandom().nextFloat() * 30 < (currentBrightness - 0.4f) * 2.0f && !shallBeImmuneToFire
-						&& event.player.level.canSeeSky(blockpos))
+				// Check if entity shall burn
+				if (player.level.isDay() && !player.level.isClientSide)
 				{
-					ItemStack hatItem = event.player.getItemBySlot(EquipmentSlot.HEAD);
+					// Taken from Mob class and slightly changed
+					float currentBrightness = player.getBrightness();
+					BlockPos blockpos = new BlockPos(player.getEyePosition());
 					
-					// Check if we shall account for the hat. If this is the case, damage the head.
-					if(!ignoreHat && !hatItem.isEmpty())
+					boolean shallBeImmuneToFire = player.isInWaterRainOrBubble() || player.isInPowderSnow || player.wasInPowderSnow;
+					if (currentBrightness > 0.5F && player.getRandom().nextFloat() * 30 < (currentBrightness - 0.4f) * 2.0f && !shallBeImmuneToFire
+							&& player.level.canSeeSky(blockpos))
 					{
-						// TODO: This could *maybe* cause a bug where the hat doesn't get destroyed.
-						hatItem.setDamageValue(hatItem.getDamageValue() + event.player.getRandom().nextInt(maxArmorDamage));
+						ItemStack hatItem = player.getItemBySlot(EquipmentSlot.HEAD);
 						
-						if (hatItem.getDamageValue() >= hatItem.getMaxDamage())
+						// Check if we shall account for the hat. If this is the case, damage the head.
+						if(!ignoreHat && !hatItem.isEmpty())
 						{
-							event.player.broadcastBreakEvent(EquipmentSlot.HEAD);
-							event.player.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
+							// TODO: This could *maybe* cause a bug where the hat doesn't get destroyed.
+							hatItem.setDamageValue(hatItem.getDamageValue() + player.getRandom().nextInt(maxArmorDamage));
+							
+							if (hatItem.getDamageValue() >= hatItem.getMaxDamage())
+							{
+								player.broadcastBreakEvent(EquipmentSlot.HEAD);
+								player.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
+							}
+							
+							return;
 						}
 						
-						return;
+						player.setSecondsOnFire(burnTime);
 					}
-					
-					event.player.setSecondsOnFire(burnTime);
 				}
 			}
 		}

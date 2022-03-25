@@ -1,8 +1,11 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
+import java.util.UUID;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -10,9 +13,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
+import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
 
 public class BlockTrailAbility extends Ability
 {
@@ -41,12 +43,12 @@ public class BlockTrailAbility extends Ability
 	}
 	
 	@SubscribeEvent
-	public void onUpdatePlayer(PlayerTickEvent event)
+	public void onServerTick(ServerTickEvent event)
 	{
-		if(event.phase == Phase.END && event.side == LogicalSide.SERVER)
+		if(event.phase == Phase.END)
 		{
-			if(isTracked(event.player))
-				placeTrailBlocks(event.player);
+			for(UUID playerId : trackedPlayers)
+				placeTrailBlocks(ServerSetup.server.getPlayerList().getPlayer(playerId));
 		}
 	}
 	
