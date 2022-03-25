@@ -1,6 +1,5 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,6 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityHandler;
 import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityInstance;
+import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.StunAbility;
@@ -21,9 +21,8 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
+import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
 
 public class PufferfishAbility extends StunAbility
 {
@@ -48,8 +47,6 @@ public class PufferfishAbility extends StunAbility
 	private SoundInstance stingSoundEffect;
 	private SoundInstance blowUpSoundEffect;
 	private SoundInstance blowOutSoundEffect;
-	
-	private HashSet<UUID> trackedPlayers = new HashSet<>();
 	
 	public PufferfishAbility(int stun, List<MobEffectInstance> effects, float directDamage, float radius, int duration, SoundInstance stingSoundEffect, SoundInstance blowUpSoundEffect, SoundInstance blowOutSoundEffect)
 	{
@@ -101,40 +98,45 @@ public class PufferfishAbility extends StunAbility
 	}
 	
 	@SubscribeEvent
-	public void onPlayerTick(PlayerTickEvent event)
+	public void onPlayerTick(ServerTickEvent event)
 	{
-		if(event.phase == Phase.END && event.side == LogicalSide.SERVER)
+		if(event.phase == Phase.END)
 		{
-			if(trackedPlayers.contains(event.player.getUUID()))
+			for(UUID playerId : trackedPlayers)
 			{
-				event.player.getCapability(PufferfishCapabilityInstance.PUFFER_CAP).ifPresent(cap ->
+				Player player = ServerSetup.server.getPlayerList().getPlayer(playerId);
+				
+				if(trackedPlayers.contains(player.getUUID()))
 				{
-					if(cap.getPuffTime() > 0)
+					player.getCapability(PufferfishCapabilityInstance.PUFFER_CAP).ifPresent(cap ->
 					{
-						List<LivingEntity> entities = event.player.getCommandSenderWorld().getEntitiesOfClass(LivingEntity.class, event.player.getBoundingBox().inflate(radius));
-						
-						for(LivingEntity entity : entities)
+						if(cap.getPuffTime() > 0)
 						{
-							if(entity == event.player || !entity.isAlive())
-								continue;
-
-							if(entity.hurt(DamageSource.mobAttack(event.player), directDamage))
+							List<LivingEntity> entities = player.getCommandSenderWorld().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius));
+							
+							for(LivingEntity entity : entities)
 							{
-								for(MobEffectInstance effect : effects)
+								if(entity == player || !entity.isAlive())
+									continue;
+	
+								if(entity.hurt(DamageSource.mobAttack(player), directDamage))
 								{
-									entity.addEffect(new MobEffectInstance(effect));
+									for(MobEffectInstance effect : effects)
+									{
+										entity.addEffect(new MobEffectInstance(effect));
+									}
+									
+									stingSoundEffect.playSoundAt(entity);
 								}
-								
-								stingSoundEffect.playSoundAt(entity);
 							}
+							
+							if(cap.getPuffTime() == 5)
+							{
+								blowOutSoundEffect.playSoundAt(player);
+							}	
 						}
-						
-						if(cap.getPuffTime() == 5)
-						{
-							blowOutSoundEffect.playSoundAt(event.player);
-						}	
-					}
-				});
+					});
+				}
 			}
 		}
 	}
