@@ -14,7 +14,6 @@ import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.capabilities.client.render_data.IRenderDataCapability;
 import de.budschie.bmorph.capabilities.client.render_data.RenderDataCapabilityProvider;
-import de.budschie.bmorph.events.Events;
 import de.budschie.bmorph.events.PlayerMorphEvent;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.functionality.Ability;
