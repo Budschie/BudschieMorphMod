@@ -80,7 +80,7 @@ public class AbilityGroupRegistry extends DynamicRegistry<AbilityGroup, AbilityG
 	
 	public static class AbilityGroup implements IDynamicRegistryObject
 	{
-		private HashSet<Ability> abilities;
+		private HashSet<Ability> abilities = new HashSet<>();
 		private ResourceLocation resourceLocation;
 		
 		public AbilityGroup(ResourceLocation resourceLocation)
