@@ -1,6 +1,7 @@
 package de.budschie.bmorph.network;
 
 import de.budschie.bmorph.main.References;
+import de.budschie.bmorph.network.AbilityGroupSync.AbilityGroupSyncPacket;
 import de.budschie.bmorph.network.AdditionalAbilitySynchronization.AdditionalAbilitySynchronizationPacket;
 import de.budschie.bmorph.network.ConfiguredAbilitySynchronizer.ConfiguredAbilityPacket;
 import de.budschie.bmorph.network.DataTransformerSynchronizer.DataTransfomerSynchronizerPacket;
@@ -59,6 +60,7 @@ public class MainNetworkChannel
 		registerSimpleImplPacket(DataTransfomerSynchronizerPacket.class, new DataTransformerSynchronizer());
 		registerSimpleImplPacket(FlightPacket.class, new Flight());
 		registerSimpleImplPacket(MorphItemDisabledPacket.class, new MorphItemDisabled());
+		registerSimpleImplPacket(AbilityGroupSyncPacket.class, new AbilityGroupSync());
 	}
 	
 	public static <T> void registerSimpleImplPacket(Class<T> packetClass, ISimpleImplPacket<T> packet)
