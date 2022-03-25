@@ -1,0 +1,12 @@
+{
+    "entity_type": "minecraft:strider",
+    "grant":
+    [
+        "bmorph:lava_jesus",
+        "#bmorph:fire_immunity"
+    ],
+    "revoke":
+    [
+
+    ]
+}

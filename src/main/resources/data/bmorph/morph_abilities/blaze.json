@@ -4,10 +4,7 @@
     [
         "bmorph:slow_flying",
         "bmorph:fire_blaze",
-        "bmorph:no_on_fire_damage",
-        "bmorph:no_in_fire_damage",
-        "bmorph:no_hot_floor_damage",
-        "bmorph:no_lava_damage",
+        "#bmorph:fire_immunity",
         "bmorph:water_dislike"
     ],
     "revoke":
