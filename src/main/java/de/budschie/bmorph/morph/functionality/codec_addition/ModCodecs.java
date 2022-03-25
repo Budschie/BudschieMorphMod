@@ -41,6 +41,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LazyOptional;
@@ -87,6 +88,7 @@ public class ModCodecs
 	public static final Codec<MobEffect> EFFECTS = getForgeRegistryCodec(ForgeRegistries.MOB_EFFECTS::getValue);
 	public static final Codec<EntityType<?>> ENTITIES = getForgeRegistryCodec(ForgeRegistries.ENTITIES::getValue);
 	public static final Codec<Block> BLOCKS = getForgeRegistryCodec(ForgeRegistries.BLOCKS::getValue);
+	public static final Codec<Fluid> FLUIDS = getForgeRegistryCodec(ForgeRegistries.FLUIDS::getValue);
 	public static final Codec<ParticleType<?>> PARTICLE_TYPE = getForgeRegistryCodec(ForgeRegistries.PARTICLE_TYPES::getValue);
 	
 	public static final Codec<Selector> SELECTOR_ENUM = getEnumCodec(Selector.class, Selector::values);

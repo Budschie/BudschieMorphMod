@@ -30,8 +30,10 @@ import de.budschie.bmorph.morph.functionality.configurable.ImmuneToDamageIfAbili
 import de.budschie.bmorph.morph.functionality.configurable.InstaDeathOnCookieAbility;
 import de.budschie.bmorph.morph.functionality.configurable.InstaJumpAbility;
 import de.budschie.bmorph.morph.functionality.configurable.InstaRegenAbility;
+import de.budschie.bmorph.morph.functionality.configurable.JesusAbility;
 import de.budschie.bmorph.morph.functionality.configurable.MobAttackAbility;
 import de.budschie.bmorph.morph.functionality.configurable.MorphAbility;
+import de.budschie.bmorph.morph.functionality.configurable.NoFlames;
 import de.budschie.bmorph.morph.functionality.configurable.NoKnockbackAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ParrotDanceAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PassiveEffectAbility;
@@ -111,6 +113,8 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<AudiovisualEffectOnEnableAbility>> AUDIOVISUAL_EFFECT_ON_ENABLE = ABILITY_REGISTRY.register("audiovisual_effect_on_enable", () -> new ConfigurableAbility<>(AudiovisualEffectOnEnableAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<TeleportOnProjectileContactAbility>> TELEPORT_ON_PROJECTILE_CONTACT = ABILITY_REGISTRY.register("teleport_on_projectile_contact", () -> new ConfigurableAbility<>(TeleportOnProjectileContactAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<ImmuneToDamageIfAbility>> IMMUNE_TO_DAMAGE_IF = ABILITY_REGISTRY.register("immune_to_damage_if", () -> new ConfigurableAbility<>(ImmuneToDamageIfAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<JesusAbility>> JESUS = ABILITY_REGISTRY.register("jesus", () -> new ConfigurableAbility<>(JesusAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<NoFlames>> NO_FLAMES = ABILITY_REGISTRY.register("no_flames", () -> new ConfigurableAbility<>(NoFlames.CODEC));
 
 }
 

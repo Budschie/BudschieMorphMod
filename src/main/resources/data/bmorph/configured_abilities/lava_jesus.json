@@ -1,0 +1,7 @@
+{
+    "ability": "bmorph:jesus",
+    "config":
+    {
+        "allowed_fluids": [ "minecraft:lava" ]
+    }
+}
