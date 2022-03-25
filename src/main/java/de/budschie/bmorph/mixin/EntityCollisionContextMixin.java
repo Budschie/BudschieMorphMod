@@ -20,7 +20,7 @@ public class EntityCollisionContextMixin
 	@Shadow
 	private Entity entity;
 	
-	@Inject(at = @At("TAIL"), method = "canStandOnFluid(Lnet/minecraft/world/level/material/FluidState;Lnet/minecraft/world/level/material/FlowingFluid;)Z", cancellable = true)
+	@Inject(at = @At("HEAD"), method = "canStandOnFluid(Lnet/minecraft/world/level/material/FluidState;Lnet/minecraft/world/level/material/FlowingFluid;)Z", cancellable = true)
 	private void canStandOnFluidInject(FluidState fluidState, FlowingFluid flowingFluid, CallbackInfoReturnable<Boolean> callback)
 	{
 		if(entity instanceof Player player)
