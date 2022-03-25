@@ -1,5 +1,6 @@
 package de.budschie.bmorph.json_integration;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,14 +18,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import de.budschie.bmorph.json_integration.ability_groups.AbilityGroupRegistry.AbilityGroup;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
-import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.registries.ForgeRegistries;
 
 /** https://forums.minecraftforge.net/topic/100915-1165-make-mod-data-editable-with-datapack-adding-new-data-type/ **/
@@ -119,12 +121,20 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 
 				for (int i = 0; i < grantedAbilities.size(); i++)
 				{
-					entry.grantAbility(grantedAbilities.get(i).getAsString());
+					String grantedString = grantedAbilities.get(i).getAsString();
+					if(isAbilityGroup(grantedString))
+						entry.grantAbilityGroup(stripAbilityGroupIndicator(grantedString));
+					else
+						entry.grantAbility(grantedString);
 				}
 
 				for (int i = 0; i < revokedAbilities.size(); i++)
 				{
-					entry.revokeAbility(revokedAbilities.get(i).getAsString());
+					String revokedString = grantedAbilities.get(i).getAsString();
+					if(isAbilityGroup(revokedString))
+						entry.revokeAbilityGroup(stripAbilityGroupIndicator(revokedString));
+					else
+						entry.revokeAbility(revokedString);
 				}
 			} catch (Exception e)
 			{
@@ -165,15 +175,30 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 		};
 	}
 	
+	private static boolean isAbilityGroup(String string)
+	{
+		return string.startsWith("#");
+	}
+	
+	private static String stripAbilityGroupIndicator(String inputString)
+	{
+		return inputString.substring(1);
+	}
+	
 	private static enum MorphAbilityEntryType
 	{
 		ENTITY, CUSTOM
 	}
 	
+	// I should really rewrite this class... It has become almost umaintainable for
+	// people who are not versed in this project's code, so the only person
+	// understanding this code is me, Budschie.
 	private static class MorphAbilityEntry
 	{
 		private HashSet<String> grantedAbilities = new HashSet<>();
 		private HashSet<String> revokedAbilities = new HashSet<>();
+		private HashSet<String> grantedAbilityGroups = new HashSet<>();
+		private HashSet<String> revokedAbilityGroups = new HashSet<>();
 		
 		public void grantAbility(String abilityResourceLocation)
 		{
@@ -185,8 +210,21 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 			revokedAbilities.add(abilityResourceLocation);
 		}
 		
+		public void grantAbilityGroup(String abilityGroupResourceLocation)
+		{
+			grantedAbilityGroups.add(abilityGroupResourceLocation);
+		}
+		
+		public void revokeAbilityGroup(String abilityGroupResourceLocation)
+		{
+			revokedAbilityGroups.add(abilityGroupResourceLocation);
+		}
+		
 		public List<Ability> resolve()
 		{
+			resolveAbilityGroup(grantedAbilityGroups, grantedAbilities);
+			resolveAbilityGroup(revokedAbilityGroups, revokedAbilities);
+			
 			return grantedAbilities.stream().filter(granted -> !revokedAbilities.contains(granted)).filter(exists ->
 			{
 				if(!BMorphMod.DYNAMIC_ABILITY_REGISTRY.hasEntry(new ResourceLocation(exists)))
@@ -197,6 +235,25 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 				
 				return true;
 			}).map(strRaw -> BMorphMod.DYNAMIC_ABILITY_REGISTRY.getEntry(new ResourceLocation(strRaw))).collect(Collectors.toList());
+		}
+		
+		private void resolveAbilityGroup(HashSet<String> abilityGroups, HashSet<String> addTo)
+		{
+			for(String abilityGroup : abilityGroups)
+			{
+				AbilityGroup grantedAbilityGroupResolved = BMorphMod.ABILITY_GROUPS.getEntry(new ResourceLocation(abilityGroup));
+				
+				if(grantedAbilityGroupResolved == null)
+				{
+					LOGGER.warn(MessageFormat.format("Ability group {0} in morph_abilities file doesn't exist. Skipping it.", abilityGroup));
+					return;
+				}
+				
+				for(Ability ability : grantedAbilityGroupResolved.getAbilities())
+				{
+					addTo.add(ability.getResourceLocation().toString());
+				}
+			}
 		}
 	}
 	

@@ -33,6 +33,7 @@ import de.budschie.bmorph.json_integration.DataTransformerHandler;
 import de.budschie.bmorph.json_integration.MorphAbilityManager;
 import de.budschie.bmorph.json_integration.MorphNBTHandler;
 import de.budschie.bmorph.json_integration.VisualMorphDataHandler;
+import de.budschie.bmorph.json_integration.ability_groups.AbilityGroups;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.main.References;
 import de.budschie.bmorph.main.ServerSetup;
@@ -93,6 +94,7 @@ public class Events
 	public static final AbilityConfigurationHandler ABILITY_CONFIG_HANDLER = new AbilityConfigurationHandler();
 	public static final DataTransformerHandler DATA_TRANSFORMER_HANDLER = new DataTransformerHandler();
 	public static final VisualMorphDataHandler VISUAL_MORPH_DATA_HANDLER = new VisualMorphDataHandler();
+	public static final AbilityGroups ABILITY_GROUP_HANDLER = new AbilityGroups();
 	
 	@SubscribeEvent
 	public static void onAcquiredMorph(AcquiredMorphEvent.Post event)
@@ -205,6 +207,7 @@ public class Events
 			BMorphMod.DYNAMIC_ABILITY_REGISTRY.syncWithClients();
 			BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY.syncWithClients();
 			BMorphMod.VISUAL_MORPH_DATA.syncWithClients();
+			BMorphMod.ABILITY_GROUPS.syncWithClients();
 			
 			ServerSetup.server.getPlayerList().getPlayers().forEach(player ->
 			{
@@ -222,6 +225,7 @@ public class Events
 			BMorphMod.DYNAMIC_ABILITY_REGISTRY.syncWithClient(event.getPlayer());
 			BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY.syncWithClient(event.getPlayer());
 			BMorphMod.VISUAL_MORPH_DATA.syncWithClient(event.getPlayer());
+			BMorphMod.ABILITY_GROUPS.syncWithClient(event.getPlayer());
 		}
 	}
 	
@@ -264,6 +268,7 @@ public class Events
 		event.addListener(DATA_TRANSFORMER_HANDLER);
 		event.addListener(MORPH_NBT_HANDLER);
 		event.addListener(VISUAL_MORPH_DATA_HANDLER);
+		event.addListener(ABILITY_GROUP_HANDLER);
 	}
 	
 	@SubscribeEvent

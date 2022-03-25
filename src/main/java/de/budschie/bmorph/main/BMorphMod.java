@@ -7,6 +7,7 @@ import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import de.budschie.bmorph.entity.EntityRegistry;
 import de.budschie.bmorph.gui.MorphGuiRegistry;
+import de.budschie.bmorph.json_integration.ability_groups.AbilityGroupRegistry;
 import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.VisualMorphDataRegistry;
@@ -49,6 +50,7 @@ public class BMorphMod
 	public static DynamicAbilityRegistry DYNAMIC_ABILITY_REGISTRY;
 	public static DynamicDataTransformerRegistry DYNAMIC_DATA_TRANSFORMER_REGISTRY;
 	public static VisualMorphDataRegistry VISUAL_MORPH_DATA;
+	public static AbilityGroupRegistry ABILITY_GROUPS;
 	
 	public static final MorphedTrigger ACQUIRED_MORPH = new MorphedTrigger(new ResourceLocation(References.MODID, "acquired_morph"));
 	public static final MorphedTrigger MORPHED_INTO = new MorphedTrigger(new ResourceLocation(References.MODID, "morphed_into"));
@@ -94,6 +96,7 @@ public class BMorphMod
 		DYNAMIC_ABILITY_REGISTRY = new DynamicAbilityRegistry();
 		DYNAMIC_DATA_TRANSFORMER_REGISTRY = new DynamicDataTransformerRegistry();
 		VISUAL_MORPH_DATA = new VisualMorphDataRegistry();
+		ABILITY_GROUPS = new AbilityGroupRegistry();
 		
 		event.enqueueWork(() ->
 		{
