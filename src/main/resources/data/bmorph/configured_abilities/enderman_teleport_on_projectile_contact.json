@@ -3,7 +3,12 @@
     "config":
     {
         "max_tries": 64,
-        "search_radius": 10,
+        "search_radius":
+        {
+            "x": 32,
+            "y": 10,
+            "z": 32
+        },
         "teleportation_effect":
         {
             "sounds":

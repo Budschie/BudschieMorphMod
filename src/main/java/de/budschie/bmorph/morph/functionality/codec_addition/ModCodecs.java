@@ -25,6 +25,7 @@ import de.budschie.bmorph.morph.functionality.data_transformers.DataTransformer;
 import de.budschie.bmorph.util.DynamicRegistry;
 import de.budschie.bmorph.util.IDynamicRegistryObject;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
@@ -180,6 +181,9 @@ public class ModCodecs
 	
 	public static final Codec<Vec3> VECTOR_3D = RecordCodecBuilder.create(instance -> instance.group(Codec.DOUBLE.fieldOf("x").forGetter(inst -> inst.x),
 			Codec.DOUBLE.fieldOf("y").forGetter(inst -> inst.y), Codec.DOUBLE.fieldOf("z").forGetter(inst -> inst.z)).apply(instance, Vec3::new));
+	
+	public static final Codec<Vec3i> VECTOR_3D_I = RecordCodecBuilder.create(instance -> instance.group(Codec.INT.fieldOf("x").forGetter(inst -> inst.getX()),
+			Codec.INT.fieldOf("y").forGetter(inst -> inst.getY()), Codec.INT.fieldOf("z").forGetter(inst -> inst.getZ())).apply(instance, Vec3i::new));
 	
 	public static final Codec<MobEffectInstance> EFFECT_INSTANCE = RecordCodecBuilder.create(instance -> instance
 			.group(
