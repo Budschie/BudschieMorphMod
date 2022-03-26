@@ -27,6 +27,7 @@ import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityHandler;
 import de.budschie.bmorph.capabilities.sheep.ISheepCapability;
 import de.budschie.bmorph.capabilities.sheep.SheepCapabilityHandler;
 import de.budschie.bmorph.capabilities.stand_on_fluid.IStandOnFluidCapability;
+import de.budschie.bmorph.capabilities.stand_on_fluid.StandOnFluidInstance;
 import de.budschie.bmorph.entity.MorphEntity;
 import de.budschie.bmorph.json_integration.AbilityConfigurationHandler;
 import de.budschie.bmorph.json_integration.DataTransformerHandler;
@@ -42,6 +43,7 @@ import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.util.BudschieUtils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -59,6 +61,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.TieredItem;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.util.FakePlayer;
@@ -527,13 +531,22 @@ public class Events
 		{
 			MorphUtil.processCap(event.player, cap ->
 			{
-				
 				if(cap.getCurrentMorph().isPresent())
 				{
 					if((event.player.getBoundingBox().maxY - event.player.getBoundingBox().minY) < 1 && event.player.getPose() == Pose.SWIMMING && !event.player.isSwimming())
 					{
 						event.player.setPose(Pose.STANDING);
 					}
+				}
+			});
+			
+			event.player.getCapability(StandOnFluidInstance.STAND_ON_FLUID_CAP).ifPresent(cap ->
+			{
+		         FluidState state = event.player.level.getFluidState(new BlockPos(event.player.position().add(0, 0.5, 0)));
+		         
+				if (cap.containsFluid(state.getType()) && event.player.isAffectedByFluids())
+				{
+					event.player.setDeltaMovement(event.player.getDeltaMovement().scale(0.5D).add(0.0D, 0.15D, 0.0D));
 				}
 			});
 		}
