@@ -1,0 +1,25 @@
+{
+    "display": {
+      "icon": {
+        "item": "minecraft:wither_skeleton_skull",
+        "nbt": "{Enchantments:[{lvl:1s, id:\"minecraft:sharpness\"}]}"
+      },
+      "title": "§aWay to go, nether star!",
+      "description": "§6Turn into a wither (and get angry because of this bad FNaF joke).",
+      "frame": "challenge",
+      "show_toast": true,
+      "announce_to_chat": true,
+      "hidden": false
+    },
+    "parent": "bmorph:bmorph/shapeshifter",
+    "criteria": {
+      "requirement": {
+        "trigger": "bmorph:morphed_into",
+        "conditions":
+        {
+            "entity_type": "minecraft:wither"
+        }
+      }
+    }
+  }
+  
