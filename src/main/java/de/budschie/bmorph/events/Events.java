@@ -182,14 +182,19 @@ public class Events
 			ParrotDanceCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 			SheepCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 			
-			event.getPlayer().getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(bossbarCap ->
-			{
-				bossbarCap.getBossbar().ifPresent(bossbar ->
-				{
-					BudschieUtils.getPlayersTrackingEntityAndSelf((ServerPlayer) event.getPlayer()).forEach(trackingPlayer -> bossbar.addPlayer(trackingPlayer));
-				});
-			});
+			showBossbarToEveryoneTrackingPlayer(player);
 		}
+	}
+	
+	public static void showBossbarToEveryoneTrackingPlayer(Player player)
+	{
+		player.getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(bossbarCap ->
+		{
+			bossbarCap.getBossbar().ifPresent(bossbar ->
+			{
+				BudschieUtils.getPlayersTrackingEntityAndSelf((ServerPlayer) player).forEach(trackingPlayer -> bossbar.addPlayer(trackingPlayer));
+			});
+		});
 	}
 	
 	@SubscribeEvent

@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.capabilities.bossbar.BossbarCapabilityInstance;
+import de.budschie.bmorph.events.Events;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
@@ -51,7 +52,7 @@ public class BossbarAbility extends Ability
 					.setDarkenScreen(darkenWorld).setPlayBossMusic(playBossMusic);
 			
 			player.getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(cap -> cap.setBossbar(bossbar));
-			bossbar.addPlayer((ServerPlayer) player);
+			Events.showBossbarToEveryoneTrackingPlayer(player);
 		}
 	}
 	
