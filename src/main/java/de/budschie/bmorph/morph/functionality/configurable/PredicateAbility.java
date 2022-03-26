@@ -184,12 +184,12 @@ public class PredicateAbility extends StunAbility
 	}
 	
 	@Override
-	public void disableAbility(Player player, MorphItem disabledItem, MorphItem newMorph, List<Ability> newAbilities, AbilityChangeReason reason)
+	public void removePlayerReferences(Player playerRefToRemove)
 	{
-		super.disableAbility(player, disabledItem, newMorph, newAbilities, reason);
+		super.removePlayerReferences(playerRefToRemove);
 		
-		players.remove(player.getUUID());
-		alreadyReceivedAbility.remove(player.getUUID());
+		players.remove(playerRefToRemove.getUUID());
+		alreadyReceivedAbility.remove(playerRefToRemove.getUUID());
 	}
 	
 	@Override

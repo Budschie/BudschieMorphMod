@@ -37,11 +37,11 @@ public abstract class StunAbility extends Ability
 	}
 	
 	@Override
-	public void disableAbility(Player player, MorphItem disabledItem, MorphItem newMorph, List<Ability> newAbilities, AbilityChangeReason reason)
+	public void removePlayerReferences(Player playerRefToRemove)
 	{
-		super.disableAbility(player, disabledItem, newMorph, newAbilities, reason);
+		super.removePlayerReferences(playerRefToRemove);
 		
-		delayHashMap.remove(player.getUUID());
+		delayHashMap.remove(playerRefToRemove.getUUID());
 	}
 	
 	public void stun(UUID player)
