@@ -3,6 +3,7 @@ package de.budschie.bmorph.morph.functionality;
 import java.util.function.Supplier;
 
 import de.budschie.bmorph.main.References;
+import de.budschie.bmorph.morph.functionality.configurable.ActivateAbilityIf;
 import de.budschie.bmorph.morph.functionality.configurable.AirSuffocationAbility;
 import de.budschie.bmorph.morph.functionality.configurable.AttackYeetAbility;
 import de.budschie.bmorph.morph.functionality.configurable.AttributeModifierAbility;
@@ -115,6 +116,7 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<ImmuneToDamageIfAbility>> IMMUNE_TO_DAMAGE_IF = ABILITY_REGISTRY.register("immune_to_damage_if", () -> new ConfigurableAbility<>(ImmuneToDamageIfAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<JesusAbility>> JESUS = ABILITY_REGISTRY.register("jesus", () -> new ConfigurableAbility<>(JesusAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<NoFlames>> NO_FLAMES = ABILITY_REGISTRY.register("no_flames", () -> new ConfigurableAbility<>(NoFlames.CODEC));
+	public static RegistryObject<ConfigurableAbility<ActivateAbilityIf>> ACTIVATE_ABILITY_IF = ABILITY_REGISTRY.register("activate_ability_if", () -> new ConfigurableAbility<>(ActivateAbilityIf.CODEC));
 
 }
 

@@ -1,0 +1,10 @@
+{
+    "ability": "bmorph:activate_ability_if",
+    "config":
+    {
+        "predicates": [["bmorph:not_in_lava"]],
+        "ability": "bmorph:slowness",
+        "lazy_ticks": 20,
+        "immediate_reset": true
+    }
+}
