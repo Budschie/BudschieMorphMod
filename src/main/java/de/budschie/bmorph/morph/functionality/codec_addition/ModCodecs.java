@@ -1,5 +1,7 @@
 package de.budschie.bmorph.morph.functionality.codec_addition;
 
+import java.text.MessageFormat;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -15,6 +17,7 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Encoder;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import de.budschie.bmorph.json_integration.ability_groups.AbilityGroupRegistry.AbilityGroup;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.LazyRegistryWrapper;
@@ -102,8 +105,9 @@ public class ModCodecs
 	
 	public static final Codec<LazyTag<Item>> LAZY_ITEM_TAGS = getLazyTagCodec(rl -> ItemTags.getAllTags().getTag(rl));
 	
-	public static final Codec<LazyOptional<Ability>> ABILITY = getLazyDynamicRegistry(() -> BMorphMod.DYNAMIC_ABILITY_REGISTRY, "ability");
-	public static final Codec<LazyOptional<DataTransformer>> DATA_TRANSFORMER = getLazyDynamicRegistry(() -> BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY, "data transformer");
+	public static final Codec<LazyOptional<Ability>> ABILITY = getLazyDynamicRegistry(() -> BMorphMod.DYNAMIC_ABILITY_REGISTRY, "ability", Optional.empty());
+	public static final Codec<LazyOptional<AbilityGroup>> ABILITY_GROUP = getLazyDynamicRegistry(() -> BMorphMod.ABILITY_GROUPS, "ability group", Optional.of("#"));
+	public static final Codec<LazyOptional<DataTransformer>> DATA_TRANSFORMER = getLazyDynamicRegistry(() -> BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY, "data transformer", Optional.empty());
 	
 	public static final Codec<LazyRegistryWrapper<LootItemCondition>> PREDICATE = getLazyMCRegistryObjectCodec(rl -> ServerSetup.server.getPredicateManager().get(rl), "predicate");
 		
@@ -140,6 +144,8 @@ public class ModCodecs
 	}, tag -> DataResult.success(tag.toString()));
 
 	
+	
+	
 	/**
 	 * This method creates a codec for a lazy optional for loading in dynamic
 	 * registries.
@@ -148,8 +154,9 @@ public class ModCodecs
 	 *                 be loaded.
 	 * @param typeName This shall be the name of the objects that will be
 	 *                 registered. These will be displayed in error messages.
+	 * @param prefix    The optional prefix that indicates what type this element is.
 	 **/
-	public static final <R extends IDynamicRegistryObject, D extends DynamicRegistry<R, ?>> Codec<LazyOptional<R>> getLazyDynamicRegistry(Supplier<D> registry, String typeName)
+	public static final <R extends IDynamicRegistryObject, D extends DynamicRegistry<R, ?>> Codec<LazyOptional<R>> getLazyDynamicRegistry(Supplier<D> registry, String typeName, Optional<String> idPrefix)
 	{
 		return new Codec<>()
 		{
@@ -157,7 +164,7 @@ public class ModCodecs
 			public <T> DataResult<T> encode(LazyOptional<R> input, DynamicOps<T> ops, T prefix)
 			{
 				if (input.isPresent())
-					return DataResult.success(ops.createString(input.resolve().get().getResourceLocation().toString()));
+					return DataResult.success(ops.createString(idPrefix.orElse("") + input.resolve().get().getResourceLocation().toString()));
 				else
 					return DataResult.error("The given " + typeName + " entry could not be encoded because it is null.");
 			}
@@ -169,6 +176,20 @@ public class ModCodecs
 
 				if (rl.result().isPresent())
 				{
+					String str = rl.result().get();
+					
+					if(idPrefix.isPresent())
+					{
+						if(str.startsWith(idPrefix.get()))
+						{
+							str = str.substring(idPrefix.get().length());
+						}
+						else
+						{
+							return DataResult.error(MessageFormat.format("The given registry entry id {0} did not have {1} as its prefix.", str, idPrefix.get()));
+						}
+					}
+					
 					ResourceLocation result = new ResourceLocation(rl.result().get());
 
 					return DataResult.success(Pair.of(LazyOptional.of(() -> registry.get().getEntry(result)), input));
