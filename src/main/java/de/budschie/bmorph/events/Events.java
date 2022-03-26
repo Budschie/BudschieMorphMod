@@ -47,6 +47,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -68,6 +69,7 @@ import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityLeaveWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
@@ -196,6 +198,21 @@ public class Events
 		if(!event.getPlayer().level.isClientSide())
 		{
 			event.getPlayer().getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(bossbarCap -> bossbarCap.clearBossbar());
+		}
+	}
+	
+	@SubscribeEvent
+	public static void onEntityLeftWorld(EntityLeaveWorldEvent event)
+	{
+		if(event.getEntity() instanceof Player player)
+		{
+			if(player.isRemoved() && player.getRemovalReason() == RemovalReason.UNLOADED_WITH_PLAYER)
+			{
+				MorphUtil.processCap(player, cap ->
+				{
+					cap.removePlayerReferences();
+				});
+			}
 		}
 	}
 	

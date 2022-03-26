@@ -96,6 +96,9 @@ public abstract class Ability implements IDynamicRegistryObject
 			trackedPlayers.remove(player.getUUID());
 	}
 	
+	/** This method is being invoked when references of the given player in the Ability classes should be removed. **/
+	public void removePlayerReferences(Player playerRefToRemove) {}
+	
 	/** This method is fired when an active ability is used. **/
 	public void onUsedAbility(Player player, MorphItem currentMorph) {}
 	
@@ -116,7 +119,7 @@ public abstract class Ability implements IDynamicRegistryObject
 			MinecraftForge.EVENT_BUS.register(this);
 		}
 	}
-	
+		
 	/**
 	 * If you plan on overriding this method, you will NEED to call the super method
 	 * as this method actually contains some code by default This method is like
@@ -228,9 +231,10 @@ public abstract class Ability implements IDynamicRegistryObject
 	 * There are currently two different reasons:
 	 * - The first one is {@link AbilityChangeReason#MORPHED}: It signalizes that the reason for a change of an ability is that morphs have changed.
 	 * - The second reason is {@link AbilityChangeReason#DYNAMIC}: It indicates that the reason for the change of an ability was not the change of morphs.
+	 * - The third reason is {@link AbilityChangeReason#LOGGED_OUT}: It tells the game that the player's ability have changed because the player left the game.
 	 **/
 	public static enum AbilityChangeReason
 	{
-		MORPHED, DYNAMIC
+		MORPHED, DYNAMIC, LOGGED_OUT
 	}
 }

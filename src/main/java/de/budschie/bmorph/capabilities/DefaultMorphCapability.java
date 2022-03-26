@@ -324,8 +324,11 @@ public class DefaultMorphCapability implements IMorphCapability
 				if(!getOwner().level.isClientSide())
 					ability.serialize(getOwner(), context, false);
 				ability.disableAbility(getOwner(), getCurrentMorph().get(), aboutToMorphTo, newAbilities, AbilityChangeReason.MORPHED);
+				
 			});
 			currentAbilities.unlock();
+			
+			removePlayerReferences();
 			
 			if(!getOwner().level.isClientSide())
 				context.clearTransientData();
@@ -426,6 +429,8 @@ public class DefaultMorphCapability implements IMorphCapability
 			ability.disableAbility(getOwner(), getCurrentMorph().orElse(null), null, Arrays.asList(), AbilityChangeReason.DYNAMIC);
 			if(!getOwner().level.isClientSide())
 				context.clearTransientDataFor(ability);
+			
+			ability.removePlayerReferences(owner);
 		}
 	}
 
@@ -451,5 +456,14 @@ public class DefaultMorphCapability implements IMorphCapability
 	public void deserializeSavableAbilityData(CompoundTag compoundTag)
 	{
 		this.context = AbilitySerializationContext.deserialize(compoundTag);
+	}
+
+	@Override
+	public void removePlayerReferences()
+	{
+		if(this.getCurrentAbilities() != null)
+		{
+			this.getCurrentAbilities().forEach(ability -> ability.removePlayerReferences(owner));
+		}
 	}
 }

@@ -113,6 +113,9 @@ public interface IMorphCapability
 	/** This will iterate over every ability and signal them that the button to use an ability has been pressed. **/
 	public void useAbility();
 	
+	/** Iterates over every current ability and removes references to the player. **/
+	public void removePlayerReferences();
+	
 	/**
 	 * Calling this method will iterate over every currently active ability and try
 	 * to serialize data of said ability.
