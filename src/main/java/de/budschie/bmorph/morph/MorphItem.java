@@ -135,7 +135,7 @@ public abstract class MorphItem
 	
 	public boolean isDisabled()
 	{
-		return ServerSetup.server.getTickCount() < disabledUntil;
+		return BudschieUtils.getUniversalTickTime() < disabledUntil;
 	}
 	
 	// This calc might be wrong lol

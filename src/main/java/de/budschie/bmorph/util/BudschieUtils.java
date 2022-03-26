@@ -3,15 +3,19 @@ package de.budschie.bmorph.util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
 import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.LazyRegistryWrapper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 
 public class BudschieUtils
 {
@@ -34,6 +38,26 @@ public class BudschieUtils
 //	{
 //		
 //	}
+	
+	public static int getUniversalTickTime()
+	{
+		if(ServerSetup.server == null)
+		{
+			AtomicLong atomicLong = new AtomicLong(-1);
+			
+			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+			{
+				if(Minecraft.getInstance().level != null)
+					atomicLong.set(Minecraft.getInstance().level.getGameTime());
+			});
+			
+			return (int) atomicLong.get();
+		}
+		else
+		{
+			return ServerSetup.server.getTickCount();
+		}
+	}
 	
 	public static LootItemCondition[][] resolveConditions(List<List<LazyRegistryWrapper<LootItemCondition>>> unresolved)
 	{
@@ -91,13 +115,13 @@ public class BudschieUtils
 	/** Convert a timestamp to a relative time that is left until this timestamp is reached. **/
 	public static int convertToRelativeTime(int timestampUntilFinished)
 	{
-		return timestampUntilFinished - ServerSetup.server.getTickCount();
+		return timestampUntilFinished - BudschieUtils.getUniversalTickTime();
 	}
 	
 	/** Convert a relative time to a timestamp. **/
 	public static int convertToAbsoluteTime(int relativeTime)
 	{
-		return relativeTime + ServerSetup.server.getTickCount();
+		return relativeTime + BudschieUtils.getUniversalTickTime();
 	}
 	
 	public static List<ServerPlayer> getPlayersTrackingEntity(ServerPlayer player)

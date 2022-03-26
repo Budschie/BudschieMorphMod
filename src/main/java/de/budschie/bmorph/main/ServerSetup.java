@@ -3,6 +3,7 @@ package de.budschie.bmorph.main;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import de.budschie.bmorph.commands.BlacklistCommand;
 import de.budschie.bmorph.commands.MorphCommand;
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -18,7 +19,7 @@ public class ServerSetup
 		
 	@SubscribeEvent
 	public static void onServerStarting(final ServerStartingEvent event)
-	{		
+	{
 		server = event.getServer();
 		
 		ConfigManager.INSTANCE.loadAll();

@@ -8,6 +8,7 @@ import de.budschie.bmorph.capabilities.AbilitySerializationContext;
 import de.budschie.bmorph.capabilities.AbilitySerializationContext.AbilitySerializationObject;
 import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
+import de.budschie.bmorph.util.BudschieUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 
@@ -28,12 +29,12 @@ public abstract class StunAbility extends Ability
 	
 	public int getStunTimeLeftFor(Player player)
 	{
-		return delayHashMap.containsKey(player.getUUID()) ? delayHashMap.get(player.getUUID()) - ServerSetup.server.getTickCount() : 0;
+		return delayHashMap.containsKey(player.getUUID()) ? delayHashMap.get(player.getUUID()) - BudschieUtils.getUniversalTickTime() : 0;
 	}
 	
 	public boolean isCurrentlyStunned(UUID player)
 	{
-		return delayHashMap.getOrDefault(player, 0) > ServerSetup.server.getTickCount();
+		return delayHashMap.getOrDefault(player, 0) > BudschieUtils.getUniversalTickTime();
 	}
 	
 	@Override
@@ -46,12 +47,12 @@ public abstract class StunAbility extends Ability
 	
 	public void stun(UUID player)
 	{
-		delayHashMap.put(player, ServerSetup.server.getTickCount() + stun);
+		delayHashMap.put(player, BudschieUtils.getUniversalTickTime() + stun);
 	}
 	
 	public void stun(UUID player, int nonDefaultStunTime)
 	{
-		delayHashMap.put(player, ServerSetup.server.getTickCount() + nonDefaultStunTime);
+		delayHashMap.put(player, BudschieUtils.getUniversalTickTime() + nonDefaultStunTime);
 	}
 	
 	@Override
