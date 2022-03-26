@@ -26,4 +26,10 @@ public class StandOnFluidCapability implements IStandOnFluidCapability
 	{
 		this.fluids.remove(fluid);
 	}
+
+	@Override
+	public boolean containsFluid(Fluid fluid)
+	{
+		return fluids.contains(fluid);
+	}
 }

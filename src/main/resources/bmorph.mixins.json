@@ -13,7 +13,7 @@
 		"PowderSnowBlockMixin",
 		"ServerGamePacketListenerImplMixin",
 		"IsHostileMixin",
-		"EntityCollisionContextMixin",
+		"LivingEntityStandOnFluidMixin",
 		"FireImmunityMixin"
 	],
 	"minVersion": "0.8"
