@@ -89,11 +89,7 @@ public abstract class Ability implements IDynamicRegistryObject
 	public void disableAbility(Player player, MorphItem disabledItem, MorphItem newMorph, List<Ability> newAbilities, AbilityChangeReason reason)
 	{
 		// Call old method for compatibility reasons.
-		disableAbility(player, disabledItem);
-		
-		// Remove player from the tracked player list if we listen for events
-		if(isAbleToReceiveEvents())
-			trackedPlayers.remove(player.getUUID());
+		disableAbility(player, disabledItem);		
 	}
 	
 	/**
@@ -102,7 +98,12 @@ public abstract class Ability implements IDynamicRegistryObject
 	 * {@link Ability#disableAbility(Player, MorphItem, MorphItem, List, AbilityChangeReason)},
 	 * but rather an addition that is not only fired when demorphing, but also when leaving the world.
 	 **/
-	public void removePlayerReferences(Player playerRefToRemove) {}
+	public void removePlayerReferences(Player playerRefToRemove) 
+	{
+		// Remove player from the tracked player list if we listen for events
+		if(isAbleToReceiveEvents())
+			trackedPlayers.remove(playerRefToRemove.getUUID());
+	}
 	
 	/** This method is fired when an active ability is used. **/
 	public void onUsedAbility(Player player, MorphItem currentMorph) {}
