@@ -96,7 +96,12 @@ public abstract class Ability implements IDynamicRegistryObject
 			trackedPlayers.remove(player.getUUID());
 	}
 	
-	/** This method is being invoked when references of the given player in the Ability classes should be removed. **/
+	/**
+	 * This method is being invoked when references of the given player in the
+	 * Ability classes should be removed. Remember that this is no replacement for
+	 * {@link Ability#disableAbility(Player, MorphItem, MorphItem, List, AbilityChangeReason)},
+	 * but rather an addition that is not only fired when demorphing, but also when leaving the world.
+	 **/
 	public void removePlayerReferences(Player playerRefToRemove) {}
 	
 	/** This method is fired when an active ability is used. **/
