@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -22,10 +23,7 @@ import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.network.MorphItemDisabled.MorphItemDisabledPacket;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.ints.IntLists;
 import net.minecraft.ChatFormatting;
-import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.CompoundTagArgument;
@@ -73,8 +71,19 @@ public class MorphCommand
 							List<ServerPlayer> players = ctx.getArgument("player", EntitySelector.class).findPlayers(ctx.getSource());
 							
 							for(ServerPlayer player : players)
+							{
 								// TODO: Risky
-								MorphUtil.morphToServer(Optional.of(MorphManagerHandlers.PLAYER.createMorph(EntityType.PLAYER, ServerSetup.server.getProfileCache().get(ctx.getArgument("playername", String.class)).get())), Optional.empty(), player);
+								
+								
+								// And risky it was 
+								// - Budschie, probably half a year later
+								Optional<GameProfile> gp = ServerSetup.server.getProfileCache().get(ctx.getArgument("playername", String.class));
+								
+								if(gp.isPresent())
+									MorphUtil.morphToServer(Optional.of(MorphManagerHandlers.PLAYER.createMorph(EntityType.PLAYER, gp.get())), Optional.empty(), player);
+								else
+									ctx.getSource().sendFailure(new TextComponent(ChatFormatting.RED + "The player" + ctx.getArgument("playername", String.class) + " doesn't exist."));
+							}
 							
 							return 0;
 						}))));
