@@ -4,6 +4,10 @@
     {
         "projectile_entity": "minecraft:fireball",
         "stun": 40,
+        "nbt":
+        {
+            "ExplosionPower": 1
+        },
         "acceleration": 0.15,
         "audiovisual_effect":
         {
