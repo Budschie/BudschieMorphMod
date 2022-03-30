@@ -43,7 +43,6 @@ public class LivingEntitySynchronzier implements IEntitySynchronizer
 		
 		entity.blocksBuilding = player.blocksBuilding;
 		
-		entity.yBodyRot = player.yBodyRotO;
 		entity.yBodyRot = player.yBodyRot;
 		entity.yBodyRotO = player.yBodyRotO;
 		entity.yHeadRot = player.yHeadRot;
