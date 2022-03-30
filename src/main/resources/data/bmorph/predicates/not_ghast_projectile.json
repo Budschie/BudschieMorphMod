@@ -1,0 +1,12 @@
+{
+    "condition": "minecraft:inverted",
+    "term": {
+      "condition": "minecraft:damage_source_properties",
+      "predicate": {
+        "direct_entity": {
+          "type": "minecraft:fireball"
+        }
+      }
+    }
+  }
+  

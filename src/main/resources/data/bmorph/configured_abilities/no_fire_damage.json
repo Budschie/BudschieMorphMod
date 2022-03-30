@@ -2,6 +2,6 @@
     "ability": "bmorph:immune_to_damage_if",
     "config":
     {
-        "predicates": [["bmorph:fire_damage"]]
+        "predicates": [["bmorph:fire_damage"], ["bmorph:not_ghast_projectile"]]
     }
 }
