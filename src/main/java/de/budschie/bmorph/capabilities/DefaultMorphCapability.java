@@ -109,7 +109,13 @@ public class DefaultMorphCapability implements IMorphCapability
 		if(getOwner().level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> getOwner()), new MorphChangedSynchronizer.MorphChangedPacket(getOwner().getUUID(), currentMorphIndex, morph, serializeAbilities()));
+		{
+			// Send the player a packet that may contain morph indices as the player owning this cap has knowledge of those indices
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)getOwner()), new MorphChangedSynchronizer.MorphChangedPacket(getOwner().getUUID(), currentMorphIndex, morph, serializeAbilities()));
+			
+			// Other players may not have knowledge of those indices, thus we always fully send the current morph
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> getOwner()), new MorphChangedSynchronizer.MorphChangedPacket(getOwner().getUUID(), Optional.empty(), getCurrentMorph(), serializeAbilities()));
+		}
 	}
 
 	@Override
