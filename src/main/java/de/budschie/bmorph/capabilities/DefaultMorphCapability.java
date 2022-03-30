@@ -109,7 +109,7 @@ public class DefaultMorphCapability implements IMorphCapability
 		if(getOwner().level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.ALL.noArg(), new MorphChangedSynchronizer.MorphChangedPacket(getOwner().getUUID(), currentMorphIndex, morph, serializeAbilities()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> getOwner()), new MorphChangedSynchronizer.MorphChangedPacket(getOwner().getUUID(), currentMorphIndex, morph, serializeAbilities()));
 	}
 
 	@Override
