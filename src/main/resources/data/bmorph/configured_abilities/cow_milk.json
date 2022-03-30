@@ -2,21 +2,31 @@
     "ability": "bmorph:cow_milk",
     "config":
     {
-	"food_level_cost": 4,
-	"required_food_level_to_milk": 6,
-	"drink_milk_self_effect":
-	{
-	    "sounds":
-	    [
-		{ "sound": "minecraft:entity.cow.milk"  }
-	    ]
-	},
-	"milked_entity_effect":
-	{
-	    "sounds":
-	    [
-		{ "sound": "minecraft:entity.cow.milk"  }
-	    ]
-	}
+		"food_level_cost": 4,
+		"required_food_level_to_milk": 6,
+		"drink_milk_self_effect":
+		{
+			"sounds":
+			[
+				{ "sound": "minecraft:entity.cow.milk"  }
+			]
+		},
+		"milked_entity_effect":
+		{
+			"sounds":
+			[
+				{ "sound": "minecraft:entity.cow.milk"  }
+			]
+		},
+		"not_enough_food_feedback_effect":
+		{
+			"sounds":
+			[
+				{
+					"sound": "minecraft:entity.cow.ambient",
+					"pitch": 1.2
+				}
+			]
+		}
     }
 }

@@ -2,15 +2,35 @@
     "ability": "bmorph:sheep_eat_grass",
     "config":
     {
-        "shear_sound":
+        "shear_effect":
         {
-            "sound": "minecraft:entity.sheep.shear"
+            "sounds":
+            [
+                {
+                    "sound": "minecraft:entity.sheep.shear"
+                }
+            ]
         },
-        "consume_grass_sound":
+        "consume_grass_effect":
         {
-            "sound": "minecraft:block.grass.break"
+            "sounds":
+            [
+                {
+                    "sound": "minecraft:block.grass.break"
+                }
+            ]
         },
-        "valid_directions": ["up"],
+        "saturated_effect":
+        {
+            "sounds":
+            [
+                {
+                    "sound": "minecraft:entity.sheep.ambient",
+                    "pitch": 0.69
+                }
+            ]
+        },
+        "valid_directions": [ "up" ],
         "valid_eatable_block": "minecraft:grass_block",
         "transform_to_block":
         {

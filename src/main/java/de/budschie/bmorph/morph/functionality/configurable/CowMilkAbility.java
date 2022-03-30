@@ -23,7 +23,8 @@ public class CowMilkAbility extends Ability
 			Codec.INT.fieldOf("required_food_level_to_milk").forGetter(CowMilkAbility::getRequiredMilkFoodLevel),
 			AudioVisualEffect.CODEC.optionalFieldOf("drink_milk_self_effect").forGetter(CowMilkAbility::getDrinkMilkSelfEffect),
 			AudioVisualEffect.CODEC.optionalFieldOf("milker_entity_effect").forGetter(CowMilkAbility::getMilkerEntityEffect),
-			AudioVisualEffect.CODEC.optionalFieldOf("milked_entity_effect").forGetter(CowMilkAbility::getMilkedEntityEffect))
+			AudioVisualEffect.CODEC.optionalFieldOf("milked_entity_effect").forGetter(CowMilkAbility::getMilkedEntityEffect),
+			AudioVisualEffect.CODEC.optionalFieldOf("not_enough_food_feedback_effect").forGetter(CowMilkAbility::getNotEnoughFoodFeedbackEffect))
 	.apply(instance, CowMilkAbility::new));
 	
 	private int foodLevelCost;
@@ -32,41 +33,58 @@ public class CowMilkAbility extends Ability
 	
 	private Optional<AudioVisualEffect> milkerEntityEffect;
 	private Optional<AudioVisualEffect> milkedEntityEffect;
+	
+	private Optional<AudioVisualEffect> notEnoughFoodFeedbackEffect;
 		
 	public CowMilkAbility(int foodLevelCost, int requiredMilkFoodLevel, Optional<AudioVisualEffect> drinkMilkSelfEffect, Optional<AudioVisualEffect> milkerEntityEffect,
-			Optional<AudioVisualEffect> milkedEntityEffect)
+			Optional<AudioVisualEffect> milkedEntityEffect, Optional<AudioVisualEffect> notEnoughFoodFeedbackEffect)
 	{
 		this.foodLevelCost = foodLevelCost;
 		this.requiredMilkFoodLevel = requiredMilkFoodLevel;
 		this.drinkMilkSelfEffect = drinkMilkSelfEffect;
 		this.milkerEntityEffect = milkerEntityEffect;
 		this.milkedEntityEffect = milkedEntityEffect;
+		this.notEnoughFoodFeedbackEffect = notEnoughFoodFeedbackEffect;
 	}
 
 	@Override
 	public void onUsedAbility(Player player, MorphItem currentMorph)
 	{
-		if(canMilk(player) && player.getActiveEffects().size() > 0)
+		if(player.getActiveEffects().size() > 0)
 		{
-			drinkMilkSelfEffect.ifPresent(effect -> effect.playEffect(player));
-			
-			decrementHungerAndSaturation(player);
-			player.removeAllEffects();
+			if(canMilk(player))
+			{
+				drinkMilkSelfEffect.ifPresent(effect -> effect.playEffect(player));
+				
+				decrementHungerAndSaturation(player);
+				player.removeAllEffects();
+			}
+			else
+			{
+				this.notEnoughFoodFeedbackEffect.ifPresent(ave -> ave.playEffect(player));
+			}
 		}
 	}
 	
 	@SubscribeEvent
 	public void onGettingInteractedWith(PlayerInteractEvent.EntityInteract event)
 	{
-		if(event.getHand() == InteractionHand.MAIN_HAND && !event.getWorld().isClientSide() && isTracked(event.getTarget()) && event.getItemStack().is(Items.BUCKET) && canMilk((Player) event.getTarget()))
+		if(event.getHand() == InteractionHand.MAIN_HAND && !event.getWorld().isClientSide() && isTracked(event.getTarget()) && event.getItemStack().is(Items.BUCKET))
 		{
-			milkerEntityEffect.ifPresent(effect -> effect.playEffect(event.getEntity()));
-			milkedEntityEffect.ifPresent(effect -> effect.playEffect(event.getTarget()));
-			
-	        ItemStack milkStack = ItemUtils.createFilledResult(event.getItemStack(), event.getPlayer(), Items.MILK_BUCKET.getDefaultInstance());	
-	        decrementHungerAndSaturation((Player) event.getTarget());
-	        
-	        event.getPlayer().setItemInHand(event.getHand(), milkStack);
+			if(canMilk((Player) event.getTarget()))
+			{	
+				milkerEntityEffect.ifPresent(effect -> effect.playEffect(event.getEntity()));
+				milkedEntityEffect.ifPresent(effect -> effect.playEffect(event.getTarget()));
+				
+		        ItemStack milkStack = ItemUtils.createFilledResult(event.getItemStack(), event.getPlayer(), Items.MILK_BUCKET.getDefaultInstance());	
+		        decrementHungerAndSaturation((Player) event.getTarget());
+		        
+		        event.getPlayer().setItemInHand(event.getHand(), milkStack);
+			}
+			else
+			{
+				this.notEnoughFoodFeedbackEffect.ifPresent(ave -> ave.playEffect(event.getTarget()));
+			}
 		}
 	}
 	
@@ -104,6 +122,11 @@ public class CowMilkAbility extends Ability
 	public Optional<AudioVisualEffect> getMilkedEntityEffect()
 	{
 		return milkedEntityEffect;
+	}
+	
+	public Optional<AudioVisualEffect> getNotEnoughFoodFeedbackEffect()
+	{
+		return notEnoughFoodFeedbackEffect;
 	}
 	
 	@Override
