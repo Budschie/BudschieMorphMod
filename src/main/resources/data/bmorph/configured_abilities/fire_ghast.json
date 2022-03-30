@@ -5,9 +5,14 @@
         "projectile_entity": "minecraft:fireball",
         "stun": 40,
         "acceleration": 0.15,
-        "sound":
+        "audiovisual_effect":
         {
-            "sound": "minecraft:entity.ghast.shoot"
+            "sounds":
+            [
+                {
+                    "sound": "minecraft:entity.ghast.shoot"
+                }
+            ]
         }
     }
 }

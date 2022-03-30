@@ -5,9 +5,14 @@
         "projectile_entity": "minecraft:small_fireball",
         "stun": 20,
         "acceleration": 0.67,
-        "sound":
+        "audiovisual_effect":
         {
-            "sound": "minecraft:entity.blaze.shoot"
+            "sounds":
+            [
+                {
+                    "sound": "minecraft:entity.blaze.shoot"
+                }
+            ]
         }
     }
 }

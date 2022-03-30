@@ -5,10 +5,15 @@
         "projectile_entity": "minecraft:cod",
         "stun": 0,
         "motion": 1,
-        "sound":
+        "audiovisual_effect":
         {
-            "sound": "minecraft:entity.llama.spit",
-            "pitch": 0.9
+            "sounds":
+            [
+                {
+                    "sound": "minecraft:entity.llama.spit",
+                    "pitch": 0.9
+                }
+            ]
         }
     }
 }

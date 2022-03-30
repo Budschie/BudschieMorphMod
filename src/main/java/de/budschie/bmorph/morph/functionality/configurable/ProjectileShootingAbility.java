@@ -7,6 +7,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.StunAbility;
+import de.budschie.bmorph.morph.functionality.codec_addition.AudioVisualEffect;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import de.budschie.bmorph.util.SoundInstance;
 import net.minecraft.nbt.CompoundTag;
@@ -25,21 +26,21 @@ public class ProjectileShootingAbility extends StunAbility
 					Codec.INT.optionalFieldOf("stun", 40).forGetter(ProjectileShootingAbility::getStun),
 					Codec.DOUBLE.optionalFieldOf("motion", 0.0D).forGetter(ProjectileShootingAbility::getMotion),
 					CompoundTag.CODEC.optionalFieldOf("nbt", new CompoundTag()).forGetter(ProjectileShootingAbility::getNbtData),
-					SoundInstance.CODEC.optionalFieldOf("sound").forGetter(ProjectileShootingAbility::getSoundInstance)
+					AudioVisualEffect.CODEC.optionalFieldOf("audiovisual_effect").forGetter(ProjectileShootingAbility::getAudioVisualEffect)
 					).apply(instance, ProjectileShootingAbility::new));
 	
 	private EntityType<?> projectileEntityType;
 	private double motion;
 	private CompoundTag nbtData;
-	private Optional<SoundInstance> soundInstance;
+	private Optional<AudioVisualEffect> audioVisualEffect;
 	
-	public ProjectileShootingAbility(EntityType<?> projectileEntityType, int stun, double motion, CompoundTag nbtData, Optional<SoundInstance> soundInstance)
+	public ProjectileShootingAbility(EntityType<?> projectileEntityType, int stun, double motion, CompoundTag nbtData, Optional<AudioVisualEffect> audioVisualEffect)
 	{
 		super(stun);
 		this.motion = motion;
 		this.projectileEntityType = projectileEntityType;
 		this.nbtData = nbtData;
-		this.soundInstance = soundInstance;
+		this.audioVisualEffect = audioVisualEffect;
 	}
 	
 	public EntityType<?> getProjectileEntityType()
@@ -57,9 +58,9 @@ public class ProjectileShootingAbility extends StunAbility
 		return nbtData;
 	}
 	
-	public Optional<SoundInstance> getSoundInstance()
+	public Optional<AudioVisualEffect> getAudioVisualEffect()
 	{
-		return soundInstance;
+		return audioVisualEffect;
 	}
 
 	@Override
@@ -95,8 +96,7 @@ public class ProjectileShootingAbility extends StunAbility
 			
 			stun(player.getUUID());
 			
-			if(this.soundInstance.isPresent())
-				this.soundInstance.get().playSoundAt(player);
+			this.audioVisualEffect.ifPresent(ave -> ave.playEffect(player));
 		}		
 	}
 }

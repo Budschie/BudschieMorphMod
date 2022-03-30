@@ -5,10 +5,15 @@
         "projectile_entity": "minecraft:egg",
         "stun": 5,
         "motion": 1.5,
-        "sound":
+        "audiovisual_effect":
         {
-            "sound": "minecraft:entity.egg.throw",
-            "pitch": 0.0
+            "sounds":
+            [
+                {
+                    "sound": "minecraft:entity.egg.throw",
+                    "pitch": 0.0
+                }
+            ]
         }
     }
 }
