@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
@@ -105,6 +106,15 @@ public class RenderHandler
 					Player player = event.getPlayer();
 					
 					Entity toRender = renderDataCapability.getOrCreateCachedEntity(player);
+					
+					if(toRender instanceof LivingEntity living)
+					{
+						living.yBodyRot = player.yBodyRot;
+						living.setYRot(player.getYRot());
+						living.setXRot(player.getXRot());
+						living.yHeadRot = player.yHeadRot;
+						living.yHeadRotO = player.yHeadRotO;
+					}
 					
 					renderMorph(player, toRender, event.getPoseStack(), event.getPartialTick(), event.getMultiBufferSource(), event.getPackedLight());
 				}
