@@ -21,6 +21,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -103,19 +104,10 @@ public class RenderHandler
 				{
 					event.setCanceled(true);
 	
-					Player player = event.getPlayer();
-					
+					Player player = event.getPlayer();					
 					Entity toRender = renderDataCapability.getOrCreateCachedEntity(player);
 					
-					if(toRender instanceof LivingEntity living)
-					{
-						living.yBodyRot = player.yBodyRot;
-						living.setYRot(player.getYRot());
-						living.setXRot(player.getXRot());
-						living.yHeadRot = player.yHeadRot;
-						living.yHeadRotO = player.yHeadRotO;
-					}
-					
+					renderDataCapability.getOrCreateCachedRotationSynchronizers(player).forEach(rotationSync -> rotationSync.updateMorphRotation(toRender, player));
 					renderMorph(player, toRender, event.getPoseStack(), event.getPartialTick(), event.getMultiBufferSource(), event.getPackedLight());
 				}
 			}			

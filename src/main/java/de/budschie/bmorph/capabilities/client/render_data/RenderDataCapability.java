@@ -9,6 +9,7 @@ import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.render_handler.EntitySynchronizerRegistry;
 import de.budschie.bmorph.render_handler.IEntitySynchronizer;
+import de.budschie.bmorph.render_handler.IEntitySynchronizerWithRotation;
 import de.budschie.bmorph.render_handler.InitializeMorphEntityEvent;
 import de.budschie.bmorph.render_handler.animations.AbstractMorphChangeAnimation;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -23,6 +24,7 @@ public class RenderDataCapability implements IRenderDataCapability
 	
 	private Entity cachedEntity;
 	private ArrayList<IEntitySynchronizer> cachedSynchronizers;
+	private ArrayList<IEntitySynchronizerWithRotation> cachedRotationSynchronizers;
 	
 	@Override
 	public void setAnimation(Optional<AbstractMorphChangeAnimation> animation)
@@ -91,6 +93,25 @@ public class RenderDataCapability implements IRenderDataCapability
 		
 		return cachedSynchronizers;
 	}
+	
+	@Override
+	public ArrayList<IEntitySynchronizerWithRotation> getOrCreateCachedRotationSynchronizers(Player player)
+	{		
+		if(cachedRotationSynchronizers == null)
+		{
+			getOrCreateCachedSynchronizers(player);
+			
+			this.cachedRotationSynchronizers = new ArrayList<>();
+			
+			for(IEntitySynchronizer sync : this.cachedSynchronizers)
+			{
+				if(sync instanceof IEntitySynchronizerWithRotation withRotation)
+					this.cachedRotationSynchronizers.add(withRotation);
+			}
+		}
+		
+		return cachedRotationSynchronizers;
+	}
 
 	@Override
 	public void setEntity(Entity entity)
@@ -108,5 +129,6 @@ public class RenderDataCapability implements IRenderDataCapability
 		
 		this.cachedEntity = null;
 		this.cachedSynchronizers = null;
+		this.cachedRotationSynchronizers = null;
 	}
 }

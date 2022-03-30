@@ -3,12 +3,13 @@ package de.budschie.bmorph.render_handler;
 import de.budschie.bmorph.capabilities.phantom_glide.GlideCapabilityInstance;
 import de.budschie.bmorph.capabilities.phantom_glide.GlideStatus;
 import de.budschie.bmorph.util.BudschieUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.entity.player.Player;
 
-public class PhantomSynchronizer implements IEntitySynchronizer
+public class PhantomSynchronizer implements IEntitySynchronizerWithRotation
 {
 	@Override
 	public boolean appliesToMorph(Entity morphEntity)
@@ -18,6 +19,11 @@ public class PhantomSynchronizer implements IEntitySynchronizer
 
 	@Override
 	public void applyToMorphEntity(Entity morphEntity, Player player)
+	{
+	}
+
+	@Override
+	public void updateMorphRotation(Entity morphEntity, Player player)
 	{
 		Phantom phantom = (Phantom) morphEntity;
 		
@@ -50,6 +56,8 @@ public class PhantomSynchronizer implements IEntitySynchronizer
 					oldProgress = 1 - oldProgress;
 				}
 				
+				progress = Mth.lerp(Minecraft.getInstance().getDeltaFrameTime(), oldProgress, progress);
+								
 				// We can use the rot and old value to interpolate instead of using the partial ticks to prevent stuttery movement
 				// morphEntity.xRotO = morphEntity.getXRot();
 				morphEntity.setXRot(Mth.lerp(progress, cap.getChargeDirection().getRotX(), correctedXRot));

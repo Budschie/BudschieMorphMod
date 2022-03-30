@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import de.budschie.bmorph.render_handler.IEntitySynchronizer;
+import de.budschie.bmorph.render_handler.IEntitySynchronizerWithRotation;
 import de.budschie.bmorph.render_handler.animations.AbstractMorphChangeAnimation;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.Entity;
@@ -48,6 +49,13 @@ public interface IRenderDataCapability
 	 * @param player The player to whom this capability belongs.
 	 **/
 	ArrayList<IEntitySynchronizer> getOrCreateCachedSynchronizers(Player player);
+	
+	/**
+	 * Gets or creates a cached list of rotation synchronizers.
+	 * 
+	 * @param player The player to whom this capability belongs.
+	 */
+	ArrayList<IEntitySynchronizerWithRotation> getOrCreateCachedRotationSynchronizers(Player player);
 	
 	/**
 	 * Sets the cached entity and invalidates the cache.
