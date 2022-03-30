@@ -1,0 +1,26 @@
+{
+    "ability": "bmorph:random_delegation_on_use",
+    "config":
+    {
+        "stun": 15,
+        "abilities":
+        [
+            {
+                "weight": 1,
+                "data": "bmorph:witch_potions/slowness_potion"
+            },
+            {
+                "weight": 1,
+                "data": "bmorph:witch_potions/harming_potion"
+            },
+            {
+                "weight": 1,
+                "data": "bmorph:witch_potions/poison_potion"
+            },
+            {
+                "weight": 1,
+                "data": "bmorph:witch_potions/weakness_potion"
+            }
+        ]
+    }
+}

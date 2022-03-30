@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:witch",
+    "grant":
+    [
+        "bmorph:witch_potion_yeet"
+    ],
+    "revoke":
+    [
+
+    ]
+}

@@ -1,0 +1,31 @@
+{
+    "ability": "bmorph:shoot_projectile",
+    "config":
+    {
+        "projectile_entity": "minecraft:potion",
+        "motion": 1,
+        "nbt":
+        {
+            "Item":
+            {
+                "id": "minecraft:splash_potion",
+                "Count": 1,
+                "tag":
+                {
+                    "Potion": "minecraft:weakness"
+                }
+            }
+        },
+        "audiovisual_effect":
+        {
+            "sounds":
+            [
+                {
+                    "sound": "minecraft:entity.witch.throw",
+                    "pitch": 0.1,
+                    "random_pitch_delta": 0.4
+                }
+            ]
+        }
+    }
+}
