@@ -1,6 +1,7 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -84,7 +85,9 @@ public class DisableMorphItem extends StunAbility
 		if(event.phase == Phase.START)
 			return;
 		
-		for(UUID uuid : trackedPlayers)
+		UUID[] trackedPlayersClone = trackedPlayers.toArray(size -> new UUID[size]);
+		
+		for(UUID uuid : trackedPlayersClone)
 		{
 			Player player = ServerSetup.server.getPlayerList().getPlayer(uuid);
 			

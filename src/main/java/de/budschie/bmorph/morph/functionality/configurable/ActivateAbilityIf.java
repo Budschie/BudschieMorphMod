@@ -93,7 +93,9 @@ public class ActivateAbilityIf extends Ability
 		if(event.phase == Phase.START)
 			return;
 		
-		for(UUID playerId : trackedPlayers)
+		UUID[] clonedTrackedPlayers = trackedPlayers.toArray(size -> new UUID[size]);
+		
+		for(UUID playerId : clonedTrackedPlayers)
 		{
 			Player player = ServerSetup.server.getPlayerList().getPlayer(playerId);
 			

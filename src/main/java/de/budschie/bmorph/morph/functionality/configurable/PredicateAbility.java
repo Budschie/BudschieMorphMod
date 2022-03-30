@@ -75,8 +75,10 @@ public class PredicateAbility extends StunAbility
 		
 		LootItemCondition[][] lootItemConditions = BudschieUtils.resolveConditions(predicates);
 		
+		UUID[] trackedPlayersClone = trackedPlayers.toArray(size -> new UUID[size]);
+		
 		playerIteration:
-		for(UUID uuid : trackedPlayers)
+		for(UUID uuid : trackedPlayersClone)
 		{
 			if(alreadyReceivedAbility.contains(uuid) || isCurrentlyStunned(uuid))
 				continue playerIteration;
