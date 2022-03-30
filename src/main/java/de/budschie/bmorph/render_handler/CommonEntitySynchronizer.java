@@ -24,6 +24,13 @@ public class CommonEntitySynchronizer implements IEntitySynchronizer
 		
 		EntityUtil.copyLocationAndRotation(player, morphEntity);
 		
+		morphEntity.xo = player.xo;
+		morphEntity.yo = player.yo;
+		morphEntity.zo = player.zo;
+		
+		morphEntity.walkDist = player.walkDist;
+		morphEntity.walkDistO = player.walkDistO;
+		
 		morphEntity.wasTouchingWater = player.isInWater();
 		
 		morphEntity.setOnGround(player.isOnGround());

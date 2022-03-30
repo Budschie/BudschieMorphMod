@@ -23,6 +23,9 @@ public class AbstractPlayerSynchronizer implements IEntitySynchronizer
 		entity.yCloakO = player.yCloakO;
 		entity.zCloak = player.zCloak;
 		entity.zCloakO = player.zCloakO;
+			
+		entity.bob = player.bob;
+		entity.oBob = player.oBob;
 		
 		if (entity.isFallFlying() != player.isFallFlying())
 		{
