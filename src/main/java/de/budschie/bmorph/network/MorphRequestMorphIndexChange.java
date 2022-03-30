@@ -3,6 +3,10 @@ package de.budschie.bmorph.network;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.slf4j.helpers.MessageFormatter;
+
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
@@ -19,6 +23,8 @@ import net.minecraftforge.network.NetworkEvent.Context;
 
 public class MorphRequestMorphIndexChange implements ISimpleImplPacket<RequestMorphIndexChangePacket>
 {
+	private static final Logger LOGGER = LogManager.getLogger();
+	
 	@Override
 	public void encode(RequestMorphIndexChangePacket packet, FriendlyByteBuf buffer)
 	{
@@ -48,7 +54,7 @@ public class MorphRequestMorphIndexChange implements ISimpleImplPacket<RequestMo
 				}
 				else if(packet.getRequestedIndex() >= resolved.getMorphList().getMorphArrayList().size() || packet.getRequestedIndex() < 0)
 				{
-					System.out.println("Player " + ctx.get().getSender().getName().getString() + " with UUID " + ctx.get().getSender().getUUID() + " has tried to send invalid data!");
+					LOGGER.warn(MessageFormatter.format("Player {0} with UUID {1} has tried to send invalid data!", ctx.get().getSender().getName().getString(), ctx.get().getSender().getUUID()));
 				}
 				else
 				{
