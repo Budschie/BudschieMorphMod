@@ -58,11 +58,11 @@ public class MorphRequestMorphIndexChange implements ISimpleImplPacket<RequestMo
 					if(shouldMorph)
 						MorphUtil.morphToServer(Optional.empty(), Optional.of(packet.getRequestedIndex()), ctx.get().getSender());
 					else
-						ctx.get().getSender().sendMessage(new TextComponent(ChatFormatting.RED + "I'm sorry but you can't morph into " + morphToRS.toString() + " as this entity is currently blacklisted."), Util.NIL_UUID);
-					
-					ctx.get().setPacketHandled(true);
-				}
+						ctx.get().getSender().sendMessage(new TextComponent(ChatFormatting.RED + "I'm sorry but you can't morph into " + morphToRS.toString() + " as this entity is currently blacklisted."), Util.NIL_UUID);					
+				}				
 			}
+			
+			ctx.get().setPacketHandled(true);
 		});
 	}
 	
