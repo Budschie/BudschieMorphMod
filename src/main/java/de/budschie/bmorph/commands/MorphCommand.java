@@ -82,7 +82,7 @@ public class MorphCommand
 								if(gp.isPresent())
 									MorphUtil.morphToServer(Optional.of(MorphManagerHandlers.PLAYER.createMorph(EntityType.PLAYER, gp.get())), Optional.empty(), player);
 								else
-									ctx.getSource().sendFailure(new TextComponent(ChatFormatting.RED + "The player" + ctx.getArgument("playername", String.class) + " doesn't exist."));
+									ctx.getSource().sendFailure(new TextComponent(ChatFormatting.RED + "The player " + ctx.getArgument("playername", String.class) + " doesn't exist."));
 							}
 							
 							return 0;
