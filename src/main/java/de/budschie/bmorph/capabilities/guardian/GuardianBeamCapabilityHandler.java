@@ -36,7 +36,7 @@ public class GuardianBeamCapabilityHandler extends CommonCapabilityHandler<IGuar
 				{
 					cap.setAttackProgression(cap.getAttackProgression() + 1);
 					
-					MinecraftForge.EVENT_BUS.post(new GuardianAbilityStatusUpdateEvent(event.player, cap));
+					MinecraftForge.EVENT_BUS.post(new GuardianAbilityStatusUpdateEvent(event.player, cap, false));
 				}
 			});
 		}
@@ -62,14 +62,17 @@ public class GuardianBeamCapabilityHandler extends CommonCapabilityHandler<IGuar
 		});
 	}
 	
-	private static void validateEntity(Level currentWorld, IGuardianBeamCapability cap)
+	private static void validateEntity(Player player, IGuardianBeamCapability cap)
 	{
 		if(cap.shouldRecalculateEntityId())
 		{
-			Entity entity = ((ServerLevel)currentWorld).getEntity(cap.getAttackedEntityServer().get());
+			Entity entity = ((ServerLevel)player.level).getEntity(cap.getAttackedEntityServer().get());
 			
 			if(entity == null)
+			{
 				cap.attackServer(Optional.empty(), 0);
+				MinecraftForge.EVENT_BUS.post(new GuardianAbilityStatusUpdateEvent(player, cap, true));
+			}
 			else
 				cap.setAttackedEntity(Optional.of(entity.getId()));
 		}
@@ -78,7 +81,7 @@ public class GuardianBeamCapabilityHandler extends CommonCapabilityHandler<IGuar
 	@Override
 	protected GuardianBeamAttackPacket createPacket(Player player, IGuardianBeamCapability capability)
 	{
-		validateEntity(player.level, capability);
+		validateEntity(player, capability);
 		
 		return new GuardianBeamAttackPacket(capability.getAttackedEntity(), capability.getAttackProgression(), capability.getMaxAttackProgression());
 	}

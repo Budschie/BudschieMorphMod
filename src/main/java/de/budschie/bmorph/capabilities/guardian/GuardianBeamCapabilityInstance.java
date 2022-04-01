@@ -23,16 +23,16 @@ public class GuardianBeamCapabilityInstance extends CommonCapabilityInstanceSeri
 	
 	public static final Capability<IGuardianBeamCapability> GUARDIAN_BEAM_CAP = CapabilityManager.get(new CapabilityToken<>(){});
 	
-	public GuardianBeamCapabilityInstance()
+	public GuardianBeamCapabilityInstance(Player player)
 	{
-		super(CAPABILITY_NAME, GUARDIAN_BEAM_CAP, GuardianBeamCapability::new);
+		super(CAPABILITY_NAME, GUARDIAN_BEAM_CAP, () -> new GuardianBeamCapability(player));
 	}
 	
 	@SubscribeEvent
 	public static void onAttachCapsOnPlayer(AttachCapabilitiesEvent<Entity> event)
 	{
-		if(event.getObject() instanceof Player)
-			event.addCapability(CAPABILITY_NAME, new GuardianBeamCapabilityInstance());
+		if(event.getObject() instanceof Player player)
+			event.addCapability(CAPABILITY_NAME, new GuardianBeamCapabilityInstance(player));
 	}
 
 	@Override

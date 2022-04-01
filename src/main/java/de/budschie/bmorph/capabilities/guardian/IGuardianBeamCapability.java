@@ -4,9 +4,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 public interface IGuardianBeamCapability
 {
+	/** Returns a reference to the player holding this capability. **/
+	Player getPlayer();
+	
 	/** Returns the entity that is being attacked by this guardian morph. **/
 	Optional<Integer> getAttackedEntity();
 	

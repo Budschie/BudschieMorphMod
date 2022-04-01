@@ -207,14 +207,19 @@ public class GuardianAbility extends Ability
 			// Check if we are on the logical server
 			if(!event.getPlayer().level.isClientSide)
 			{
+				if(event.isInvalidated())
+				{
+					deapplyAbilityEffects(event.getPlayer());
+					return;
+				}
+				
 				// Retrieve current entity
 				Entity targettedEntity = ((ServerLevel)event.getPlayer().level).getEntity(event.getCapability().getAttackedEntityServer().get());
 				
 				// Check if entity is null or out of bounds
-				if(targettedEntity == null || !targettedEntity.isAlive() || isEntityOutOfRange(event.getPlayer(), targettedEntity))
+				if(targettedEntity == null || !targettedEntity.isAlive() || targettedEntity.isRemoved() || isEntityOutOfRange(event.getPlayer(), targettedEntity))
 				{
 					GuardianBeamCapabilityHandler.INSTANCE.unattackServer(event.getPlayer());
-					deapplyAbilityEffects(event.getPlayer());
 					return;
 				}
 				
@@ -231,7 +236,6 @@ public class GuardianAbility extends Ability
 					if(blockResult != null && blockResult.getType() == Type.BLOCK)
 					{
 						GuardianBeamCapabilityHandler.INSTANCE.unattackServer(event.getPlayer());
-						deapplyAbilityEffects(event.getPlayer());
 						return;
 					}
 				}
@@ -247,9 +251,6 @@ public class GuardianAbility extends Ability
 					
 					// Set the capability accordingly and sync it to the client
 					GuardianBeamCapabilityHandler.INSTANCE.unattackServer(event.getPlayer());
-					
-					// Remove the slowness effect if possible
-					deapplyAbilityEffects(event.getPlayer());
 				}
 			}			
 		}		

@@ -3,7 +3,10 @@ package de.budschie.bmorph.capabilities.guardian;
 import java.util.Optional;
 import java.util.UUID;
 
+import de.budschie.bmorph.events.GuardianAbilityStatusUpdateEvent;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.MinecraftForge;
 
 public class GuardianBeamCapability implements IGuardianBeamCapability
 {
@@ -11,6 +14,18 @@ public class GuardianBeamCapability implements IGuardianBeamCapability
 	private Optional<Integer> attackedEntity = Optional.empty();
 	private int progression;
 	private int maxAttackProgression;
+	private Player player;
+	
+	public GuardianBeamCapability(Player player)
+	{
+		this.player = player;
+	}
+	
+	@Override
+	public Player getPlayer()
+	{
+		return player;
+	}
 	
 	@Override
 	public Optional<UUID> getAttackedEntityServer()
@@ -39,6 +54,9 @@ public class GuardianBeamCapability implements IGuardianBeamCapability
 	@Override
 	public void attackServer(Optional<Entity> entity, int maxAttackDuration)
 	{
+		if(this.attackedEntityServer.isPresent() && entity.isEmpty())
+			MinecraftForge.EVENT_BUS.post(new GuardianAbilityStatusUpdateEvent(player, this, true));
+		
 		setAttackedEntityServer(entity.map(entityInstance -> entityInstance.getUUID()));
 		attack(entity.map(entityInstance -> entityInstance.getId()), maxAttackDuration);
 	}
