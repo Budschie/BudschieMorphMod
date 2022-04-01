@@ -42,7 +42,7 @@ public class ClientSetup
 	// Toggles the morph UI on or off
 	public static final KeyMapping TOGGLE_MORPH_UI = new KeyMapping("key.bmorph.toggle_morph", GLFW.GLFW_KEY_SEMICOLON, "key.bmorph.bmorph_category");
 	// Changes the favourite status of a selected morph
-	public static final KeyMapping TOGGLE_MORPH_FAVOURITE = new KeyMapping("key.bmorph.toggle_morph_favourite", GLFW.GLFW_KEY_F, "key.bmorph.bmorph_category");
+	public static final KeyMapping TOGGLE_MORPH_FAVOURITE = new KeyMapping("key.bmorph.toggle_morph_favourite", GLFW.GLFW_KEY_APOSTROPHE, "key.bmorph.bmorph_category");
 	// Scrolls up, down, left or right
 	public static final KeyMapping SCROLL_UP_MORPH_UI = new KeyMapping("key.bmorph.scroll_up", GLFW.GLFW_KEY_UP, "key.bmorph.bmorph_category");
 	public static final KeyMapping SCROLL_DOWN_MORPH_UI = new KeyMapping("key.bmorph.scroll_down", GLFW.GLFW_KEY_DOWN, "key.bmorph.bmorph_category");
