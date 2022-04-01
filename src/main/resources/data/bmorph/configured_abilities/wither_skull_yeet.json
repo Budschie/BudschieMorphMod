@@ -6,9 +6,14 @@
         "stun": 5,
         "acceleration": 0.2,
         "motion": 0.2,
-        "sound":
+        "audiovisual_effect":
         {
-            "sound": "minecraft:entity.wither.shoot"
+            "sounds":
+            [
+                {
+                    "sound": "minecraft:entity.wither.shoot"
+                }
+            ]
         }
     }
 }

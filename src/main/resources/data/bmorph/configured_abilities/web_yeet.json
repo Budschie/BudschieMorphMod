@@ -5,10 +5,15 @@
         "projectile_entity": "minecraft:falling_block",
         "stun": 20,
         "motion": 1,
-        "sound":
+        "audiovisual_effect":
         {
-            "sound": "minecraft:entity.spider.step",
-            "pitch": 0.25
+            "sounds":
+            [
+                {
+                    "sound": "minecraft:entity.spider.step",
+                    "pitch": 0.25
+                }
+            ]
         },
         "nbt":
         {
