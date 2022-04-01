@@ -55,7 +55,7 @@ public class GuardianClientAdapterInstance extends GuardianClientAdapter
 								
 				if(toLookAt != null)
 				{
-					Minecraft.getInstance().player.lookAt(EntityAnchorArgument.Anchor.EYES, calculateSmoothedEntityPos(event.renderTickTime, toLookAt).add(0, toLookAt.getEyeHeight(), 0));
+					Minecraft.getInstance().player.lookAt(EntityAnchorArgument.Anchor.EYES, calculateSmoothedEntityPos(Minecraft.getInstance().getDeltaFrameTime(), toLookAt).add(0, toLookAt.getEyeHeight(), 0));
 				}
 			}
 		}
@@ -66,9 +66,9 @@ public class GuardianClientAdapterInstance extends GuardianClientAdapter
 	// I have the feeling that I am doing something wrong and that this code exists somewhere else already...
 	private Vec3 calculateSmoothedEntityPos(float renderTicks, Entity entity)
 	{
-		return new Vec3(Mth.lerp(renderTicks, entity.xo, entity.getX()),
-				Mth.lerp(renderTicks, entity.yo, entity.getY()),
-				Mth.lerp(renderTicks, entity.zo, entity.getZ()));
+		return new Vec3(Mth.lerp(renderTicks, entity.xOld, entity.getX()),
+				Mth.lerp(renderTicks, entity.yOld, entity.getY()),
+				Mth.lerp(renderTicks, entity.zOld, entity.getZ()));
 	}
 	
 	// This is some really cursed code holy fuck
