@@ -15,6 +15,7 @@ import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import de.budschie.bmorph.capabilities.bossbar.BossbarCapabilityInstance;
 import de.budschie.bmorph.capabilities.bossbar.IBossbarCapability;
 import de.budschie.bmorph.capabilities.client.render_data.IRenderDataCapability;
+import de.budschie.bmorph.capabilities.client.render_data.RenderDataCapabilityProvider;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityHandler;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityInstance;
 import de.budschie.bmorph.capabilities.guardian.IGuardianBeamCapability;
@@ -222,6 +223,9 @@ public class Events
 					cap.removePlayerReferences();
 				});
 			}
+			
+			if(event.getEntity().getRemovalReason() != RemovalReason.CHANGED_DIMENSION && event.getEntity().level.isClientSide())
+				player.getCapability(RenderDataCapabilityProvider.RENDER_CAP).ifPresent(cap -> cap.invalidateCache());
 		}
 	}
 	
@@ -472,25 +476,29 @@ public class Events
 	@SubscribeEvent
 	public static void onPlayerDeathEvent(LivingDeathEvent event)
 	{
-		if(event.getEntityLiving() instanceof Player && !event.getEntity().level.isClientSide)
+		if(event.getEntityLiving() instanceof Player player)
 		{
-			Player player = (Player) event.getEntityLiving();
-			
-			LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
-			
-			if(cap.isPresent())
+			if(event.getEntityLiving().level.isClientSide())
 			{
-				IMorphCapability resolved = cap.resolve().get();
+			}
+			else
+			{
+				LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 				
-				resolved.deapplyAbilities(null, Arrays.asList());
-				
-				if(!ServerSetup.server.getGameRules().getBoolean(BMorphMod.KEEP_MORPH_INVENTORY))
+				if(cap.isPresent())
 				{
-					for(MorphItem item : resolved.getMorphList().getMorphArrayList())
+					IMorphCapability resolved = cap.resolve().get();
+					
+					resolved.deapplyAbilities(null, Arrays.asList());
+					
+					if(!ServerSetup.server.getGameRules().getBoolean(BMorphMod.KEEP_MORPH_INVENTORY))
 					{
-						MorphEntity morphEntity = new MorphEntity(player.level, item);
-						morphEntity.setPos(player.getX(), player.getY(), player.getZ());
-						player.level.addFreshEntity(morphEntity);
+						for(MorphItem item : resolved.getMorphList().getMorphArrayList())
+						{
+							MorphEntity morphEntity = new MorphEntity(player.level, item);
+							morphEntity.setPos(player.getX(), player.getY(), player.getZ());
+							player.level.addFreshEntity(morphEntity);
+						}
 					}
 				}
 			}
