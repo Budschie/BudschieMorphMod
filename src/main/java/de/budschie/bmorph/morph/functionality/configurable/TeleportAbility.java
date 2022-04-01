@@ -42,10 +42,10 @@ public class TeleportAbility extends StunAbility
 			// We are looking for a length of 25 (25^2=625)
 			if(result.getType() == HitResult.Type.BLOCK)
 			{
-				player.level.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 10, .7f);
+				player.level.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 1, .7f);
 				((ServerLevel)player.level).sendParticles(ParticleTypes.PORTAL, player.getX(), player.getY(), player.getZ(), 300, 1, 1, 1, 0);
 				player.teleportToWithTicket(result.getLocation().x(), result.getLocation().y() + 1, result.getLocation().z());
-				player.level.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 10, 2f);
+				player.level.playSound(null, player.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 1, 2f);
 				
 				// Reset the fall distance to negate all fall damage
 				player.fallDistance = 0;
