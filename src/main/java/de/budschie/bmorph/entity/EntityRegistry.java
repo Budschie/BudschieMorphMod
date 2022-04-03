@@ -15,7 +15,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class EntityRegistry
 {
 	public static DeferredRegister<EntityType<?>> ENTITY_REGISTRY = DeferredRegister.create(ForgeRegistries.ENTITIES, References.MODID);
-	public static DeferredRegister<DataSerializerEntry> SERIALIZER_REGISTRY = DeferredRegister.create(ForgeRegistries.DATA_SERIALIZERS, References.MODID);
+	public static DeferredRegister<DataSerializerEntry> SERIALIZER_REGISTRY = DeferredRegister.create(ForgeRegistries.DATA_SERIALIZERS.get(), References.MODID);
 	
 	public static RegistryObject<EntityType<MorphEntity>> MORPH_ENTITY = ENTITY_REGISTRY.register("morph_entity", () ->
 	{

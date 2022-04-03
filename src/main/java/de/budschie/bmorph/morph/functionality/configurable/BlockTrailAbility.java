@@ -65,7 +65,7 @@ public class BlockTrailAbility extends Ability
 			
 			BlockState blockState = trailBlock.getState(player.getRandom(), blockPos);
 			
-			if (player.level.isEmptyBlock(blockPos) && (player.level.getBiome(blockPos).shouldSnowGolemBurn(blockPos) || !shouldSpawnOnlyInColdBiome()) && blockState.canSurvive(player.level, blockPos))
+			if (player.level.isEmptyBlock(blockPos) && (player.level.getBiome(blockPos).value().shouldSnowGolemBurn(blockPos) || !shouldSpawnOnlyInColdBiome()) && blockState.canSurvive(player.level, blockPos))
 			{
 				player.level.setBlockAndUpdate(blockPos, trailBlock.getState(player.getRandom(), blockPos));
 			}

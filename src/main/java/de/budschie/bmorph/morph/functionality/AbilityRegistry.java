@@ -53,6 +53,7 @@ import de.budschie.bmorph.morph.functionality.configurable.TransformEntityOnDeat
 import de.budschie.bmorph.morph.functionality.configurable.WalkOnPowderedSnowAbility;
 import de.budschie.bmorph.morph.functionality.configurable.WaterBreathingAbility;
 import de.budschie.bmorph.morph.functionality.configurable.WaterDislikeAbility;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -63,10 +64,12 @@ import net.minecraftforge.registries.RegistryObject;
 @EventBusSubscriber(bus = Bus.MOD)
 public class AbilityRegistry
 {	
-	@SuppressWarnings("unchecked")
-	public static DeferredRegister<ConfigurableAbility<? extends Ability>> ABILITY_REGISTRY = DeferredRegister.<ConfigurableAbility<? extends Ability>>create((Class<ConfigurableAbility<?>>)((Class<?>)ConfigurableAbility.class), References.MODID); 
+	public static final ResourceLocation ABILITY_REGISTRY_ID = new ResourceLocation(References.MODID, "abilities");
 	
-	public static Supplier<IForgeRegistry<ConfigurableAbility<? extends Ability>>> REGISTRY = ABILITY_REGISTRY.makeRegistry("abilities", () -> new RegistryBuilder<ConfigurableAbility<?>>().disableSaving());
+	public static DeferredRegister<ConfigurableAbility<? extends Ability>> ABILITY_REGISTRY = DeferredRegister.<ConfigurableAbility<? extends Ability>>create(ABILITY_REGISTRY_ID, References.MODID); 
+	
+	@SuppressWarnings("unchecked")
+	public static Supplier<IForgeRegistry<ConfigurableAbility<? extends Ability>>> REGISTRY = ABILITY_REGISTRY.<ConfigurableAbility<? extends Ability>>makeRegistry((Class<ConfigurableAbility<?>>)((Class<?>)ConfigurableAbility.class), () -> new RegistryBuilder<ConfigurableAbility<?>>().disableSaving().setName(ABILITY_REGISTRY_ID));
 	
 	public static RegistryObject<ConfigurableAbility<Boom>> BOOM = ABILITY_REGISTRY.register("boom", () -> new ConfigurableAbility<>(Boom.CODEC));
 	public static RegistryObject<ConfigurableAbility<AttackYeetAbility>> ATTACK_YEET = ABILITY_REGISTRY.register("yeet", () -> new ConfigurableAbility<>(AttackYeetAbility.CODEC));
