@@ -28,14 +28,13 @@ import de.budschie.bmorph.morph.functionality.data_transformers.DataTransformer;
 import de.budschie.bmorph.util.DynamicRegistry;
 import de.budschie.bmorph.util.IDynamicRegistryObject;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.BossEvent.BossBarColor;
 import net.minecraft.world.BossEvent.BossBarOverlay;
 import net.minecraft.world.effect.MobEffect;
@@ -51,6 +50,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.tags.ITag;
 
 // This class is a fucking mess
 /** Contains useful codecs for the abilities **/
@@ -101,9 +101,9 @@ public class ModCodecs
 	public static final Codec<BossBarColor> BOSSBAR_COLOR_ENUM = getEnumCodec(BossBarColor.class, BossBarColor::values);
 	public static final Codec<BossBarOverlay> BOSSBAR_OVERLAY_ENUM = getEnumCodec(BossBarOverlay.class, BossBarOverlay::values);
 	
-	public static final Codec<LazyTag<Block>> LAZY_BLOCK_TAGS = getLazyTagCodec(rl -> BlockTags.getAllTags().getTag(rl));
+	public static final Codec<LazyTag<Block>> LAZY_BLOCK_TAGS = getLazyTagCodec(rl -> ForgeRegistries.BLOCKS.tags().getTag(TagKey.create(Registry.BLOCK_REGISTRY, rl)));
 	
-	public static final Codec<LazyTag<Item>> LAZY_ITEM_TAGS = getLazyTagCodec(rl -> ItemTags.getAllTags().getTag(rl));
+	public static final Codec<LazyTag<Item>> LAZY_ITEM_TAGS = getLazyTagCodec(rl -> ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, rl)));
 	
 	public static final Codec<LazyOptional<Ability>> ABILITY = getLazyDynamicRegistry(() -> BMorphMod.DYNAMIC_ABILITY_REGISTRY, "ability", Optional.empty());
 	public static final Codec<LazyOptional<AbilityGroup>> ABILITY_GROUP = getLazyDynamicRegistry(() -> BMorphMod.ABILITY_GROUPS, "ability group", Optional.of("#"));
@@ -255,7 +255,7 @@ public class ModCodecs
 	}
 	
 	/** Creates a codec that can convert any given resource location to an object and vice versa (all in a lazy manner so that registry entries can be loaded in properly) **/
-	public static final <T> Codec<LazyTag<T>> getLazyTagCodec(Function<ResourceLocation, Tag<T>> toObject)
+	public static final <T> Codec<LazyTag<T>> getLazyTagCodec(Function<ResourceLocation, ITag<T>> toObject)
 	{
 		return ResourceLocation.CODEC.flatXmap((resourceLocation) ->
 		{
