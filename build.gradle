@@ -201,13 +201,13 @@ dependencies {
     
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-	implementation fg.deobf("curse.maven:shrink-426386:3576970")
-	implementation fg.deobf("curse.maven:betteranimalsplus-303557:3580530")
+	implementation fg.deobf("curse.maven:shrink-426386:3696155")
+	implementation fg.deobf("curse.maven:betteranimalsplus-303557:3680864")
 	// implementation fg.deobf("curse.maven:firstpersonmodel-333287:3556530")
 	
 	// Deps of betteranimalsplus mod
-	implementation fg.deobf("curse.maven:architectury-419699:3582324")
-	implementation fg.deobf("curse.maven:curios-309927:3581722")
+	implementation fg.deobf("curse.maven:architectury-419699:3728618")
+	implementation fg.deobf("curse.maven:curios-309927:3670447")
         
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
