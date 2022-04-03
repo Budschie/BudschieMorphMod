@@ -9,13 +9,13 @@ import de.budschie.bmorph.capabilities.stand_on_fluid.StandOnFluidInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 
 @Mixin(LivingEntity.class)
 public class LivingEntityStandOnFluidMixin
 {
-	@Inject(method = "canStandOnFluid(Lnet/minecraft/world/level/material/Fluid;)Z", at = @At("HEAD"), cancellable = true)
-	private void canStandOnFluidMixin(Fluid fluid, CallbackInfoReturnable<Boolean> callback)
+	@Inject(method = "canStandOnFluid(Lnet/minecraft/world/level/material/FluidState;)Z", at = @At("HEAD"), cancellable = true)
+	private void canStandOnFluidMixin(FluidState fluid, CallbackInfoReturnable<Boolean> callback)
 	{
 		Entity entity = (Entity) ((Object)this);
 		
@@ -23,7 +23,7 @@ public class LivingEntityStandOnFluidMixin
 		{
 			player.getCapability(StandOnFluidInstance.STAND_ON_FLUID_CAP).ifPresent(cap ->
 			{
-				if(cap.containsFluid(fluid))
+				if(cap.containsFluid(fluid.getType()))
 					callback.setReturnValue(true);
 			});
 		}
