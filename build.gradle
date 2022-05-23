@@ -26,7 +26,7 @@ apply plugin: 'maven-publish'
 
 // apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
-version = '1.18.2-1.0.0'
+version = '1.18.2-1.0.1'
 group = 'de.budschie.bmorph' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'bmorph'
 
@@ -189,7 +189,7 @@ dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.18.2-40.0.36'
+    minecraft 'net.minecraftforge:forge:1.18.2-40.1.21'
 
     // implementation fg.deobf("curse.maven:shrink-426386:3458658")
     // implementation fg.deobf("curse.maven:quark-243121:3394265")

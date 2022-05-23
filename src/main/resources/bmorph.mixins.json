@@ -4,14 +4,12 @@
 	"compatibilityLevel": "JAVA_17",
 	"refmap": "bmorph.refmap.json",
 	"client": [
-        "PlayerRendererMixin",
-		"PickMixin"
+        "PlayerRendererMixin"
 	],
 	"mixins": [
 		"LookAtGoalMixin",
 		"MotionMultiplierMixin",
 		"PowderSnowBlockMixin",
-		"ServerGamePacketListenerImplMixin",
 		"IsHostileMixin",
 		"LivingEntityStandOnFluidMixin",
 		"FireImmunityMixin"

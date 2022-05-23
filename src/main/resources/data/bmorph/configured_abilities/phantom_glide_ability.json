@@ -17,6 +17,6 @@
         },
         "charging_ticks": 40,
         "transition_ticks": 5,
-        "gliding_abilities": ["bmorph:reach"]
+        "gliding_abilities": ["bmorph:reach", "bmorph:attack_range"]
     }
 }
