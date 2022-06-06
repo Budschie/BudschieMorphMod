@@ -81,6 +81,7 @@ public class RenderHandler
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void onRenderedHandler(RenderPlayerEvent.Pre event)
 	{
+		// TODO: Fix this mess
 		if(veryDodgyStackOverflowPreventionHackJesJes)
 			return;
 		
