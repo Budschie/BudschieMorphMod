@@ -23,6 +23,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -37,8 +38,7 @@ public class BlockPassthroughAbility extends Ability
 					.apply(instance, BlockPassthroughAbility::new));
 	
 	private double webSpeedMultiplier;
-	private UUID webSpeedUUID;
-	private AttributeModifier am;
+	private LazyOptional<AttributeModifier> am;
 	private LazyTag<Block> appliesTo;
 	private Optional<IBlockPassthroughAbilityAdapter> adapter;
 	
@@ -50,18 +50,17 @@ public class BlockPassthroughAbility extends Ability
 	public BlockPassthroughAbility(double webSpeedMultiplier, LazyTag<Block> appliesTo)
 	{
 		this.webSpeedMultiplier = webSpeedMultiplier;
-		this.webSpeedUUID = UUID.randomUUID();
 		this.appliesTo = appliesTo;
 		
 		// Löööng name
-		this.am = new AttributeModifier(webSpeedUUID, "web_speed_attribute_modifier", this.webSpeedMultiplier, Operation.MULTIPLY_BASE);
+		this.am = LazyOptional.of(() -> new AttributeModifier(UUID.nameUUIDFromBytes((this.getResourceLocation().toString() + "_web_speed_attribute_modifier").getBytes()), "web_speed_attribute_modifier", this.webSpeedMultiplier, Operation.MULTIPLY_BASE));
 		
 		this.adapter = Optional.empty();
 		
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
 		{
-			adapter = Optional.of(new BlockPassthroughAbilityAdapter());
-			adapter.get().setAbilty(this);
+			this.adapter = Optional.of(new BlockPassthroughAbilityAdapter());
+			this.adapter.get().setAbilty(this);
 		});
 	}
 	
@@ -94,7 +93,7 @@ public class BlockPassthroughAbility extends Ability
 	}
 	
 	@SubscribeEvent
-	public void onPlayerTick(ServerTickEvent event)
+	public void onServerTick(ServerTickEvent event)
 	{
 		if(event.phase == Phase.START)
 		{
@@ -104,11 +103,11 @@ public class BlockPassthroughAbility extends Ability
 				if(!wasInWeb.contains(uuid))
 				{
 					Player player = ServerSetup.server.getPlayerList().getPlayer(uuid);
-					player.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(am);
-				}
-				
-				wasInWeb.clear();
+					player.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(am.resolve().get());
+				}				
 			});
+			
+			wasInWeb.clear();
 		}
 	}
 	
@@ -123,21 +122,21 @@ public class BlockPassthroughAbility extends Ability
 
 			AttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
 
-			if (!attributeInstance.hasModifier(am))
-				attributeInstance.addTransientModifier(am);
+			if (!attributeInstance.hasModifier(am.resolve().get()))
+				attributeInstance.addTransientModifier(am.resolve().get());
 			
 			wasInWeb.add(player.getUUID());
 		}
 	}
 	
-	public boolean wasInWeb(Player player)
+	public boolean isInWeb(Player player)
 	{
-		return wasInWeb.contains(player.getUUID());
+		return player.getAttribute(Attributes.MOVEMENT_SPEED).hasModifier(am.resolve().get());
 	}
 	
 	public float getSpeedMultiplier()
 	{
-		return (float) am.getAmount();
+		return (float) am.resolve().get().getAmount();
 	}
 	
 	// We need this since this may cause issues like permanent speed boost (until world is loaded again) otherwise
@@ -148,8 +147,10 @@ public class BlockPassthroughAbility extends Ability
 		
 		AttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
 		
-		if(attributeInstance.hasModifier(am))
-			attributeInstance.removeModifier(am);
+		if(attributeInstance.hasModifier(am.resolve().get()))
+			attributeInstance.removeModifier(am.resolve().get());
+		
+		wasInWeb.remove(player.getUUID());
 	}
 	
 	@Override

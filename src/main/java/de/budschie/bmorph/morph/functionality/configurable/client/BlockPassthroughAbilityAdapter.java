@@ -18,9 +18,9 @@ public class BlockPassthroughAbilityAdapter implements IBlockPassthroughAbilityA
 	@SubscribeEvent
 	public void onFovModification(FOVModifierEvent event)
 	{
-		if(this.ability.wasInWeb(event.getEntity()))
+		if (this.ability.isInWeb(event.getEntity()))
 		{
-			event.setNewfov(event.getNewfov() / (ability.getSpeedMultiplier()));
+			event.setNewfov((event.getNewfov() / (ability.getSpeedMultiplier() + 1)) * 1.75f);
 		}
 	}
 
