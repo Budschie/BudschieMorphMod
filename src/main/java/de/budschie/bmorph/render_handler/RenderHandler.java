@@ -160,7 +160,7 @@ public class RenderHandler
 		// NOTE: This does not occur when using tSingle...
 		EntityRenderer<? super Entity> manager = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(toRender);
 		//System.out.println(texture);
-		manager.render(toRender, 0, partialRenderTicks, matrixStack, buffers, light);
+		manager.render(toRender, 0, partialRenderTicks, matrixStack, buffers, manager.getPackedLightCoords(toRender, partialRenderTicks));
 		
 		matrixStack.popPose();
 	}
