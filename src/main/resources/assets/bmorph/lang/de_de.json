@@ -1,0 +1,22 @@
+{
+    "key.bmorph.use_ability": "Benutze Fähigkeit",
+    "key.bmorph.toggle_morph": "Öffne Morph-UI",
+    "key.bmorph.toggle_morph_favourite": "Favorisiere Morph",
+    "key.bmorph.scroll_up": "Scrolle hoch",
+    "key.bmorph.scroll_down": "Scrolle runter",
+    "key.bmorph.scroll_left": "Scrolle nach rechts",
+    "key.bmorph.scroll_right": "Scrolle nach links",
+    "key.bmorph.next": "Wechsle zur nächsten Morph-UI",
+    "key.bmorph.previous": "Wechsle zur vorherigen Morph-UI",
+    "key.bmorph.morph": "Morphe",
+    "key.bmorph.delete_current": "Lösche selektierten Morph",
+    "key.bmorph.drop_current": "Lasse selektierten Morph fallen",
+    "key.bmorph.bmorph_category": "Budschie's Morph Mod Tastenkürzel",
+    "gamerule.keepMorphInventory": "Behalte Morphinventar",
+    "gamerule.morphAggroDuration": "Aggro-Zeit nahegelegener Mobs im gemorphten Zustand (in Ticks)",
+    "gamerule.preventLookat": "Verhindert, dass Entities gemorphte Spieler angucken.",
+    "gamerule.doMorphDrops": "Erlaubt Entities, beim Tod ihren jeweiligen Morph fallenzulassen.",
+    "gamerule.allowMorphDeletion": "Kontrolliert, ob Spieler Morphs löschen dürfen oder nicht.",
+    "gamerule.allowMorphDropping": "Kontrolliert, ob Spieler Morphs fallen lassen dürfen oder nicht.",
+    "gamerule.allowMorphTools": "Diese Regel zu deaktivieren führt dazu, dass Spieler ihre Werkzeuge nicht mehr benutzen können."
+}
