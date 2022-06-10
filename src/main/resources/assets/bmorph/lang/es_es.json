@@ -1,0 +1,22 @@
+{
+    "key.bmorph.use_ability": "Usar habilidad",
+    "key.bmorph.toggle_morph": "Mostrar/Esconder Morph Menú",
+    "key.bmorph.toggle_morph_favourite": "Marcar/Desmarcar Morph favorito",
+    "key.bmorph.scroll_up": "Mover hacia arriba",
+    "key.bmorph.scroll_down": "Mover hacia abajo",
+    "key.bmorph.scroll_left": "Mover a la izquierda",
+    "key.bmorph.scroll_right": "Mover a la derecha",
+    "key.bmorph.next": "Cambiar al siguiente Morph del menú",
+    "key.bmorph.previous": "Cambiar al anterior Morph del menú",
+    "key.bmorph.morph": "Morph",
+    "key.bmorph.delete_current": "Eliminar Morph seleccionado",
+    "key.bmorph.drop_current": "Soltar Morph seleccionado",
+    "key.bmorph.bmorph_category": "Controles Budschie's Morph Mod",
+    "gamerule.keepMorphInventory": "Mantener el inventario de Morphs",
+    "gamerule.morphAggroDuration": "Tiempo de agresividad de mobs cercanos cuando se transforma (en ticks)",
+    "gamerule.preventLookat": "Prevents entities from looking at morphed players.",
+    "gamerule.doMorphDrops": "Permite que las entidades dejen caer su metamorfosis al morir.",
+    "gamerule.allowMorphDeletion": "Controla si se permite a los jugadores eliminar Morphs.",
+    "gamerule.allowMorphDropping": "Controla si se permite a los jugadores soltar Morphs.",
+    "gamerule.allowMorphTools": "Configurar esto en falso evita que los jugadores usen herramientas."
+}
