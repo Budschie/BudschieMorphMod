@@ -20,7 +20,8 @@ public class BlockPassthroughAbilityAdapter implements IBlockPassthroughAbilityA
 	{
 		if (this.ability.isInWeb(event.getEntity()))
 		{
-			event.setNewfov((event.getNewfov() / (ability.getSpeedMultiplier() + 1)) * 1.75f);
+			if(ability.getSpeedMultiplier() != 0)
+				event.setNewfov((event.getNewfov() / (ability.getSpeedMultiplier())));
 		}
 	}
 
