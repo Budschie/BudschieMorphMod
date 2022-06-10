@@ -4,7 +4,7 @@
     [
         "bmorph:water_breathing",
         "bmorph:water_sanic",
-        "bmorph:extreme_slowness"
+        "#bmorph:speed_changes/extreme_slowness"
     ],
     "revoke":
     [

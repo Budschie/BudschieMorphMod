@@ -2,7 +2,7 @@
     "entity_type": "minecraft:cat",
     "grant":
     [
-        "bmorph:swiftness",
+        "#bmorph:speed_changes/swiftness",
         "bmorph:night_vision",
         "bmorph:fish_insta_regen"
     ],

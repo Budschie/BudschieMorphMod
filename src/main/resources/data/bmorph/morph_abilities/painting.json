@@ -3,7 +3,7 @@
     "grant":
     [
         "bmorph:flying",
-        "bmorph:extreme_swiftness"
+        "#bmorph:speed_changes/extreme_swiftness"
     ],
     "revoke":
     [

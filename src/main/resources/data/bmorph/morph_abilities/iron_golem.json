@@ -4,7 +4,7 @@
     [
         "bmorph:mob_attack",
         "bmorph:yeet",
-        "bmorph:slowness",
+        "#bmorph:speed_changes/slowness",
         "bmorph:no_knockback",
         "bmorph:more_damage",
         "bmorph:no_fall_damage",

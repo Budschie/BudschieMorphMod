@@ -2,7 +2,7 @@
     "entity_type": "minecraft:ocelot",
     "grant":
     [
-        "bmorph:extreme_swiftness",
+        "#bmorph:speed_changes/extreme_swiftness",
         "bmorph:one_block_insta_jump",
         "bmorph:night_vision",
         "bmorph:fish_insta_regen",

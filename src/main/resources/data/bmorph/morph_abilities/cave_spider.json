@@ -5,8 +5,8 @@
         "bmorph:one_block_insta_jump",
         "bmorph:climbing",
         "bmorph:no_fall_damage",
-        "bmorph:swiftness",
-        "bmorph:web_speed",
+        "#bmorph:speed_changes/swiftness",
+        "bmorph:speed_changes/web_speed",
         "bmorph:web_yeet"
     ],
     "revoke":

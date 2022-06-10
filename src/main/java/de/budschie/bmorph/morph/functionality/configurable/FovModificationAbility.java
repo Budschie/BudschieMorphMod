@@ -59,7 +59,8 @@ public class FovModificationAbility extends Ability
 	public void onUnregister()
 	{
 		if(adapter.isPresent())
-			adapter.get().unregister();	}
+			adapter.get().unregister();	
+	}
 	
 	public float getFovMultiplier()
 	{

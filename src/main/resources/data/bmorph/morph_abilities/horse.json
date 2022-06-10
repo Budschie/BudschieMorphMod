@@ -3,7 +3,7 @@
     "grant":
     [
         "bmorph:higher_insta_jump",
-        "bmorph:swiftness",
+        "#bmorph:speed_changes/swiftness",
         "bmorph:jumpboost"
     ],
     "revoke":

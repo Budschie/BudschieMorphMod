@@ -3,7 +3,7 @@
     "config":
     {
         "predicates": [["bmorph:not_in_lava"]],
-        "ability": "bmorph:slowness",
+        "ability": "#bmorph:speed_changes/slowness",
         "lazy_ticks": 20,
         "immediate_reset": true
     }

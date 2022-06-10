@@ -1,0 +1,7 @@
+{
+    "ability": "bmorph:modify_fov",
+    "config":
+    {
+        "fov_multiplier": 0.7
+    }
+}
