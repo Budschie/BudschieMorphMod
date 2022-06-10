@@ -37,6 +37,8 @@ public class FovModificationAbility extends Ability
 		this.fovMultiplier = fovMultiplier;
 		this.fovAdd = fovAdd;
 		
+		this.adapter = Optional.empty();
+		
 		// This (hopefully) works to prevent classnotfound exceptions, though the compat
 		// check between the interface and the implementation might be a bit
 		// problematic.

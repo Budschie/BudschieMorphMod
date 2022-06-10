@@ -2,6 +2,7 @@ package de.budschie.bmorph.morph.functionality.configurable;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.mojang.serialization.Codec;
@@ -13,15 +14,19 @@ import de.budschie.bmorph.morph.LazyTag;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
+import de.budschie.bmorph.morph.functionality.configurable.client.BlockPassthroughAbilityAdapter;
+import de.budschie.bmorph.morph.functionality.configurable.client.IBlockPassthroughAbilityAdapter;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 
 public class BlockPassthroughAbility extends Ability
 {
@@ -35,6 +40,7 @@ public class BlockPassthroughAbility extends Ability
 	private UUID webSpeedUUID;
 	private AttributeModifier am;
 	private LazyTag<Block> appliesTo;
+	private Optional<IBlockPassthroughAbilityAdapter> adapter;
 	
 	// TODO: This is dumb.
 	private HashSet<UUID> wasInWeb = new HashSet<>();
@@ -49,6 +55,14 @@ public class BlockPassthroughAbility extends Ability
 		
 		// Löööng name
 		this.am = new AttributeModifier(webSpeedUUID, "web_speed_attribute_modifier", this.webSpeedMultiplier, Operation.MULTIPLY_BASE);
+		
+		this.adapter = Optional.empty();
+		
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () ->
+		{
+			adapter = Optional.of(new BlockPassthroughAbilityAdapter());
+			adapter.get().setAbilty(this);
+		});
 	}
 	
 	public LazyTag<Block> getAppliesTo()
@@ -59,6 +73,24 @@ public class BlockPassthroughAbility extends Ability
 	public double getWebSpeedMultiplier()
 	{
 		return webSpeedMultiplier;
+	}
+	
+	@Override
+	public void onRegister()
+	{
+		super.onRegister();
+		
+		if(this.adapter.isPresent())
+			this.adapter.get().register();
+	}
+	
+	@Override
+	public void onUnregister()
+	{
+		super.onUnregister();
+		
+		if(this.adapter.isPresent())
+			this.adapter.get().unregister();
 	}
 	
 	@SubscribeEvent
@@ -96,6 +128,16 @@ public class BlockPassthroughAbility extends Ability
 			
 			wasInWeb.add(player.getUUID());
 		}
+	}
+	
+	public boolean wasInWeb(Player player)
+	{
+		return wasInWeb.contains(player.getUUID());
+	}
+	
+	public float getSpeedMultiplier()
+	{
+		return (float) am.getAmount();
 	}
 	
 	// We need this since this may cause issues like permanent speed boost (until world is loaded again) otherwise

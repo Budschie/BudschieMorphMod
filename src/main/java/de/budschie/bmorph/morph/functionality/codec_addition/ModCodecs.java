@@ -27,6 +27,7 @@ import de.budschie.bmorph.morph.functionality.codec_addition.CommandProvider.Sel
 import de.budschie.bmorph.morph.functionality.data_transformers.DataTransformer;
 import de.budschie.bmorph.util.DynamicRegistry;
 import de.budschie.bmorph.util.IDynamicRegistryObject;
+import net.minecraft.ResourceLocationException;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
@@ -190,7 +191,16 @@ public class ModCodecs
 						}
 					}
 					
-					ResourceLocation result = new ResourceLocation(rl.result().get());
+					final ResourceLocation result;
+					
+					try
+					{
+						result = new ResourceLocation(rl.result().get());
+					}
+					catch(ResourceLocationException ex)
+					{
+						return DataResult.error(ex.getMessage());
+					}
 
 					return DataResult.success(Pair.of(LazyOptional.of(() -> registry.get().getEntry(result)), input));
 				} 
