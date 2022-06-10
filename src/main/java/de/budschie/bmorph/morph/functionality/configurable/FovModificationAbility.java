@@ -47,6 +47,20 @@ public class FovModificationAbility extends Ability
 		});
 	}
 	
+	// I didn't call the super method of onRegister or onUnregister because this class should not receive any events.
+	@Override
+	public void onRegister()
+	{
+		if(adapter.isPresent())
+			adapter.get().register();
+	}
+	
+	@Override
+	public void onUnregister()
+	{
+		if(adapter.isPresent())
+			adapter.get().unregister();	}
+	
 	public float getFovMultiplier()
 	{
 		return fovMultiplier;
