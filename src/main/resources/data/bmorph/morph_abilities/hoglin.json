@@ -2,7 +2,7 @@
     "entity_type": "minecraft:hoglin",
     "grant":
     [
-        "bmorph:turn_to_zoglin_in_overworld"
+        "bmorph:transformations/turn_to_zoglin_in_overworld"
     ],
     "revoke":
     [

@@ -3,9 +3,9 @@
     "config":
     {
         "stun": 0,
-        "predicates": [[ "bmorph:water_check" ]],
+        "predicates": [[ "bmorph:desert_predicate", "bmorph:badlands_predicate" ]],
         "execute_once": false,
         "predicate_true_for_time": 300,
-        "ability_to_execute": "bmorph:turn_to_drowned"
+        "ability_to_execute": "bmorph:transformations/turn_to_husk"
     }
 }

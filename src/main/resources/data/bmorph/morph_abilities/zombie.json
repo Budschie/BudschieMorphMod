@@ -4,8 +4,8 @@
     [
         "bmorph:burn_in_sun",
         "bmorph:infect_villagers",
-        "bmorph:turn_to_drowned_as_zombie",
-        "bmorph:turn_to_husk_as_zombie",
+        "bmorph:transformations/turn_to_drowned_as_zombie",
+        "bmorph:transformations/turn_to_husk_as_zombie",
         "bmorph:water_breathing"
     ],
     "revoke":

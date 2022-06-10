@@ -6,6 +6,6 @@
         "predicates": [[ "bmorph:overworld_predicate" ]],
         "execute_once": false,
         "predicate_true_for_time": 150,
-        "ability_to_execute": "bmorph:turn_to_zombified_piglin"
+        "ability_to_execute": "bmorph:transformations/turn_to_zoglin"
     }
 }

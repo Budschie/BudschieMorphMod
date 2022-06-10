@@ -3,6 +3,6 @@
     "config":
     {
         "delegate_on_damage": "lightningBolt",
-        "delegate_to": "bmorph:turn_to_witch"
+        "delegate_to": "bmorph:transformations/turn_to_witch"
     }
 }

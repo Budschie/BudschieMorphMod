@@ -4,7 +4,7 @@
     [
         "bmorph:burn_in_sun",
         "bmorph:no_freezing",
-        "bmorph:turn_to_stray_as_skeleton"
+        "bmorph:transformations/turn_to_stray_as_skeleton"
     ],
     "revoke":
     [

@@ -3,7 +3,7 @@
     "grant":
     [
         "bmorph:infect_villagers",
-        "bmorph:turn_to_zombie_as_husk",
+        "bmorph:transformations/turn_to_zombie_as_husk",
         "bmorph:water_breathing"
     ],
     "revoke":

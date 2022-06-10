@@ -6,6 +6,6 @@
         "predicates": [[ "bmorph:freezing_check" ]],
         "execute_once": false,
         "predicate_true_for_time": 220,
-        "ability_to_execute": "bmorph:turn_to_stray"
+        "ability_to_execute": "bmorph:transformations/turn_to_stray"
     }
 }

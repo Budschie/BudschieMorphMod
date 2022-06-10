@@ -6,6 +6,6 @@
         "predicates": [[ "bmorph:water_check" ]],
         "execute_once": false,
         "predicate_true_for_time": 600,
-        "ability_to_execute": "bmorph:turn_to_zombie"
+        "ability_to_execute": "bmorph:transformations/turn_to_zombie"
     }
 }

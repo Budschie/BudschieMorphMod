@@ -2,7 +2,7 @@
     "entity_type": "minecraft:piglin",
     "grant":
     [
-        "bmorph:turn_to_zombified_piglin_in_overworld"
+        "bmorph:transformations/turn_to_zombified_piglin_in_overworld"
     ],
     "revoke":
     [

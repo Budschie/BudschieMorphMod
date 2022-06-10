@@ -3,6 +3,6 @@
     "config":
     {
         "delegate_on_damage": "lightningBolt",
-        "delegate_to": "bmorph:turn_to_zombified_piglin_from_pig"
+        "delegate_to": "bmorph:transformations/turn_to_zombified_piglin_from_pig"
     }
 }
