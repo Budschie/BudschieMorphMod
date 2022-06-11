@@ -1,0 +1,18 @@
+{
+    "ability": "bmorph:shoot_projectile",
+    "config":
+    {
+        "projectile_entity": "minecraft:dragon_fireball",
+        "stun": 40,
+        "acceleration": 0.15,
+        "audiovisual_effect":
+        {
+            "sounds":
+            [
+                {
+                    "sound": "minecraft:entity.ender_dragon.shoot"
+                }
+            ]
+        }
+    }
+}

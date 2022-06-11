@@ -1,0 +1,9 @@
+{
+    "ability": "bmorph:bossbar",
+    "config":
+    {
+        "bossbar_color": "pink",
+        "bossbar_overlay": "progress",
+        "create_world_fog": true
+    }
+}

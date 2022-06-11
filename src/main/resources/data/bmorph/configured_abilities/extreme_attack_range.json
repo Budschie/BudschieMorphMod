@@ -1,0 +1,10 @@
+{
+    "ability": "bmorph:attribute_modifier",
+    "config":
+    {
+        "attribute": "forge:attack_range",
+        "operation": "multiply_base",
+        "name": "Increased Reach",
+        "amount": 3
+    }
+}

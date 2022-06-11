@@ -1,0 +1,79 @@
+{
+    "ability": "bmorph:disable_morph_item",
+    "config":
+    {
+        "time_until_demorph": 600,
+        "disable_morph_for": 10000,
+        "warning_effects":
+        [
+            {
+                "ticks_left": 100,
+                "audiovisual_effect":
+                {
+                    "sounds":
+                    [
+                        {
+                            "sound": "minecraft:entity.ender_dragon.hurt",
+                            "pitch": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "ticks_left": 70,
+                "mob_effects":
+                [
+                    {
+                        "potion_effect": "minecraft:blindness",
+                        "duration": 200,
+                        "amplifier": 3
+                    }
+                ]
+            },
+            {
+                "ticks_left": 0,
+                "mob_effects":
+                [
+                    {
+                        "potion_effect": "minecraft:slow_falling",
+                        "duration": 80
+                    }
+                ],
+                "audiovisual_effect":
+                {
+                    "sounds":
+                    [
+                        {
+                            "sound": "minecraft:entity.ender_dragon.death"
+                        }
+                    ],
+                    "particles":
+                    [
+                        {
+                            "particle_type": "minecraft:large_smoke",
+                            "delta":
+                            {
+                                "x": 2,
+                                "y": 2,
+                                "z": 2
+                            },
+                            "count": 1000,
+                            "speed": 0.005
+                        },
+                        {
+                            "particle_type": "minecraft:portal",
+                            "delta":
+                            {
+                                "x": 2,
+                                "y": 2,
+                                "z": 2
+                            },
+                            "count": 1000,
+                            "speed": 0.0
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

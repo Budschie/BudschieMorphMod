@@ -2,7 +2,19 @@
     "entity_type": "minecraft:ender_dragon",
     "grant":
     [
-        "bmorph:ender_dragon_flight"
+        "bmorph:ender_dragon_flight",
+        "bmorph:no_fall_damage",
+        "#bmorph:fire_immunity",
+        "bmorph:extreme_yeet",
+        "bmorph:even_more_damage",
+        "bmorph:shoot_ender_dragon",
+        "bmorph:ender_dragon_bossbar",
+        "bmorph:ender_dragon_bossbar",
+        "bmorph:ender_dragon_enabled_visuals",
+        "bmorph:no_magic_damage",
+        "bmorph:extreme_reach",
+        "bmorph:extreme_attack_range",
+        "bmorph:disable_ender_dragon"
     ],
     "revoke":
     [
