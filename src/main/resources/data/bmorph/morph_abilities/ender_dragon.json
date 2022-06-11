@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:ender_dragon",
+    "grant":
+    [
+        "bmorph:ender_dragon_flight"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

@@ -25,6 +25,7 @@ import de.budschie.bmorph.morph.functionality.configurable.DisableMorphItem;
 import de.budschie.bmorph.morph.functionality.configurable.EffectOnAttackEntity;
 import de.budschie.bmorph.morph.functionality.configurable.EffectOnUseAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ElderGuardianJumpscareAbility;
+import de.budschie.bmorph.morph.functionality.configurable.EnderDragonAbility;
 import de.budschie.bmorph.morph.functionality.configurable.FlyAbility;
 import de.budschie.bmorph.morph.functionality.configurable.FovModificationAbility;
 import de.budschie.bmorph.morph.functionality.configurable.GuardianAbility;
@@ -122,6 +123,7 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<NoFlames>> NO_FLAMES = ABILITY_REGISTRY.register("no_flames", () -> new ConfigurableAbility<>(NoFlames.CODEC));
 	public static RegistryObject<ConfigurableAbility<ActivateAbilityIf>> ACTIVATE_ABILITY_IF = ABILITY_REGISTRY.register("activate_ability_if", () -> new ConfigurableAbility<>(ActivateAbilityIf.CODEC));
 	public static RegistryObject<ConfigurableAbility<FovModificationAbility>> MODIFY_FOV = ABILITY_REGISTRY.register("modify_fov", () -> new ConfigurableAbility<>(FovModificationAbility.CODEC));
-
+	public static RegistryObject<ConfigurableAbility<EnderDragonAbility>> ENDER_DRAGON_FLIGHT = ABILITY_REGISTRY.register("ender_dragon_flight", () -> new ConfigurableAbility<>(EnderDragonAbility.CODEC));
+	
 }
 
