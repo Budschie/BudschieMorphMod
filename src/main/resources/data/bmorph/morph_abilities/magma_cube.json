@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:magma_cube",
+    "grant":
+    [
+        "#bmorph:fire_immunity"
+    ],
+    "revoke":
+    [
+
+    ]
+}

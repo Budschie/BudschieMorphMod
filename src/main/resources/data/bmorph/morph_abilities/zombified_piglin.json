@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:zombified_piglin",
+    "grant":
+    [
+        "#bmorph:fire_immunity"
+    ],
+    "revoke":
+    [
+
+    ]
+}
