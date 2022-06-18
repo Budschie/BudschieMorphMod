@@ -34,6 +34,7 @@ public class EnderDragonAbility extends Ability
 	{
 		super.enableAbility(player, enabledItem, oldMorph, oldAbilities, reason);
 		player.setNoGravity(true);
+		player.getAbilities().mayfly = true;
 	}
 	
 	@Override
@@ -41,6 +42,7 @@ public class EnderDragonAbility extends Ability
 	{
 		super.disableAbility(player, disabledItem, newMorph, newAbilities, reason);
 		player.setNoGravity(false);
+		player.getAbilities().mayfly = false;
 	}
 	
 	@SubscribeEvent
@@ -55,6 +57,9 @@ public class EnderDragonAbility extends Ability
 			{
 				event.player.setDeltaMovement(event.player.getForward().multiply(maxSpeed, maxSpeed, maxSpeed));
 			}
+			
+			// Thou shalt not fly
+			event.player.getAbilities().flying = false;
 		}
 	}
 	
