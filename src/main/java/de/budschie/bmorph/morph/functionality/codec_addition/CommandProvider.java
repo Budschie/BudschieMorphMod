@@ -32,7 +32,7 @@ public class CommandProvider
 	/** Executes the given command as the given command source. **/
 	public void executeAs(CommandSourceStack commandSource)
 	{
-		ServerSetup.server.getCommands().performCommand(commandSource, command);
+		commandSource.getServer().getCommands().performCommand(commandSource, command);
 	}
 	
 	/** Executes the stored command as the given player. **/
@@ -41,7 +41,7 @@ public class CommandProvider
 		CommandSourceStack source = this.selector.getCommandSource(player);
 		
 		if(source != null)
-			executeAs(source.withPermission(ServerSetup.server.getOperatorUserPermissionLevel()).withSuppressedOutput());
+			executeAs(source.withPermission(source.getServer().getOperatorUserPermissionLevel()).withSuppressedOutput());
 	}
 	
 	public Selector getSelector()

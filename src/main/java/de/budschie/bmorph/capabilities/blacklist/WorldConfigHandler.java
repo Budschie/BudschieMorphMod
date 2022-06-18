@@ -6,6 +6,7 @@ import java.io.IOException;
 import de.budschie.bmorph.main.ServerSetup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
+import net.minecraft.server.MinecraftServer;
 
 public abstract class WorldConfigHandler
 {
@@ -19,9 +20,9 @@ public abstract class WorldConfigHandler
 	public abstract void read(CompoundTag data);
 	public abstract CompoundTag write();
 	
-	public void readFromFile()
+	public void readFromFile(MinecraftServer server)
 	{
-		File resolvedPath = new File(ServerSetup.server.storageSource.getWorldDir().toFile(), "morph_blacklist.dat");
+		File resolvedPath = new File(server.storageSource.getWorldDir().toFile(), "morph_blacklist.dat");
 		
 		if(resolvedPath.exists())
 		{
@@ -38,9 +39,9 @@ public abstract class WorldConfigHandler
 		}
 	}
 	
-	public void writeToFile()
+	public void writeToFile(MinecraftServer server)
 	{
-		File resolvedPath = new File(ServerSetup.server.storageSource.getWorldDir().toFile(), "morph_blacklist.dat");
+		File resolvedPath = new File(server.storageSource.getWorldDir().toFile(), "morph_blacklist.dat");
 		
 		CompoundTag serialized = write();
 		

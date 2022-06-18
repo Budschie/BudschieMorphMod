@@ -11,6 +11,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class PassiveTickAbility extends Ability 
 {
@@ -34,7 +35,7 @@ public class PassiveTickAbility extends Ability
 	{
 		if(event.phase == Phase.START)
 		{
-			int tickCounter = ServerSetup.server.getTickCount();
+			int tickCounter = ServerLifecycleHooks.getCurrentServer().getTickCount();
 			
 			if(tickCounter >= (lastUpdate + updateDuration))
 			{
@@ -42,7 +43,7 @@ public class PassiveTickAbility extends Ability
 				
 				for(UUID uuid : trackedPlayers)
 				{
-					Player player = ServerSetup.server.getPlayerList().getPlayer(uuid);
+					Player player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(uuid);
 					
 					if(player != null)
 					{

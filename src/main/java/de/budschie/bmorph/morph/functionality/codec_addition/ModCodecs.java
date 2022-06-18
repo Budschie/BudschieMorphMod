@@ -52,6 +52,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.tags.ITag;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 // This class is a fucking mess
 /** Contains useful codecs for the abilities **/
@@ -110,7 +111,7 @@ public class ModCodecs
 	public static final Codec<LazyOptional<AbilityGroup>> ABILITY_GROUP = getLazyDynamicRegistry(() -> BMorphMod.ABILITY_GROUPS, "ability group", Optional.of("#"));
 	public static final Codec<LazyOptional<DataTransformer>> DATA_TRANSFORMER = getLazyDynamicRegistry(() -> BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY, "data transformer", Optional.empty());
 	
-	public static final Codec<LazyRegistryWrapper<LootItemCondition>> PREDICATE = getLazyMCRegistryObjectCodec(rl -> ServerSetup.server.getPredicateManager().get(rl), "predicate");
+	public static final Codec<LazyRegistryWrapper<LootItemCondition>> PREDICATE = getLazyMCRegistryObjectCodec(rl -> ServerLifecycleHooks.getCurrentServer().getPredicateManager().get(rl), "predicate");
 		
 	public static final Codec<net.minecraft.nbt.Tag> NBT_TAG = Codec.STRING.flatXmap(str ->
 	{

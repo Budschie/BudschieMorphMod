@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.LazyRegistryWrapper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerPlayerConnection;
@@ -16,6 +17,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class BudschieUtils
 {
@@ -41,7 +43,8 @@ public class BudschieUtils
 	
 	public static int getUniversalTickTime()
 	{
-		if(ServerSetup.server == null)
+		// wth is this even
+		if(ServerLifecycleHooks.getCurrentServer() == null)
 		{
 			AtomicLong atomicLong = new AtomicLong(-1);
 			
@@ -55,7 +58,7 @@ public class BudschieUtils
 		}
 		else
 		{
-			return ServerSetup.server.getTickCount();
+			return ServerLifecycleHooks.getCurrentServer().getTickCount();
 		}
 	}
 	

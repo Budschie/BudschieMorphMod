@@ -5,6 +5,7 @@ import java.util.HashMap;
 import de.budschie.bmorph.main.ServerSetup;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class EntityClassByTypeCache
 {
@@ -21,7 +22,7 @@ public class EntityClassByTypeCache
 		
 		if(clazz == null)
 		{
-			T entityInstance = entity.create(ServerSetup.server.getAllLevels().iterator().next());
+			T entityInstance = entity.create(ServerLifecycleHooks.getCurrentServer().getAllLevels().iterator().next());
 			clazz = (Class<T>) entityInstance.getClass();
 			cache.put(entity, clazz);
 		}

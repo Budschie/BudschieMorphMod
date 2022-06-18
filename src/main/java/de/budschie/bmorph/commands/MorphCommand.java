@@ -77,7 +77,7 @@ public class MorphCommand
 								
 								// And risky it was 
 								// - Budschie, probably half a year later
-								Optional<GameProfile> gp = ServerSetup.server.getProfileCache().get(ctx.getArgument("playername", String.class));
+								Optional<GameProfile> gp = ctx.getSource().getServer().getProfileCache().get(ctx.getArgument("playername", String.class));
 								
 								if(gp.isPresent())
 									MorphUtil.morphToServer(Optional.of(MorphManagerHandlers.PLAYER.createMorph(EntityType.PLAYER, gp.get())), Optional.empty(), player);

@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class BurnInSunAbility extends Ability
 {
@@ -56,7 +57,7 @@ public class BurnInSunAbility extends Ability
 		
 		for(UUID playerId : trackedPlayers)
 		{
-			Player player = ServerSetup.server.getPlayerList().getPlayer(playerId);
+			Player player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(playerId);
 
 			if(!player.isInvulnerable() && !player.level.isClientSide)
 			{

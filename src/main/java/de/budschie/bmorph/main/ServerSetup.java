@@ -15,14 +15,12 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @EventBusSubscriber(bus = Bus.FORGE)
 public class ServerSetup
 {
-	public static MinecraftServer server;
+//	public static MinecraftServer server;
 		
 	@SubscribeEvent
 	public static void onServerStarting(final ServerStartingEvent event)
 	{
-		server = event.getServer();
-		
-		ConfigManager.INSTANCE.loadAll();
+		ConfigManager.INSTANCE.loadAll(event.getServer());
 	}
 	
 	@SubscribeEvent
@@ -37,10 +35,9 @@ public class ServerSetup
 	@SubscribeEvent
 	public static void onServerStopping(final ServerStoppedEvent event)
 	{
-		ConfigManager.INSTANCE.serverShutdown();
+		ConfigManager.INSTANCE.serverShutdown(event.getServer());
 		BMorphMod.DYNAMIC_ABILITY_REGISTRY.unregisterAll();
 		BMorphMod.VISUAL_MORPH_DATA.clear();
 		BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY.unregisterAll();
-		server = null;
 	}
 }

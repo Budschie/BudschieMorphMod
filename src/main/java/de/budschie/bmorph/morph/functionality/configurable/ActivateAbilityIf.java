@@ -30,6 +30,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class ActivateAbilityIf extends Ability
 {
@@ -97,7 +98,7 @@ public class ActivateAbilityIf extends Ability
 		
 		for(UUID playerId : clonedTrackedPlayers)
 		{
-			Player player = ServerSetup.server.getPlayerList().getPlayer(playerId);
+			Player player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(playerId);
 			
 			LootItemCondition[][] resolved = BudschieUtils.resolveConditions(predicates);
 			

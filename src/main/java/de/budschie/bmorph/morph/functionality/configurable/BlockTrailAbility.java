@@ -15,6 +15,7 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvi
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class BlockTrailAbility extends Ability
 {
@@ -48,7 +49,7 @@ public class BlockTrailAbility extends Ability
 		if(event.phase == Phase.END)
 		{
 			for(UUID playerId : trackedPlayers)
-				placeTrailBlocks(ServerSetup.server.getPlayerList().getPlayer(playerId));
+				placeTrailBlocks(ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(playerId));
 		}
 	}
 	

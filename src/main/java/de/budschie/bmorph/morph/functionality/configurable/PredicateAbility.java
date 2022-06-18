@@ -29,6 +29,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class PredicateAbility extends StunAbility
 {
@@ -83,7 +84,7 @@ public class PredicateAbility extends StunAbility
 			if(alreadyReceivedAbility.contains(uuid) || isCurrentlyStunned(uuid))
 				continue playerIteration;
 			
-			Player currentPlayer = ServerSetup.server.getPlayerList().getPlayer(uuid);
+			Player currentPlayer = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(uuid);
 			
 			// First, check if the predicate is true
 			
@@ -167,7 +168,7 @@ public class PredicateAbility extends StunAbility
 	
 	public int getTimeLeftForPlayerToReceiveAbility(Player player)
 	{
-		return players.get(player.getUUID()) - ServerSetup.server.getTickCount();
+		return players.get(player.getUUID()) - player.getServer().getTickCount();
 	}
 	
 	public void removePlayerFromTimestamp(Player player)
@@ -177,12 +178,12 @@ public class PredicateAbility extends StunAbility
 	
 	public void addTimestampForPlayer(Player player, int time)
 	{
-		players.put(player.getUUID(), time + ServerSetup.server.getTickCount());
+		players.put(player.getUUID(), time + player.getServer().getTickCount());
 	}
 	
 	public boolean hasPassedTimestamp(Player player)
 	{
-		return players.containsKey(player.getUUID()) && ServerSetup.server.getTickCount() > players.get(player.getUUID());
+		return players.containsKey(player.getUUID()) && player.getServer().getTickCount() > players.get(player.getUUID());
 	}
 	
 	@Override

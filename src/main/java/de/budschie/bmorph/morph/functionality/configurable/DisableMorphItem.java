@@ -21,6 +21,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class DisableMorphItem extends StunAbility
 {
@@ -89,7 +90,7 @@ public class DisableMorphItem extends StunAbility
 		
 		for(UUID uuid : trackedPlayersClone)
 		{
-			Player player = ServerSetup.server.getPlayerList().getPlayer(uuid);
+			Player player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(uuid);
 			
 			int timeLeft = getStunTimeLeftFor(player);
 			

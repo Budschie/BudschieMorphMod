@@ -28,6 +28,7 @@ import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class BlockPassthroughAbility extends Ability
 {
@@ -102,7 +103,7 @@ public class BlockPassthroughAbility extends Ability
 				// This is not particularly efficient.
 				if(!wasInWeb.contains(uuid))
 				{
-					Player player = ServerSetup.server.getPlayerList().getPlayer(uuid);
+					Player player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(uuid);
 					player.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(am.resolve().get());
 				}				
 			});

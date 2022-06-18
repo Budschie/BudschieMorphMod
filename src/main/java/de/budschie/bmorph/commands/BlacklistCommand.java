@@ -41,7 +41,7 @@ public class BlacklistCommand
 			
 			ctx.getSource().sendSuccess(new TextComponent(ChatFormatting.GREEN + "Successfully added " + arg.toString() + " to the blacklist!"), true);
 			
-			blacklist.writeToFile();
+			blacklist.writeToFile(ctx.getSource().getServer());
 		}
 		
 		return 0;
@@ -75,7 +75,7 @@ public class BlacklistCommand
 		{
 			blacklist.removeBlacklist(arg);
 			ctx.getSource().sendSuccess(new TextComponent(ChatFormatting.GREEN + "Successfully removed " + arg.toString() + " from the entity blacklist."), false);
-			blacklist.writeToFile();
+			blacklist.writeToFile(ctx.getSource().getServer());
 		}
 		else
 		{

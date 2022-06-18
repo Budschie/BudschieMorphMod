@@ -23,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class PufferfishAbility extends StunAbility
 {
@@ -104,7 +105,7 @@ public class PufferfishAbility extends StunAbility
 		{
 			for(UUID playerId : trackedPlayers)
 			{
-				Player player = ServerSetup.server.getPlayerList().getPlayer(playerId);
+				Player player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(playerId);
 				
 				if(trackedPlayers.contains(player.getUUID()))
 				{

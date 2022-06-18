@@ -47,6 +47,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
@@ -88,6 +89,9 @@ import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.loading.targets.FMLServerLaunchHandler;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 @EventBusSubscriber
 public class Events
@@ -239,7 +243,7 @@ public class Events
 			BMorphMod.VISUAL_MORPH_DATA.syncWithClients();
 			BMorphMod.ABILITY_GROUPS.syncWithClients();
 			
-			ServerSetup.server.getPlayerList().getPlayers().forEach(player ->
+			event.getPlayerList().getPlayers().forEach(player ->
 			{
 				IMorphCapability cap = MorphUtil.getCapOrNull(player);
 				
@@ -376,7 +380,7 @@ public class Events
 	@SubscribeEvent
 	public static void onPlayerKilledLivingEntity(LivingDeathEvent event)
 	{		
-		if(!event.getEntity().level.isClientSide && ServerSetup.server.getGameRules().getBoolean(BMorphMod.DO_MORPH_DROPS))
+		if(!event.getEntity().level.isClientSide && event.getEntity().getServer().getGameRules().getBoolean(BMorphMod.DO_MORPH_DROPS))
 		{
 			if(event.getSource().getEntity() instanceof Player)
 			{
@@ -427,7 +431,7 @@ public class Events
 	{
 		// TODO: This may cause a crash under certain circumstances, so I should maybe replace this code!
 		// I've tested it and it doesnt cause a crash. That's good.
-		if(!(event.isWasDeath() && !ServerSetup.server.getGameRules().getBoolean(BMorphMod.KEEP_MORPH_INVENTORY)))
+		if(!(event.isWasDeath() && !event.getEntity().getServer().getGameRules().getBoolean(BMorphMod.KEEP_MORPH_INVENTORY)))
 		{
 			event.getOriginal().reviveCaps();
 			
@@ -458,7 +462,7 @@ public class Events
 	@SubscribeEvent
 	public static void onPlayerRespawnedEvent(PlayerRespawnEvent event)
 	{
-		if(!event.getPlayer().level.isClientSide && ServerSetup.server.getGameRules().getBoolean(BMorphMod.KEEP_MORPH_INVENTORY))
+		if(!event.getPlayer().level.isClientSide && event.getPlayer().getServer().getGameRules().getBoolean(BMorphMod.KEEP_MORPH_INVENTORY))
 		{
 			LazyOptional<IMorphCapability> cap = event.getPlayer().getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			
@@ -491,7 +495,7 @@ public class Events
 					
 					resolved.deapplyAbilities(null, Arrays.asList());
 					
-					if(!ServerSetup.server.getGameRules().getBoolean(BMorphMod.KEEP_MORPH_INVENTORY))
+					if(!event.getEntity().getServer().getGameRules().getBoolean(BMorphMod.KEEP_MORPH_INVENTORY))
 					{
 						for(MorphItem item : resolved.getMorphList().getMorphArrayList())
 						{
@@ -525,7 +529,7 @@ public class Events
 			Player source = (Player) event.getSource().getEntity();
 			
 			LazyOptional<IMorphCapability> cap = source.getCapability(MorphCapabilityAttacher.MORPH_CAP);
-			aggro(cap.resolve().get(), ServerSetup.server.getGameRules().getInt(BMorphMod.MORPH_AGGRO_DURATION));
+			aggro(cap.resolve().get(), event.getEntity().getServer().getGameRules().getInt(BMorphMod.MORPH_AGGRO_DURATION));
 		}
 	}
 	
@@ -591,7 +595,7 @@ public class Events
 	
 	private static void aggro(IMorphCapability capability, int aggroDuration)
 	{
-		capability.setLastAggroTimestamp(ServerSetup.server.getTickCount());
+		capability.setLastAggroTimestamp(ServerLifecycleHooks.getCurrentServer().getTickCount());
 		capability.setLastAggroDuration(aggroDuration);
 	}
 	
@@ -612,18 +616,18 @@ public class Events
 				
 				if(resolved.getCurrentMorph().isPresent())
 				{
-					if(!resolved.shouldMobsAttack() && (ServerSetup.server.getTickCount() - resolved.getLastAggroTimestamp()) > resolved.getLastAggroDuration())
+					if(!resolved.shouldMobsAttack() && (event.getEntity().getServer().getTickCount() - resolved.getLastAggroTimestamp()) > resolved.getLastAggroDuration())
 						aggressor.setTarget(null);
 					else
 					{
-						aggro(resolved, ServerSetup.server.getGameRules().getInt(BMorphMod.MORPH_AGGRO_DURATION));
+						aggro(resolved, event.getEntity().getServer().getGameRules().getInt(BMorphMod.MORPH_AGGRO_DURATION));
 					}
 				}
 				// Do this so that we can't morph to player, wait the 10 sec, and move back.
 				else
-					aggro(resolved, ServerSetup.server.getGameRules().getInt(BMorphMod.MORPH_AGGRO_DURATION));
+					aggro(resolved, event.getEntity().getServer().getGameRules().getInt(BMorphMod.MORPH_AGGRO_DURATION));
 			}
-		}
+		}		
 	}
 	
 	@SubscribeEvent(priority = EventPriority.LOW)

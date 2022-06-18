@@ -15,6 +15,7 @@ import de.budschie.bmorph.network.DeleteOrDropMorph.DeleteOrDropMorphPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent.Context;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class DeleteOrDropMorph implements ISimpleImplPacket<DeleteOrDropMorphPacket>
 {
@@ -37,7 +38,7 @@ public class DeleteOrDropMorph implements ISimpleImplPacket<DeleteOrDropMorphPac
 	public void handle(DeleteOrDropMorphPacket packet, Supplier<Context> ctx)
 	{
 		// Just do nothing if we don't allow dropping or deleting morph items
-		if((packet.drop && !ServerSetup.server.getGameRules().getBoolean(BMorphMod.ALLOW_MORPH_DROPPING)) || (!packet.drop && !ServerSetup.server.getGameRules().getBoolean(BMorphMod.ALLOW_MORPH_DELETION)))
+		if((packet.drop && !ServerLifecycleHooks.getCurrentServer().getGameRules().getBoolean(BMorphMod.ALLOW_MORPH_DROPPING)) || (!packet.drop && !ServerLifecycleHooks.getCurrentServer().getGameRules().getBoolean(BMorphMod.ALLOW_MORPH_DELETION)))
 			return;
 		
 		ctx.get().enqueueWork(() ->

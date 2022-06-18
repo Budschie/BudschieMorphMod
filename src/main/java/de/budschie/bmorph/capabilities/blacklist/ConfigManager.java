@@ -3,6 +3,8 @@ package de.budschie.bmorph.capabilities.blacklist;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
+import net.minecraft.server.MinecraftServer;
+
 public enum ConfigManager
 {	
 	INSTANCE;
@@ -10,24 +12,24 @@ public enum ConfigManager
 	private HashMap<Class<?>, Supplier<? extends WorldConfigHandler>> registeredConfigs = new HashMap<>();
 	private HashMap<Class<?>, WorldConfigHandler> presentConfigs = new HashMap<>();
 	
-	public void saveAll()
+	public void saveAll(MinecraftServer server)
 	{
-		presentConfigs.forEach((key, value) -> value.writeToFile());
+		presentConfigs.forEach((key, value) -> value.writeToFile(server));
 	}
 	
-	public void serverShutdown()
+	public void serverShutdown(MinecraftServer server)
 	{
-		saveAll();
+		saveAll(server);
 		presentConfigs.clear();
 	}
 	
-	public void loadAll()
+	public void loadAll(MinecraftServer server)
 	{
 		registeredConfigs.forEach((key, value) ->
 		{
 			WorldConfigHandler instance = value.get();
 			presentConfigs.put(key, instance);
-			instance.readFromFile();
+			instance.readFromFile(server);
 		});
 	}
 	
