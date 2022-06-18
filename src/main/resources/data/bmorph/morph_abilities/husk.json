@@ -4,7 +4,8 @@
     [
         "bmorph:infect_villagers",
         "bmorph:transformations/turn_to_zombie_as_husk",
-        "bmorph:water_breathing"
+        "bmorph:water_breathing",
+        "bmorph:zombie_armor"
     ],
     "revoke":
     [

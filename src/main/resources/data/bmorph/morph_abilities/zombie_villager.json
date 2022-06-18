@@ -3,7 +3,8 @@
     "grant":
     [
         "bmorph:burn_in_sun",
-        "bmorph:infect_villagers"
+        "bmorph:infect_villagers",
+        "bmorph:zombie_armor"
     ],
     "revoke":
     [

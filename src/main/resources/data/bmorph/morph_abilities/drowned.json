@@ -4,7 +4,8 @@
     [
         "bmorph:water_breathing",
         "bmorph:burn_in_sun",
-        "bmorph:transformations/turn_to_zombie_as_drowned"
+        "bmorph:transformations/turn_to_zombie_as_drowned",
+        "bmorph:zombie_armor"
     ],
     "revoke":
     [
