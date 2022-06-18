@@ -602,6 +602,9 @@ public class Events
 	@SubscribeEvent
 	public static void onTargetBeingSet(LivingSetAttackTargetEvent event)
 	{
+		if(event.getEntity().level.isClientSide())
+			return;
+		
 		// This iron golem exception is needed because we don't want players morphed as zombies to sneak around iron golems 
 		if(event.getEntityLiving() instanceof Mob && event.getTarget() instanceof Player && event.getTarget() != event.getEntityLiving().getLastHurtByMob() && !(event.getEntity() instanceof IronGolem || event.getEntity() instanceof EnderMan))
 		{
