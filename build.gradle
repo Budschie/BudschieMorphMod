@@ -208,6 +208,10 @@ dependencies {
 	// Deps of betteranimalsplus mod
 	implementation fg.deobf("curse.maven:architectury-419699:3728618")
 	implementation fg.deobf("curse.maven:curios-309927:3670447")
+	
+	implementation fg.deobf("curse.maven:artifacts-312353:3736897")
+	implementation fg.deobf("curse.maven:expandability-465066:3678612")
+	
         
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
