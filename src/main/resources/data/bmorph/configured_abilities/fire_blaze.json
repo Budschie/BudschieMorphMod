@@ -4,7 +4,6 @@
     {
         "projectile_entity": "minecraft:small_fireball",
         "stun": 20,
-        "acceleration": 0.67,
         "audiovisual_effect":
         {
             "sounds":
