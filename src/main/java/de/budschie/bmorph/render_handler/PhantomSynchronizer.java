@@ -30,7 +30,6 @@ public class PhantomSynchronizer implements IEntitySynchronizerWithRotation
 		player.getCapability(GlideCapabilityInstance.GLIDE_CAP).ifPresent(cap ->
 		{
 			float correctedXRot = -phantom.getXRot();
-			float correctedXRotO = -phantom.xRotO;
 
 			morphEntity.xRotO = morphEntity.getXRot();
 			

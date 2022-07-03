@@ -15,18 +15,33 @@ public class LivingEntitySynchronzier implements IEntitySynchronizer
 	{
 		return morphEntity instanceof LivingEntity;
 	}
+	
+	@Override
+	public void applyToMorphEntityPostTick(Entity morphEntity, Player player)
+	{
+		LivingEntity entity = (LivingEntity) morphEntity;
+
+		entity.walkDist = player.walkDist;
+		entity.walkDistO = player.walkDistO;
+		
+		entity.attackAnim = player.attackAnim;
+		entity.oAttackAnim = player.oAttackAnim;
+		
+		entity.yBodyRot = player.yBodyRot;
+		entity.yBodyRotO = player.yBodyRotO;
+		entity.yHeadRot = player.yHeadRot;
+		entity.yHeadRotO = player.yHeadRotO;
+	}
 
 	@Override
 	public void applyToMorphEntity(Entity morphEntity, Player player)
 	{
 		LivingEntity entity = (LivingEntity) morphEntity;
 		
-		entity.walkDist = player.walkDist;
-		entity.walkDistO = player.walkDistO;
 		
-		entity.animationPosition = player.animationPosition;
-		entity.animationSpeed = player.animationSpeed;
-		entity.animationSpeedOld = player.animationSpeedOld;
+//		entity.animationPosition = player.animationPosition;
+//		entity.animationSpeed = player.animationSpeed;
+//		entity.animationSpeedOld = player.animationSpeedOld;
 		
 		entity.deathTime = player.deathTime;
 		
@@ -35,19 +50,11 @@ public class LivingEntitySynchronzier implements IEntitySynchronizer
 		
 		entity.swinging = player.swinging;
 		entity.swingTime = player.swingTime;
-		
-		entity.attackAnim = player.attackAnim;
-		entity.oAttackAnim = player.oAttackAnim;
-		
+				
 		entity.setInvisible(player.isInvisible());
 		
 		entity.blocksBuilding = player.blocksBuilding;
-		
-		entity.yBodyRot = player.yBodyRot;
-		entity.yBodyRotO = player.yBodyRotO;
-		entity.yHeadRot = player.yHeadRot;
-		entity.yHeadRotO = player.yHeadRotO;
-		
+				
 		if(player.getSleepingPos().isPresent())
 			entity.setSleepingPos(player.getSleepingPos().get());
 				

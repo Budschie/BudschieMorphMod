@@ -20,6 +20,8 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.animal.Squid;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -132,9 +134,24 @@ public class RenderHandler
 				
 				ArrayList<IEntitySynchronizer> syncs = renderDataCapability.getOrCreateCachedSynchronizers(event.player);
 				
+				Entity entity = renderDataCapability.getOrCreateCachedEntity(event.player);
+				
+				// Apply all syncs.
 				if(syncs != null)
 				{
-					syncs.forEach(sync -> sync.applyToMorphEntity(renderDataCapability.getOrCreateCachedEntity(event.player), event.player));
+					syncs.forEach(sync -> sync.applyToMorphEntity(entity, event.player));
+				}
+				
+				// Tick the entity
+				
+				if(entity != null)
+				{
+					entity.tick();
+				}
+				
+				if(syncs != null)
+				{
+					syncs.forEach(sync -> sync.applyToMorphEntityPostTick(entity, event.player));
 				}
 			}
 		}
@@ -153,8 +170,11 @@ public class RenderHandler
 			matrixStack.translate(0, 1, 0);
 		
 		// If we are crouching and we should not move down, offset the player up again.
-		if(toRender.isCrouching() && ForgeRegistries.ENTITIES.tags().getTag(ModEntityTypeTags.DISABLE_SNEAK_TRANSFORM).contains(toRender.getType()))
+		if(player.isCrouching() && ForgeRegistries.ENTITIES.tags().getTag(ModEntityTypeTags.DISABLE_SNEAK_TRANSFORM).contains(toRender.getType()))
+		{
+			toRender.setPose(Pose.STANDING);
 			matrixStack.translate(0, 0.125D, 0);
+		}
 		
 		// info: We are getting NOTEX when displaying tVariant render thingys by better animals plus https://github.com/itsmeow/betteranimalsplus/blob/1.16/src/main/java/its_meow/betteranimalsplus/client/ClientLifecycleHandler.java
 		// NOTE: This does not occur when using tSingle...

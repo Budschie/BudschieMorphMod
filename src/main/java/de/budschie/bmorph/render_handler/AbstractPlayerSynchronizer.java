@@ -17,22 +17,19 @@ public class AbstractPlayerSynchronizer implements IEntitySynchronizer
 	{
 		AbstractClientPlayer entity = (AbstractClientPlayer) morphEntity;
 
-		entity.xCloak = player.xCloak;
-		entity.xCloakO = player.xCloakO;
-		entity.yCloak = player.yCloak;
-		entity.yCloakO = player.yCloakO;
-		entity.zCloak = player.zCloak;
-		entity.zCloakO = player.zCloakO;
-			
 		entity.bob = player.bob;
 		entity.oBob = player.oBob;
 		
 		if (entity.isFallFlying() != player.isFallFlying())
 		{
 			if (player.isFallFlying())
+			{
 				entity.startFallFlying();
+			}
 			else
+			{
 				entity.stopFallFlying();
+			}
 		}
 	}
 }

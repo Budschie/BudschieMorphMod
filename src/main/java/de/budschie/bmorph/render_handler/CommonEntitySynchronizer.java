@@ -19,23 +19,27 @@ public class CommonEntitySynchronizer implements IEntitySynchronizerWithRotation
 			morphEntity.level = player.level;
 		}
 		
-		morphEntity.tickCount = player.tickCount;
-		
+		morphEntity.xo = player.xo;
+		morphEntity.yo = player.yo;
+		morphEntity.zo = player.zo;
 		morphEntity.setPos(player.getX(), player.getY(), player.getZ());
 		morphEntity.xOld = player.xOld;
 		morphEntity.yOld = player.yOld;
 		morphEntity.zOld = player.zOld;
 		
-		morphEntity.xo = player.xo;
-		morphEntity.yo = player.yo;
-		morphEntity.zo = player.zo;
-		
-		morphEntity.walkDist = player.walkDist;
-		morphEntity.walkDistO = player.walkDistO;
-		
+		morphEntity.tickCount = player.tickCount;
+
 		morphEntity.wasTouchingWater = player.isInWater();
 		
 		morphEntity.setOnGround(player.isOnGround());
+	}
+	
+	@Override
+	public void applyToMorphEntityPostTick(Entity morphEntity, Player player)
+	{
+
+		morphEntity.walkDist = player.walkDist;
+		morphEntity.walkDistO = player.walkDistO;
 	}
 
 	@Override

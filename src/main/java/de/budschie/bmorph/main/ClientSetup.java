@@ -9,7 +9,6 @@ import de.budschie.bmorph.entity.rendering.MorphEntityRenderer;
 import de.budschie.bmorph.morph.player.AdvancedAbstractClientPlayerEntity;
 import de.budschie.bmorph.morph.player.UglyHackThatDoesntWork;
 import de.budschie.bmorph.render_handler.AbstractPlayerSynchronizer;
-import de.budschie.bmorph.render_handler.ChickenSynchronizer;
 import de.budschie.bmorph.render_handler.CommonEntitySynchronizer;
 import de.budschie.bmorph.render_handler.EnderDragonSynchronizer;
 import de.budschie.bmorph.render_handler.EndermanSynchronizer;
@@ -22,7 +21,6 @@ import de.budschie.bmorph.render_handler.PufferfishSynchronizer;
 import de.budschie.bmorph.render_handler.SheepSynchronizer;
 import de.budschie.bmorph.render_handler.SquidSynchronizer;
 import de.budschie.bmorph.render_handler.TamableSynchronizer;
-import de.budschie.bmorph.render_handler.WitherSynchronizer;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -85,12 +83,10 @@ public class ClientSetup
 		EntitySynchronizerRegistry.addEntitySynchronizer(new AbstractPlayerSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new PufferfishSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new GuardianEntitySynchronizer());
-		EntitySynchronizerRegistry.addEntitySynchronizer(new ChickenSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new ParrotSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new PhantomSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new TamableSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new SheepSynchronizer());
-		EntitySynchronizerRegistry.addEntitySynchronizer(new WitherSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new EndermanSynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new EnderDragonSynchronizer());
 				

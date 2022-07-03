@@ -18,8 +18,6 @@ public class ParrotSynchronizer implements IEntitySynchronizer
 	{
 		Parrot parrot = (Parrot) morphEntity;
 		
-		parrot.calculateFlapping();
-		
 		player.getCapability(ParrotDanceCapabilityInstance.PARROT_CAP).ifPresent(cap ->
 		{
 			parrot.partyParrot = cap.isDancing();

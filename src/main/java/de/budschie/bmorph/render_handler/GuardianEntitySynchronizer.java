@@ -45,20 +45,6 @@ public class GuardianEntitySynchronizer implements IEntitySynchronizer
 			{
 				casted.setActiveAttackTarget(0);
 			}
-
-			casted.clientSideTouchedGround = casted.getDeltaMovement().y < 0.0D && casted.level.loadedAndEntityCanStandOn(casted.blockPosition().below(), casted);
-
-			casted.clientSideSpikesAnimationO = casted.clientSideSpikesAnimation;
-			casted.clientSideSpikesAnimation += (1.0F - casted.clientSideSpikesAnimation) * 0.06F;
-
-			casted.clientSideTailAnimationO = casted.clientSideTailAnimation;
-
-			float tailAnimationSpeed = casted.isInWater() ? 0.4f : 0.2f;
-
-			if (player.getDeltaMovement().lengthSqr() > 0.01f)
-				tailAnimationSpeed *= 3.5;
-
-			casted.clientSideTailAnimation += tailAnimationSpeed;
 		}
 	}
 	
