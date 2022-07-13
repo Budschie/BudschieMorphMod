@@ -16,6 +16,8 @@ import de.budschie.bmorph.capabilities.bossbar.BossbarCapabilityInstance;
 import de.budschie.bmorph.capabilities.bossbar.IBossbarCapability;
 import de.budschie.bmorph.capabilities.client.render_data.IRenderDataCapability;
 import de.budschie.bmorph.capabilities.client.render_data.RenderDataCapabilityProvider;
+import de.budschie.bmorph.capabilities.evoker.EvokerSpellCapabilityHandler;
+import de.budschie.bmorph.capabilities.evoker.IEvokerSpellCapability;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityHandler;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityInstance;
 import de.budschie.bmorph.capabilities.guardian.IGuardianBeamCapability;
@@ -38,7 +40,6 @@ import de.budschie.bmorph.json_integration.VisualMorphDataHandler;
 import de.budschie.bmorph.json_integration.ability_groups.AbilityGroups;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.main.References;
-import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphUtil;
@@ -47,7 +48,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
@@ -89,8 +89,6 @@ import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.loading.targets.FMLServerLaunchHandler;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 @EventBusSubscriber
@@ -125,6 +123,7 @@ public class Events
 		event.register(IRenderDataCapability.class);
 		event.register(IBossbarCapability.class);
 		event.register(IStandOnFluidCapability.class);
+		event.register(IEvokerSpellCapability.class);
 	}
 	
 	// Add additional target selector to iron golem entity
@@ -190,6 +189,7 @@ public class Events
 			GlideCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 			ParrotDanceCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 			SheepCapabilityHandler.INSTANCE.synchronizeWithClients(player);
+			EvokerSpellCapabilityHandler.INSTANCE.synchronizeWithClients(player);
 			
 			showBossbarToEveryoneTrackingPlayer(player);
 		}
@@ -286,6 +286,8 @@ public class Events
 			GlideCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
 			ParrotDanceCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
 			SheepCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
+			EvokerSpellCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
+			
 			
 			event.getTarget().getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(bossbarCap ->
 			{

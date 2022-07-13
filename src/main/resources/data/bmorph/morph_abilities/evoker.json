@@ -1,0 +1,11 @@
+{
+    "entity_type": "minecraft:evoker",
+    "grant":
+    [
+        "bmorph:evoker_spell"
+    ],
+    "revoke":
+    [
+        
+    ]
+}

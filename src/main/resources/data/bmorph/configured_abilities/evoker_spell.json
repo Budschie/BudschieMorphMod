@@ -1,0 +1,19 @@
+{
+    "ability": "bmorph:evoker_spell",
+    "config":
+    {
+        "stun": 140,
+        "spell_duration": 40,
+        "fangs_time_point": 20,
+        "range": 18,
+        "audiovisual_effect":
+        {
+            "sounds":
+            [
+                {
+                    "sound": "minecraft:entity.evoker.prepare_attack"
+                }
+            ]
+        }
+    }
+}
