@@ -64,12 +64,9 @@ public class RenderHandler
 			advanced.setIsWearing(part -> event.getPlayer().isModelPartShown(part));
 		}
 		
-		if(event.getMorphEntity() instanceof Mob)
+		if(event.getMorphEntity() instanceof Mob mob)
 		{
-			if(event.getMorphEntity() instanceof AbstractSkeleton)
-				((Mob)event.getMorphEntity()).setLeftHanded(event.getPlayer().getMainArm() == HumanoidArm.RIGHT);
-			else
-				((Mob)event.getMorphEntity()).setLeftHanded(event.getPlayer().getMainArm() == HumanoidArm.LEFT);
+			mob.setLeftHanded(event.getPlayer().getMainArm() == HumanoidArm.RIGHT);
 		}
 	}
 	
