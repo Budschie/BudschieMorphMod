@@ -3,7 +3,7 @@
     "config":
     {
         "projectile_entity": "minecraft:small_fireball",
-        "stun": 20,
+        "stun": 18,
         "audiovisual_effect":
         {
             "sounds":
