@@ -1,0 +1,4 @@
+{
+    "entity_type": "minecraft:slime",
+    "tracked_nbt_keys": [ "Size" ]
+}
