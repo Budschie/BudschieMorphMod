@@ -26,5 +26,6 @@ public class EntityTagsProvider extends TagsProvider<EntityType<?>>
 	protected void addTags()
 	{
 		this.tag(ModEntityTypeTags.DISABLE_SNEAK_TRANSFORM).add(EntityType.WOLF).add(EntityType.CAT).add(EntityType.PARROT);
+		this.tag(ModEntityTypeTags.IRON_GOLEM_ALIKE).add(EntityType.IRON_GOLEM);
 	}
 }

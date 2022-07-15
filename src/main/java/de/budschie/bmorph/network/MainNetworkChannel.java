@@ -6,6 +6,7 @@ import de.budschie.bmorph.network.AdditionalAbilitySynchronization.AdditionalAbi
 import de.budschie.bmorph.network.ConfiguredAbilitySynchronizer.ConfiguredAbilityPacket;
 import de.budschie.bmorph.network.DataTransformerSynchronizer.DataTransfomerSynchronizerPacket;
 import de.budschie.bmorph.network.DeleteOrDropMorph.DeleteOrDropMorphPacket;
+import de.budschie.bmorph.network.EntityMovementChanged.EntityMovementChangedPacket;
 import de.budschie.bmorph.network.EvokerSpell.EvokerSpellPacket;
 import de.budschie.bmorph.network.Flight.FlightPacket;
 import de.budschie.bmorph.network.GlideStatusChange.GlideStatusChangePacket;
@@ -20,6 +21,7 @@ import de.budschie.bmorph.network.MorphRequestFavouriteChange.MorphRequestFavour
 import de.budschie.bmorph.network.MorphRequestMorphIndexChange.RequestMorphIndexChangePacket;
 import de.budschie.bmorph.network.MorphSheepSheared.MorphSheepShearedPacket;
 import de.budschie.bmorph.network.ParrotDanceSync.ParrotDanceSyncPacket;
+import de.budschie.bmorph.network.ProxyEntityEvent.ProxyEntityEventPacket;
 import de.budschie.bmorph.network.PufferfishPuff.PufferfishPuffPacket;
 import de.budschie.bmorph.network.SquidBoost.SquidBoostPacket;
 import de.budschie.bmorph.network.VisualMorphSynchronizer.VisualMorphPacket;
@@ -63,6 +65,8 @@ public class MainNetworkChannel
 		registerSimpleImplPacket(MorphItemDisabledPacket.class, new MorphItemDisabled());
 		registerSimpleImplPacket(AbilityGroupSyncPacket.class, new AbilityGroupSync());
 		registerSimpleImplPacket(EvokerSpellPacket.class, new EvokerSpell());
+		registerSimpleImplPacket(ProxyEntityEventPacket.class, new ProxyEntityEvent());
+		registerSimpleImplPacket(EntityMovementChangedPacket.class, new EntityMovementChanged());
 	}
 	
 	public static <T> void registerSimpleImplPacket(Class<T> packetClass, ISimpleImplPacket<T> packet)

@@ -6,14 +6,16 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.functionality.Ability;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
+import de.budschie.bmorph.network.EntityMovementChanged.EntityMovementChangedPacket;
+import de.budschie.bmorph.network.MainNetworkChannel;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.network.PacketDistributor;
 
 public class AttackYeetAbility extends Ability
 {	
@@ -37,22 +39,28 @@ public class AttackYeetAbility extends Ability
 	}
 	
 	@SubscribeEvent
-	public void onPlayerAttack(LivingDamageEvent event)
+	public void onPlayerAttack(LivingHurtEvent event)
 	{		
-		if (event.getSource() != null && event.getSource().getEntity() instanceof Player && !(event.getEntityLiving() instanceof Player))
+		if (event.getSource() != null && event.getSource().getEntity() instanceof Player attacker)
 		{
-			Player attacker = (Player) event.getSource().getEntity();
-
 			if (trackedPlayers.contains(attacker.getUUID()))
 			{
+				// TH?!?
 				while (lock);
 				lock = true;
 				
 				delayedAttacks.add(() ->
 				{
 					event.getEntityLiving().setDeltaMovement(event.getEntityLiving().getDeltaMovement().add(0, yeetAmount, 0));
-					event.getEntityLiving().level.playSound(null, attacker.blockPosition(),
-							SoundEvents.IRON_GOLEM_ATTACK, SoundSource.MASTER, 10, 1);
+					
+					// Players need to receive a movement packet
+					if(event.getEntity() instanceof Player attackedPlayer)
+					{
+			            MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> attackedPlayer), new EntityMovementChangedPacket(attackedPlayer.getId(), new Vec3(0, yeetAmount, 0), true));
+					}
+					
+//					event.getEntityLiving().level.playSound(null, attacker.blockPosition(),
+//							SoundEvents.IRON_GOLEM_ATTACK, SoundSource.MASTER, 10, 1);
 				});
 
 				lock = false;
