@@ -60,6 +60,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ProjectileWeaponItem;
@@ -76,6 +77,7 @@ import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityLeaveWorldEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
@@ -512,21 +514,31 @@ public class Events
 	}
 	
 	@SubscribeEvent
-	public static void onPlayerTakingDamage(LivingDamageEvent event)
+	public static void onPlayerHurtEvent(LivingAttackEvent event)
 	{
-		if(event.getEntityLiving() instanceof Player)
+		if(event.getEntityLiving() instanceof Player player)
 		{
-			Player player = (Player)event.getEntityLiving();
-			
 			LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			
 			if(cap.isPresent())
 			{
-				IMorphCapability resolved = cap.resolve().get();				
+				IMorphCapability resolved = cap.resolve().get();
+				
+				// We shouldn't take any damage from slimes if they are not aggroed on us
+				if(resolved.getCurrentMorph().isPresent() && event.getSource().getEntity() != null && event.getSource().getEntity() instanceof Slime slime
+						&& slime.getTarget() != player && (event.getEntity().getServer().getTickCount() - resolved.getLastAggroTimestamp()) > resolved.getLastAggroDuration())
+				{
+					event.setCanceled(true);
+				}
 			}
 		}
+	}
+	
+	@SubscribeEvent
+	public static void onPlayerTakingDamage(LivingDamageEvent event)
+	{
 		// Check if living is a Mob and therefore "evil"
-		else if(event.getSource().getEntity() instanceof Player && event.getEntityLiving() instanceof Enemy && !event.getEntity().level.isClientSide)
+		if(event.getSource().getEntity() instanceof Player && event.getEntityLiving() instanceof Enemy && !event.getEntity().level.isClientSide)
 		{
 			Player source = (Player) event.getSource().getEntity();
 			
