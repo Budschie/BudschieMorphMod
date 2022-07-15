@@ -1,6 +1,7 @@
 package de.budschie.bmorph.morph;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -9,10 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.budschie.bmorph.events.Events;
-import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.util.BudschieUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -119,7 +118,7 @@ public abstract class MorphItem
 		
 		List<Ability> defaultAbilities = Events.MORPH_ABILITY_MANAGER.getAbilitiesForEntity(toGetAbilitiesFrom);
 		
-		return defaultAbilities == null ? Arrays.asList() : defaultAbilities;
+		return defaultAbilities == null ? Arrays.asList() : new ArrayList<>(defaultAbilities);
 	}
 	
 	protected Optional<ResourceLocation> getCustomAbilityList()
