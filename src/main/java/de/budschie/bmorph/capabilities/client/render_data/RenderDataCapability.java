@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
+import de.budschie.bmorph.capabilities.proxy_entity_cap.ProxyEntityCapabilityInstance;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.render_handler.EntitySynchronizerRegistry;
 import de.budschie.bmorph.render_handler.IEntitySynchronizer;
@@ -69,7 +70,7 @@ public class RenderDataCapability implements IRenderDataCapability
 			if(cap != null && cap.getCurrentMorph().isPresent())
 			{
 				cachedEntity = cap.getCurrentMorph().get().createEntity(player.level);
-				
+				cachedEntity.getCapability(ProxyEntityCapabilityInstance.PROXY_ENTITY_CAP).ifPresent(proxyEntityCap -> proxyEntityCap.setProxyEntity(true));
 				MinecraftForge.EVENT_BUS.post(new InitializeMorphEntityEvent(player, cachedEntity));
 			}
 		}

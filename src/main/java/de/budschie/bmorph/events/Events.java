@@ -25,6 +25,7 @@ import de.budschie.bmorph.capabilities.parrot_dance.IParrotDanceCapability;
 import de.budschie.bmorph.capabilities.parrot_dance.ParrotDanceCapabilityHandler;
 import de.budschie.bmorph.capabilities.phantom_glide.GlideCapabilityHandler;
 import de.budschie.bmorph.capabilities.phantom_glide.IGlideCapability;
+import de.budschie.bmorph.capabilities.proxy_entity_cap.IProxyEntityCapability;
 import de.budschie.bmorph.capabilities.pufferfish.IPufferfishCapability;
 import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityHandler;
 import de.budschie.bmorph.capabilities.sheep.ISheepCapability;
@@ -126,6 +127,7 @@ public class Events
 		event.register(IBossbarCapability.class);
 		event.register(IStandOnFluidCapability.class);
 		event.register(IEvokerSpellCapability.class);
+		event.register(IProxyEntityCapability.class);
 	}
 	
 	// Add additional target selector to iron golem entity
