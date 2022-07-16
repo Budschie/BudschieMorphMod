@@ -19,7 +19,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.json_integration.ability_groups.AbilityGroupRegistry.AbilityGroup;
 import de.budschie.bmorph.main.BMorphMod;
-import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.LazyRegistryWrapper;
 import de.budschie.bmorph.morph.LazyTag;
 import de.budschie.bmorph.morph.functionality.Ability;
