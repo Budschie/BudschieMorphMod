@@ -22,9 +22,11 @@ import de.budschie.bmorph.json_integration.ability_groups.AbilityGroupRegistry.A
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -88,6 +90,7 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 		entityAbilityLookup.clear();
 		
 		HashMap<MorphAbilityKey, MorphAbilityEntry> abilityEntries = new HashMap<>();
+		HashMap<ResourceLocation, MorphAbilityEntry> abilityEntityTagEntries = new HashMap<>();
 		
 		// Load in all granted and revoked abilities and store this data in an HashMap with a String representing the entity resource location as a 
 		// key and a MorphAbilityEntry as a value.
@@ -98,11 +101,24 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 				JsonObject root = json.getAsJsonObject();
 				
 				MorphAbilityKey key = null;
+				// I should probably refactor this code in the future...
+				boolean isEntityTag = false;
+				ResourceLocation entityTag = null;
 				
 				// Dumb spaghetti code but idc
 				if(root.has("entity_type"))
 				{
-					key = new MorphAbilityKey(new ResourceLocation(root.get("entity_type").getAsString()), MorphAbilityEntryType.ENTITY);
+					String entityType = root.get("entity_type").getAsString();
+					
+					if(isAbilityGroup(entityType))
+					{
+						isEntityTag = true;
+						entityTag = new ResourceLocation(stripAbilityGroupIndicator(entityType));
+					}
+					else
+					{
+						key = new MorphAbilityKey(new ResourceLocation(entityType), MorphAbilityEntryType.ENTITY);
+					}
 				}
 				else if(root.has("ability_list_name"))
 				{
@@ -117,7 +133,16 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 				JsonArray revokedAbilities = root.getAsJsonArray("revoke");
 
 				// Sorry for the naming lul
-				MorphAbilityEntry entry = abilityEntries.computeIfAbsent(key, keyLambda -> new MorphAbilityEntry());
+				MorphAbilityEntry entry = null;
+				
+				if(isEntityTag)
+				{
+					entry = abilityEntityTagEntries.computeIfAbsent(entityTag, keyLambda -> new MorphAbilityEntry());
+				}
+				else
+				{
+					entry = abilityEntries.computeIfAbsent(key, keyLambda -> new MorphAbilityEntry());
+				}
 
 				for (int i = 0; i < grantedAbilities.size(); i++)
 				{
@@ -145,6 +170,30 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 		// Resolve the stored data
 		this.lazyResolveEntity = () ->
 		{
+			for(Map.Entry<ResourceLocation, MorphAbilityEntry> entityTagTupel : abilityEntityTagEntries.entrySet())
+			{
+				TagKey<EntityType<?>> tagKey = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, entityTagTupel.getKey());
+				
+				// Find every entity that has this tag
+//				ForgeRegistries.ENTITIES.tags().getTag(tagKey).forEach(entityType ->
+//				{
+//					
+//				});
+				
+				if(ForgeRegistries.ENTITIES.tags().isKnownTagName(tagKey))
+				{
+					ForgeRegistries.ENTITIES.tags().getTag(tagKey).forEach(entityType ->
+					{
+						MorphAbilityEntry entry = abilityEntries.computeIfAbsent(new MorphAbilityKey(entityType.getRegistryName(), MorphAbilityEntryType.ENTITY), keyLambda -> new MorphAbilityEntry());
+						entry.mergeWith(entityTagTupel.getValue());
+					});
+				}
+				else
+				{
+					LOGGER.warn("Entity Tag {} is not known to the game; discarding the content of this ability file.", entityTagTupel.getKey());
+				}
+			}
+			
 			abilityEntries.forEach((entity, entry) ->
 			{
 				try
@@ -235,6 +284,14 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 				
 				return true;
 			}).map(strRaw -> BMorphMod.DYNAMIC_ABILITY_REGISTRY.getEntry(new ResourceLocation(strRaw))).collect(Collectors.toList());
+		}
+		
+		public void mergeWith(MorphAbilityEntry otherEntry)
+		{
+			grantedAbilities.addAll(otherEntry.grantedAbilities);
+			revokedAbilities.addAll(otherEntry.revokedAbilities);
+			grantedAbilityGroups.addAll(otherEntry.grantedAbilityGroups);
+			revokedAbilityGroups.addAll(otherEntry.revokedAbilityGroups);
 		}
 		
 		private void resolveAbilityGroup(HashSet<String> abilityGroups, HashSet<String> addTo)
