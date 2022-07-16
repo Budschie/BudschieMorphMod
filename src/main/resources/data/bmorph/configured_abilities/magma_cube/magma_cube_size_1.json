@@ -1,0 +1,11 @@
+{
+    "ability": "bmorph:conditional_ability",
+    "config":
+    {
+        "predicates": 
+        [
+            [ "bmorph:magma_cube/magma_cube_size_1" ]
+        ],
+        "abilities": [ "bmorph:magma_cube/magma_cube_armor_1", "bmorph:magma_cube/magma_cube_jumpboost_1" ]
+    }
+}

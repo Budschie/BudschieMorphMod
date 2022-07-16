@@ -17,6 +17,7 @@ import de.budschie.bmorph.morph.functionality.configurable.ClimbingAbility;
 import de.budschie.bmorph.morph.functionality.configurable.CommandOnDisable;
 import de.budschie.bmorph.morph.functionality.configurable.CommandOnEnable;
 import de.budschie.bmorph.morph.functionality.configurable.CommandOnUseAbility;
+import de.budschie.bmorph.morph.functionality.configurable.ConditionalAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ConfigurableAbility;
 import de.budschie.bmorph.morph.functionality.configurable.CowMilkAbility;
 import de.budschie.bmorph.morph.functionality.configurable.DamageImmunityAbility;
@@ -126,5 +127,6 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<FovModificationAbility>> MODIFY_FOV = ABILITY_REGISTRY.register("modify_fov", () -> new ConfigurableAbility<>(FovModificationAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<EnderDragonAbility>> ENDER_DRAGON_FLIGHT = ABILITY_REGISTRY.register("ender_dragon_flight", () -> new ConfigurableAbility<>(EnderDragonAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<EvokerSpellAbility>> EVOKER_SPELL = ABILITY_REGISTRY.register("evoker_spell", () -> new ConfigurableAbility<>(EvokerSpellAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<ConditionalAbility>> CONDITIONAL_ABILITY = ABILITY_REGISTRY.register("conditional_ability", () -> new ConfigurableAbility<>(ConditionalAbility.CODEC));
 }
 

@@ -1,0 +1,10 @@
+{
+    "ability": "bmorph:attribute_modifier",
+    "config":
+    {
+        "attribute": "minecraft:generic.armor",
+        "operation": "addition",
+        "name": "Increased Armor",
+        "amount": 12
+    }
+}

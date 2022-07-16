@@ -1,0 +1,7 @@
+{
+  "condition": "bmorph:player_attributes",
+    "current_morph":
+    {
+      "nbt": "{Size:3}"
+    }
+}

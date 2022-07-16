@@ -2,7 +2,11 @@
     "entity_type": "minecraft:magma_cube",
     "grant":
     [
-        "#bmorph:fire_immunity"
+        "#bmorph:fire_immunity",
+        "bmorph:magma_cube/magma_cube_size_0",
+        "bmorph:magma_cube/magma_cube_size_1",
+        "bmorph:magma_cube/magma_cube_size_3",
+        "bmorph:no_fall_damage"
     ],
     "revoke":
     [
