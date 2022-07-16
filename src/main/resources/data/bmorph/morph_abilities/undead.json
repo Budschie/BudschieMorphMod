@@ -1,0 +1,11 @@
+{
+    "entity_type": "#bmorph:undead",
+    "grant":
+    [
+        "bmorph:water_breathing"
+    ],
+    "revoke":
+    [
+        
+    ]
+}
