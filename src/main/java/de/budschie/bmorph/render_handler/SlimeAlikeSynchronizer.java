@@ -2,7 +2,7 @@ package de.budschie.bmorph.render_handler;
 
 import de.budschie.bmorph.capabilities.client.render_data.IRenderDataCapability;
 import de.budschie.bmorph.capabilities.client.render_data.RenderDataCapabilityProvider;
-import de.budschie.bmorph.util.ProtectedGetterAccess;
+import de.budschie.bmorph.util.ProtectedMethodAccess;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Slime;
@@ -16,9 +16,9 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 @EventBusSubscriber(value = Dist.CLIENT)
 public class SlimeAlikeSynchronizer
 {
-	private static final ProtectedGetterAccess<Slime, Float> GET_SOUND_PITCH = new ProtectedGetterAccess<>(Slime.class, "m_33642_");
-	private static final ProtectedGetterAccess<Slime, Float> GET_SOUND_VOLUME = new ProtectedGetterAccess<>(Slime.class, "m_6121_");
-	private static final ProtectedGetterAccess<Slime, SoundEvent> GET_JUMP_SOUND = new ProtectedGetterAccess<>(Slime.class, "m_7903_");
+	private static final ProtectedMethodAccess<Slime, Float> GET_SOUND_PITCH = new ProtectedMethodAccess<>(Slime.class, "m_33642_");
+	private static final ProtectedMethodAccess<Slime, Float> GET_SOUND_VOLUME = new ProtectedMethodAccess<>(Slime.class, "m_6121_");
+	private static final ProtectedMethodAccess<Slime, SoundEvent> GET_JUMP_SOUND = new ProtectedMethodAccess<>(Slime.class, "m_7903_");
 	
 	@SubscribeEvent
 	public static void onPlayerJump(LivingJumpEvent event)
