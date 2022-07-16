@@ -12,6 +12,8 @@ public class ModEntityTypeTags
 	public static TagKey<EntityType<?>> DISABLE_SNEAK_TRANSFORM = createTag("disable_sneak_transform");
 	// Tag an entity with this type if it extends from the iron golem class
 	public static TagKey<EntityType<?>> IRON_GOLEM_ALIKE = createTag("iron_golem_alike");
+	// Tag for undead mobs
+	public static TagKey<EntityType<?>> UNDEAD = createTag("undead");
 	
 	public static TagKey<EntityType<?>> createTag(ResourceLocation rl)
 	{

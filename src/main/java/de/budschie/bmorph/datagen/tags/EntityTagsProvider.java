@@ -1,5 +1,7 @@
 package de.budschie.bmorph.datagen.tags;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import de.budschie.bmorph.tags.ModEntityTypeTags;
@@ -11,6 +13,8 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class EntityTagsProvider extends TagsProvider<EntityType<?>>
 {
+	private Logger LOGGER = LogManager.getLogger();
+	
 	public EntityTagsProvider(DataGenerator pGenerator, Registry<EntityType<?>> pRegistry, String modId, @Nullable ExistingFileHelper existingFileHelper)
 	{
 		super(pGenerator, pRegistry, modId, existingFileHelper);
