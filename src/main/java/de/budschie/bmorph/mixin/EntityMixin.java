@@ -54,8 +54,12 @@ public class EntityMixin
 				IRenderDataCapability cap = renderDataOpt.resolve().get();
 				
 				Entity entity = cap.getOrCreateCachedEntity(player);
-				PLAY_STEP_SOUND.getValue(entity, blockPos, block);
-				callbackInfo.cancel();
+				
+				if(entity != null)
+				{
+					PLAY_STEP_SOUND.getValue(entity, blockPos, block);
+					callbackInfo.cancel();
+				}
 			}
 		}
 	}
