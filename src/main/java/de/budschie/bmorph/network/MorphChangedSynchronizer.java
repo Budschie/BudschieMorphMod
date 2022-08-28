@@ -20,10 +20,8 @@ public class MorphChangedSynchronizer implements ISimpleImplPacket<MorphChangedP
 	{
 		buffer.writeUUID(packet.getPlayerUUID());
 		
-		buffer.writeBoolean(packet.getMorphIndex().isPresent());
 		buffer.writeBoolean(packet.getMorphItem().isPresent());
 		
-		packet.getMorphIndex().ifPresent(index -> buffer.writeInt(index));
 		packet.getMorphItem().ifPresent(item -> buffer.writeNbt(item.serialize()));
 		
 		buffer.writeInt(packet.getAbilities().size());
@@ -36,13 +34,9 @@ public class MorphChangedSynchronizer implements ISimpleImplPacket<MorphChangedP
 	public MorphChangedPacket decode(FriendlyByteBuf buffer)
 	{
 		UUID playerUUID = buffer.readUUID();
-		boolean hasIndex = buffer.readBoolean(), hasItem = buffer.readBoolean();
+		boolean hasItem = buffer.readBoolean();
 		
-		Optional<Integer> morphIndex = Optional.empty();
 		Optional<MorphItem> morphItem = Optional.empty();
-		
-		if(hasIndex)
-			morphIndex = Optional.of(buffer.readInt());
 		
 		if(hasItem)
 			morphItem = Optional.of(MorphHandler.deserializeMorphItem(buffer.readNbt()));
@@ -54,7 +48,7 @@ public class MorphChangedSynchronizer implements ISimpleImplPacket<MorphChangedP
 		for(int i = 0; i < amountOfAbilities; i++)
 			abilities.add(buffer.readUtf());
 		
-		return new MorphChangedPacket(playerUUID, morphIndex, morphItem, abilities);
+		return new MorphChangedPacket(playerUUID, morphItem, abilities);
 	}
 
 	@Override
@@ -64,7 +58,7 @@ public class MorphChangedSynchronizer implements ISimpleImplPacket<MorphChangedP
 		{
 			if(Minecraft.getInstance().level != null)
 			{
-				MorphUtil.morphToClient(packet.getMorphItem(), packet.getMorphIndex(), packet.getAbilities(), Minecraft.getInstance().level.getPlayerByUUID(packet.getPlayerUUID()));
+				MorphUtil.morphToClient(packet.getMorphItem(), Optional.empty(), packet.getAbilities(), Minecraft.getInstance().level.getPlayerByUUID(packet.getPlayerUUID()));
 				ctx.get().setPacketHandled(true);
 			}
 		});
@@ -73,21 +67,14 @@ public class MorphChangedSynchronizer implements ISimpleImplPacket<MorphChangedP
 	public static class MorphChangedPacket
 	{
 		UUID playerUUID;
-		Optional<Integer> morphIndex;
 		Optional<MorphItem> morphItem;
 		ArrayList<String> abilities; 
 		
-		public MorphChangedPacket(UUID playerUUID, Optional<Integer> morphIndex, Optional<MorphItem> morphItem, ArrayList<String> abilities)
+		public MorphChangedPacket(UUID playerUUID, Optional<MorphItem> morphItem, ArrayList<String> abilities)
 		{
 			this.playerUUID = playerUUID;
-			this.morphIndex = morphIndex;
 			this.morphItem = morphItem;
 			this.abilities = abilities;
-		}
-		
-		public Optional<Integer> getMorphIndex()
-		{
-			return morphIndex;
 		}
 		
 		public Optional<MorphItem> getMorphItem()

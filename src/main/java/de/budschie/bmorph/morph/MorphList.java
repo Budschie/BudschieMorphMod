@@ -3,6 +3,7 @@ package de.budschie.bmorph.morph;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import net.minecraft.nbt.CompoundTag;
@@ -91,6 +92,16 @@ public class MorphList
 	public boolean contains(MorphItem item)
 	{
 		return playerMorphItems.contains(item);
+	}
+	
+	public Optional<Integer> indexOf(MorphItem item)
+	{
+		if(playerMorphItems.contains(item))
+		{
+			return Optional.of(morphArrayList.indexOf(item));
+		}
+		
+		return Optional.empty();
 	}
 	
 	public ArrayList<MorphItem> getMorphArrayList()

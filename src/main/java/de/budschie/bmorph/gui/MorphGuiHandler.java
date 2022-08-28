@@ -182,12 +182,27 @@ public class MorphGuiHandler
 			
 			if(ClientSetup.MORPH_UI.consumeClick() && glfwPress)
 			{
-				MainNetworkChannel.INSTANCE.sendToServer(new RequestMorphIndexChangePacket(currentMorphGui.get().getMorphIndex()));
+				LazyOptional<IMorphCapability> cap = Minecraft.getInstance().player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 				
-				if(guiHidden)
-					showGui();
-				else
-					hideGui();
+				if(cap.isPresent())
+				{
+					IMorphCapability resolved = cap.resolve().get();
+					int currentIndex = currentMorphGui.get().getMorphIndex();
+					
+					if(currentIndex < 0)
+					{
+						MainNetworkChannel.INSTANCE.sendToServer(RequestMorphIndexChangePacket.ofMorphItem(Optional.empty()));
+					}
+					else
+					{
+						MainNetworkChannel.INSTANCE.sendToServer(RequestMorphIndexChangePacket.ofMorphItem(Optional.of(resolved.getMorphList().getMorphArrayList().get(currentIndex))));
+					}
+					
+					if(guiHidden)
+						showGui();
+					else
+						hideGui();
+				}
 			}
 			else if(morphIndex >= 0)
 			{
