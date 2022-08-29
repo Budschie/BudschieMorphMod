@@ -25,6 +25,7 @@ public class InstaJumpAbility extends Ability
 		return stepHeight;
 	}
 	
+	// TODO: Port from maxUpStep to attribute based system
 	@Override
 	public void enableAbility(Player player, MorphItem enabledItem, MorphItem oldMorph, List<Ability> oldAbilities, AbilityChangeReason reason)
 	{
