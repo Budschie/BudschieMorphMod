@@ -9,6 +9,8 @@ import com.ibm.icu.text.MessageFormat;
 
 import net.minecraft.resources.ResourceLocation;
 
+// TODO: Remove references to ibm.icu.text.MessageFormat
+
 /**
  * The aim of this class is to provide a way of easily loading and later
  * resolving any kind of dynamic registry object.
