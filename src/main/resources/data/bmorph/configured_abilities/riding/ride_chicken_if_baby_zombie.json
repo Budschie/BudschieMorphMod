@@ -1,0 +1,11 @@
+{
+    "ability": "bmorph:conditional_ability",
+    "config":
+    {
+        "predicates": 
+        [
+            [ "bmorph:morph_checks/is_baby_zombie" ]
+        ],
+        "abilities": [ "bmorph:riding/ride_chicken" ]
+    }
+}

@@ -1,0 +1,9 @@
+{
+    "condition": "bmorph:player_attributes",
+      "current_morph":
+      {
+        "nbt": "{IsBaby:true}",
+	    "entity_type": "minecraft:zombie"
+      }
+  }
+  

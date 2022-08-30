@@ -1,0 +1,7 @@
+{
+    "ability": "bmorph:ride_ability",
+    "config":
+    {
+        "predicates": [["bmorph:entity_checks/is_chicken"]]
+    }
+}

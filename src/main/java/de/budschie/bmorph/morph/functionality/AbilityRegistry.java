@@ -48,6 +48,7 @@ import de.budschie.bmorph.morph.functionality.configurable.PredicateAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ProjectileShootingAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PufferfishAbility;
 import de.budschie.bmorph.morph.functionality.configurable.RandomDelegatingOnUseAbility;
+import de.budschie.bmorph.morph.functionality.configurable.RideAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SheepEatGrassAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SoundOnUseAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SquidBoostAbility;
@@ -128,5 +129,6 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<EnderDragonAbility>> ENDER_DRAGON_FLIGHT = ABILITY_REGISTRY.register("ender_dragon_flight", () -> new ConfigurableAbility<>(EnderDragonAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<EvokerSpellAbility>> EVOKER_SPELL = ABILITY_REGISTRY.register("evoker_spell", () -> new ConfigurableAbility<>(EvokerSpellAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<ConditionalAbility>> CONDITIONAL_ABILITY = ABILITY_REGISTRY.register("conditional_ability", () -> new ConfigurableAbility<>(ConditionalAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<RideAbility>> RIDE_ABILITY = ABILITY_REGISTRY.register("ride_ability", () -> new ConfigurableAbility<>(RideAbility.CODEC));
 }
 

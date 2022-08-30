@@ -16,6 +16,8 @@ import de.budschie.bmorph.capabilities.bossbar.BossbarCapabilityInstance;
 import de.budschie.bmorph.capabilities.bossbar.IBossbarCapability;
 import de.budschie.bmorph.capabilities.client.render_data.IRenderDataCapability;
 import de.budschie.bmorph.capabilities.client.render_data.RenderDataCapabilityProvider;
+import de.budschie.bmorph.capabilities.custom_riding_offset.CustomRidingOffsetInstance;
+import de.budschie.bmorph.capabilities.custom_riding_offset.ICustomRidingOffset;
 import de.budschie.bmorph.capabilities.evoker.EvokerSpellCapabilityHandler;
 import de.budschie.bmorph.capabilities.evoker.IEvokerSpellCapability;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityHandler;
@@ -129,6 +131,7 @@ public class Events
 		event.register(IStandOnFluidCapability.class);
 		event.register(IEvokerSpellCapability.class);
 		event.register(IProxyEntityCapability.class);
+		event.register(ICustomRidingOffset.class);
 	}
 	
 	// Add additional target selector to iron golem entity
@@ -582,6 +585,8 @@ public class Events
 	public static void onMorphedClient(PlayerMorphEvent.Client.Post event)
 	{
 		event.getPlayer().refreshDimensions();
+		
+		handleCustomRidingOffset(event.getPlayer(), event.getAboutToMorphTo());
 	}
 	
 	@SubscribeEvent
@@ -593,6 +598,28 @@ public class Events
 			return;
 		
 		BMorphMod.MORPHED_INTO.trigger(event.getAboutToMorphTo(), (ServerPlayer) event.getPlayer());
+		
+		handleCustomRidingOffset(event.getPlayer(), event.getAboutToMorphTo());
+	}
+	
+	private static void handleCustomRidingOffset(Player player, MorphItem aboutToMorphTo)
+	{
+		LazyOptional<ICustomRidingOffset> customRidingOffsetCap = player.getCapability(CustomRidingOffsetInstance.CUSTOM_RIDING_OFFSET_CAP);
+		
+		if(customRidingOffsetCap.isPresent())
+		{
+			ICustomRidingOffset resolved = customRidingOffsetCap.resolve().get();
+			
+			if(aboutToMorphTo == null)
+			{
+				resolved.setCustomRidingOffset(Optional.empty());
+			}
+			else
+			{
+				Entity entityInstance = aboutToMorphTo.createEntity(player.getLevel());
+				resolved.setCustomRidingOffset(Optional.of(entityInstance.getMyRidingOffset()));
+			}
+		}
 	}
 	
 	@SubscribeEvent

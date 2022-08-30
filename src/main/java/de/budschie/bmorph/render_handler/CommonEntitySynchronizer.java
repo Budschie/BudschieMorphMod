@@ -32,6 +32,8 @@ public class CommonEntitySynchronizer implements IEntitySynchronizerWithRotation
 		morphEntity.wasTouchingWater = player.isInWater();
 		
 		morphEntity.setOnGround(player.isOnGround());
+		
+		morphEntity.vehicle = player.vehicle;
 	}
 	
 	@Override

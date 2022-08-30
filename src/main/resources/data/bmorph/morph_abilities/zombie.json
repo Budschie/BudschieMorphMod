@@ -7,7 +7,8 @@
         "bmorph:transformations/turn_to_drowned_as_zombie",
         "bmorph:transformations/turn_to_husk_as_zombie",
         "bmorph:water_breathing",
-        "bmorph:zombie_armor"
+        "bmorph:zombie_armor",
+        "bmorph:riding/ride_chicken_if_baby_zombie"
     ],
     "revoke":
     [
