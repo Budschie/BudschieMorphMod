@@ -1,4 +1,4 @@
-package de.budschie.bmorph.capabilities.custom_riding_offset;
+package de.budschie.bmorph.capabilities.custom_riding_data;
 
 import de.budschie.bmorph.capabilities.common.CommonCapabilityInstance;
 import de.budschie.bmorph.main.References;
@@ -13,14 +13,14 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber
-public class CustomRidingOffsetInstance extends CommonCapabilityInstance<ICustomRidingOffset>
+public class CustomRidingDataInstance extends CommonCapabilityInstance<ICustomRidingData>
 {
-	public static final Capability<ICustomRidingOffset> CUSTOM_RIDING_OFFSET_CAP = CapabilityManager.get(new CapabilityToken<>(){});
-	public static final ResourceLocation CUSTOM_RIDING_OFFSET_CAP_NAME = new ResourceLocation(References.MODID, "custom_riding_offset");
+	public static final Capability<ICustomRidingData> CUSTOM_RIDING_DATA_CAP = CapabilityManager.get(new CapabilityToken<>(){});
+	public static final ResourceLocation CUSTOM_RIDING_DATA_CAP_NAME = new ResourceLocation(References.MODID, "custom_riding_data");
 	
-	public CustomRidingOffsetInstance()
+	public CustomRidingDataInstance()
 	{
-		super(CUSTOM_RIDING_OFFSET_CAP_NAME, CUSTOM_RIDING_OFFSET_CAP, CustomRidingOffset::new);
+		super(CUSTOM_RIDING_DATA_CAP_NAME, CUSTOM_RIDING_DATA_CAP, CustomRidingData::new);
 	}
 	
 	@SubscribeEvent
@@ -28,7 +28,7 @@ public class CustomRidingOffsetInstance extends CommonCapabilityInstance<ICustom
 	{
 		if(event.getObject() instanceof Player player)
 		{
-			event.addCapability(CUSTOM_RIDING_OFFSET_CAP_NAME, new CustomRidingOffsetInstance());
+			event.addCapability(CUSTOM_RIDING_DATA_CAP_NAME, new CustomRidingDataInstance());
 		}
 	}
 }

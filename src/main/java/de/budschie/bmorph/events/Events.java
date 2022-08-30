@@ -16,8 +16,8 @@ import de.budschie.bmorph.capabilities.bossbar.BossbarCapabilityInstance;
 import de.budschie.bmorph.capabilities.bossbar.IBossbarCapability;
 import de.budschie.bmorph.capabilities.client.render_data.IRenderDataCapability;
 import de.budschie.bmorph.capabilities.client.render_data.RenderDataCapabilityProvider;
-import de.budschie.bmorph.capabilities.custom_riding_offset.CustomRidingOffsetInstance;
-import de.budschie.bmorph.capabilities.custom_riding_offset.ICustomRidingOffset;
+import de.budschie.bmorph.capabilities.custom_riding_data.CustomRidingDataInstance;
+import de.budschie.bmorph.capabilities.custom_riding_data.ICustomRidingData;
 import de.budschie.bmorph.capabilities.evoker.EvokerSpellCapabilityHandler;
 import de.budschie.bmorph.capabilities.evoker.IEvokerSpellCapability;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityHandler;
@@ -131,7 +131,7 @@ public class Events
 		event.register(IStandOnFluidCapability.class);
 		event.register(IEvokerSpellCapability.class);
 		event.register(IProxyEntityCapability.class);
-		event.register(ICustomRidingOffset.class);
+		event.register(ICustomRidingData.class);
 	}
 	
 	// Add additional target selector to iron golem entity
@@ -604,11 +604,11 @@ public class Events
 	
 	private static void handleCustomRidingOffset(Player player, MorphItem aboutToMorphTo)
 	{
-		LazyOptional<ICustomRidingOffset> customRidingOffsetCap = player.getCapability(CustomRidingOffsetInstance.CUSTOM_RIDING_OFFSET_CAP);
+		LazyOptional<ICustomRidingData> customRidingOffsetCap = player.getCapability(CustomRidingDataInstance.CUSTOM_RIDING_DATA_CAP);
 		
 		if(customRidingOffsetCap.isPresent())
 		{
-			ICustomRidingOffset resolved = customRidingOffsetCap.resolve().get();
+			ICustomRidingData resolved = customRidingOffsetCap.resolve().get();
 			
 			if(aboutToMorphTo == null)
 			{

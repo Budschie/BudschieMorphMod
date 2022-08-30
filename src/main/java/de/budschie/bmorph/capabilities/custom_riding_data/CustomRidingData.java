@@ -1,8 +1,8 @@
-package de.budschie.bmorph.capabilities.custom_riding_offset;
+package de.budschie.bmorph.capabilities.custom_riding_data;
 
 import java.util.Optional;
 
-public class CustomRidingOffset implements ICustomRidingOffset
+public class CustomRidingData implements ICustomRidingData
 {
 	private Optional<Double> customRidingOffset = Optional.empty();
 

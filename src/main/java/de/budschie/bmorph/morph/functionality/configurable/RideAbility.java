@@ -38,19 +38,12 @@ public class RideAbility extends Ability
 	{
 		if(!event.getEntity().level.isClientSide() && isTracked(event.getEntity()))
 		{
-			LootItemCondition[][] lootItemConditions = BudschieUtils.resolveConditions(predicates);
-			
-			LootContext.Builder predicateContext = (new LootContext.Builder((ServerLevel)event.getWorld())).withParameter(LootContextParams.ORIGIN, event.getTarget().position())
-					.withOptionalParameter(LootContextParams.THIS_ENTITY, event.getTarget());
-			
-			boolean predicateTrue = BudschieUtils.testPredicates(lootItemConditions, () -> predicateContext.create(LootContextParamSets.COMMAND));
-			
-			if(predicateTrue)
+			executePredicateTest(event.getPlayer(), event.getTarget(), () ->
 			{
 				event.getPlayer().startRiding(event.getTarget());
 				event.getPlayer().setYRot(event.getTarget().getYRot());
 				event.getPlayer().setXRot(event.getTarget().getXRot());
-			}
+			});
 		}
 	}
 	
@@ -65,8 +58,19 @@ public class RideAbility extends Ability
 	{
 		if(!player.level.isClientSide())
 		{
-			Entity ridingEntity = player.getVehicle();
-			
+			executePredicateTest(player, player.getVehicle(), () ->
+			{
+				player.stopRiding();
+			});
+		}
+				
+		super.disableAbility(player, disabledItem, newMorph, newAbilities, reason);
+	}
+	
+	private void executePredicateTest(Player player, Entity ridingEntity, Runnable onSuccess)
+	{
+		if(!player.level.isClientSide())
+		{
 			if(ridingEntity != null)
 			{
 				LootItemCondition[][] lootItemConditions = BudschieUtils.resolveConditions(predicates);
@@ -78,12 +82,10 @@ public class RideAbility extends Ability
 				
 				if(predicateTrue)
 				{
-					player.stopRiding();
+					onSuccess.run();
 				}
 			}
 		}
-		
-		super.disableAbility(player, disabledItem, newMorph, newAbilities, reason);
 	}
 	
 	public List<List<LazyRegistryWrapper<LootItemCondition>>> getPredicates()

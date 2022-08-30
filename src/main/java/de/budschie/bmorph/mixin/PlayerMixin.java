@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import de.budschie.bmorph.capabilities.client.render_data.IRenderDataCapability;
 import de.budschie.bmorph.capabilities.client.render_data.RenderDataCapabilityProvider;
-import de.budschie.bmorph.capabilities.custom_riding_offset.CustomRidingOffsetInstance;
-import de.budschie.bmorph.capabilities.custom_riding_offset.ICustomRidingOffset;
+import de.budschie.bmorph.capabilities.custom_riding_data.CustomRidingDataInstance;
+import de.budschie.bmorph.capabilities.custom_riding_data.ICustomRidingData;
 import de.budschie.bmorph.util.ProtectedMethodAccess;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
@@ -49,15 +49,12 @@ public class PlayerMixin
 	@Inject(at = @At("HEAD"), method = "getMyRidingOffset", cancellable = true)
 	private void getMyRidingOffset(CallbackInfoReturnable<Double> callback)
 	{
-		LazyOptional<ICustomRidingOffset> customRidingOffsetCap = ((Player)((Object)this)).getCapability(CustomRidingOffsetInstance.CUSTOM_RIDING_OFFSET_CAP);
+		LazyOptional<ICustomRidingData> customRidingOffsetCap = ((Player)((Object)this)).getCapability(CustomRidingDataInstance.CUSTOM_RIDING_DATA_CAP);
 		
 		if(customRidingOffsetCap.isPresent() && customRidingOffsetCap.resolve().get().getCustomRidingOffset().isPresent())
 		{
-			System.out.println("Returning custom r offset" + customRidingOffsetCap.resolve().get().getCustomRidingOffset().get());
 			callback.setReturnValue(customRidingOffsetCap.resolve().get().getCustomRidingOffset().get());
 		}
-		
-		System.out.println("C");
 	}
 	
 	private void handleSoundReplacement(CallbackInfoReturnable<SoundEvent> hurtSound, Function<LivingEntity, SoundEvent> soundSupplier)
