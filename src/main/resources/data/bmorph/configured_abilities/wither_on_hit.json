@@ -9,6 +9,7 @@
             "ambient": false,
             "show_particles": true,
             "show_icon": true
-        }
+        },
+        "damage_predicates": [["bmorph:damage_checks/is_direct_player_damage"]]
     }
 }
