@@ -58,7 +58,6 @@ public class DataTransformer implements IDynamicRegistryObject
 			
 			ResourceLocation modifierId = new ResourceLocation(modifierTag.getString("ModifierId"));
 			
-			// TODO: Create registry for modifier holders
 			DataModifierHolder<?> modifierHolder = DataModifierRegistry.REGISTRY.get().getValue(modifierId);
 			
 			if(modifierHolder == null)

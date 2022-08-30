@@ -43,8 +43,9 @@ public abstract class AbstractMorphGui implements IForgeRegistryEntry<AbstractMo
 	
 	/**
 	 *  This method returns the morph index.
-	 * @return An integer representing the morph index. Any negative number shall represent a demorph, everything else represents a morph. 
+	 * @return An integer representing the morph index. Any negative number shall represent a demorph, everything else represents a morph.
 	**/
+	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
 	public abstract int getMorphIndex();
 	
 	/**

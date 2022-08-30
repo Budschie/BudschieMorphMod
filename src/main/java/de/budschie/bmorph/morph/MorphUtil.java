@@ -34,9 +34,16 @@ public class MorphUtil
 {
 	private static Logger LOGGER = LogManager.getLogger();
 	
+	// TODO: Remove deprecated stuff in the future
+	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
 	public static void morphToServer(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, Player player)
 	{
-		morphToServer(morphItem, morphIndex, player, false);
+		morphToServer(morphItem, morphIndex, morphIndex.isPresent() ? MorphReasonRegistry.MORPHED_BY_UI.get() : MorphReasonRegistry.MORPHED_BY_COMMAND.get(), player, false);
+	}
+	
+	public static void morphToServer(Optional<MorphItem> morphItem, MorphReason reason, Player player)
+	{
+		morphToServer(morphItem, Optional.empty(), reason, player, false);
 	}
 	
 	public static void processCap(Player player, Consumer<IMorphCapability> capConsumer)
@@ -63,8 +70,19 @@ public class MorphUtil
 		return null;
 	}
 	
+	public static void morphToServer(Optional<MorphItem> morphItem, MorphReason reason, Player player, boolean force)
+	{
+		morphToServer(morphItem, Optional.empty(), reason, player, force);
+	}
+	
 	/** Method to invoke a morph operation on the server. This will be synced to every player on the server. TODO: Only sync change to players that are being tracked.  **/
+	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
 	public static void morphToServer(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, Player player, boolean force)
+	{
+		morphToServer(morphItem, morphIndex, morphIndex.isPresent() ? MorphReasonRegistry.MORPHED_BY_UI.get() : MorphReasonRegistry.MORPHED_BY_COMMAND.get(), player, force);
+	}
+	
+	private static void morphToServer(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, MorphReason reason, Player player, boolean force)
 	{
 		LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 		
@@ -79,7 +97,7 @@ public class MorphUtil
 			else if(morphIndex.isPresent())
 				aboutToMorphTo = resolved.getMorphList().getMorphArrayList().get(morphIndex.get());
 			
-			boolean isCanceled = MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Pre(player, resolved, aboutToMorphTo));
+			boolean isCanceled = MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Pre(player, resolved, aboutToMorphTo, reason));
 			
 			if(!(isCanceled && !force))
 			{
@@ -93,11 +111,11 @@ public class MorphUtil
 				resolved.deapplyAbilities(aboutToMorphTo, newAbilities == null ? Arrays.asList() : newAbilities);
 				
 				if(morphIndex.isPresent())
-					resolved.setMorph(morphIndex.get());
+					resolved.setMorph(morphIndex.get(), reason);
 				else if(morphItem.isPresent())
-					resolved.setMorph(morphItem.get());
+					resolved.setMorph(morphItem.get(), reason);
 				else
-					resolved.demorph();
+					resolved.demorph(reason);
 				
 				//resolved.getCurrentMorph().ifPresentOrElse(morph -> resolved.setCurrentAbilities(AbilityLookupTableHandler.getAbilitiesFor(morph)), () -> resolved.setCurrentAbilities(new ArrayList<>()));
 				
@@ -107,13 +125,17 @@ public class MorphUtil
 				resolved.syncMorphChange();
 				resolved.applyHealthOnPlayer();
 				
-				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Post(player, resolved, aboutToMorphTo));
+				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Post(player, resolved, aboutToMorphTo, reason));
 			}
 		}
 	}
 	
-	/** This method is used to invoke functions required for handling a sync on the server on the client side. **/
-	public static void morphToClient(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, ArrayList<String> abilities, Player player)
+	public static void morphToClient(Optional<MorphItem> morphItem, MorphReason reason, ArrayList<String> abilities, Player player)
+	{
+		morphToClient(morphItem, Optional.empty(), reason, abilities, player);
+	}
+	
+	private static void morphToClient(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, MorphReason reason, ArrayList<String> abilities, Player player)
 	{
 		if(player != null)
 		{
@@ -133,7 +155,7 @@ public class MorphUtil
 				else if(morphIndex.isPresent())
 					aboutToMorphTo = resolved.getMorphList().getMorphArrayList().get(morphIndex.get());
 				
-				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Client.Pre(player, resolved, aboutToMorphTo));
+				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Client.Pre(player, resolved, aboutToMorphTo, reason));
 				
 				IRenderDataCapability renderDataCap = player.getCapability(RenderDataCapabilityProvider.RENDER_CAP).resolve().get();
 				
@@ -167,11 +189,11 @@ public class MorphUtil
 				resolved.deapplyAbilities(aboutToMorphTo, resolvedAbilities);
 				
 				if(morphIndex.isPresent())
-					resolved.setMorph(morphIndex.get());
+					resolved.setMorph(morphIndex.get(), reason);
 				else if(morphItem.isPresent())
-					resolved.setMorph(morphItem.get());
+					resolved.setMorph(morphItem.get(), reason);
 				else
-					resolved.demorph();
+					resolved.demorph(reason);
 					
 				MorphItem javaSucks = aboutToMorphTo;
 				
@@ -182,7 +204,7 @@ public class MorphUtil
 				
 				resolved.applyAbilities(oldMorphItem, oldAbilities == null ? Arrays.asList() : oldAbilities);
 				
-				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Client.Post(player, resolved, aboutToMorphTo));
+				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Client.Post(player, resolved, aboutToMorphTo, reason));
 				
 				Entity cachedEntityNew = renderDataCap.getOrCreateCachedEntity(player);
 				ArrayList<IEntitySynchronizer> synchronizersNew = EntitySynchronizerRegistry.getSynchronizersForEntity(cachedEntityNew);
@@ -199,5 +221,12 @@ public class MorphUtil
 			else
 				System.out.println("Could not synchronize data, as the morph cap is not created yet.");
 		}
+	}
+	
+	/** This method is used to invoke functions required for handling a sync on the server on the client side. **/
+	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
+	public static void morphToClient(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, ArrayList<String> abilities, Player player)
+	{
+		morphToClient(morphItem, morphIndex, morphIndex.isPresent() ? MorphReasonRegistry.MORPHED_BY_UI.get() : MorphReasonRegistry.MORPHED_BY_COMMAND.get(), abilities, player);
 	}
 }

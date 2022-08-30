@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.google.common.collect.Lists;
 
 import de.budschie.bmorph.morph.FavouriteList;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
+import de.budschie.bmorph.morph.MorphReason;
+import de.budschie.bmorph.morph.MorphReasonRegistry;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.Ability.AbilityChangeReason;
 import de.budschie.bmorph.network.AdditionalAbilitySynchronization;
@@ -30,6 +33,8 @@ import net.minecraftforge.network.PacketDistributor;
 
 public class DefaultMorphCapability implements IMorphCapability
 {
+	MorphReason morphReason = MorphReasonRegistry.NONE.get();
+	
 	Player owner;
 	
 	boolean mobAttack = false;
@@ -38,7 +43,6 @@ public class DefaultMorphCapability implements IMorphCapability
 	int aggroDuration = 0;
 	
 	Optional<MorphItem> morph = Optional.empty();
-	Optional<Integer> currentMorphIndex = Optional.empty();
 	
 	MorphList morphList = new MorphList();
 	FavouriteList favouriteList = new FavouriteList(morphList);
@@ -46,6 +50,11 @@ public class DefaultMorphCapability implements IMorphCapability
 	LockableList<Ability> currentAbilities = new LockableList<>();
 	
 	AbilitySerializationContext context = new AbilitySerializationContext();
+	
+	public DefaultMorphCapability()
+	{
+		morphList.setFavouriteList(favouriteList);
+	}
 	
 	@Override
 	public AbilitySerializationContext getAbilitySerializationContext()
@@ -77,7 +86,7 @@ public class DefaultMorphCapability implements IMorphCapability
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> getOwner()), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, favouriteList, serializeAbilities(), getOwner().getUUID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> getOwner()), new MorphCapabilityFullSynchronizer.MorphPacket(morph.map(MorphItem::serialize), morphReason.getRegistryName(), morphList, favouriteList, serializeAbilities(), getOwner().getUUID()));
 		}
 	}
 	
@@ -88,7 +97,7 @@ public class DefaultMorphCapability implements IMorphCapability
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTo), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, favouriteList, serializeAbilities(), getOwner().getUUID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTo), new MorphCapabilityFullSynchronizer.MorphPacket(morph.map(MorphItem::serialize), morphReason.getRegistryName(), morphList, favouriteList, serializeAbilities(), getOwner().getUUID()));
 		}
 	}
 	
@@ -99,7 +108,7 @@ public class DefaultMorphCapability implements IMorphCapability
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.NMLIST.with(() -> Lists.newArrayList(connection)), new MorphCapabilityFullSynchronizer.MorphPacket(morph, currentMorphIndex, morphList, favouriteList, serializeAbilities(), getOwner().getUUID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.NMLIST.with(() -> Lists.newArrayList(connection)), new MorphCapabilityFullSynchronizer.MorphPacket(morph.map(MorphItem::serialize), morphReason.getRegistryName(), morphList, favouriteList, serializeAbilities(), getOwner().getUUID()));
 		}
 	}
 	
@@ -111,7 +120,7 @@ public class DefaultMorphCapability implements IMorphCapability
 		else
 		{
 			// Other players may not have knowledge of those indices, thus we always fully send the current morph
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> getOwner()), new MorphChangedSynchronizer.MorphChangedPacket(getOwner().getUUID(), getCurrentMorph(), serializeAbilities()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> getOwner()), new MorphChangedSynchronizer.MorphChangedPacket(getOwner().getUUID(), getCurrentMorph(), morphReason.getRegistryName(), serializeAbilities()));
 		}
 	}
 
@@ -130,7 +139,16 @@ public class DefaultMorphCapability implements IMorphCapability
 		if(getOwner().level.isClientSide)
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)getOwner()), new MorphRemovedPacket(getOwner().getUUID(), index));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)getOwner()), new MorphRemovedPacket(getOwner().getUUID(), morphList.getMorphArrayList().get(index).getUUID()));
+	}
+	
+	@Override
+	public void syncMorphRemoval(UUID... morphItemKeys)
+	{
+		if(getOwner().level.isClientSide)
+			throw new IllegalAccessError("This method may not be called on client side.");
+		else
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)getOwner()), new MorphRemovedPacket(getOwner().getUUID(), morphItemKeys));
 	}
 	
 	@Override
@@ -185,12 +203,19 @@ public class DefaultMorphCapability implements IMorphCapability
 	}
 	
 	@Override
+	public void removeFromMorphList(MorphItem morphItem)
+	{
+		morphList.removeFromMorphList(morphItem.getUUID());
+	}
+	
+	@Override
 	public void setMorphList(MorphList list)
 	{
 		this.morphList = list;
 		
 		// Setting morph list not fully handled, but this is an edge case that never happens lulw
 		this.favouriteList.setMorphList(morphList);
+		this.morphList.setFavouriteList(favouriteList);
 	}
 
 	@Override
@@ -236,7 +261,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	@Override
 	public Optional<Integer> getCurrentMorphIndex()
 	{
-		return currentMorphIndex;
+		return (morphReason == MorphReasonRegistry.MORPHED_BY_UI.get() && morph.isPresent()) ? morphList.indexOf(morph.get()) : Optional.empty();
 	}
 
 	@Override
@@ -248,9 +273,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	@Override
 	public Optional<MorphItem> getCurrentMorph()
 	{
-		if(currentMorphIndex.isPresent())
-			return Optional.of(getMorphList().getMorphArrayList().get(currentMorphIndex.get()));
-		else if(morph.isPresent())
+		if(morph.isPresent())
 			return morph;
 		else
 			return Optional.empty();
@@ -259,25 +282,39 @@ public class DefaultMorphCapability implements IMorphCapability
 	@Override
 	public void setMorph(int index)
 	{
-		this.morph = Optional.empty();
-		this.currentMorphIndex = Optional.of(index);
-//		dirty = true;
+		setMorph(index, MorphReasonRegistry.MORPHED_BY_UI.get());
 	}
 
 	@Override
 	public void setMorph(MorphItem morph)
 	{
+		setMorph(morph, MorphReasonRegistry.MORPHED_BY_COMMAND.get());
+	}
+	
+	@Override
+	public void setMorph(int index, MorphReason reason)
+	{
+		setMorph(morphList.getMorphArrayList().get(index), reason);
+	}
+
+	@Override
+	public void setMorph(MorphItem morph, MorphReason reason)
+	{
 		this.morph = Optional.of(morph);
-		this.currentMorphIndex = Optional.empty();
-//		dirty = true;
+		setMorphReason(reason);
 	}
 
 	@Override
 	public void demorph()
 	{
+		demorph(MorphReasonRegistry.MORPHED_BY_COMMAND.get());
+	}
+	
+	@Override
+	public void demorph(MorphReason reason)
+	{
 		this.morph = Optional.empty();
-		this.currentMorphIndex = Optional.empty();
-//		dirty = true;
+		setMorphReason(reason);
 	}
 
 	@Override
@@ -468,5 +505,17 @@ public class DefaultMorphCapability implements IMorphCapability
 		{
 			this.getCurrentAbilities().forEach(ability -> ability.removePlayerReferences(owner));
 		}
+	}
+
+	@Override
+	public MorphReason getMorphReason()
+	{
+		return morphReason;
+	}
+
+	@Override
+	public void setMorphReason(MorphReason reason)
+	{
+		this.morphReason = reason;
 	}
 }

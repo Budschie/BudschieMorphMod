@@ -10,6 +10,7 @@ import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
 import de.budschie.bmorph.main.ClientSetup;
 import de.budschie.bmorph.morph.FavouriteNetworkingHelper;
+import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.network.DeleteOrDropMorph;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.network.MorphRequestAbilityUsage;
@@ -148,16 +149,16 @@ public class MorphGuiHandler
 						if(cap.isPresent())
 						{
 							IMorphCapability resolved = cap.resolve().get();
-							int favouriteMorphIndex = currentMorphGui.get().getMorphIndex();
+							MorphItem currentMorphItem = currentMorphGui.get().getMorphItem();
 							
-							if(favouriteMorphIndex < 0)
+							if(currentMorphItem == null)
 								System.out.println("Yo wat");
 							else
 							{
-								if(resolved.getFavouriteList().containsMorphItem(resolved.getMorphList().getMorphArrayList().get(favouriteMorphIndex)))
-									FavouriteNetworkingHelper.removeFavouriteMorph(favouriteMorphIndex);
+								if(resolved.getFavouriteList().containsMorphItem(currentMorphItem))
+									FavouriteNetworkingHelper.removeFavouriteMorph(currentMorphItem.getUUID());
 								else
-									FavouriteNetworkingHelper.addFavouriteMorph(favouriteMorphIndex);
+									FavouriteNetworkingHelper.addFavouriteMorph(currentMorphItem.getUUID());
 							}
 						}
 						
@@ -178,7 +179,7 @@ public class MorphGuiHandler
 		{
 			boolean glfwPress = event.getAction() == GLFW.GLFW_PRESS;
 			
-			int morphIndex = currentMorphGui.get().getMorphIndex(); 
+			MorphItem morphItem = currentMorphGui.get().getMorphItem(); 
 			
 			if(ClientSetup.MORPH_UI.consumeClick() && glfwPress)
 			{
@@ -187,15 +188,14 @@ public class MorphGuiHandler
 				if(cap.isPresent())
 				{
 					IMorphCapability resolved = cap.resolve().get();
-					int currentIndex = currentMorphGui.get().getMorphIndex();
 					
-					if(currentIndex < 0)
+					if(morphItem == null)
 					{
-						MainNetworkChannel.INSTANCE.sendToServer(RequestMorphIndexChangePacket.ofMorphItem(Optional.empty()));
+						MainNetworkChannel.INSTANCE.sendToServer(new RequestMorphIndexChangePacket(Optional.empty()));
 					}
 					else
 					{
-						MainNetworkChannel.INSTANCE.sendToServer(RequestMorphIndexChangePacket.ofMorphItem(Optional.of(resolved.getMorphList().getMorphArrayList().get(currentIndex))));
+						MainNetworkChannel.INSTANCE.sendToServer(new RequestMorphIndexChangePacket(Optional.of(morphItem.getUUID())));
 					}
 					
 					if(guiHidden)
@@ -204,23 +204,23 @@ public class MorphGuiHandler
 						hideGui();
 				}
 			}
-			else if(morphIndex >= 0)
+			else if(morphItem != null)
 			{
 				if(ClientSetup.DROP_CURRENT_MORPH.consumeClick() && glfwPress)
 				{
-					dropOrDelete(true, morphIndex);
+					dropOrDelete(true, morphItem);
 				}
 				else if(ClientSetup.DELETE_CURRENT_MORPH.consumeClick() && glfwPress)
 				{
-					dropOrDelete(false, morphIndex);
+					dropOrDelete(false, morphItem);
 				}
 			}
 		}
 	}
 	
-	private static void dropOrDelete(boolean drop, int currentMorphIndex)
+	private static void dropOrDelete(boolean drop, MorphItem currentMorphItem)
 	{
-		MainNetworkChannel.INSTANCE.sendToServer(new DeleteOrDropMorph.DeleteOrDropMorphPacket(currentMorphIndex, drop));
+		MainNetworkChannel.INSTANCE.sendToServer(new DeleteOrDropMorph.DeleteOrDropMorphPacket(currentMorphItem.getUUID(), drop));
 	}
 	
 	@SubscribeEvent

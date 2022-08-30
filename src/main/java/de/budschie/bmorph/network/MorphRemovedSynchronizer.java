@@ -18,13 +18,28 @@ public class MorphRemovedSynchronizer implements ISimpleImplPacket<MorphRemovedP
 	public void encode(MorphRemovedPacket packet, FriendlyByteBuf buffer)
 	{
 		buffer.writeUUID(packet.getPlayerUUID());
-		buffer.writeInt(packet.getRemovedMorph());
+		buffer.writeInt(packet.getRemovedMorphKeys().length);
+		
+		for(UUID uuid : packet.getRemovedMorphKeys())
+		{
+			buffer.writeUUID(uuid);
+		}
 	}
 
 	@Override
 	public MorphRemovedPacket decode(FriendlyByteBuf buffer)
 	{
-		return new MorphRemovedPacket(buffer.readUUID(), buffer.readInt());
+		UUID player = buffer.readUUID();
+		int arrayLength = buffer.readInt();
+		
+		UUID[] removedMorphKeys = new UUID[arrayLength];
+		
+		for(int i = 0; i < arrayLength; i++)
+		{
+			removedMorphKeys[i] = buffer.readUUID();
+		}
+		
+		return new MorphRemovedPacket(player, removedMorphKeys);
 	}
 
 	@Override
@@ -40,7 +55,10 @@ public class MorphRemovedSynchronizer implements ISimpleImplPacket<MorphRemovedP
 				{
 					IMorphCapability resolved = cap.resolve().get();
 					
-					resolved.removeFromMorphList(packet.getRemovedMorph());
+					for(UUID removedMorphKey : packet.getRemovedMorphKeys())
+					{
+						resolved.getMorphList().removeFromMorphList(removedMorphKey);
+					}
 				}
 				
 				MorphGuiHandler.updateMorphUi();
@@ -52,17 +70,17 @@ public class MorphRemovedSynchronizer implements ISimpleImplPacket<MorphRemovedP
 	public static class MorphRemovedPacket
 	{
 		UUID playerUUID;
-		int removedMorph;
+		UUID[] removedMorphKeys;
 		
-		public MorphRemovedPacket(UUID playerUUID, int removedMorph)
+		public MorphRemovedPacket(UUID playerUUID, UUID... removedMorphKeys)
 		{
 			this.playerUUID = playerUUID;
-			this.removedMorph = removedMorph;
+			this.removedMorphKeys = removedMorphKeys;
 		}
 		
-		public int getRemovedMorph()
+		public UUID[] getRemovedMorphKeys()
 		{
-			return removedMorph;
+			return removedMorphKeys;
 		}
 		
 		public UUID getPlayerUUID()

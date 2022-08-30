@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,6 +35,8 @@ public abstract class MorphItem
 	private Optional<ResourceLocation> customAbilityList = Optional.empty();
 	private Optional<EntityType<?>> abilityListFromEntity = Optional.empty();
 	
+	private UUID uuid = UUID.randomUUID();
+	
 	protected MorphItem(String morphItemId)
 	{
 		this.morphItemId = morphItemId;
@@ -54,6 +57,7 @@ public abstract class MorphItem
 		CompoundTag nbt = new CompoundTag();
 		nbt.putString("id", getMorphItemId());
 		nbt.put("additional", serializeAdditional());
+		nbt.putUUID("uuid", uuid);
 		
 		// If we are stunned, save all of this stun stuff
 		if(isDisabled())
@@ -88,6 +92,11 @@ public abstract class MorphItem
 				totalDisableTime = nbt.getInt("total_stun_time");
 			}
 			
+			if(nbt.contains("uuid"))
+			{
+				this.uuid = nbt.getUUID("uuid");
+			}
+			
 			if(nbt.contains("custom_ability_list", Tag.TAG_STRING))
 			{
 				setCustomAbilityList(new ResourceLocation(nbt.getString("custom_ability_list")));
@@ -97,6 +106,11 @@ public abstract class MorphItem
 				setAbilityListFromEntity(ForgeRegistries.ENTITIES.getValue(new ResourceLocation(nbt.getString("ability_list_from_entity"))));
 			}
 		}
+	}
+	
+	public UUID getUUID()
+	{
+		return uuid;
 	}
 	
 	public List<Ability> getAbilities()

@@ -9,6 +9,7 @@ import de.budschie.bmorph.gui.MorphGuiRegistry;
 import de.budschie.bmorph.json_integration.ability_groups.AbilityGroupRegistry;
 import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
+import de.budschie.bmorph.morph.MorphReasonRegistry;
 import de.budschie.bmorph.morph.VisualMorphDataRegistry;
 import de.budschie.bmorph.morph.fallback.FallbackMorphItem;
 import de.budschie.bmorph.morph.functionality.AbilityRegistry;
@@ -62,6 +63,7 @@ public class BMorphMod
 		AbilityRegistry.ABILITY_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
 		DataModifierRegistry.DATA_MODIFIER_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
 		MorphGuiRegistry.MORPH_GUI_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
+		MorphReasonRegistry.MORPH_REASON_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
 	
 	@SubscribeEvent

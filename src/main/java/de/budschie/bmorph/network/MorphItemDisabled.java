@@ -1,12 +1,15 @@
 package de.budschie.bmorph.network;
 
 import java.text.MessageFormat;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
+import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.network.MorphItemDisabled.MorphItemDisabledPacket;
 import de.budschie.bmorph.util.ClientUtils;
@@ -23,9 +26,9 @@ public class MorphItemDisabled implements ISimpleImplPacket<MorphItemDisabledPac
 	{
 		buffer.writeInt(packet.getDisabledFor());
 
-		buffer.writeInt(packet.indices.length);
-		for(int i : packet.indices)
-			buffer.writeInt(i);		
+		buffer.writeInt(packet.keys.length);
+		for(UUID uuid : packet.keys)
+			buffer.writeUUID(uuid);
 	}
 
 	@Override
@@ -39,10 +42,10 @@ public class MorphItemDisabled implements ISimpleImplPacket<MorphItemDisabledPac
 			throw new IllegalArgumentException("The amount of morph items that shall be disabled shall not exceed the value of 32767. If you see this error, please report it to the mod author.");
 		}
 		
-		int[] toDisable = new int[length];
+		UUID[] toDisable = new UUID[length];
 		
 		for(int i = 0; i < length; i++)
-			toDisable[i] = buffer.readInt();
+			toDisable[i] = buffer.readUUID();
 		
 		return new MorphItemDisabledPacket(timeToDisableFor, toDisable);
 	}
@@ -57,15 +60,18 @@ public class MorphItemDisabled implements ISimpleImplPacket<MorphItemDisabledPac
 			
 			if(cap != null)
 			{
-				for(int index : packet.getIndices())
+				for(UUID key : packet.getKeys())
 				{
-					if(index >= cap.getMorphList().getMorphArrayList().size() || index < 0)
+					Optional<MorphItem> correspondingItem = cap.getMorphList().getMorphByUUID(key);
+					
+					if(correspondingItem.isEmpty())
 					{
-						LOGGER.warn(MessageFormat.format("Server said that a morph item is disabled that doesn't even exist. Index of morph item: {0}", Integer.valueOf(index).toString()));
+						LOGGER.warn(MessageFormat.format("Server said that a morph item should be disabled that doesn't even exist. UUID of morph item: {0}", key));
 					}
 					else
 					{
-						cap.getMorphList().getMorphArrayList().get(index).disable(packet.getDisabledFor());
+						// cap.getMorphList().getMorphArrayList().get(index).disable(packet.getDisabledFor());
+						correspondingItem.get().disable(packet.getDisabledFor());
 					}
 				}
 			}
@@ -76,18 +82,18 @@ public class MorphItemDisabled implements ISimpleImplPacket<MorphItemDisabledPac
 	
 	public static class MorphItemDisabledPacket
 	{
-		private int[] indices;
+		private UUID[] keys;
 		private int disabledFor;
 				
-		public MorphItemDisabledPacket(int disabledFor, int...indices)
+		public MorphItemDisabledPacket(int disabledFor, UUID...keys)
 		{
 			this.disabledFor = disabledFor;
-			this.indices = indices;
+			this.keys = keys;
 		}
 
-		public int[] getIndices()
+		public UUID[] getKeys()
 		{
-			return indices;
+			return keys;
 		}
 		
 		public int getDisabledFor()

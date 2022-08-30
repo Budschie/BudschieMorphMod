@@ -5,6 +5,8 @@ import java.util.Optional;
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.main.References;
+import de.budschie.bmorph.morph.MorphReason;
+import de.budschie.bmorph.morph.MorphReasonRegistry;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.morph.fallback.FallbackMorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
@@ -29,7 +31,7 @@ public class AbilityGameTest
 			try
 			{
 				for (Player player : test.getLevel().players())
-					MorphUtil.morphToServer(Optional.empty(), Optional.empty(), player);
+					MorphUtil.morphToServer(Optional.empty(), MorphReasonRegistry.MORPHED_BY_GAMETEST.get(), player);
 			} 
 			catch (Exception ex)
 			{
@@ -42,7 +44,7 @@ public class AbilityGameTest
 			try
 			{
 				for (Player player : test.getLevel().players())
-					MorphUtil.morphToServer(Optional.of(new FallbackMorphItem(EntityType.PIG)), Optional.empty(), player);
+					MorphUtil.morphToServer(Optional.of(new FallbackMorphItem(EntityType.PIG)), MorphReasonRegistry.MORPHED_BY_GAMETEST.get(), player);
 			} 
 			catch (Exception ex)
 			{
@@ -96,7 +98,7 @@ public class AbilityGameTest
 			{
 				for (Player player : test.getLevel().players())
 				{
-					MorphUtil.morphToServer(Optional.empty(), Optional.empty(), player);
+					MorphUtil.morphToServer(Optional.empty(), MorphReasonRegistry.MORPHED_BY_GAMETEST.get(), player);
 				}
 			} 
 			catch (Exception ex)

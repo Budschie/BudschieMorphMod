@@ -11,6 +11,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.MorphItem;
+import de.budschie.bmorph.morph.MorphReason;
+import de.budschie.bmorph.morph.MorphReasonRegistry;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.StunAbility;
@@ -97,7 +99,7 @@ public class DisableMorphItem extends StunAbility
 			warningEffects.forEach(effect -> effect.applyWarning(player, timeLeft));
 			
 			if(!isCurrentlyStunned(uuid))
-				MorphUtil.morphToServer(Optional.empty(), Optional.empty(), player);
+				MorphUtil.morphToServer(Optional.empty(), MorphReasonRegistry.MORPHED_BY_ABILITY.get(), player);
 		}
 	}
 	

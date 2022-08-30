@@ -9,6 +9,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.morph.MorphItem;
+import de.budschie.bmorph.morph.MorphReason;
+import de.budschie.bmorph.morph.MorphReasonRegistry;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.morph.fallback.FallbackMorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
@@ -80,8 +82,6 @@ public class MorphAbility extends Ability
 		
 		FallbackMorphItem item = new FallbackMorphItem(newTag, entityToMorphTo);
 		
-		Optional<Integer> index = Optional.empty();
-		
 		if(morphMode == MorphMode.ADD_TO_LIST || morphMode == MorphMode.BOTH)
 		{
 			IMorphCapability morphCap = MorphUtil.getCapOrNull(player);
@@ -89,17 +89,13 @@ public class MorphAbility extends Ability
 			if(!morphCap.getMorphList().contains(item))
 			{
 				// Add to morph list and sync it with all clients (I should really change that "all clients" stuff netcode bullsh*t in the future tho)
-				index = Optional.of(morphCap.addToMorphList(item));
 				morphCap.syncMorphAcquisition(item);
 			}
 		}
 		
 		if(morphMode == MorphMode.MORPH || morphMode == MorphMode.BOTH)
 		{
-			if(index.isPresent())
-				MorphUtil.morphToServer(Optional.empty(), index, player);
-			else
-				MorphUtil.morphToServer(Optional.of(item), Optional.empty(), player);
+			MorphUtil.morphToServer(Optional.of(item), MorphReasonRegistry.MORPHED_BY_ABILITY.get(), player);
 		}
 		
 		effectOnMorph.ifPresent(effect -> effect.playEffect(player));

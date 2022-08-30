@@ -2,12 +2,15 @@ package de.budschie.bmorph.capabilities;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
 import de.budschie.bmorph.morph.FavouriteList;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
+import de.budschie.bmorph.morph.MorphReason;
+import de.budschie.bmorph.morph.MorphReasonRegistry;
 import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -29,33 +32,63 @@ public interface IMorphCapability
 	/** Getter for the value returned in {@link IMorphCapability#getAbilitySerializationContext()} **/
 	public void setAbilitySerializationContext(AbilitySerializationContext context);
 	
-	/** Returns an optional with the current morph item. This optional will be empty, except when you are morphed with the /morph command. **/
+	/** Returns the current morph. Deprecated, please use {@link #getCurrentMorph()}. **/
+	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
 	public Optional<MorphItem> getCurrentMorphItem();
 	/** Returns an integer representing the current morph index of the morph item you are currently morphed in. Note that this does not apply to the /morph command. **/
+	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
 	public Optional<Integer> getCurrentMorphIndex();
 	
-	/** This sort of combines {@link IMorphCapability#getCurrentMorphIndex()} and {@link IMorphCapability#getCurrentMorphItem()} by checking if one of these methods doesn't return an empty Optional, and returns the result. **/
+	/** Returns the morph that this player is currently morphed into. **/
 	public Optional<MorphItem> getCurrentMorph();
 	
 	/** This method adds the given morph item to the morph list and returns the index of the added morph. **/
 	public int addToMorphList(MorphItem morphItem);
-	/** This method removes the given index from the morph list. **/
+	/** This method removes the given index from the morph list. Deprecated, please use {@link #removeFromMorphList(MorphItem)}. **/
+	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
 	public void removeFromMorphList(int index);
+	public void removeFromMorphList(MorphItem morphItem);
 	/** This method returns the morph list as an object. **/
 	public MorphList getMorphList();
 	/** This is a setter for the morph list. **/
 	public void setMorphList(MorphList list);
 	
-	/** This sets the morph index, and its value can be retrieved by invoking {@link IMorphCapability#getCurrentMorphIndex()}. **/
+	/** This sets the morph index, and its value can be retrieved by invoking {@link IMorphCapability#getCurrentMorphIndex()}. Deprecated, please use {@link #setMorph(MorphItem, boolean)}.
+	 * There is no guarantee that this method still works. **/
+	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
 	public void setMorph(int index);
-	/** This sets the morph item, and its value can be retrieved by invoking {@link IMorphCapability#getCurrentMorphItem()}. **/
+	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
+	public void setMorph(int index, MorphReason reason);
+	/** This sets the morph item, and its value can be retrieved by invoking {@link IMorphCapability#getCurrentMorph()}. Deprecated, please use {@link #setMorph(MorphItem, boolean)}. **/
+	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
 	public void setMorph(MorphItem morph);
+	/** This sets the morph item, and its value can be retrieved by invoking {@link IMorphCapability#getCurrentMorph()}. **/
+	public void setMorph(MorphItem morph, MorphReason reason);
 	
-	/** The purpose of this method is to clear the Optionals holding the current morph data. 
-	 * After calling this method, {@link IMorphCapability#getCurrentMorphItem()}, {@link IMorphCapability#getCurrentMorphIndex()} and {@link IMorphCapability#getCurrentMorph()} 
-	 * will return an empty optional. 
-	**/
+	/**
+	 * Returns the reason why this player morphed. You can find a list of default reasons in {@link MorphReasonRegistry}
+	 */
+	public MorphReason getMorphReason();
+	
+	/**
+	 * The purpose of this method is to clear the Optionals holding the current
+	 * morph data. {@link IMorphCapability#getCurrentMorph()} will return an empty
+	 * optional. Deprecated, use {@link #demorph(MorphReason)} instead.
+	 **/
+	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
 	public void demorph();
+	
+	/**
+	 * The purpose of this method is to clear the Optionals holding the current
+	 * morph data. {@link IMorphCapability#getCurrentMorph()} will return an empty
+	 * optional.
+	 **/
+	public void demorph(MorphReason reason);
+	
+	/**
+	 * Sets the morph reason. Only use this method for cap serializing purposes.
+	 */
+	public void setMorphReason(MorphReason reason);
 	
 	public void applyHealthOnPlayer();
 	
@@ -77,8 +110,11 @@ public interface IMorphCapability
 	public void syncMorphChange();
 	/** This method synchronizes the acquisition of a morph to all players. **/
 	public void syncMorphAcquisition(MorphItem item);
-	/** This method synchronizes the removal of a morph to all players. **/
+	/** This method synchronizes the removal of a morph to all players. Deprecated, please use {@link #syncMorphRemoval(UUID)} instead. **/
+	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
 	public void syncMorphRemoval(int index);
+	/** This method synchronizes the removal of a morph to all tracking players. **/
+	public void syncMorphRemoval(UUID... morphItemKeys);
 	
 	/** This method syncs the addition of one or more abilities. **/
 	public void syncAbilityAddition(Ability...abilities);

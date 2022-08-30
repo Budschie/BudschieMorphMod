@@ -43,6 +43,7 @@ import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.main.References;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
+import de.budschie.bmorph.morph.MorphReasonRegistry;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.util.BudschieUtils;
 import net.minecraft.ChatFormatting;
@@ -176,7 +177,7 @@ public class Events
 			
 			if(cap.isPresent())
 			{
-				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Pre(player, cap.resolve().get(), cap.resolve().get().getCurrentMorph().orElse(null)));
+				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Pre(player, cap.resolve().get(), cap.resolve().get().getCurrentMorph().orElse(null), MorphReasonRegistry.NONE.get()));
 				
 //				ServerSetup.server.getPlayerList().getPlayers().forEach(serverPlayer -> cap.resolve().get().syncWithClient(event.getPlayer(), serverPlayer));
 //				ServerSetup.server.getPlayerList().getPlayers().forEach(serverPlayer -> cap.resolve().get().syncWithClient(serverPlayer, (ServerPlayerEntity) event.getPlayer()));
@@ -185,7 +186,7 @@ public class Events
 				cap.resolve().get().applyHealthOnPlayer();
 				cap.resolve().get().applyAbilities(null, Arrays.asList());
 				
-				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Post(player, cap.resolve().get(), cap.resolve().get().getCurrentMorph().orElse(null)));				
+				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Post(player, cap.resolve().get(), cap.resolve().get().getCurrentMorph().orElse(null), MorphReasonRegistry.NONE.get()));				
 			}
 			
 			PufferfishCapabilityHandler.INSTANCE.synchronizeWithClients(player);
@@ -254,7 +255,7 @@ public class Events
 				if(cap != null)
 				{
 					// We need to force it since we would otherwise not remorph when our current morph item has been disabled
-					MorphUtil.morphToServer(cap.getCurrentMorphItem(), cap.getCurrentMorphIndex(), player, true);
+					MorphUtil.morphToServer(cap.getCurrentMorph(), cap.getMorphReason(), player, true);
 				}
 			});
 		}
@@ -454,13 +455,12 @@ public class Events
 				newResolved.setMorphList(oldResolved.getMorphList());
 				newResolved.setFavouriteList(oldResolved.getFavouriteList());
 				
-				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Pre(event.getPlayer(), newResolved, newResolved.getCurrentMorph().orElse(null)));
+				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Pre(event.getPlayer(), newResolved, newResolved.getCurrentMorph().orElse(null), MorphReasonRegistry.NONE.get()));
 				
-				oldResolved.getCurrentMorphIndex().ifPresent(morph -> newResolved.setMorph(morph));
-				oldResolved.getCurrentMorphItem().ifPresent(morph -> newResolved.setMorph(morph));
+				oldResolved.getCurrentMorph().ifPresentOrElse(morphItem -> newResolved.setMorph(morphItem, oldResolved.getMorphReason()), () -> newResolved.demorph(oldResolved.getMorphReason()));
 				newResolved.setCurrentAbilities(oldResolved.getCurrentAbilities());
 				
-				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Post(event.getPlayer(), newResolved, newResolved.getCurrentMorph().orElse(null)));
+				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Post(event.getPlayer(), newResolved, newResolved.getCurrentMorph().orElse(null), MorphReasonRegistry.NONE.get()));
 			}
 		}
 	}
@@ -503,7 +503,7 @@ public class Events
 					
 					if(!event.getEntity().getServer().getGameRules().getBoolean(BMorphMod.KEEP_MORPH_INVENTORY))
 					{
-						for(MorphItem item : resolved.getMorphList().getMorphArrayList())
+						for(MorphItem item : resolved.getMorphList())
 						{
 							MorphEntity morphEntity = new MorphEntity(player.level, item);
 							morphEntity.setPos(player.getX(), player.getY(), player.getZ());
@@ -690,10 +690,10 @@ public class Events
 						LOGGER.catching(ex);
 						
 						if(!player.level.isClientSide)
-							MorphUtil.morphToServer(Optional.empty(), Optional.empty(), player);
+							MorphUtil.morphToServer(Optional.empty(), MorphReasonRegistry.MORPHED_BY_ERROR.get(), player);
 						else
 						{
-							resolved.demorph();
+							resolved.demorph(MorphReasonRegistry.MORPHED_BY_ERROR.get());
 							player.sendMessage(new TextComponent(ChatFormatting.RED + "Couldn't morph to " + item.getEntityType().getRegistryName().toString() + ". This is a compatability issue. If possible, report this to the mod author on GitHub."), new UUID(0, 0));
 						}
 					}

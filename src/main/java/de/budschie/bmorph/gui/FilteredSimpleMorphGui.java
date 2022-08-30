@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 
 import org.apache.logging.log4j.LogManager;
@@ -23,7 +24,6 @@ import de.budschie.bmorph.morph.VisualMorphDataRegistry.VisualMorphData;
 import de.budschie.bmorph.util.Pair;
 import de.budschie.bmorph.util.UiUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
@@ -48,6 +48,8 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 	// private BiFunction<IMorphCapability, List<MorphItem>, List<MorphItem>> filter;
 	BiPredicate<IMorphCapability, Integer> filter;
 	
+	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
+	/** Deprecated. I cannot provide a smooth deprecation transition here because of type erasure and ambiguity of arguments. **/
 	public FilteredSimpleMorphGui(ResourceLocation morphGuiTypeIcon, String unlocalizedGuiType, BiPredicate<IMorphCapability, Integer> filter)
 	{
 		super(morphGuiTypeIcon, unlocalizedGuiType);
