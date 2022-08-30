@@ -1,7 +1,11 @@
 package de.budschie.bmorph.network;
 
+import java.text.MessageFormat;
 import java.util.UUID;
 import java.util.function.Supplier;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
@@ -11,11 +15,14 @@ import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.network.MorphAddedSynchronizer.MorphAddedPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.network.NetworkEvent.Context;
 
 public class MorphAddedSynchronizer implements ISimpleImplPacket<MorphAddedPacket>
 {
+	private static final Logger LOGGER = LogManager.getLogger();
+	
 	@Override
 	public void encode(MorphAddedPacket packet, FriendlyByteBuf buffer)
 	{
@@ -36,18 +43,25 @@ public class MorphAddedSynchronizer implements ISimpleImplPacket<MorphAddedPacke
 		{
 			if(Minecraft.getInstance().level != null)
 			{
-				// TODO: A null pointer exception might occour here. Please check to fix it
-				// EDIT: Yes here is a NP
-				LazyOptional<IMorphCapability> cap = Minecraft.getInstance().level.getPlayerByUUID(packet.getPlayerUUID()).getCapability(MorphCapabilityAttacher.MORPH_CAP);
+				Player player = Minecraft.getInstance().level.getPlayerByUUID(packet.getPlayerUUID());
 				
-				if(cap.isPresent())
+				if(player == null)
 				{
-					IMorphCapability resolved = cap.resolve().get();
-					
-					resolved.addMorphItem(packet.getAddedMorph());
+					LOGGER.warn(MessageFormat.format("Player {0} not known to client. Ignoring this packet.", packet.getPlayerUUID()));
 				}
-				
-				MorphGuiHandler.updateMorphUi();
+				else
+				{
+					LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
+					
+					if(cap.isPresent())
+					{
+						IMorphCapability resolved = cap.resolve().get();
+						
+						resolved.addMorphItem(packet.getAddedMorph());
+					}
+					
+					MorphGuiHandler.updateMorphUi();
+				}
 				ctx.get().setPacketHandled(true);
 			}
 		});
