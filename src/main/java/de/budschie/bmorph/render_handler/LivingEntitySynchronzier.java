@@ -1,15 +1,15 @@
 package de.budschie.bmorph.render_handler;
 
+import de.budschie.bmorph.util.ProtectedMethodAccess;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
 
 public class LivingEntitySynchronzier implements IEntitySynchronizer
 {
-
+	private static final ProtectedMethodAccess<LivingEntity, Void> SET_LIVING_ENTITY_FLAGS = new ProtectedMethodAccess<>(LivingEntity.class, "m_21155_", Integer.TYPE, Boolean.TYPE);
 	@Override
 	public boolean appliesToMorph(Entity morphEntity)
 	{
@@ -63,16 +63,16 @@ public class LivingEntitySynchronzier implements IEntitySynchronizer
 		
 //		System.out.println("Player main hand: " + player.getPrimaryHand() + "; Entity main hand: " + entity.getPrimaryHand());
 		
-		if(entity instanceof AbstractSkeleton || entity instanceof Player)
-		{
-			entity.setItemInHand(InteractionHand.OFF_HAND, player.getItemInHand(InteractionHand.MAIN_HAND));
-			entity.setItemInHand(InteractionHand.MAIN_HAND, player.getItemInHand(InteractionHand.OFF_HAND));
-		}
-		else
-		{
+//		if(entity instanceof AbstractSkeleton || entity instanceof Player)
+//		{
+//			entity.setItemInHand(InteractionHand.OFF_HAND, player.getItemInHand(InteractionHand.MAIN_HAND));
+//			entity.setItemInHand(InteractionHand.MAIN_HAND, player.getItemInHand(InteractionHand.OFF_HAND));
+//		}
+//		else
+//		{
 			entity.setItemInHand(InteractionHand.MAIN_HAND, player.getItemInHand(InteractionHand.MAIN_HAND));
 			entity.setItemInHand(InteractionHand.OFF_HAND, player.getItemInHand(InteractionHand.OFF_HAND));
-		}
+//		}
 		
 //		entity.setItemStackToSlot(entity.getPrimaryHand() == HandSide.LEFT ? EquipmentSlotType.OFFHAND : EquipmentSlotType.MAINHAND, player.getItemStackFromSlot(EquipmentSlotType.MAINHAND));
 //		entity.setItemStackToSlot(entity.getPrimaryHand() == HandSide.LEFT ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND, player.getItemStackFromSlot(EquipmentSlotType.OFFHAND));
@@ -89,6 +89,21 @@ public class LivingEntitySynchronzier implements IEntitySynchronizer
 		entity.setDeltaMovement(player.getDeltaMovement());
 		
 		entity.setHealth(player.getHealth());
+		
+		if(entity.isUsingItem() != player.isUsingItem())
+		{
+			if(entity.isUsingItem())
+			{
+				entity.stopUsingItem();
+				SET_LIVING_ENTITY_FLAGS.getValue(entity, 1, false);
+			}
+			else
+			{
+				entity.startUsingItem(player.getUsedItemHand());
+				SET_LIVING_ENTITY_FLAGS.getValue(entity, 1, true);
+				SET_LIVING_ENTITY_FLAGS.getValue(entity, 2, player.getUsedItemHand() == InteractionHand.OFF_HAND);
+			}
+		}
 	}
 
 }

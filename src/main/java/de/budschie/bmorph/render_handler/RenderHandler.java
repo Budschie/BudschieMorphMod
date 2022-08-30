@@ -14,15 +14,13 @@ import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.player.AdvancedAbstractClientPlayerEntity;
 import de.budschie.bmorph.tags.ModEntityTypeTags;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.animal.Squid;
-import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -47,13 +45,13 @@ public class RenderHandler
 		if(event.getPlayer() == Minecraft.getInstance().player)
 			event.getMorphEntity().setCustomNameVisible(false);
 		
-		if(event.getMorphEntity() instanceof AbstractClientPlayer)
-		{
-			AbstractClientPlayer entity = (AbstractClientPlayer) event.getMorphEntity();
-			
-			// WTF?!?
-			entity.setMainArm(event.getPlayer().getMainArm() == HumanoidArm.LEFT ? HumanoidArm.RIGHT : HumanoidArm.LEFT);
-		}
+//		if(event.getMorphEntity() instanceof AbstractClientPlayer)
+//		{
+//			AbstractClientPlayer entity = (AbstractClientPlayer) event.getMorphEntity();
+//			
+//			// WTF?!?
+//			entity.setMainArm(event.getPlayer().getMainArm() == HumanoidArm.LEFT ? HumanoidArm.RIGHT : HumanoidArm.LEFT);
+//		}
 		
 		if(event.getMorphEntity() instanceof AdvancedAbstractClientPlayerEntity)
 		{
@@ -66,7 +64,12 @@ public class RenderHandler
 		
 		if(event.getMorphEntity() instanceof Mob mob)
 		{
-			mob.setLeftHanded(event.getPlayer().getMainArm() == HumanoidArm.RIGHT);
+			mob.setLeftHanded(event.getPlayer().getMainArm() == HumanoidArm.LEFT);
+		}
+		
+		if(event.getMorphEntity() instanceof LivingEntity living)
+		{
+			living.swingingArm = event.getPlayer().swingingArm;
 		}
 	}
 	
