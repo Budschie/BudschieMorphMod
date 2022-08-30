@@ -157,7 +157,7 @@ public abstract class MorphItem
 		float timeLeft = BudschieUtils.convertToRelativeTime(disabledUntil);
 		float totalTime = totalDisableTime;
 		
-		return (timeLeft - partialTicks) / totalTime;
+		return (timeLeft + partialTicks) / totalTime;
 	}
 	
 	public float getDisabledProgress()
