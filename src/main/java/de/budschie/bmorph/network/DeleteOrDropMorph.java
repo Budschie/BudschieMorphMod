@@ -1,13 +1,12 @@
 package de.budschie.bmorph.network;
 
+import java.text.MessageFormat;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.ibm.icu.text.MessageFormat;
 
 import de.budschie.bmorph.entity.MorphEntity;
 import de.budschie.bmorph.main.BMorphMod;

@@ -1,15 +1,12 @@
 package de.budschie.bmorph.morph;
 
+import java.text.MessageFormat;
 import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.ibm.icu.text.MessageFormat;
-
 import net.minecraft.resources.ResourceLocation;
-
-// TODO: Remove references to ibm.icu.text.MessageFormat
 
 /**
  * The aim of this class is to provide a way of easily loading and later
