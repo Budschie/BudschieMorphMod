@@ -103,8 +103,11 @@ public class BudschieUtils
 			}
 			
 			// If we did not go to the next list of predicates, this means that there was no predicate true. This means that AND will return false => we set "predicateTrue" to false and break out of the loop.
-			predicateTrue = false;
-			break iterateOverList;
+			if(innerList.length > 0)
+			{
+				predicateTrue = false;
+				break iterateOverList;
+			}
 		}
 		
 		return predicateTrue;
