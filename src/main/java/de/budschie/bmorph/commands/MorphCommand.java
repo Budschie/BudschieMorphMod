@@ -1,8 +1,11 @@
 package de.budschie.bmorph.commands;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.mojang.authlib.GameProfile;
@@ -19,6 +22,8 @@ import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphReasonRegistry;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.morph.functionality.Ability;
+import de.budschie.bmorph.network.MainNetworkChannel;
+import de.budschie.bmorph.network.MorphItemDisabled.MorphItemDisabledPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -28,11 +33,13 @@ import net.minecraft.commands.arguments.EntitySummonArgument;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.commands.synchronization.SuggestionProviders;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class MorphCommand
@@ -120,40 +127,7 @@ public class MorphCommand
 									}))
 								)
 						));
-		
-		// TODO: Fix this code
-		// This code is plain unreadable...
-//		dispatcher.register(Commands.literal("disable_morph_item").requires(sender -> sender.hasPermission(2))
-//				.then(Commands.argument("player", EntityArgument.players()).then(Commands.argument("disabled_for", IntegerArgumentType.integer(0))
-//						.then(Commands.literal("current_morph_item").executes(ctx -> disableMorphItems(ctx, (sp, cap) ->
-//						{
-//							if (cap.getMorphReason() == MorphReasonRegistry.MORPHED_BY_UI.get() &&)
-//								return new int[] { cap.getCurrentMorphIndex().get() };
-//							else
-//								return null;
-//						})))
-//						.then(Commands.literal("everything")
-//								.then(Commands.literal("matching")
-//										.then(Commands.literal("entity")
-//												.then(Commands.argument("entity_type", EntitySummonArgument.id())
-//														.then(Commands.argument("nbt", CompoundTagArgument.compoundTag())
-//																.executes(ctx -> disableMorphItems(ctx, (sp, cap) -> selectMatchingMorphItems(sp, cap, ctx.getArgument("entity_type", ResourceLocation.class), Optional.of(ctx.getArgument("nbt", CompoundTag.class))))))
-//										.suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
-//										.executes(ctx -> disableMorphItems(ctx, (sp, cap) -> selectMatchingMorphItems(sp, cap, ctx.getArgument("entity_type", ResourceLocation.class), Optional.empty()))))))
-//								.executes(ctx -> disableMorphItems(ctx, (sp, cap) ->
-//								{
-//									// We could greatly optimize this (memory-wise) but we would lose a lot of
-//									// generalization, so I'm not gonna do it
-//									int[] toDisable = new int[cap.getMorphList().getMorphArrayList().size()];
-//
-//									for (int i = 0; i < toDisable.length; i++)
-//									{
-//										toDisable[i] = i;
-//									}
-//
-//									return toDisable;
-//								}))))));
-		
+				
 		dispatcher.register(Commands.literal("disable_morph_item")
 				.requires(sender -> sender.hasPermission(2))
 				.then(Commands.argument("player", EntityArgument.players())
@@ -162,11 +136,11 @@ public class MorphCommand
 						.then(Commands.literal("matching")
 						.then(Commands.argument("entity_type", EntitySummonArgument.id()).suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
 							.then(Commands.argument("nbt", CompoundTagArgument.compoundTag())
-							.executes(null))
-						.executes(null)))
-					.executes(null))
+							.executes(ctx -> disableMorphItems(ctx, getMorphFilter(ctx.getArgument("entity_type", ResourceLocation.class), Optional.of(ctx.getArgument("nbt", CompoundTag.class))))))
+						.executes(ctx -> disableMorphItems(ctx, getMorphFilter(ctx.getArgument("entity_type", ResourceLocation.class), Optional.empty())))))
+					.executes(ctx -> disableMorphItems(ctx, (cap, consumer) -> cap.getMorphList().forEach(consumer))))
 				.then(Commands.literal("current_morph_item")
-						.executes(null))))
+						.executes(ctx -> disableMorphItems(ctx, (cap, consumer) -> cap.getCurrentMorph().ifPresent(consumer))))))
 		);
 		
 		dispatcher.register(Commands.literal("morph_list_ability")
@@ -175,36 +149,30 @@ public class MorphCommand
 				.then(Commands.argument("player", EntityArgument.player()).executes(ctx -> listAbilities(ctx.getSource(), EntityArgument.getPlayer(ctx, "player")))));
 	}
 	
-//	private static int[] selectMatchingMorphItems(ServerPlayer player, IMorphCapability cap, ResourceLocation entityType, Optional<CompoundTag> nbt)
-//	{
-//		EntityType<?> desiredEntityType = ForgeRegistries.ENTITIES.getValue(entityType);
-//
-//		// If the given entity type doesn't exist, return null to indicate error
-//		if (desiredEntityType == null)
-//			return null;
-//
-//		// Create an dynamically resizable int array containing the indices of the found
-//		// entities
-//		IntArrayList intArrayList = new IntArrayList();
-//
-//		// Iterate over every single morph item and add those morph items to the array
-//		// list that have the given entity type
-//		for (int i = 0; i < cap.getMorphList().getMorphArrayList().size(); i++)
-//		{
-//			MorphItem currentItem = cap.getMorphList().getMorphArrayList().get(i);
-//
-//			if (currentItem.getEntityType() == desiredEntityType && (nbt.isEmpty() || (nbt.isPresent() && currentItem.serializeAdditional().equals(nbt.get()))))
-//				intArrayList.add(i);
-//		}
-//
-//		// Return the int array
-//		return intArrayList.toIntArray();
-//	}
+	private static BiConsumer<IMorphCapability, Consumer<MorphItem>> getMorphFilter(ResourceLocation entity, Optional<CompoundTag> nbtToMatch)
+	{
+		EntityType<?> resultingEntityType = ForgeRegistries.ENTITIES.getValue(entity);
+		
+		return (cap, consumer) ->
+		{
+			for(MorphItem morph : cap.getMorphList())
+			{
+				if(morph.getEntityType() == resultingEntityType &&
+						(nbtToMatch.isEmpty() || (nbtToMatch.isPresent() && NbtUtils.compareNbt(nbtToMatch.get(), morph.serializeAdditional(), true))))
+				{
+					consumer.accept(morph);
+				}
+			}
+		};
+	}
 	
-	private static int disableMorphItems(CommandContext<CommandSourceStack> ctx, Consumer<Consumer<MorphItem>> forEachMorphItem) throws CommandSyntaxException
+	private static int disableMorphItems(CommandContext<CommandSourceStack> ctx, BiConsumer<IMorphCapability, Consumer<MorphItem>> forEachMorphItem) throws CommandSyntaxException
 	{
 		List<ServerPlayer> players = ctx.getArgument("player", EntitySelector.class).findPlayers(ctx.getSource());
 		int disabledFor = ctx.getArgument("disabled_for", Integer.class);
+		
+		// Count of players where the given for each loop provided more than one result.
+		int succeeded = 0;
 		
 		for(ServerPlayer player : players)
 		{
@@ -212,45 +180,28 @@ public class MorphCommand
 			
 			if(cap != null)
 			{
+				ArrayList<UUID> toDeactivate = new ArrayList<>();
 				
+				forEachMorphItem.accept(cap, morphItem ->
+				{
+					toDeactivate.add(morphItem.getUUID());
+					morphItem.disable(disabledFor);
+				});
+				
+				if(toDeactivate.size() > 0)
+				{
+					succeeded++;
+				}
+				
+				MorphItemDisabledPacket packet = new MorphItemDisabledPacket(disabledFor, toDeactivate.toArray(size -> new UUID[size]));
+				MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
 			}
 		}
 		
+		ctx.getSource().sendSuccess(new TextComponent(MessageFormat.format("{0}/{1} players' morphs were successfully disabled.", succeeded, players.size())), false);
+		
 		return 0;
 	}
-	
-//	private static int disableMorphItems(CommandContext<CommandSourceStack> ctx, BiFunction<ServerPlayer, IMorphCapability, int[]> morphItemSelectionFunction) throws CommandSyntaxException
-//	{
-//		List<ServerPlayer> players = ctx.getArgument("player", EntitySelector.class).findPlayers(ctx.getSource());
-//		int disableFor = ctx.getArgument("disabled_for", Integer.class);
-//		
-//		int succeeded = 0;
-//		
-//		for(ServerPlayer player : players)
-//		{
-//			IMorphCapability cap = MorphUtil.getCapOrNull(player);
-//			
-//			if(cap != null)
-//			{
-//				int[] selectedMorphs = morphItemSelectionFunction.apply(player, cap);
-//				
-//				if(selectedMorphs != null && selectedMorphs.length > 0)
-//				{
-//					for(int i : selectedMorphs)
-//						cap.getMorphList().getMorphArrayList().get(i).disable(disableFor);
-//					
-//					MorphItemDisabledPacket packet = new MorphItemDisabledPacket(disableFor, selectedMorphs);
-//					MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), packet);
-//					
-//					succeeded++;
-//				}
-//			}
-//		}
-//		
-//		ctx.getSource().sendSuccess(new TextComponent(MessageFormat.format("{0}/{1} players' morphs were successfully disabled.", succeeded, players.size())), false);
-//		
-//		return 0;
-//	}
 	
 	private static int listAbilities(CommandSourceStack sender, Player player)
 	{
@@ -304,7 +255,7 @@ public class MorphCommand
 			{
 				entity.sendMessage(new TextComponent("Added " + rs.toString() + " with its NBT data to your morph list."), new UUID(0, 0));
 				
-				capability.addToMorphList(morphItemToAdd);
+				capability.addMorphItem(morphItemToAdd);
 				capability.syncMorphAcquisition(morphItemToAdd);
 			}
 		}
