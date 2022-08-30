@@ -103,11 +103,12 @@ public class MorphCapabilityAttacher implements ICapabilitySerializable<Compound
 			{
 				instance.setMorph(MorphHandler.deserializeMorphItem(capTag.getCompound("currentMorphItem")), morphReason);
 			}
-			else if(hasIndex)
+			if(hasIndex)
 			{
 				instance.setMorph(instance.getMorphList().getMorphArrayList().get(capTag.getInt("currentMorphIndex")), morphReason);
 			}
-			else
+			
+			if(!(hasIndex || hasItem))
 			{
 				instance.demorph(morphReason);
 			}
