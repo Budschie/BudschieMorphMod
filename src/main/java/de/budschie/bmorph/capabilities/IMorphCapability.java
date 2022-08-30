@@ -42,12 +42,18 @@ public interface IMorphCapability
 	/** Returns the morph that this player is currently morphed into. **/
 	public Optional<MorphItem> getCurrentMorph();
 	
-	/** This method adds the given morph item to the morph list and returns the index of the added morph. **/
+	/** This method adds the given morph item to the morph list and returns the index of the added morph. Deprecated, use {@link #addMorphItem(MorphItem)} instead. **/
+	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
 	public int addToMorphList(MorphItem morphItem);
-	/** This method removes the given index from the morph list. Deprecated, please use {@link #removeFromMorphList(MorphItem)}. **/
+	/** This method adds the given morph item to the morph list. **/
+	public void addMorphItem(MorphItem morphItem);
+	/** This method removes the given index from the morph list. Deprecated, please use {@link #removeMorphItem(MorphItem)} or {@link #removeMorphItem(UUID)} instead. **/
 	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
 	public void removeFromMorphList(int index);
-	public void removeFromMorphList(MorphItem morphItem);
+	/** Removes a given morph item from the morph list. **/
+	public void removeMorphItem(MorphItem morphItem);
+	/** Removes a given morph associated with the given key from the morph list. **/
+	public void removeMorphItem(UUID key);
 	/** This method returns the morph list as an object. **/
 	public MorphList getMorphList();
 	/** This is a setter for the morph list. **/

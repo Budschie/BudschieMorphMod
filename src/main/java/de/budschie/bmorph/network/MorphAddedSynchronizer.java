@@ -44,7 +44,7 @@ public class MorphAddedSynchronizer implements ISimpleImplPacket<MorphAddedPacke
 				{
 					IMorphCapability resolved = cap.resolve().get();
 					
-					resolved.addToMorphList(packet.getAddedMorph());
+					resolved.addMorphItem(packet.getAddedMorph());
 				}
 				
 				MorphGuiHandler.updateMorphUi();

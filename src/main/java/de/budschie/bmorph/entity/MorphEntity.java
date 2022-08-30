@@ -104,7 +104,7 @@ public class MorphEntity extends Entity
 									
 									if(!MinecraftForge.EVENT_BUS.post(acquiredMorphPre))
 									{
-										resolvedCaps.getMorphList().addToMorphList(getMorphItem());
+										resolvedCaps.getMorphList().addMorphItem(getMorphItem());
 										resolvedCaps.syncMorphAcquisition(getMorphItem());
 										this.remove(RemovalReason.DISCARDED);
 										

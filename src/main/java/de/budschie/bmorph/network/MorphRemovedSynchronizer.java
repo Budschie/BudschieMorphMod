@@ -57,7 +57,7 @@ public class MorphRemovedSynchronizer implements ISimpleImplPacket<MorphRemovedP
 					
 					for(UUID removedMorphKey : packet.getRemovedMorphKeys())
 					{
-						resolved.getMorphList().removeFromMorphList(removedMorphKey);
+						resolved.getMorphList().removeMorphItem(removedMorphKey);
 					}
 				}
 				

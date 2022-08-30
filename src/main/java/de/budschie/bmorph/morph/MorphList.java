@@ -62,17 +62,20 @@ public class MorphList implements Iterable<MorphItem>
 	}
 	
 	public void deserializePacket(FriendlyByteBuf packet)
-	{
+	{		
 		int amount = packet.readInt();
 		
 		morphArrayList = new ArrayList<>(amount);
+		playerMorphItems = new HashSet<>(amount);
+		uuidToMorphItem = new HashMap<>(amount);
 		
 		for(int i = 0; i < amount; i++)
 		{
-			morphArrayList.add(MorphHandler.deserializeMorphItem(packet.readNbt()));
+			addToMorphList(MorphHandler.deserializeMorphItem(packet.readNbt()));
 		}
 	}
 	
+	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
 	public int addToMorphList(MorphItem item)
 	{
 		playerMorphItems.add(item);
@@ -82,6 +85,19 @@ public class MorphList implements Iterable<MorphItem>
 		incrementEntityCount(item.getEntityType());
 				
 		return morphArrayList.size() - 1;
+	}
+	
+	public void addMorphItem(MorphItem item)
+	{
+//		playerMorphItems.add(item);
+//		morphArrayList.add(item);
+//		uuidToMorphItem.put(item.getUUID(), item);
+//		
+//		incrementEntityCount(item.getEntityType());
+//				
+//		return morphArrayList.size() - 1;
+		
+		addToMorphList(item);
 	}
 	
 	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
@@ -111,16 +127,16 @@ public class MorphList implements Iterable<MorphItem>
 		return Optional.empty();
 	}
 	
-	public void removeFromMorphList(UUID uuid)
+	public void removeMorphItem(UUID morphItemKey)
 	{
-		if(uuidToMorphItem.containsKey(uuid))
+		if(uuidToMorphItem.containsKey(morphItemKey))
 		{
-			MorphItem associatedMorphItem = uuidToMorphItem.get(uuid);
+			MorphItem associatedMorphItem = uuidToMorphItem.get(morphItemKey);
 			morphArrayList.remove(associatedMorphItem);
 			playerMorphItems.remove(associatedMorphItem);
-			uuidToMorphItem.remove(uuid);
+			uuidToMorphItem.remove(morphItemKey);
 			
-			favouriteList.removeFavourite(uuid);
+			favouriteList.removeFavourite(morphItemKey);
 			
 			decrementEntityCount(associatedMorphItem.getEntityType());
 		}

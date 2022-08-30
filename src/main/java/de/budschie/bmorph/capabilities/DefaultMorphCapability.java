@@ -51,11 +51,6 @@ public class DefaultMorphCapability implements IMorphCapability
 	
 	AbilitySerializationContext context = new AbilitySerializationContext();
 	
-	public DefaultMorphCapability()
-	{
-		morphList.setFavouriteList(favouriteList);
-	}
-	
 	@Override
 	public AbilitySerializationContext getAbilitySerializationContext()
 	{
@@ -71,6 +66,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	public DefaultMorphCapability(Player owner)
 	{
 		this.owner = owner;
+		morphList.setFavouriteList(favouriteList);
 	}
 	
 	@Override
@@ -203,9 +199,21 @@ public class DefaultMorphCapability implements IMorphCapability
 	}
 	
 	@Override
-	public void removeFromMorphList(MorphItem morphItem)
+	public void addMorphItem(MorphItem morphItem)
 	{
-		morphList.removeFromMorphList(morphItem.getUUID());
+		morphList.addMorphItem(morphItem);
+	}
+
+	@Override
+	public void removeMorphItem(MorphItem morphItem)
+	{
+		morphList.removeMorphItem(morphItem.getUUID());
+	}
+
+	@Override
+	public void removeMorphItem(UUID key)
+	{
+		morphList.removeMorphItem(key);
 	}
 	
 	@Override
@@ -420,6 +428,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	public void setFavouriteList(FavouriteList favouriteList)
 	{
 		this.favouriteList = favouriteList;
+		this.morphList.setFavouriteList(favouriteList);
 	}
 
 	@Override
