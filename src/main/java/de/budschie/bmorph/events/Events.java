@@ -436,8 +436,6 @@ public class Events
 	@SubscribeEvent
 	public static void onClonePlayer(PlayerEvent.Clone event)
 	{
-		// TODO: This may cause a crash under certain circumstances, so I should maybe replace this code!
-		// I've tested it and it doesnt cause a crash. That's good.
 		if(!(event.isWasDeath() && !event.getEntity().getServer().getGameRules().getBoolean(BMorphMod.KEEP_MORPH_INVENTORY)))
 		{
 			event.getOriginal().reviveCaps();

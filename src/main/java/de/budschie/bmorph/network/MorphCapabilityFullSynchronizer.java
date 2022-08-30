@@ -30,7 +30,6 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 {
 	private static final Logger LOGGER = LogManager.getLogger();
 	
-	// TODO: Deleting works when using newly picked up items; with this packet however it does not work.
 	@Override
 	public void encode(MorphPacket packet, FriendlyByteBuf buffer)
 	{		

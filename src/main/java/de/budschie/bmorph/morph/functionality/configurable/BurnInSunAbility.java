@@ -77,7 +77,6 @@ public class BurnInSunAbility extends Ability
 						// Check if we shall account for the hat. If this is the case, damage the head.
 						if(!ignoreHat && !hatItem.isEmpty())
 						{
-							// TODO: This could *maybe* cause a bug where the hat doesn't get destroyed.
 							hatItem.setDamageValue(hatItem.getDamageValue() + player.getRandom().nextInt(maxArmorDamage));
 							
 							if (hatItem.getDamageValue() >= hatItem.getMaxDamage())

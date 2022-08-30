@@ -75,7 +75,7 @@ public class MorphUtil
 		morphToServer(morphItem, Optional.empty(), reason, player, force);
 	}
 	
-	/** Method to invoke a morph operation on the server. This will be synced to every player on the server. TODO: Only sync change to players that are being tracked.  **/
+	/** Method to invoke a morph operation on the server. This will be synced to every player on the server.  **/
 	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
 	public static void morphToServer(Optional<MorphItem> morphItem, Optional<Integer> morphIndex, Player player, boolean force)
 	{
