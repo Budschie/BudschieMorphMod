@@ -38,14 +38,17 @@ public class SoundSynchronizer
 				
 				Entity entity = cap.getOrCreateCachedEntity(player);
 				
-				Consumer<SoundEvent> soundSetter = soundEvent -> event.setSound(soundEvent);
-				replaceSound(player, entity, event.getSound(), GET_SWIM_SOUND, soundSetter);
-				replaceSound(player, entity, event.getSound(), GET_SWIM_SPLASH_SOUND, soundSetter);
-				replaceSound(player, entity, event.getSound(), GET_SWIM_HIGH_SPEED_SOUND, soundSetter);
-				
-				if(entity instanceof LivingEntity living)
+				if(entity != null)
 				{
-					replaceSound(player, living, event.getSound(), GET_DEATH_SOUND, soundSetter);
+					Consumer<SoundEvent> soundSetter = soundEvent -> event.setSound(soundEvent);
+					replaceSound(player, entity, event.getSound(), GET_SWIM_SOUND, soundSetter);
+					replaceSound(player, entity, event.getSound(), GET_SWIM_SPLASH_SOUND, soundSetter);
+					replaceSound(player, entity, event.getSound(), GET_SWIM_HIGH_SPEED_SOUND, soundSetter);
+					
+					if(entity instanceof LivingEntity living)
+					{
+						replaceSound(player, living, event.getSound(), GET_DEATH_SOUND, soundSetter);
+					}
 				}
 			}
 		}
