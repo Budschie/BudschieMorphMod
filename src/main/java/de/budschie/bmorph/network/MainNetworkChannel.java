@@ -1,5 +1,7 @@
 package de.budschie.bmorph.network;
 
+import java.util.Optional;
+
 import de.budschie.bmorph.main.References;
 import de.budschie.bmorph.network.AbilityGroupSync.AbilityGroupSyncPacket;
 import de.budschie.bmorph.network.AdditionalAbilitySynchronization.AdditionalAbilitySynchronizationPacket;
@@ -26,6 +28,7 @@ import de.budschie.bmorph.network.PufferfishPuff.PufferfishPuffPacket;
 import de.budschie.bmorph.network.SquidBoost.SquidBoostPacket;
 import de.budschie.bmorph.network.VisualMorphSynchronizer.VisualMorphPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
@@ -43,34 +46,34 @@ public class MainNetworkChannel
 //		INSTANCE.registerMessage(id++, MorphCapabilityFullSynchronizer.MorphPacket.class, MorphCapabilityFullSynchronizer::encode,
 //				MorphCapabilityFullSynchronizer::decode, MorphCapabilityFullSynchronizer::handle);
 		
-		registerSimpleImplPacket(MorphPacket.class, new MorphCapabilityFullSynchronizer());
-		registerSimpleImplPacket(MorphAddedPacket.class, new MorphAddedSynchronizer());
-		registerSimpleImplPacket(MorphRemovedPacket.class, new MorphRemovedSynchronizer());
-		registerSimpleImplPacket(MorphChangedPacket.class, new MorphChangedSynchronizer());
-		registerSimpleImplPacket(RequestMorphIndexChangePacket.class, new MorphRequestMorphIndexChange());
-		registerSimpleImplPacket(MorphRequestAbilityUsagePacket.class, new MorphRequestAbilityUsage());
-		registerSimpleImplPacket(MorphRequestFavouriteChangePacket.class, new MorphRequestFavouriteChange());
-		registerSimpleImplPacket(SquidBoostPacket.class, new SquidBoost());
-		registerSimpleImplPacket(ConfiguredAbilityPacket.class, new ConfiguredAbilitySynchronizer());
-		registerSimpleImplPacket(PufferfishPuffPacket.class, new PufferfishPuff());
-		registerSimpleImplPacket(GuardianBeamAttackPacket.class, new GuardianBeamAttack());
-		registerSimpleImplPacket(DeleteOrDropMorphPacket.class, new DeleteOrDropMorph());
-		registerSimpleImplPacket(VisualMorphPacket.class, new VisualMorphSynchronizer());
-		registerSimpleImplPacket(GlideStatusChangePacket.class, new GlideStatusChange());
-		registerSimpleImplPacket(AdditionalAbilitySynchronizationPacket.class, new AdditionalAbilitySynchronization());
-		registerSimpleImplPacket(ParrotDanceSyncPacket.class, new ParrotDanceSync());
-		registerSimpleImplPacket(MorphSheepShearedPacket.class, new MorphSheepSheared());
-		registerSimpleImplPacket(DataTransfomerSynchronizerPacket.class, new DataTransformerSynchronizer());
-		registerSimpleImplPacket(FlightPacket.class, new Flight());
-		registerSimpleImplPacket(MorphItemDisabledPacket.class, new MorphItemDisabled());
-		registerSimpleImplPacket(AbilityGroupSyncPacket.class, new AbilityGroupSync());
-		registerSimpleImplPacket(EvokerSpellPacket.class, new EvokerSpell());
-		registerSimpleImplPacket(ProxyEntityEventPacket.class, new ProxyEntityEvent());
-		registerSimpleImplPacket(EntityMovementChangedPacket.class, new EntityMovementChanged());
+		registerSimpleImplPacket(MorphPacket.class, new MorphCapabilityFullSynchronizer(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(MorphAddedPacket.class, new MorphAddedSynchronizer(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(MorphRemovedPacket.class, new MorphRemovedSynchronizer(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(MorphChangedPacket.class, new MorphChangedSynchronizer(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(RequestMorphIndexChangePacket.class, new MorphRequestMorphIndexChange(), NetworkDirection.PLAY_TO_SERVER);
+		registerSimpleImplPacket(MorphRequestAbilityUsagePacket.class, new MorphRequestAbilityUsage(), NetworkDirection.PLAY_TO_SERVER);
+		registerSimpleImplPacket(MorphRequestFavouriteChangePacket.class, new MorphRequestFavouriteChange(), NetworkDirection.PLAY_TO_SERVER);
+		registerSimpleImplPacket(SquidBoostPacket.class, new SquidBoost(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(ConfiguredAbilityPacket.class, new ConfiguredAbilitySynchronizer(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(PufferfishPuffPacket.class, new PufferfishPuff(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(GuardianBeamAttackPacket.class, new GuardianBeamAttack(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(DeleteOrDropMorphPacket.class, new DeleteOrDropMorph(), NetworkDirection.PLAY_TO_SERVER);
+		registerSimpleImplPacket(VisualMorphPacket.class, new VisualMorphSynchronizer(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(GlideStatusChangePacket.class, new GlideStatusChange(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(AdditionalAbilitySynchronizationPacket.class, new AdditionalAbilitySynchronization(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(ParrotDanceSyncPacket.class, new ParrotDanceSync(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(MorphSheepShearedPacket.class, new MorphSheepSheared(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(DataTransfomerSynchronizerPacket.class, new DataTransformerSynchronizer(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(FlightPacket.class, new Flight(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(MorphItemDisabledPacket.class, new MorphItemDisabled(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(AbilityGroupSyncPacket.class, new AbilityGroupSync(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(EvokerSpellPacket.class, new EvokerSpell(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(ProxyEntityEventPacket.class, new ProxyEntityEvent(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(EntityMovementChangedPacket.class, new EntityMovementChanged(), NetworkDirection.PLAY_TO_CLIENT);
 	}
 	
-	public static <T> void registerSimpleImplPacket(Class<T> packetClass, ISimpleImplPacket<T> packet)
+	public static <T> void registerSimpleImplPacket(Class<T> packetClass, ISimpleImplPacket<T> packet, NetworkDirection netDir)
 	{
-		INSTANCE.registerMessage(id++, packetClass, packet::encode, packet::decode, packet::handle);
+		INSTANCE.registerMessage(id++, packetClass, packet::encode, packet::decode, packet::handle, Optional.of(netDir));
 	}
 }
