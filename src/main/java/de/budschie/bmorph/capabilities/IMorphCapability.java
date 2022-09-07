@@ -15,6 +15,7 @@ import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 public interface IMorphCapability
@@ -41,6 +42,8 @@ public interface IMorphCapability
 	
 	/** Returns the morph that this player is currently morphed into. **/
 	public Optional<MorphItem> getCurrentMorph();
+	/** Returns the entity which the morph that this player is currently morphed into represents. **/
+	public Optional<Entity> getCurrentMorphEntity();
 	
 	/** This method adds the given morph item to the morph list and returns the index of the added morph. Deprecated, use {@link #addMorphItem(MorphItem)} instead. **/
 	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)

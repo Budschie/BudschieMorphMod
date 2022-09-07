@@ -51,6 +51,28 @@ public class DefaultMorphCapability implements IMorphCapability
 	
 	AbilitySerializationContext context = new AbilitySerializationContext();
 	
+	private Optional<Entity> cachedEntity = Optional.empty();
+	
+	// TODO: Merge this morph entity system with the system from the IRenderDataCapability
+	@Override
+	public Optional<Entity> getCurrentMorphEntity()
+	{
+		if(morph.isPresent())
+		{
+			if(!cachedEntity.isPresent())
+			{
+				// We do nullable instead of normal optional because an error is indicated as null here
+				cachedEntity = Optional.ofNullable(morph.get().createEntity(owner.getLevel()));
+			}
+			
+			return cachedEntity;
+		}
+		else
+		{
+			return Optional.empty();
+		}
+	}
+	
 	@Override
 	public AbilitySerializationContext getAbilitySerializationContext()
 	{
@@ -310,12 +332,19 @@ public class DefaultMorphCapability implements IMorphCapability
 	{
 		this.morph = Optional.of(morph);
 		setMorphReason(reason);
+		resetEntityCache();
 	}
 
 	@Override
 	public void demorph()
 	{
 		demorph(MorphReasonRegistry.MORPHED_BY_COMMAND.get());
+		resetEntityCache();
+	}
+	
+	private void resetEntityCache()
+	{
+		cachedEntity = Optional.empty();
 	}
 	
 	@Override
