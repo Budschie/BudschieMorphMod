@@ -83,7 +83,7 @@ public class RenderHandler
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void onRenderedHandler(RenderPlayerEvent.Pre event)
 	{
-		// TODO: Fix this mess
+		// TODO: Fix this mess EDIT: If I find a better way of doing this, I will implement it, but as of now, I wont
 		if(veryDodgyStackOverflowPreventionHackJesJes)
 			return;
 		
