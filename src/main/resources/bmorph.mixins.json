@@ -15,7 +15,8 @@
 		"PowderSnowBlockMixin",
 		"IsHostileMixin",
 		"LivingEntityStandOnFluidMixin",
-		"FireImmunityMixin"
+		"FireImmunityMixin",
+		"LivingEntitySoundMixin"
 	],
 	"minVersion": "0.8"
 }
