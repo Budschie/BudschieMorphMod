@@ -58,8 +58,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
+import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.EnderMan;
@@ -593,6 +597,36 @@ public class Events
 	public static void onMorphedServer(PlayerMorphEvent.Server.Post event)
 	{
 		event.getPlayer().refreshDimensions();
+		
+
+		IMorphCapability cap = MorphUtil.getCapOrNull(event.getPlayer());
+		
+		if(cap != null)
+		{
+			Optional<AttributeMap> attributesToCopy = Optional.empty();
+			
+			if(event.getAboutToMorphTo() != null && cap.getCurrentMorphEntity().isPresent())
+			{
+				Entity toMorphTo = cap.getCurrentMorphEntity().get();
+				
+				if(toMorphTo instanceof LivingEntity living)
+				{
+					// living.getAttributes().attributes.forEach((attribute, instance) -> event.getPlayer().getAttribute(attribute).setBaseValue(instance.getBaseValue()));
+					attributesToCopy = Optional.of(living.getAttributes());
+				}
+			}
+			
+			AttributeMap toCopyFromAttributeMap = attributesToCopy.orElseGet(() -> new AttributeMap(DefaultAttributes.getSupplier(EntityType.PLAYER)));
+			
+			for(Attribute playerAttributes : DefaultAttributes.getSupplier(EntityType.PLAYER).instances.keySet())
+			{
+				if(toCopyFromAttributeMap.hasAttribute(playerAttributes))
+				{
+					event.getPlayer().getAttribute(playerAttributes).setBaseValue(toCopyFromAttributeMap.getBaseValue(playerAttributes));
+				}
+				// event.getPlayer().getAttribute(aPair.getKey()).setBaseValue();
+			}
+		}
 		
 		if(event.getAboutToMorphTo() == null)
 			return;

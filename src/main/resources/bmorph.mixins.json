@@ -6,7 +6,8 @@
 	"client": [
         "PlayerRendererMixin",
 		"EntityMixin",
-		"PlayerMixin"
+		"PlayerMixin",
+		"LocalPlayerMixin"
 	],
 	"mixins": [
 		"PlayerSoundMixin",
