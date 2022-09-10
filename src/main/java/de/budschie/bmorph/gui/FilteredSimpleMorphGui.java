@@ -38,6 +38,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 // The current state of this class...
+// TODO: Ability logos; maybe copy attributes of morph to the player
 public class FilteredSimpleMorphGui extends AbstractMorphGui
 {
 	private static final Logger LOGGER = LogManager.getLogger();
