@@ -18,5 +18,6 @@
     "gamerule.doMorphDrops": "Allows entities to drop their morph upon death.",
     "gamerule.allowMorphDeletion": "Controls whether to allow players to delete morphs.",
     "gamerule.allowMorphDropping": "Controls whether to allow players to drop morphs.",
-    "gamerule.allowMorphTools": "Setting this to false prevents players from using tools."
+    "gamerule.allowMorphTools": "Setting this to false prevents players from using tools.",
+    "gamerule.copyMorphSpeed": "Changes the speed of the player to the speed of the morph when morphing."
 }

@@ -18,5 +18,6 @@
     "gamerule.doMorphDrops": "Erlaubt Entities, beim Tod ihren jeweiligen Morph fallenzulassen.",
     "gamerule.allowMorphDeletion": "Kontrolliert, ob Spieler Morphs löschen dürfen oder nicht.",
     "gamerule.allowMorphDropping": "Kontrolliert, ob Spieler Morphs fallen lassen dürfen oder nicht.",
-    "gamerule.allowMorphTools": "Diese Regel zu deaktivieren führt dazu, dass Spieler ihre Werkzeuge nicht mehr benutzen können."
+    "gamerule.allowMorphTools": "Diese Regel zu deaktivieren führt dazu, dass Spieler ihre Werkzeuge nicht mehr benutzen können.",
+    "gamerule.copyMorphSpeed": "Übernimmt die Geschwindigkeit des gemorphten Mobs."
 }
