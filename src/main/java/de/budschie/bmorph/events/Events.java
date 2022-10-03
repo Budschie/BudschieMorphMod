@@ -613,7 +613,7 @@ public class Events
 	
 	public static boolean mayCopySpeed(LivingEntity entity)
 	{
-		return entity.getLevel().getGameRules().getBoolean(BMorphMod.COPY_MORPH_SPEED) && !(entity.getAttributeBaseValue(Attributes.MOVEMENT_SPEED) == 0.7f && !ForgeRegistries.ENTITIES.tags().getTag(ModEntityTypeTags.FORCE_SPEED_COPY).contains(entity.getType())) &&
+		return entity.getLevel().getGameRules().getBoolean(BMorphMod.INHERIT_MORPH_SPEED) && !(entity.getAttributeBaseValue(Attributes.MOVEMENT_SPEED) == 0.7f && !ForgeRegistries.ENTITIES.tags().getTag(ModEntityTypeTags.FORCE_SPEED_COPY).contains(entity.getType())) &&
 				!ForgeRegistries.ENTITIES.tags().getTag(ModEntityTypeTags.PROHIBIT_SPEED_COPY).contains(entity.getType());
 	}
 	
