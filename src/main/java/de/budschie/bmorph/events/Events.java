@@ -134,12 +134,6 @@ public class Events
 	}
 	
 	@SubscribeEvent
-	public static void onEntityDamaged(LivingHurtEvent event)
-	{
-		event.setAmount(3);
-	}
-	
-	@SubscribeEvent
 	public static void onRegisterCapabilities(RegisterCapabilitiesEvent event)
 	{
 		event.register(IMorphCapability.class);
