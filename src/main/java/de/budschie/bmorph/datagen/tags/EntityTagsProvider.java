@@ -33,5 +33,7 @@ public class EntityTagsProvider extends TagsProvider<EntityType<?>>
 		this.tag(ModEntityTypeTags.IRON_GOLEM_ALIKE).add(EntityType.IRON_GOLEM);
 		this.tag(ModEntityTypeTags.UNDEAD).add(EntityType.ZOGLIN).add(EntityType.PHANTOM).add(EntityType.ZOMBIE).add(EntityType.DROWNED)
 		.add(EntityType.HUSK).add(EntityType.ZOMBIE_VILLAGER).add(EntityType.ZOMBIFIED_PIGLIN).add(EntityType.SKELETON).add(EntityType.STRAY).add(EntityType.WITHER_SKELETON);
+		
+		this.tag(ModEntityTypeTags.PROHIBIT_SPEED_COPY).add(EntityType.VILLAGER);
 	}
 }

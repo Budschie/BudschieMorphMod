@@ -14,6 +14,10 @@ public class ModEntityTypeTags
 	public static TagKey<EntityType<?>> IRON_GOLEM_ALIKE = createTag("iron_golem_alike");
 	// Tag for undead mobs
 	public static TagKey<EntityType<?>> UNDEAD = createTag("undead");
+	// Set this tag to an entity to avoid copying speed info from this entity to the player
+	public static TagKey<EntityType<?>> PROHIBIT_SPEED_COPY = createTag("prohibit_speed_copy");
+	// Set this tag to an entity to force this mod to copy speed info to the player
+	public static TagKey<EntityType<?>> FORCE_SPEED_COPY = createTag("force_speed_copy");
 	
 	public static TagKey<EntityType<?>> createTag(ResourceLocation rl)
 	{

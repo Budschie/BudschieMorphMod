@@ -23,6 +23,8 @@ import de.budschie.bmorph.capabilities.evoker.IEvokerSpellCapability;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityHandler;
 import de.budschie.bmorph.capabilities.guardian.GuardianBeamCapabilityInstance;
 import de.budschie.bmorph.capabilities.guardian.IGuardianBeamCapability;
+import de.budschie.bmorph.capabilities.morph_attribute_modifiers.IMorphAttributeModifiers;
+import de.budschie.bmorph.capabilities.morph_attribute_modifiers.MorphAttributeModifiersInstance;
 import de.budschie.bmorph.capabilities.parrot_dance.IParrotDanceCapability;
 import de.budschie.bmorph.capabilities.parrot_dance.ParrotDanceCapabilityHandler;
 import de.budschie.bmorph.capabilities.phantom_glide.GlideCapabilityHandler;
@@ -47,6 +49,7 @@ import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphReasonRegistry;
 import de.budschie.bmorph.morph.MorphUtil;
+import de.budschie.bmorph.tags.ModEntityTypeTags;
 import de.budschie.bmorph.util.BudschieUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -60,15 +63,20 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Slime;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ProjectileWeaponItem;
@@ -88,6 +96,7 @@ import net.minecraftforge.event.entity.EntityLeaveWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
@@ -99,6 +108,7 @@ import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 @EventBusSubscriber
@@ -106,6 +116,8 @@ public class Events
 {
 	private static final Logger LOGGER = LogManager.getLogger();
 	public static int AGGRO_TICKS_TO_PASS = 200;
+	
+	private static final String MORPH_ATTRIBUTE_ID = References.MODID + ":please_remove_lol";
 	
 	// This field indicates whether we should resolve the ability names or not
 	public static final MorphAbilityManager MORPH_ABILITY_MANAGER = new MorphAbilityManager();
@@ -119,6 +131,12 @@ public class Events
 	public static void onAcquiredMorph(AcquiredMorphEvent.Post event)
 	{
 		BMorphMod.ACQUIRED_MORPH.trigger(event.getMorph(), (ServerPlayer) event.getPlayer());
+	}
+	
+	@SubscribeEvent
+	public static void onEntityDamaged(LivingHurtEvent event)
+	{
+		event.setAmount(3);
 	}
 	
 	@SubscribeEvent
@@ -136,6 +154,7 @@ public class Events
 		event.register(IEvokerSpellCapability.class);
 		event.register(IProxyEntityCapability.class);
 		event.register(ICustomRidingData.class);
+		event.register(IMorphAttributeModifiers.class);
 	}
 	
 	// Add additional target selector to iron golem entity
@@ -593,16 +612,23 @@ public class Events
 		handleCustomRidingOffset(event.getPlayer(), event.getAboutToMorphTo());
 	}
 	
+	private static boolean mayCopySpeed(LivingEntity entity)
+	{
+		return (entity.getAttributeBaseValue(Attributes.MOVEMENT_SPEED) != 0.7f && !ForgeRegistries.ENTITIES.tags().getTag(ModEntityTypeTags.PROHIBIT_SPEED_COPY).contains(entity.getType())) ||
+				ForgeRegistries.ENTITIES.tags().getTag(ModEntityTypeTags.FORCE_SPEED_COPY).contains(entity.getType());
+	}
+	
 	@SubscribeEvent
 	public static void onMorphedServer(PlayerMorphEvent.Server.Post event)
 	{
 		event.getPlayer().refreshDimensions();
 		
-
 		IMorphCapability cap = MorphUtil.getCapOrNull(event.getPlayer());
+		IMorphAttributeModifiers attribCap = event.getPlayer().getCapability(MorphAttributeModifiersInstance.MORPH_ATTRIBUTE_MODIFIERS_CAP).orElse(null);
 		
-		if(cap != null)
-		{
+		if(cap != null && attribCap != null)
+		{			
+			boolean copySpeed = true;
 			Optional<AttributeMap> attributesToCopy = Optional.empty();
 			
 			if(event.getAboutToMorphTo() != null && cap.getCurrentMorphEntity().isPresent())
@@ -613,6 +639,7 @@ public class Events
 				{
 					// living.getAttributes().attributes.forEach((attribute, instance) -> event.getPlayer().getAttribute(attribute).setBaseValue(instance.getBaseValue()));
 					attributesToCopy = Optional.of(living.getAttributes());
+					copySpeed = mayCopySpeed(living);
 				}
 			}
 			
@@ -620,9 +647,22 @@ public class Events
 			
 			for(Attribute playerAttributes : DefaultAttributes.getSupplier(EntityType.PLAYER).instances.keySet())
 			{
+				if(playerAttributes == Attributes.MOVEMENT_SPEED && !copySpeed)
+					continue;
+				
+				// Copy over attribute modifiers as well
 				if(toCopyFromAttributeMap.hasAttribute(playerAttributes))
 				{
+					// Check if the attribute instance for the speed is the same as the attrib instance of the supplier of a living entity.
+					
 					event.getPlayer().getAttribute(playerAttributes).setBaseValue(toCopyFromAttributeMap.getBaseValue(playerAttributes));
+					
+					for(AttributeModifier modifier : toCopyFromAttributeMap.getInstance(playerAttributes).getModifiers())
+					{
+						AttributeModifier mod = new AttributeModifier(UUID.randomUUID(), modifier.getName(), modifier.getAmount(), modifier.getOperation());
+						event.getPlayer().getAttribute(playerAttributes).addTransientModifier(mod);
+						attribCap.addAttributeModifier(playerAttributes, mod);
+					}
 				}
 				// event.getPlayer().getAttribute(aPair.getKey()).setBaseValue();
 			}
@@ -666,6 +706,13 @@ public class Events
 		}
 		
 		event.getMorphCapability().getCurrentMorph().ifPresent(currentMorph -> BMorphMod.DEMORPHED_FROM.trigger(currentMorph, (ServerPlayer) event.getPlayer()));
+		
+		IMorphAttributeModifiers attribCap = event.getPlayer().getCapability(MorphAttributeModifiersInstance.MORPH_ATTRIBUTE_MODIFIERS_CAP).orElse(null);
+		
+		if(attribCap != null)
+		{
+			attribCap.removeAllAttributesFromPlayer(event.getPlayer());
+		}
 	}
 	
 	private static void aggro(IMorphCapability capability, int aggroDuration)
