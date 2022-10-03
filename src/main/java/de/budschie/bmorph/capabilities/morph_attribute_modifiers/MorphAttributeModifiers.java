@@ -4,6 +4,7 @@ import com.google.common.collect.HashMultimap;
 
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 
 public class MorphAttributeModifiers implements IMorphAttributeModifiers
@@ -26,5 +27,11 @@ public class MorphAttributeModifiers implements IMorphAttributeModifiers
 	public void removeAllAttributesFromPlayer(Player player)
 	{
 		player.getAttributes().removeAttributeModifiers(attributeMap);
+	}
+
+	@Override
+	public boolean containsSpeedAttribute()
+	{
+		return attributeMap.containsKey(Attributes.MOVEMENT_SPEED);
 	}
 }

@@ -34,6 +34,7 @@ import de.budschie.bmorph.capabilities.pufferfish.IPufferfishCapability;
 import de.budschie.bmorph.capabilities.pufferfish.PufferfishCapabilityHandler;
 import de.budschie.bmorph.capabilities.sheep.ISheepCapability;
 import de.budschie.bmorph.capabilities.sheep.SheepCapabilityHandler;
+import de.budschie.bmorph.capabilities.speed_of_morph_cap.IPlayerUsingSpeedOfMorph;
 import de.budschie.bmorph.capabilities.stand_on_fluid.IStandOnFluidCapability;
 import de.budschie.bmorph.capabilities.stand_on_fluid.StandOnFluidInstance;
 import de.budschie.bmorph.entity.MorphEntity;
@@ -49,6 +50,8 @@ import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphReasonRegistry;
 import de.budschie.bmorph.morph.MorphUtil;
+import de.budschie.bmorph.network.ChangeUsingSpeedOfMorph;
+import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.tags.ModEntityTypeTags;
 import de.budschie.bmorph.util.BudschieUtils;
 import net.minecraft.ChatFormatting;
@@ -108,6 +111,7 @@ import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
@@ -149,6 +153,7 @@ public class Events
 		event.register(IProxyEntityCapability.class);
 		event.register(ICustomRidingData.class);
 		event.register(IMorphAttributeModifiers.class);
+		event.register(IPlayerUsingSpeedOfMorph.class);
 	}
 	
 	// Add additional target selector to iron golem entity
@@ -606,10 +611,10 @@ public class Events
 		handleCustomRidingOffset(event.getPlayer(), event.getAboutToMorphTo());
 	}
 	
-	private static boolean mayCopySpeed(LivingEntity entity)
+	public static boolean mayCopySpeed(LivingEntity entity)
 	{
-		return (entity.getAttributeBaseValue(Attributes.MOVEMENT_SPEED) != 0.7f && !ForgeRegistries.ENTITIES.tags().getTag(ModEntityTypeTags.PROHIBIT_SPEED_COPY).contains(entity.getType())) ||
-				ForgeRegistries.ENTITIES.tags().getTag(ModEntityTypeTags.FORCE_SPEED_COPY).contains(entity.getType());
+		return entity.getLevel().getGameRules().getBoolean(BMorphMod.COPY_MORPH_SPEED) && !(entity.getAttributeBaseValue(Attributes.MOVEMENT_SPEED) == 0.7f && !ForgeRegistries.ENTITIES.tags().getTag(ModEntityTypeTags.FORCE_SPEED_COPY).contains(entity.getType())) &&
+				!ForgeRegistries.ENTITIES.tags().getTag(ModEntityTypeTags.PROHIBIT_SPEED_COPY).contains(entity.getType());
 	}
 	
 	@SubscribeEvent
@@ -622,7 +627,9 @@ public class Events
 		
 		if(cap != null && attribCap != null)
 		{			
-			boolean copySpeed = true;
+			boolean copySpeed = false;
+			boolean isDefault = true;
+			
 			Optional<AttributeMap> attributesToCopy = Optional.empty();
 			
 			if(event.getAboutToMorphTo() != null && cap.getCurrentMorphEntity().isPresent())
@@ -634,15 +641,23 @@ public class Events
 					// living.getAttributes().attributes.forEach((attribute, instance) -> event.getPlayer().getAttribute(attribute).setBaseValue(instance.getBaseValue()));
 					attributesToCopy = Optional.of(living.getAttributes());
 					copySpeed = mayCopySpeed(living);
+					isDefault = false;
 				}
 			}
 			
+			// Bug here
 			AttributeMap toCopyFromAttributeMap = attributesToCopy.orElseGet(() -> new AttributeMap(DefaultAttributes.getSupplier(EntityType.PLAYER)));
 			
 			for(Attribute playerAttributes : DefaultAttributes.getSupplier(EntityType.PLAYER).instances.keySet())
 			{
-				if(playerAttributes == Attributes.MOVEMENT_SPEED && !copySpeed)
-					continue;
+				if(playerAttributes == Attributes.MOVEMENT_SPEED)
+				{
+					if(!copySpeed && !isDefault)
+					{
+						event.getPlayer().getAttribute(playerAttributes).setBaseValue(DefaultAttributes.getSupplier(EntityType.PLAYER).getBaseValue(Attributes.MOVEMENT_SPEED));
+						continue;
+					}
+				}
 				
 				// Copy over attribute modifiers as well
 				if(toCopyFromAttributeMap.hasAttribute(playerAttributes))
@@ -660,6 +675,12 @@ public class Events
 				}
 				// event.getPlayer().getAttribute(aPair.getKey()).setBaseValue();
 			}
+			
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)event.getPlayer()), new ChangeUsingSpeedOfMorph.ChangeUsingSpeedOfMorphPacket(copySpeed));
+		}
+		else
+		{
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)event.getPlayer()), new ChangeUsingSpeedOfMorph.ChangeUsingSpeedOfMorphPacket(false));
 		}
 		
 		if(event.getAboutToMorphTo() == null)
@@ -706,6 +727,7 @@ public class Events
 		if(attribCap != null)
 		{
 			attribCap.removeAllAttributesFromPlayer(event.getPlayer());
+			// Set default attributes
 		}
 	}
 	

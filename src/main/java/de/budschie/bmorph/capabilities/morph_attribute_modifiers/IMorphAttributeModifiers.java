@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
  */
 public interface IMorphAttributeModifiers
 {
+	public boolean containsSpeedAttribute();
 	public void removeAllAttributesFromPlayer(Player player);
 	
 	public void addAttributeModifier(Attribute attribute, AttributeModifier modifier);

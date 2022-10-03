@@ -5,6 +5,7 @@ import java.util.Optional;
 import de.budschie.bmorph.main.References;
 import de.budschie.bmorph.network.AbilityGroupSync.AbilityGroupSyncPacket;
 import de.budschie.bmorph.network.AdditionalAbilitySynchronization.AdditionalAbilitySynchronizationPacket;
+import de.budschie.bmorph.network.ChangeUsingSpeedOfMorph.ChangeUsingSpeedOfMorphPacket;
 import de.budschie.bmorph.network.ConfiguredAbilitySynchronizer.ConfiguredAbilityPacket;
 import de.budschie.bmorph.network.DataTransformerSynchronizer.DataTransfomerSynchronizerPacket;
 import de.budschie.bmorph.network.DeleteOrDropMorph.DeleteOrDropMorphPacket;
@@ -70,6 +71,7 @@ public class MainNetworkChannel
 		registerSimpleImplPacket(EvokerSpellPacket.class, new EvokerSpell(), NetworkDirection.PLAY_TO_CLIENT);
 		registerSimpleImplPacket(ProxyEntityEventPacket.class, new ProxyEntityEvent(), NetworkDirection.PLAY_TO_CLIENT);
 		registerSimpleImplPacket(EntityMovementChangedPacket.class, new EntityMovementChanged(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(ChangeUsingSpeedOfMorphPacket.class, new ChangeUsingSpeedOfMorph(), NetworkDirection.PLAY_TO_CLIENT);
 	}
 	
 	public static <T> void registerSimpleImplPacket(Class<T> packetClass, ISimpleImplPacket<T> packet, NetworkDirection netDir)
