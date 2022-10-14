@@ -19,5 +19,7 @@
     "gamerule.allowMorphDeletion": "Kontrolliert, ob Spieler Morphs löschen dürfen oder nicht.",
     "gamerule.allowMorphDropping": "Kontrolliert, ob Spieler Morphs fallen lassen dürfen oder nicht.",
     "gamerule.allowMorphTools": "Diese Regel zu deaktivieren führt dazu, dass Spieler ihre Werkzeuge nicht mehr benutzen können.",
-    "gamerule.inheritMorphSpeed": "Erbt die Geschwindigkeit des Mobs, in den man sich verwandelte."
+    "gamerule.inheritMorphSpeed": "Erbt die Geschwindigkeit des Mobs, in den man sich verwandelte.",
+    "gamerule.skipSpaceRestrictionCheck": "Überspringe beim Morphen die Überprüfung, ob genügend Platz vorhanden ist.",
+    "ui.bmorph.not_enough_space": "Es ist nicht genügend Platz vorhanden, um dich zu verwandeln."
 }

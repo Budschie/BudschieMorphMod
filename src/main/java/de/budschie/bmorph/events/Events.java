@@ -57,6 +57,7 @@ import de.budschie.bmorph.util.BudschieUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AgeableMob;
@@ -82,6 +83,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.util.FakePlayer;
@@ -709,11 +711,36 @@ public class Events
 	
 	@SubscribeEvent
 	public static void onMorphingServer(PlayerMorphEvent.Server.Pre event)
-	{
+	{		
 		if(event.getAboutToMorphTo() != null && event.getAboutToMorphTo().isDisabled())
 		{
 			event.setCanceled(true);
 			return;
+		}
+		
+		// If the morph reason is that the client requested to morph via the UI, perform a space check
+		// TODO: Add gamerule for this
+		if(event.getMorphReason() == MorphReasonRegistry.MORPHED_BY_UI.get() && !event.getPlayer().getLevel().getGameRules().getBoolean(BMorphMod.SKIP_SPACE_RESTRICTION_CHECK))
+		{
+			// Create the entity and set its location. Then, perform a collision test.
+			Entity entity = event.getAboutToMorphTo().createEntity(event.getPlayer().getLevel());
+			entity.setPos(event.getPlayer().position());
+			
+			boolean found = false;
+			
+			for(VoxelShape shape : entity.getLevel().getBlockCollisions(entity, entity.getBoundingBox()))
+			{
+				event.setCanceled(true);
+				found = true;
+				event.getPlayer().sendMessage(new TranslatableComponent("ui.bmorph.not_enough_space").withStyle(ChatFormatting.RED), new UUID(0, 0));
+				break;
+			}
+			
+			// We need this weird construct because Eclipse will whine about a non-closed closeable else
+			if(found)
+			{
+				return;
+			}
 		}
 		
 		event.getMorphCapability().getCurrentMorph().ifPresent(currentMorph -> BMorphMod.DEMORPHED_FROM.trigger(currentMorph, (ServerPlayer) event.getPlayer()));

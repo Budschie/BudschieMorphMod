@@ -19,5 +19,7 @@
     "gamerule.allowMorphDeletion": "Controls whether to allow players to delete morphs.",
     "gamerule.allowMorphDropping": "Controls whether to allow players to drop morphs.",
     "gamerule.allowMorphTools": "Setting this to false prevents players from using tools.",
-    "gamerule.inheritMorphSpeed": "Inherits the speed of the morph."
+    "gamerule.inheritMorphSpeed": "Inherits the speed of the morph.",
+    "gamerule.skipSpaceRestrictionCheck": "Skips checks which test whether enough space to morph is present or not.",
+    "ui.bmorph.not_enough_space": "There is not enough space around you to turn into this morph."
 }

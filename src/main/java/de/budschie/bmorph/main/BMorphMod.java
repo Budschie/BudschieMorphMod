@@ -45,6 +45,7 @@ public class BMorphMod
 	public static Key<BooleanValue> ALLOW_MORPH_DROPPING;
 	public static Key<BooleanValue> ALLOW_MORPH_TOOLS;
 	public static Key<BooleanValue> INHERIT_MORPH_SPEED;
+	public static Key<BooleanValue> SKIP_SPACE_RESTRICTION_CHECK;
 
 	public static Key<IntegerValue> MORPH_AGGRO_DURATION;
 	
@@ -84,6 +85,7 @@ public class BMorphMod
 		ALLOW_MORPH_DROPPING = GameRules.register("allowMorphDropping", Category.PLAYER, BooleanValue.create(true));
 		ALLOW_MORPH_TOOLS = GameRules.register("allowMorphTools", Category.PLAYER, BooleanValue.create(true));
 		INHERIT_MORPH_SPEED = GameRules.register("inheritMorphSpeed", Category.PLAYER, BooleanValue.create(false));
+		SKIP_SPACE_RESTRICTION_CHECK = GameRules.register("skipSpaceRestrictionCheck", Category.PLAYER, BooleanValue.create(false));
 
 		MainNetworkChannel.registerMainNetworkChannels();
 		
