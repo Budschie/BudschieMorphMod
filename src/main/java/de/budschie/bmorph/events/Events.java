@@ -66,12 +66,10 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -79,7 +77,6 @@ import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.monster.Slime;
-import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ProjectileWeaponItem;
@@ -97,10 +94,9 @@ import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityLeaveWorldEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
@@ -738,16 +734,15 @@ public class Events
 	}
 	
 	@SubscribeEvent
-	public static void onTargetBeingSet(LivingSetAttackTargetEvent event)
+	public static void onTargetBeingSet(LivingChangeTargetEvent event)
 	{
 		if(event.getEntity().level.isClientSide())
 			return;
 		
 		// This iron golem exception is needed because we don't want players morphed as zombies to sneak around iron golems 
-		if(event.getEntityLiving() instanceof Mob && event.getTarget() instanceof Player && event.getTarget() != event.getEntityLiving().getLastHurtByMob() && !(event.getEntity() instanceof IronGolem || event.getEntity() instanceof EnderMan))
+		if(event.getEntityLiving() instanceof Mob && event.getNewTarget() instanceof Player && event.getNewTarget() != event.getEntityLiving().getLastHurtByMob() && !(event.getEntity() instanceof IronGolem || event.getEntity() instanceof EnderMan))
 		{
-			Player player = (Player) event.getTarget();
-			Mob aggressor = (Mob) event.getEntityLiving();
+			Player player = (Player) event.getNewTarget();
 			
 			LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			
@@ -758,7 +753,9 @@ public class Events
 				if(resolved.getCurrentMorph().isPresent())
 				{
 					if(!resolved.shouldMobsAttack() && (event.getEntity().getServer().getTickCount() - resolved.getLastAggroTimestamp()) > resolved.getLastAggroDuration())
-						aggressor.setTarget(null);
+					{
+						event.setCanceled(true);
+					}
 					else
 					{
 						aggro(resolved, event.getEntity().getServer().getGameRules().getInt(BMorphMod.MORPH_AGGRO_DURATION));
@@ -766,7 +763,9 @@ public class Events
 				}
 				// Do this so that we can't morph to player, wait the 10 sec, and move back.
 				else
+				{
 					aggro(resolved, event.getEntity().getServer().getGameRules().getInt(BMorphMod.MORPH_AGGRO_DURATION));
+				}
 			}
 		}		
 	}
