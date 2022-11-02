@@ -134,7 +134,6 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
 		}
 		
 		// DAMN IT JAVA
-		// This is utterly fucking retarded
 		if((renderer instanceof HumanoidMobRenderer<?, ?> || renderer.getModel() instanceof PlayerModel<?>) && isLeft && player.getMainArm() == HumanoidArm.LEFT && player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty())
 			matrixStack.translate(.65, 0, 0);
 
