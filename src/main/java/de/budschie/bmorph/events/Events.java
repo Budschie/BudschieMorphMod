@@ -83,6 +83,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
@@ -719,13 +720,23 @@ public class Events
 		// If the morph reason is that the client requested to morph via the UI, perform a space check
 		if(event.getMorphReason() == MorphReasonRegistry.MORPHED_BY_UI.get() && !event.getPlayer().getLevel().getGameRules().getBoolean(BMorphMod.SKIP_SPACE_RESTRICTION_CHECK))
 		{
-			// Create the entity and set its location. Then, perform a collision test.
-			Entity entity = event.getAboutToMorphTo().createEntity(event.getPlayer().getLevel());
-			entity.setPos(event.getPlayer().position());
+			AABB foundShape = null;
+			
+			if(event.getAboutToMorphTo() == null)
+			{
+				foundShape = EntityType.PLAYER.getAABB(event.getPlayer().getX(), event.getPlayer().getY(), event.getPlayer().getZ());
+			}
+			else
+			{
+				// Create the entity and set its location. Then, perform a collision test.
+				Entity entity = event.getAboutToMorphTo().createEntity(event.getPlayer().getLevel());
+				entity.setPos(event.getPlayer().position());
+				foundShape = entity.getBoundingBox();
+			}
 			
 			boolean found = false;
 			
-			for(VoxelShape shape : entity.getLevel().getBlockCollisions(entity, entity.getBoundingBox()))
+			for(VoxelShape shape : event.getPlayer().getLevel().getBlockCollisions(event.getPlayer(), foundShape))
 			{
 				event.setCanceled(true);
 				found = true;
