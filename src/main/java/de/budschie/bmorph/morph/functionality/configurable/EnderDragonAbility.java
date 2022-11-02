@@ -60,6 +60,11 @@ public class EnderDragonAbility extends Ability
 			
 			// Thou shalt not fly
 			event.player.getAbilities().flying = false;
+			// Thou shalt not be kicked
+			if(!event.player.getAbilities().mayfly)
+			{
+				event.player.getAbilities().mayfly = true;
+			}
 		}
 	}
 	
