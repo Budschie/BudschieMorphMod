@@ -119,8 +119,6 @@ public class Events
 	private static final Logger LOGGER = LogManager.getLogger();
 	public static int AGGRO_TICKS_TO_PASS = 200;
 	
-	private static final String MORPH_ATTRIBUTE_ID = References.MODID + ":please_remove_lol";
-	
 	// This field indicates whether we should resolve the ability names or not
 	public static final MorphAbilityManager MORPH_ABILITY_MANAGER = new MorphAbilityManager();
 	public static final MorphNBTHandler MORPH_NBT_HANDLER = new MorphNBTHandler();
