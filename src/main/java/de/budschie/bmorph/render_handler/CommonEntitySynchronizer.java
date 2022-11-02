@@ -34,6 +34,8 @@ public class CommonEntitySynchronizer implements IEntitySynchronizerWithRotation
 		morphEntity.setOnGround(player.isOnGround());
 		
 		morphEntity.vehicle = player.vehicle;
+		
+		updateMorphRotation(morphEntity, player);
 	}
 	
 	@Override
