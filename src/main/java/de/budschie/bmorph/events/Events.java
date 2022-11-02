@@ -717,7 +717,6 @@ public class Events
 		}
 		
 		// If the morph reason is that the client requested to morph via the UI, perform a space check
-		// TODO: Add gamerule for this
 		if(event.getMorphReason() == MorphReasonRegistry.MORPHED_BY_UI.get() && !event.getPlayer().getLevel().getGameRules().getBoolean(BMorphMod.SKIP_SPACE_RESTRICTION_CHECK))
 		{
 			// Create the entity and set its location. Then, perform a collision test.
