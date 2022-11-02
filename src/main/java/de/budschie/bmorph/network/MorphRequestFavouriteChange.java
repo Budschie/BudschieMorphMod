@@ -45,22 +45,6 @@ public class MorphRequestFavouriteChange implements ISimpleImplPacket<MorphReque
 			{
 				IMorphCapability resolved = cap.resolve().get();
 						
-				
-				
-//				if(resolved.getMorphList().getMorphArrayList().size() < packet.getIndexInMorphArray() || packet.getIndexInMorphArray() < 0)
-//					System.out.println("Player " + ctx.get().getSender().getName().getString() + " with UUID " + ctx.get().getSender().getUUID() + " has tried to cause an ArrayIndexOutOfBoundsException! Shame on you!");
-//				else
-//				{
-//					FavouriteList favouriteList = resolved.getFavouriteList();
-//					
-//					if(packet.shouldAdd())
-//						favouriteList.addFavourite(packet.getIndexInMorphArray());
-//					else
-//						favouriteList.removeFavourite(packet.getIndexInMorphArray());
-//					
-//					ctx.get().setPacketHandled(true);
-//				}
-				
 				boolean hasMorphItem = resolved.getMorphList().contains(packet.getMorphItemKey());
 				
 				if(hasMorphItem)
