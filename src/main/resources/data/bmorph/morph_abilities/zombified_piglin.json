@@ -2,8 +2,7 @@
     "entity_type": "minecraft:zombified_piglin",
     "grant":
     [
-        "#bmorph:fire_immunity",
-        "bmorph:zombie_armor"
+        "#bmorph:fire_immunity"
     ],
     "revoke":
     [
