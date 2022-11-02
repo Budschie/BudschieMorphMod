@@ -7,6 +7,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Pair;
@@ -57,6 +60,8 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 /** Contains useful codecs for the abilities **/
 public class ModCodecs
 {	
+	private static final Logger LOGGER = LogManager.getLogger();
+	
 	public static final Codec<SoundEvent> SOUND_EVENT_CODEC = Codec.of(new Encoder<SoundEvent>()
 	{
 		@Override
@@ -314,7 +319,7 @@ public class ModCodecs
 					return DataResult.<Pair<A, T>>success(Pair.of(enumParsed, input));
 				else
 				{
-					System.out.println(String.format("The %s %s is unknown. Here is a list of valid operations: %s", clazz.getName(), str, 
+					LOGGER.warn(String.format("The %s %s is unknown. Here is a list of valid operations: %s", clazz.getName(), str, 
 							Stream.of(values.get()).map(validEnum -> validEnum.name().toLowerCase())
 								.collect(Collectors.joining(", "))));
 					

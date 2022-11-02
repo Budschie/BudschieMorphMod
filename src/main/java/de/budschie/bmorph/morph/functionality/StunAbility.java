@@ -81,11 +81,4 @@ public abstract class StunAbility extends Ability
 			}
 		}
 	}
-	
-//	@SubscribeEvent
-//	public void onServerStop(FMLServerStoppingEvent event)
-//	{
-//		delayHashMap.clear();
-//		System.out.println("Cleared stun list for " + this.getClass().getName() + ".");
-//	}
 }

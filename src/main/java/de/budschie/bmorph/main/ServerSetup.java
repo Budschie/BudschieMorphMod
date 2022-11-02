@@ -1,5 +1,8 @@
 package de.budschie.bmorph.main;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import de.budschie.bmorph.commands.BlacklistCommand;
 import de.budschie.bmorph.commands.MorphCommand;
@@ -15,6 +18,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @EventBusSubscriber(bus = Bus.FORGE)
 public class ServerSetup
 {
+	private static final Logger LOGGER = LogManager.getLogger();
 //	public static MinecraftServer server;
 		
 	@SubscribeEvent
@@ -29,7 +33,7 @@ public class ServerSetup
 		MorphCommand.registerCommands(event.getDispatcher());
 		BlacklistCommand.registerCommand(event.getDispatcher());
 		
-		System.out.println("Registered commands.");
+		LOGGER.info("Registered morph commands.");
 	}
 	
 	@SubscribeEvent

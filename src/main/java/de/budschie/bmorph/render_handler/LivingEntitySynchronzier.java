@@ -61,8 +61,6 @@ public class LivingEntitySynchronzier implements IEntitySynchronizer
 		// More WTF?!? Btw if you are asking yourself "WTF?!?", this is because else, there is some weird shit going on with hands and stuff.
 		// But this could just be me being stupid
 		
-//		System.out.println("Player main hand: " + player.getPrimaryHand() + "; Entity main hand: " + entity.getPrimaryHand());
-		
 //		if(entity instanceof AbstractSkeleton || entity instanceof Player)
 //		{
 //			entity.setItemInHand(InteractionHand.OFF_HAND, player.getItemInHand(InteractionHand.MAIN_HAND));

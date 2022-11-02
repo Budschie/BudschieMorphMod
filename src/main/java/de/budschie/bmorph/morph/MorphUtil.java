@@ -219,7 +219,7 @@ public class MorphUtil
 				renderDataCap.setAnimation(Optional.of(new ScaleAnimation(player, cachedEntityOld, synchronizersOld, cachedEntityNew, synchronizersNew, 20)));
 			}
 			else
-				System.out.println("Could not synchronize data, as the morph cap is not created yet.");
+				LOGGER.warn("Could not synchronize data, as the morph cap is not created yet.");
 		}
 	}
 	

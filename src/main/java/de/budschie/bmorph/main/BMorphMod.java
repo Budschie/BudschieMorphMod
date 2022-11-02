@@ -1,5 +1,8 @@
 package de.budschie.bmorph.main;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.budschie.bmorph.advancements.MorphedTrigger;
 import de.budschie.bmorph.api_interact.ShrinkAPIInteractor;
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
@@ -38,6 +41,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @EventBusSubscriber(bus = Bus.MOD)
 public class BMorphMod
 {
+	private static final Logger LOGGER = LogManager.getLogger();
+	
 	public static Key<BooleanValue> KEEP_MORPH_INVENTORY;
 	public static Key<BooleanValue> PREVENT_LOOKAT;
 	public static Key<BooleanValue> DO_MORPH_DROPS;
@@ -75,7 +80,7 @@ public class BMorphMod
 		
 		ConfigManager.INSTANCE.register(BlacklistData.class, BlacklistData::new);
 		
-		System.out.println("Registered capabilities.");
+		LOGGER.info("Registered capabilities.");
 		
 		KEEP_MORPH_INVENTORY = GameRules.register("keepMorphInventory", Category.PLAYER, BooleanValue.create(true));
 		PREVENT_LOOKAT = GameRules.register("preventLookat", Category.PLAYER, BooleanValue.create(false));

@@ -3,6 +3,9 @@ package de.budschie.bmorph.entity.rendering;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
@@ -19,6 +22,8 @@ import net.minecraft.world.entity.LivingEntity;
 
 public class MorphEntityRenderer extends EntityRenderer<MorphEntity>
 {
+	private static final Logger LOGGER = LogManager.getLogger();
+	
 	WeakHashMap<UUID, Entity> entityCache = new WeakHashMap<>();
 
 	public MorphEntityRenderer(EntityRendererProvider.Context renderManager)
@@ -35,6 +40,7 @@ public class MorphEntityRenderer extends EntityRenderer<MorphEntity>
 	@Override
 	public void render(MorphEntity entity, float something, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int light)
 	{
+		// TODO: Clean this up
 		Entity toRender = entityCache.get(entity.getUUID());
 
 		if (toRender == null)
@@ -85,7 +91,7 @@ public class MorphEntityRenderer extends EntityRenderer<MorphEntity>
 			{
 				if (((RenderType.CompositeRenderType) renderType).state.textureState.cutoutTexture().isEmpty())
 				{
-					System.out.println("If you see this, then there is an error with rendering that you should report as a bug.");
+					LOGGER.error("If you see this, then there is an error with rendering that you should report as a bug.");
 					return buffer.getBuffer(renderType);
 				} else
 				{
@@ -112,7 +118,7 @@ public class MorphEntityRenderer extends EntityRenderer<MorphEntity>
 //				}
 			} else
 			{
-				System.out.println("If you see this, then there is an error with rendering that you should report as a bug.");
+				LOGGER.error("If you see this, then there is an error with rendering that you should report as a bug.");
 				return buffer.getBuffer(renderType);
 			}
 

@@ -17,7 +17,6 @@ public class IronGolemSynchronizer
 	@SubscribeEvent
 	public static void onLivingDamage(LivingDamageEvent event)
 	{		
-//		System.out.println("Client Damage event: " + event.getEntity().getLevel().isClientSide());
 		if(event.getSource().getEntity() instanceof Player player)
 		{
 			MorphUtil.processCap(player, cap ->

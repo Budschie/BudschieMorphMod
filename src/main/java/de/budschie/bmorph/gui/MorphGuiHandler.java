@@ -152,7 +152,9 @@ public class MorphGuiHandler
 							MorphItem currentMorphItem = currentMorphGui.get().getMorphItem();
 							
 							if(currentMorphItem == null)
-								System.out.println("Yo wat");
+							{
+								throw new IllegalStateException("Current morph item should not be null.");
+							}
 							else
 							{
 								if(resolved.getFavouriteList().containsMorphItem(currentMorphItem))

@@ -3,6 +3,8 @@ package de.budschie.bmorph.morph;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
 
 import net.minecraft.world.entity.EntityType;
@@ -10,6 +12,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class BetterAnimalsPlusFallbackMorphData implements Runnable
 {
+	private static final Logger LOGGER = LogManager.getLogger();
+	
 	private static final String VARIANT_KEY_NAME = "VariantId";
 	
 	@Override

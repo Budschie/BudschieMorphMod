@@ -80,7 +80,6 @@ public class PlayerSoundMixin
 		{
 			if(entity instanceof LivingEntity living)
 			{
-				System.out.println("living");
 				return soundSupplier.apply(living);
 			}
 			else
