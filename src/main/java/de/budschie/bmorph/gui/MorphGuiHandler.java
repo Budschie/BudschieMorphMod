@@ -97,7 +97,16 @@ public class MorphGuiHandler
 	public static void onPressedKey(ClientTickEvent event)
 	{		
 		if(event.phase == Phase.END)
-		{
+		{			
+			boolean canScollDown = ClientSetup.SCROLL_DOWN_MORPH_UI.consumeClick();
+			boolean canScrollUp = ClientSetup.SCROLL_UP_MORPH_UI.consumeClick();
+			boolean canScrollLeft = ClientSetup.SCROLL_LEFT_MORPH_UI.consumeClick();
+			boolean canScrollRight = ClientSetup.SCROLL_RIGHT_MORPH_UI.consumeClick();
+			
+			boolean shouldDisplayNext = ClientSetup.NEXT_MORPH_UI.consumeClick();
+			boolean shouldDisplayPrevious = ClientSetup.PREVIOUS_MORPH_UI.consumeClick();
+			boolean shouldToggleFavourite = ClientSetup.TOGGLE_MORPH_FAVOURITE.consumeClick();
+			
 			if(Minecraft.getInstance().level != null)
 			{	
 				if(!currentMorphGui.isPresent())
@@ -113,20 +122,20 @@ public class MorphGuiHandler
 				
 				if(canGuiBeDisplayed())
 				{
-					if (ClientSetup.SCROLL_DOWN_MORPH_UI.consumeClick())
+					if (canScollDown)
 						currentMorphGui.get().scroll(1);
 		
-					if (ClientSetup.SCROLL_UP_MORPH_UI.consumeClick())
+					if (canScrollUp)
 						currentMorphGui.get().scroll(-1);
 					
-					if (ClientSetup.SCROLL_LEFT_MORPH_UI.consumeClick())
+					if (canScrollLeft)
 						currentMorphGui.get().horizontalScroll(-1);
 		
-					if (ClientSetup.SCROLL_RIGHT_MORPH_UI.consumeClick())
+					if (canScrollRight)
 						currentMorphGui.get().horizontalScroll(1);
 	
 					
-					if(ClientSetup.NEXT_MORPH_UI.consumeClick())
+					if(shouldDisplayNext)
 					{
 						currentIndex++;
 						currentIndex %= MorphGuiRegistry.REGISTRY.get().getValues().size();
@@ -134,7 +143,7 @@ public class MorphGuiHandler
 						updateCurrentMorphUI();
 					}
 					
-					if(ClientSetup.PREVIOUS_MORPH_UI.consumeClick())
+					if(shouldDisplayPrevious)
 					{
 						currentIndex--;
 						currentIndex %= MorphGuiRegistry.REGISTRY.get().getValues().size();
@@ -142,7 +151,7 @@ public class MorphGuiHandler
 						updateCurrentMorphUI();
 					}
 					
-					if(ClientSetup.TOGGLE_MORPH_FAVOURITE.consumeClick())
+					if(shouldToggleFavourite)
 					{
 						LazyOptional<IMorphCapability> cap = Minecraft.getInstance().player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 						
@@ -168,7 +177,7 @@ public class MorphGuiHandler
 					}
 				}
 				
-				if(ClientSetup.USE_ABILITY_KEY.consumeClick())
+				if(ClientSetup.USE_ABILITY_KEY.isDown())
 				{
 					MainNetworkChannel.INSTANCE.sendToServer(new MorphRequestAbilityUsage.MorphRequestAbilityUsagePacket());
 				}
@@ -179,6 +188,9 @@ public class MorphGuiHandler
 	@SubscribeEvent
 	public static void onPressedKeyboardKeyRaw(KeyInputEvent event)
 	{
+		boolean shouldDropCurrentMorph = ClientSetup.DROP_CURRENT_MORPH.isDown();
+		boolean shouldDeleteCurrentMorph = ClientSetup.DELETE_CURRENT_MORPH.isDown();
+		
 		if(canGuiBeDisplayed() && currentMorphGui.isPresent())
 		{
 			boolean glfwPress = event.getAction() == GLFW.GLFW_PRESS;
@@ -210,11 +222,11 @@ public class MorphGuiHandler
 			}
 			else if(morphItem != null)
 			{
-				if(ClientSetup.DROP_CURRENT_MORPH.consumeClick() && glfwPress)
+				if(shouldDropCurrentMorph && glfwPress)
 				{
 					dropOrDelete(true, morphItem);
 				}
-				else if(ClientSetup.DELETE_CURRENT_MORPH.consumeClick() && glfwPress)
+				else if(shouldDeleteCurrentMorph && glfwPress)
 				{
 					dropOrDelete(false, morphItem);
 				}
