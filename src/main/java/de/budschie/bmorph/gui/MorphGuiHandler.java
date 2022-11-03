@@ -151,8 +151,7 @@ public class MorphGuiHandler
 							IMorphCapability resolved = cap.resolve().get();
 							MorphItem currentMorphItem = currentMorphGui.get().getMorphItem();
 							
-							
-							if (currentMorphItem == null)
+							if (currentMorphItem != null)
 							{
 								if(resolved.getFavouriteList().containsMorphItem(currentMorphItem))
 								{
