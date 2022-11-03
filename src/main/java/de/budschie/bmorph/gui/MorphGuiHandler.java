@@ -151,16 +151,17 @@ public class MorphGuiHandler
 							IMorphCapability resolved = cap.resolve().get();
 							MorphItem currentMorphItem = currentMorphGui.get().getMorphItem();
 							
-							if(currentMorphItem == null)
-							{
-								throw new IllegalStateException("Current morph item should not be null.");
-							}
-							else
+							
+							if (currentMorphItem == null)
 							{
 								if(resolved.getFavouriteList().containsMorphItem(currentMorphItem))
+								{
 									FavouriteNetworkingHelper.removeFavouriteMorph(currentMorphItem.getUUID());
+								}
 								else
+								{
 									FavouriteNetworkingHelper.addFavouriteMorph(currentMorphItem.getUUID());
+								}
 							}
 						}
 						
@@ -169,7 +170,9 @@ public class MorphGuiHandler
 				}
 				
 				if(ClientSetup.USE_ABILITY_KEY.consumeClick())
-					MainNetworkChannel.INSTANCE.sendToServer(new MorphRequestAbilityUsage.MorphRequestAbilityUsagePacket());			
+				{
+					MainNetworkChannel.INSTANCE.sendToServer(new MorphRequestAbilityUsage.MorphRequestAbilityUsagePacket());
+				}
 			}
 		}
 	}
