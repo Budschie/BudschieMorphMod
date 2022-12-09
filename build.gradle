@@ -1,32 +1,29 @@
 buildscript {
     repositories {
         maven {
-            url = 'https://maven.minecraftforge.net'
+            url = 'https://maven.parchmentmc.org'
         }
-        
-        maven { url = 'https://maven.parchmentmc.org' }
-        
-         // maven { url = "https://repo.spongepowered.org/maven" }
-
-        mavenCentral()
     }
-
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7.+'
         classpath 'org.parchmentmc:librarian:1.+'
     }
 }
-apply plugin: 'net.minecraftforge.gradle'
+
+plugins {
+    id 'eclipse'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '5.1.+'
+}
+
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
 
 // apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
-version = '1.18.2-2.0.1'
+version = '1.19.2-1.0.0'
 group = 'de.budschie.bmorph' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'bmorph'
 
@@ -45,7 +42,7 @@ minecraft {
     //
     // Use non-default mappings at your own risk. they may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-	mappings channel: 'parchment', version: '2022.03.13-1.18.2'
+	mappings channel: 'parchment', version: '2022.11.20-1.19.2'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -193,7 +190,7 @@ dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.84'
+    minecraft 'net.minecraftforge:forge:1.19.2-43.1.10'
 
     // implementation fg.deobf("curse.maven:shrink-426386:3458658")
     // implementation fg.deobf("curse.maven:quark-243121:3394265")
@@ -205,16 +202,13 @@ dependencies {
     
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-	implementation fg.deobf("curse.maven:shrink-426386:3696155")
-	implementation fg.deobf("curse.maven:betteranimalsplus-303557:3680864")
+	implementation fg.deobf("curse.maven:shrink-426386:3906397")
+	implementation fg.deobf("curse.maven:betteranimalsplus-303557:3825879")
 	// implementation fg.deobf("curse.maven:firstpersonmodel-333287:3556530")
 	
 	// Deps of betteranimalsplus mod
-	implementation fg.deobf("curse.maven:architectury-419699:3728618")
-	implementation fg.deobf("curse.maven:curios-309927:3670447")
-	
-	implementation fg.deobf("curse.maven:artifacts-312353:3736897")
-	implementation fg.deobf("curse.maven:expandability-465066:3678612")
+	implementation fg.deobf("curse.maven:architectury-419699:4104616")
+	implementation fg.deobf("curse.maven:curios-309927:3924518")
 	
         
     // You may put jars on which you depend on in ./libs or you may define them like so..
