@@ -39,7 +39,7 @@ public class DelegateOnDamageAbility extends Ability
 	@SubscribeEvent
 	public void onPlayerTakingDamage(LivingAttackEvent event)
 	{
-		if(event.getSource().getMsgId().equals(delegateOnDamage) && event.getEntity() instanceof Player player && trackedPlayers.contains(event.getEntityLiving().getUUID()))
+		if(event.getSource().getMsgId().equals(delegateOnDamage) && event.getEntity() instanceof Player player && trackedPlayers.contains(event.getEntity().getUUID()))
 		{
 			delegateTo.resolve().get().onUsedAbility(player, MorphUtil.getCapOrNull(player).getCurrentMorph().get());
 		}

@@ -23,8 +23,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class TransformEntityOnDeath extends Ability
 {	
 	public static Codec<TransformEntityOnDeath> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ModCodecs.ENTITIES.fieldOf("transform_from").forGetter(TransformEntityOnDeath::getEntityToTransformFrom),
-			ModCodecs.ENTITIES.fieldOf("transform_to").forGetter(TransformEntityOnDeath::getEntityToTransformTo),
+			ModCodecs.ENTITY_TYPES.fieldOf("transform_from").forGetter(TransformEntityOnDeath::getEntityToTransformFrom),
+			ModCodecs.ENTITY_TYPES.fieldOf("transform_to").forGetter(TransformEntityOnDeath::getEntityToTransformTo),
 			NbtMappings.CODEC.listOf().optionalFieldOf("nbt_mappings", Arrays.asList()).forGetter(TransformEntityOnDeath::getNbtMappings),
 			ModCodecs.DATA_TRANSFORMER.listOf().optionalFieldOf("data_transformers", Arrays.asList()).forGetter(TransformEntityOnDeath::getDataTransformers),
 			Codec.STRING.listOf().optionalFieldOf("permitted_deaths").forGetter(TransformEntityOnDeath::getPermittedDeaths),

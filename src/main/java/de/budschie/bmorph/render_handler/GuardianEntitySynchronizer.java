@@ -50,6 +50,7 @@ public class GuardianEntitySynchronizer implements IEntitySynchronizer
 	
 	// Render the UI when shooting lasers
 	@SubscribeEvent
+	// FIXME: Needs work
 	public static void onPlayerRenderer(RenderGameOverlayEvent.Pre event)
 	{
 		if(event.getType() != ElementType.TEXT)

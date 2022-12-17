@@ -38,11 +38,11 @@ public class RideAbility extends Ability
 	{
 		if(!event.getEntity().level.isClientSide() && isTracked(event.getEntity()))
 		{
-			executePredicateTest(event.getPlayer(), event.getTarget(), () ->
+			executePredicateTest(event.getEntity(), event.getTarget(), () ->
 			{
-				event.getPlayer().startRiding(event.getTarget());
-				event.getPlayer().setYRot(event.getTarget().getYRot());
-				event.getPlayer().setXRot(event.getTarget().getXRot());
+				event.getEntity().startRiding(event.getTarget());
+				event.getEntity().setYRot(event.getTarget().getYRot());
+				event.getEntity().setXRot(event.getTarget().getXRot());
 			});
 		}
 	}

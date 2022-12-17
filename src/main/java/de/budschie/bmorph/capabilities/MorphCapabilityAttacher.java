@@ -64,7 +64,7 @@ public class MorphCapabilityAttacher implements ICapabilitySerializable<Compound
 		if(instance.getCurrentMorph().isPresent())
 		{			
 			capTag.put("currentMorphItem", instance.getCurrentMorph().get().serialize());
-			capTag.putString("morphReason", instance.getMorphReason().getRegistryName().toString());
+			capTag.putString("morphReason", MorphReasonRegistry.REGISTRY.get().getKey(instance.getMorphReason()).toString());
 		}
 		
 		capTag.put("morphList", instance.getMorphList().serializeNBT());

@@ -104,7 +104,7 @@ public class DefaultMorphCapability implements IMorphCapability
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> getOwner()), new MorphCapabilityFullSynchronizer.MorphPacket(morph.map(MorphItem::serialize), morphReason.getRegistryName(), morphList, favouriteList, serializeAbilities(), getOwner().getUUID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> getOwner()), new MorphCapabilityFullSynchronizer.MorphPacket(morph.map(MorphItem::serialize), MorphReasonRegistry.REGISTRY.get().getKey(morphReason), morphList, favouriteList, serializeAbilities(), getOwner().getUUID()));
 		}
 	}
 	
@@ -115,7 +115,7 @@ public class DefaultMorphCapability implements IMorphCapability
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTo), new MorphCapabilityFullSynchronizer.MorphPacket(morph.map(MorphItem::serialize), morphReason.getRegistryName(), morphList, favouriteList, serializeAbilities(), getOwner().getUUID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTo), new MorphCapabilityFullSynchronizer.MorphPacket(morph.map(MorphItem::serialize), MorphReasonRegistry.REGISTRY.get().getKey(morphReason), morphList, favouriteList, serializeAbilities(), getOwner().getUUID()));
 		}
 	}
 	
@@ -126,7 +126,7 @@ public class DefaultMorphCapability implements IMorphCapability
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.NMLIST.with(() -> Lists.newArrayList(connection)), new MorphCapabilityFullSynchronizer.MorphPacket(morph.map(MorphItem::serialize), morphReason.getRegistryName(), morphList, favouriteList, serializeAbilities(), getOwner().getUUID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.NMLIST.with(() -> Lists.newArrayList(connection)), new MorphCapabilityFullSynchronizer.MorphPacket(morph.map(MorphItem::serialize), MorphReasonRegistry.REGISTRY.get().getKey(morphReason), morphList, favouriteList, serializeAbilities(), getOwner().getUUID()));
 		}
 	}
 	
@@ -138,7 +138,7 @@ public class DefaultMorphCapability implements IMorphCapability
 		else
 		{
 			// Other players may not have knowledge of those indices, thus we always fully send the current morph
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> getOwner()), new MorphChangedSynchronizer.MorphChangedPacket(getOwner().getUUID(), getCurrentMorph(), morphReason.getRegistryName(), serializeAbilities()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> getOwner()), new MorphChangedSynchronizer.MorphChangedPacket(getOwner().getUUID(), getCurrentMorph(), MorphReasonRegistry.REGISTRY.get().getKey(morphReason), serializeAbilities()));
 		}
 	}
 

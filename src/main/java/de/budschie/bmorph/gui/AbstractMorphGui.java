@@ -4,9 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import de.budschie.bmorph.morph.MorphItem;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
-public abstract class AbstractMorphGui implements IForgeRegistryEntry<AbstractMorphGui>
+public abstract class AbstractMorphGui
 {
 	private ResourceLocation id;
 	
@@ -76,22 +75,22 @@ public abstract class AbstractMorphGui implements IForgeRegistryEntry<AbstractMo
 		
 	}
 	
-	@Override
-	public AbstractMorphGui setRegistryName(ResourceLocation name)
-	{
-		this.id = name;
-		return this;
-	}
-	
-	@Override
-	public ResourceLocation getRegistryName()
-	{
-		return id;
-	}
-	
-	@Override
-	public Class<AbstractMorphGui> getRegistryType()
-	{
-		return AbstractMorphGui.class;
-	}
+//	@Override
+//	public AbstractMorphGui setRegistryName(ResourceLocation name)
+//	{
+//		this.id = name;
+//		return this;
+//	}
+//	
+//	@Override
+//	public ResourceLocation getRegistryName()
+//	{
+//		return id;
+//	}
+//	
+//	@Override
+//	public Class<AbstractMorphGui> getRegistryType()
+//	{
+//		return AbstractMorphGui.class;
+//	}
 }

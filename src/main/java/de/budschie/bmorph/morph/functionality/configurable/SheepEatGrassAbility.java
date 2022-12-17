@@ -76,13 +76,13 @@ public class SheepEatGrassAbility extends StunAbility
 		{
 			event.setCancellationResult(InteractionResult.SUCCESS);
 			
-			if(!event.getWorld().isClientSide())
+			if(!event.getLevel().isClientSide())
 			{
 				Player target = (Player) event.getTarget();
 				
 				shear(target);
 				
-				event.getItemStack().hurtAndBreak(1, event.getPlayer(), (player) ->
+				event.getItemStack().hurtAndBreak(1, event.getEntity(), (player) ->
 				{
 					player.broadcastBreakEvent(event.getHand());
 				});

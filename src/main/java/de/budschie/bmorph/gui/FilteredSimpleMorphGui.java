@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 
 import org.apache.logging.log4j.LogManager;
@@ -31,11 +30,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderNameplateEvent;
+import net.minecraftforge.client.event.RenderNameTagEvent;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.registries.ForgeRegistries;
 
 // The current state of this class...
 // TODO: Ability logos; maybe copy attributes of morph to the player
@@ -281,7 +281,7 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 		}
 		
 		@SubscribeEvent
-		public static void onRenderingNameplate(RenderNameplateEvent event)
+		public static void onRenderingNameplate(RenderNameTagEvent event)
 		{
 			if(dumbFix != null && event.getEntity() == dumbFix && event.getEntity().hasCustomName())
 			{
@@ -320,7 +320,7 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 					{
 						crashed = true;
 						LOGGER.catching(ex);
-						LOGGER.warn("Could not render entity ", morphItem.getEntityType().getRegistryName().toString() + ".");
+						LOGGER.warn("Could not render entity ", ForgeRegistries.ENTITY_TYPES.getKey(morphItem.getEntityType()).toString() + ".");
 					}
 				}
 				

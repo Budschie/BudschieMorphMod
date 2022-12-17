@@ -14,7 +14,7 @@ public class MorphGuiRegistry
 	public static final ResourceLocation MORPH_GUI_REGISTRY_ID = new ResourceLocation(References.MODID, "morph_guis");
 	
 	public static final DeferredRegister<AbstractMorphGui> MORPH_GUI_REGISTRY = DeferredRegister.create(MORPH_GUI_REGISTRY_ID, References.MODID); 
-	public static final Supplier<IForgeRegistry<AbstractMorphGui>> REGISTRY = MORPH_GUI_REGISTRY.makeRegistry(AbstractMorphGui.class, () -> new RegistryBuilder<AbstractMorphGui>().setName(MORPH_GUI_REGISTRY_ID));
+	public static final Supplier<IForgeRegistry<AbstractMorphGui>> REGISTRY = MORPH_GUI_REGISTRY.makeRegistry(() -> new RegistryBuilder<AbstractMorphGui>().setName(MORPH_GUI_REGISTRY_ID));
 	
 	public static final RegistryObject<FilteredSimpleMorphGui> SIMPLE_MORPH_GUI = MORPH_GUI_REGISTRY.register("simple_default", () -> 
 	new FilteredSimpleMorphGui(null, "morph_gui.bmorph.simple_default", (resolved, input) -> true));

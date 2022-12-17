@@ -38,7 +38,7 @@ public class MorphEntity extends Entity
 	private static final PlayerMorphItem DEFAULT = MorphManagerHandlers.PLAYER.createMorph(EntityType.PLAYER, new GameProfile(new UUID(0, 0), "SteveMcSteve"));
 	
 	@SuppressWarnings("unchecked")
-	private static final EntityDataAccessor<MorphItem> MORPH_ITEM = (EntityDataAccessor<MorphItem>) SynchedEntityData.defineId(MorphEntity.class, EntityRegistry.MORPH_SERIALIZER.get().getSerializer());
+	private static final EntityDataAccessor<MorphItem> MORPH_ITEM = (EntityDataAccessor<MorphItem>) SynchedEntityData.defineId(MorphEntity.class, EntityRegistry.MORPH_SERIALIZER.get());
 	
 	private static final EntityDataAccessor<Integer> PICKUP_POSSIBLE_IN = SynchedEntityData.defineId(MorphEntity.class, EntityDataSerializers.INT);
 	

@@ -27,7 +27,7 @@ public class ConfiguredAbilitySynchronizer implements ISimpleImplPacket<Configur
 			if(serialized.isPresent())
 			{
 				buffer.writeUtf(ability.getResourceLocation().toString());
-				buffer.writeUtf(ability.getConfigurableAbility().getRegistryName().toString());
+				buffer.writeUtf(AbilityRegistry.REGISTRY.get().getKey(ability.getConfigurableAbility()).toString());
 				buffer.writeNbt(serialized.get());
 			}
 		}

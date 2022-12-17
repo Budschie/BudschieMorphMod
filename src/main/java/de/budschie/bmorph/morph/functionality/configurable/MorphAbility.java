@@ -36,7 +36,7 @@ public class MorphAbility extends Ability
 	{
 		return instance
 				.group(MORPH_MODE_CODEC.fieldOf("morph_mode").forGetter(MorphAbility::getMorphMode),
-						ModCodecs.ENTITIES.fieldOf("entity_to_morph_to").forGetter(MorphAbility::getEntityToMorphTo),
+						ModCodecs.ENTITY_TYPES.fieldOf("entity_to_morph_to").forGetter(MorphAbility::getEntityToMorphTo),
 						NbtMappings.CODEC.listOf().optionalFieldOf("nbt_mappings", Arrays.asList()).forGetter(MorphAbility::getNbtMappings),
 						ModCodecs.DATA_TRANSFORMER.listOf().optionalFieldOf("data_transformers", Arrays.asList()).forGetter(MorphAbility::getDataTransformers),
 						AudioVisualEffect.CODEC.optionalFieldOf("effect_on_morph").forGetter(MorphAbility::getEffectOnMorph),

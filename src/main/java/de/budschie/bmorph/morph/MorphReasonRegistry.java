@@ -14,7 +14,7 @@ public class MorphReasonRegistry
 	public static final ResourceLocation MORPH_REASON_REGISTRY_ID = new ResourceLocation(References.MODID, "morph_reasons");
 	
 	public static DeferredRegister<MorphReason> MORPH_REASON_REGISTRY = DeferredRegister.create(MORPH_REASON_REGISTRY_ID, References.MODID); 	
-	public static Supplier<IForgeRegistry<MorphReason>> REGISTRY = MORPH_REASON_REGISTRY.makeRegistry(MorphReason.class, () -> new RegistryBuilder<MorphReason>().disableSaving().setName(MORPH_REASON_REGISTRY_ID));
+	public static Supplier<IForgeRegistry<MorphReason>> REGISTRY = MORPH_REASON_REGISTRY.makeRegistry(() -> new RegistryBuilder<MorphReason>().disableSaving().setName(MORPH_REASON_REGISTRY_ID));
 	
 	public static final RegistryObject<MorphReason> NONE = MORPH_REASON_REGISTRY.register("none", MorphReason::new);
 	public static final RegistryObject<MorphReason> MORPHED_BY_ERROR = MORPH_REASON_REGISTRY.register("morphed_by_error", MorphReason::new);

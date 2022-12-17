@@ -56,8 +56,9 @@ import de.budschie.bmorph.tags.ModEntityTypeTags;
 import de.budschie.bmorph.util.BudschieUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.LiteralContents;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AgeableMob;
@@ -236,9 +237,9 @@ public class Events
 	@SubscribeEvent
 	public static void onPlayerLeft(PlayerLoggedOutEvent event)
 	{
-		if(!event.getPlayer().level.isClientSide())
+		if(!event.getEntity().level.isClientSide())
 		{
-			event.getPlayer().getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(bossbarCap -> bossbarCap.clearBossbar());
+			event.getEntity().getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(bossbarCap -> bossbarCap.clearBossbar());
 		}
 	}
 	
@@ -306,19 +307,19 @@ public class Events
 		if(event.getTarget() instanceof Player)
 		{
 			Player player = (Player) event.getTarget();
-			MorphUtil.processCap(player, resolved -> resolved.syncWithClient((ServerPlayer) event.getPlayer()));
+			MorphUtil.processCap(player, resolved -> resolved.syncWithClient((ServerPlayer) event.getEntity()));
 			
-			PufferfishCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
-			GuardianBeamCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
-			GlideCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
-			ParrotDanceCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
-			SheepCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
-			EvokerSpellCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getPlayer());
+			PufferfishCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getEntity());
+			GuardianBeamCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getEntity());
+			GlideCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getEntity());
+			ParrotDanceCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getEntity());
+			SheepCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getEntity());
+			EvokerSpellCapabilityHandler.INSTANCE.synchronizeWithClient(player, (ServerPlayer) event.getEntity());
 			
 			
 			event.getTarget().getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(bossbarCap ->
 			{
-				bossbarCap.getBossbar().ifPresent(bossbar -> bossbar.addPlayer((ServerPlayer) event.getPlayer()));
+				bossbarCap.getBossbar().ifPresent(bossbar -> bossbar.addPlayer((ServerPlayer) event.getEntity()));
 			});
 		}
 	}
@@ -337,11 +338,11 @@ public class Events
 	@SubscribeEvent
 	public static void onPlayerStoppedBeingLoaded(PlayerEvent.StopTracking event)
 	{
-		event.getPlayer().getCapability(GuardianBeamCapabilityInstance.GUARDIAN_BEAM_CAP).ifPresent(cap ->
+		event.getEntity().getCapability(GuardianBeamCapabilityInstance.GUARDIAN_BEAM_CAP).ifPresent(cap ->
 		{
 			if(cap.getAttackedEntity().isPresent() && cap.getAttackedEntity().get() == event.getTarget().getId())
 			{
-				GuardianBeamCapabilityHandler.INSTANCE.unattackServer(event.getPlayer());
+				GuardianBeamCapabilityHandler.INSTANCE.unattackServer(event.getEntity());
 			}
 		});
 		
@@ -349,7 +350,7 @@ public class Events
 		{
 			event.getTarget().getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(bossbarCap ->
 			{
-				bossbarCap.getBossbar().ifPresent(bossbar -> bossbar.removePlayer((ServerPlayer) event.getPlayer()));
+				bossbarCap.getBossbar().ifPresent(bossbar -> bossbar.removePlayer((ServerPlayer) event.getEntity()));
 			});
 		}
 	}
@@ -376,21 +377,21 @@ public class Events
 	@SubscribeEvent
 	public static void onPlayerBreakingBlockCheck(PlayerEvent.HarvestCheck event)
 	{
-		if(!event.getPlayer().isCreative() && !mayUseTool(event.getPlayer()) && event.getTargetBlock().requiresCorrectToolForDrops())
+		if(!event.getEntity().isCreative() && !mayUseTool(event.getEntity()) && event.getTargetBlock().requiresCorrectToolForDrops())
 			event.setCanHarvest(false);
 	}
 	
 	@SubscribeEvent
 	public static void onPlayerBreakingBlockSpeed(PlayerEvent.BreakSpeed event)
 	{
-		if(!event.getPlayer().isCreative() && !mayUseTool(event.getPlayer()) && event.getPlayer().getMainHandItem().getItem() instanceof TieredItem)
-			event.setNewSpeed(event.getOriginalSpeed() / ((TieredItem)event.getPlayer().getMainHandItem().getItem()).getTier().getSpeed());
+		if(!event.getEntity().isCreative() && !mayUseTool(event.getEntity()) && event.getEntity().getMainHandItem().getItem() instanceof TieredItem)
+			event.setNewSpeed(event.getOriginalSpeed() / ((TieredItem)event.getEntity().getMainHandItem().getItem()).getTier().getSpeed());
 	}
 	
 	@SubscribeEvent
 	public static void onPlayerInteractItem(PlayerInteractEvent.RightClickItem event)
 	{
-		if(!event.getPlayer().isCreative() && !mayUseTool(event.getPlayer()))
+		if(!event.getEntity().isCreative() && !mayUseTool(event.getEntity()))
 		{
 			if(event.getItemStack().getItem() instanceof TieredItem || event.getItemStack().getItem() instanceof ProjectileWeaponItem)
 				event.setCanceled(true);
@@ -400,7 +401,7 @@ public class Events
 	@SubscribeEvent
 	public static void onInteractAtBlock(PlayerInteractEvent.RightClickBlock event)
 	{
-		if(!event.getPlayer().isCreative() && !mayUseTool(event.getPlayer()) && !(event.getItemStack().getItem() instanceof BlockItem))
+		if(!event.getEntity().isCreative() && !mayUseTool(event.getEntity()) && !(event.getItemStack().getItem() instanceof BlockItem))
 		{
 			event.setUseItem(Result.DENY);
 		}
@@ -428,7 +429,7 @@ public class Events
 						if(morphItem != null)
 						{
 							IMorphCapability resolved = playerMorph.resolve().get();
-							boolean shouldMorph = !ConfigManager.INSTANCE.get(BlacklistData.class).isInBlacklist(event.getEntity().getType().getRegistryName());
+							boolean shouldMorph = !ConfigManager.INSTANCE.get(BlacklistData.class).isInBlacklist(ForgeRegistries.ENTITY_TYPES.getKey(event.getEntity().getType()));
 							
 							if(!resolved.getMorphList().contains(morphItem) && shouldMorph)
 							{
@@ -448,7 +449,7 @@ public class Events
 	{
 		if(!event.getEntity().level.isClientSide)
 		{
-			MorphUtil.processCap(event.getPlayer(), resolved ->
+			MorphUtil.processCap(event.getEntity(), resolved ->
 			{
 				resolved.syncWithClients();
 			});
@@ -463,7 +464,7 @@ public class Events
 			event.getOriginal().reviveCaps();
 			
 			Optional<IMorphCapability> oldCap = event.getOriginal().getCapability(MorphCapabilityAttacher.MORPH_CAP).resolve();
-			Optional<IMorphCapability> newCap = event.getPlayer().getCapability(MorphCapabilityAttacher.MORPH_CAP).resolve();
+			Optional<IMorphCapability> newCap = event.getEntity().getCapability(MorphCapabilityAttacher.MORPH_CAP).resolve();
 			
 			event.getOriginal().invalidateCaps();
 			
@@ -475,12 +476,12 @@ public class Events
 				newResolved.setMorphList(oldResolved.getMorphList());
 				newResolved.setFavouriteList(oldResolved.getFavouriteList());
 				
-				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Pre(event.getPlayer(), newResolved, newResolved.getCurrentMorph().orElse(null), MorphReasonRegistry.NONE.get()));
+				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Pre(event.getEntity(), newResolved, newResolved.getCurrentMorph().orElse(null), MorphReasonRegistry.NONE.get()));
 				
 				oldResolved.getCurrentMorph().ifPresentOrElse(morphItem -> newResolved.setMorph(morphItem, oldResolved.getMorphReason()), () -> newResolved.demorph(oldResolved.getMorphReason()));
 				newResolved.setCurrentAbilities(oldResolved.getCurrentAbilities());
 				
-				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Post(event.getPlayer(), newResolved, newResolved.getCurrentMorph().orElse(null), MorphReasonRegistry.NONE.get()));
+				MinecraftForge.EVENT_BUS.post(new PlayerMorphEvent.Server.Post(event.getEntity(), newResolved, newResolved.getCurrentMorph().orElse(null), MorphReasonRegistry.NONE.get()));
 			}
 		}
 	}
@@ -488,9 +489,9 @@ public class Events
 	@SubscribeEvent
 	public static void onPlayerRespawnedEvent(PlayerRespawnEvent event)
 	{
-		if(!event.getPlayer().level.isClientSide && event.getPlayer().getServer().getGameRules().getBoolean(BMorphMod.KEEP_MORPH_INVENTORY))
+		if(!event.getEntity().level.isClientSide && event.getEntity().getServer().getGameRules().getBoolean(BMorphMod.KEEP_MORPH_INVENTORY))
 		{
-			LazyOptional<IMorphCapability> cap = event.getPlayer().getCapability(MorphCapabilityAttacher.MORPH_CAP);
+			LazyOptional<IMorphCapability> cap = event.getEntity().getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			
 			if(cap.isPresent())
 			{
@@ -506,9 +507,9 @@ public class Events
 	@SubscribeEvent
 	public static void onPlayerDeathEvent(LivingDeathEvent event)
 	{
-		if(event.getEntityLiving() instanceof Player player)
+		if(event.getEntity() instanceof Player player)
 		{
-			if(event.getEntityLiving().level.isClientSide())
+			if(event.getEntity().level.isClientSide())
 			{
 			}
 			else
@@ -538,7 +539,7 @@ public class Events
 	@SubscribeEvent
 	public static void onPlayerHurtEvent(LivingAttackEvent event)
 	{
-		if(event.getEntityLiving() instanceof Player player)
+		if(event.getEntity() instanceof Player player)
 		{
 			LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			
@@ -560,7 +561,7 @@ public class Events
 	public static void onPlayerTakingDamage(LivingDamageEvent event)
 	{
 		// Check if living is a Mob and therefore "evil"
-		if(event.getSource().getEntity() instanceof Player && event.getEntityLiving() instanceof Enemy && !event.getEntity().level.isClientSide)
+		if(event.getSource().getEntity() instanceof Player && event.getEntity() instanceof Enemy && !event.getEntity().level.isClientSide)
 		{
 			Player source = (Player) event.getSource().getEntity();
 			
@@ -610,8 +611,8 @@ public class Events
 	
 	public static boolean mayCopySpeed(LivingEntity entity)
 	{
-		return entity.getLevel().getGameRules().getBoolean(BMorphMod.INHERIT_MORPH_SPEED) && !(entity.getAttributeBaseValue(Attributes.MOVEMENT_SPEED) == 0.7f && !ForgeRegistries.ENTITIES.tags().getTag(ModEntityTypeTags.FORCE_SPEED_COPY).contains(entity.getType())) &&
-				!ForgeRegistries.ENTITIES.tags().getTag(ModEntityTypeTags.PROHIBIT_SPEED_COPY).contains(entity.getType());
+		return entity.getLevel().getGameRules().getBoolean(BMorphMod.INHERIT_MORPH_SPEED) && !(entity.getAttributeBaseValue(Attributes.MOVEMENT_SPEED) == 0.7f && !ForgeRegistries.ENTITY_TYPES.tags().getTag(ModEntityTypeTags.FORCE_SPEED_COPY).contains(entity.getType())) &&
+				!ForgeRegistries.ENTITY_TYPES.tags().getTag(ModEntityTypeTags.PROHIBIT_SPEED_COPY).contains(entity.getType());
 	}
 	
 	@SubscribeEvent
@@ -740,7 +741,7 @@ public class Events
 			{
 				event.setCanceled(true);
 				found = true;
-				event.getPlayer().sendMessage(new TranslatableComponent("ui.bmorph.not_enough_space").withStyle(ChatFormatting.RED), new UUID(0, 0));
+				event.getPlayer().sendSystemMessage(MutableComponent.create(new TranslatableContents("ui.bmorph.not_enough_space")).withStyle(ChatFormatting.RED));
 				break;
 			}
 			
@@ -775,7 +776,7 @@ public class Events
 			return;
 		
 		// This iron golem exception is needed because we don't want players morphed as zombies to sneak around iron golems 
-		if(event.getEntityLiving() instanceof Mob && event.getNewTarget() instanceof Player && event.getNewTarget() != event.getEntityLiving().getLastHurtByMob() && !(event.getEntity() instanceof IronGolem || event.getEntity() instanceof EnderMan))
+		if(event.getEntity() instanceof Mob && event.getNewTarget() instanceof Player && event.getNewTarget() != event.getEntity().getLastHurtByMob() && !(event.getEntity() instanceof IronGolem || event.getEntity() instanceof EnderMan))
 		{
 			Player player = (Player) event.getNewTarget();
 			
@@ -850,7 +851,7 @@ public class Events
 						else
 						{
 							resolved.demorph(MorphReasonRegistry.MORPHED_BY_ERROR.get());
-							player.sendMessage(new TextComponent(ChatFormatting.RED + "Couldn't morph to " + item.getEntityType().getRegistryName().toString() + ". This is a compatability issue. If possible, report this to the mod author on GitHub."), new UUID(0, 0));
+							player.sendSystemMessage(MutableComponent.create(new LiteralContents("Couldn't morph to " + ForgeRegistries.ENTITY_TYPES.getKey(item.getEntityType()).toString() + ". This is a compatability issue. If possible, report this to the mod author on GitHub.")).withStyle(ChatFormatting.RED));
 						}
 					}
 				});

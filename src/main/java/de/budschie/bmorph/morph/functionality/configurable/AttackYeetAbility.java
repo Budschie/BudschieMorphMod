@@ -51,7 +51,7 @@ public class AttackYeetAbility extends Ability
 				
 				delayedAttacks.add(() ->
 				{
-					event.getEntityLiving().setDeltaMovement(event.getEntityLiving().getDeltaMovement().add(0, yeetAmount, 0));
+					event.getEntity().setDeltaMovement(event.getEntity().getDeltaMovement().add(0, yeetAmount, 0));
 					
 					// Players need to receive a movement packet
 					if(event.getEntity() instanceof Player attackedPlayer)

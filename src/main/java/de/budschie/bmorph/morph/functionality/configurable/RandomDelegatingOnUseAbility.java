@@ -45,7 +45,7 @@ public class RandomDelegatingOnUseAbility extends StunAbility
 		{
 			stun(player.getUUID());
 			
-			ResourceLocation randomRL = weightedList.getRandom(player.getCommandSenderWorld().getRandom());
+			ResourceLocation randomRL = weightedList.getRandom(player.getLevel().getRandom());
 			
 			Ability ability = BMorphMod.DYNAMIC_ABILITY_REGISTRY.getEntry(randomRL);
 			

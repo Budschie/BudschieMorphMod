@@ -1,5 +1,6 @@
 package de.budschie.bmorph.gui;
 
+import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
@@ -20,7 +21,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;

@@ -55,7 +55,7 @@ public class MorphNBTHandler extends SimpleJsonResourceReloadListener
 				String entityTypeString = jsonObject.get("entity_type").getAsString();
 
 				// Load in the entity type
-				final EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(entityTypeString));
+				final EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(entityTypeString));
 
 				if (entityType == null)
 					LOGGER.warn("The entity ", entityTypeString,

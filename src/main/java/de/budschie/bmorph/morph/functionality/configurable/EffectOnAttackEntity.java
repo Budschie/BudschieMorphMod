@@ -53,13 +53,13 @@ public class EffectOnAttackEntity extends Ability
 				LootItemCondition[][] lootItemConditions = BudschieUtils.resolveConditions(predicates);
 				
 				LootContext.Builder predicateContext = (new LootContext.Builder((ServerLevel)player.level)).withParameter(LootContextParams.ORIGIN, player.position())
-						.withOptionalParameter(LootContextParams.THIS_ENTITY, event.getEntityLiving()).withOptionalParameter(LootContextParams.DAMAGE_SOURCE, event.getSource());
+						.withOptionalParameter(LootContextParams.THIS_ENTITY, event.getEntity()).withOptionalParameter(LootContextParams.DAMAGE_SOURCE, event.getSource());
 				
 				boolean predicateTrue = BudschieUtils.testPredicates(lootItemConditions, () -> predicateContext.create(LootContextParamSets.ENTITY));
 				
 				if(predicateTrue)
 				{
-					event.getEntityLiving().addEffect(new MobEffectInstance(this.effectInstance));
+					event.getEntity().addEffect(new MobEffectInstance(this.effectInstance));
 				}
 			}
 		}

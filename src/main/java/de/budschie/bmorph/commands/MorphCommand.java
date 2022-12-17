@@ -22,6 +22,7 @@ import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphReasonRegistry;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.morph.functionality.Ability;
+import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.network.MorphItemDisabled.MorphItemDisabledPacket;
 import net.minecraft.ChatFormatting;
@@ -34,7 +35,8 @@ import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.commands.synchronization.SuggestionProviders;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
@@ -84,7 +86,7 @@ public class MorphCommand
 								if(gp.isPresent())
 									MorphUtil.morphToServer(Optional.of(MorphManagerHandlers.PLAYER.createMorph(EntityType.PLAYER, gp.get())), MorphReasonRegistry.MORPHED_BY_COMMAND.get(), player);
 								else
-									ctx.getSource().sendFailure(new TextComponent(ChatFormatting.RED + "The player " + ctx.getArgument("playername", String.class) + " doesn't exist."));
+									ctx.getSource().sendFailure(MutableComponent.create(new LiteralContents(ChatFormatting.RED + "The player " + ctx.getArgument("playername", String.class) + " doesn't exist.")));
 							}
 							
 							return 0;
@@ -151,7 +153,7 @@ public class MorphCommand
 	
 	private static BiConsumer<IMorphCapability, Consumer<MorphItem>> getMorphFilter(ResourceLocation entity, Optional<CompoundTag> nbtToMatch)
 	{
-		EntityType<?> resultingEntityType = ForgeRegistries.ENTITIES.getValue(entity);
+		EntityType<?> resultingEntityType = ForgeRegistries.ENTITY_TYPES.getValue(entity);
 		
 		return (cap, consumer) ->
 		{
@@ -198,7 +200,7 @@ public class MorphCommand
 			}
 		}
 		
-		ctx.getSource().sendSuccess(new TextComponent(MessageFormat.format("{0}/{1} players' morphs were successfully disabled.", succeeded, players.size())), false);
+		ctx.getSource().sendSuccess(MutableComponent.create(new LiteralContents(MessageFormat.format("{0}/{1} players' morphs were successfully disabled.", succeeded, players.size()))), false);
 		
 		return 0;
 	}
@@ -209,11 +211,11 @@ public class MorphCommand
 		
 		if(cap == null || !cap.getCurrentMorph().isPresent())
 		{
-			sender.sendFailure(new TextComponent("The given player is currently not morphed."));
+			sender.sendFailure(MutableComponent.create(new LiteralContents("The given player is currently not morphed.")));
 		}
 		else if(cap.getCurrentAbilities().size() <= 0)
 		{
-			sender.sendSuccess(new TextComponent(ChatFormatting.AQUA + "The given player has no abilities, but they are morphed."), true);
+			sender.sendSuccess(MutableComponent.create(new LiteralContents("The given player has no abilities, but they are morphed.")).withStyle(ChatFormatting.AQUA), true);
 		}
 		else
 		{
@@ -223,7 +225,7 @@ public class MorphCommand
 			{
 				Ability currentAbility = cap.getCurrentAbilities().get(i);
 				
-				builder.append(currentAbility.getResourceLocation().toString()).append('(').append(currentAbility.getConfigurableAbility().getRegistryName().toString()).append(')');
+				builder.append(currentAbility.getResourceLocation().toString()).append('(').append(AbilityRegistry.REGISTRY.get().getKey(currentAbility.getConfigurableAbility()).toString()).append(')');
 				
 				if(i == (cap.getCurrentAbilities().size() - 2))
 				{
@@ -235,7 +237,7 @@ public class MorphCommand
 				}
 			}
 			
-			sender.sendSuccess(new TextComponent(builder.toString()), true);
+			sender.sendSuccess(MutableComponent.create(new LiteralContents(builder.toString())), true);
 		}
 		
 		return 0;
@@ -243,17 +245,17 @@ public class MorphCommand
 	
 	private static int addMorph(List<ServerPlayer> entities, ResourceLocation rs, CompoundTag nbtData)
 	{
-		MorphItem morphItemToAdd = MorphManagerHandlers.FALLBACK.createMorph(ForgeRegistries.ENTITIES.getValue(rs), nbtData, null, true);
+		MorphItem morphItemToAdd = MorphManagerHandlers.FALLBACK.createMorph(ForgeRegistries.ENTITY_TYPES.getValue(rs), nbtData, null, true);
 		
 		for(ServerPlayer entity : entities)
 		{
 			IMorphCapability capability = entity.getCapability(MorphCapabilityAttacher.MORPH_CAP).resolve().get();
 						
 			if(capability.getMorphList().contains(morphItemToAdd))
-				entity.sendMessage(new TextComponent(ChatFormatting.RED + "You may not add a morph to your list that is already present."), new UUID(0, 0));
+				entity.sendSystemMessage(MutableComponent.create(new LiteralContents("You may not add a morph to your list that is already present.")).withStyle(ChatFormatting.RED));
 			else
 			{
-				entity.sendMessage(new TextComponent("Added " + rs.toString() + " with its NBT data to your morph list."), new UUID(0, 0));
+				entity.sendSystemMessage(MutableComponent.create(new LiteralContents("Added " + rs.toString() + " with its NBT data to your morph list.")));
 				
 				capability.addMorphItem(morphItemToAdd);
 				capability.syncMorphAcquisition(morphItemToAdd);
@@ -272,7 +274,7 @@ public class MorphCommand
 			
 			nbtData.putString("id", rs.toString());
 			
-			MorphUtil.morphToServer(Optional.of(MorphManagerHandlers.FALLBACK.createMorph(ForgeRegistries.ENTITIES.getValue(rs), nbtData, null, true)), MorphReasonRegistry.MORPHED_BY_COMMAND.get(), entity);
+			MorphUtil.morphToServer(Optional.of(MorphManagerHandlers.FALLBACK.createMorph(ForgeRegistries.ENTITY_TYPES.getValue(rs), nbtData, null, true)), MorphReasonRegistry.MORPHED_BY_COMMAND.get(), entity);
 		}
 		
 		return 0;

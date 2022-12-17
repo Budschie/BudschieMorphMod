@@ -1,12 +1,15 @@
 package de.budschie.bmorph.morph.functionality.configurable;
 
+import java.awt.TextComponent;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -38,7 +41,7 @@ public class InstaDeathOnCookieAbility extends Ability
 	{
 		if(isTracked(event.getEntity()))
 		{
-			Player player = (Player) event.getEntityLiving();
+			Player player = (Player) event.getEntity();
 			
 			if(event.getItem().getItem() == Items.COOKIE)
 			{
@@ -53,16 +56,16 @@ public class InstaDeathOnCookieAbility extends Ability
 					player.setGlowingTag(true);
 					player.setDeltaMovement(0, 10, 0);
 					
-					player.sendMessage(new TextComponent(ChatFormatting.RED + "H4h4 u d3d s00n"), Util.NIL_UUID);
+					player.sendSystemMessage(MutableComponent.create(new LiteralContents("H4h4 u d3d s00n")).withStyle(ChatFormatting.RED));
 				}
 				else
 				{
 					player.hurt(DamageSource.badRespawnPointExplosion(), 420000000);
 					
 					if(player.isDeadOrDying())
-						player.sendMessage(new TextComponent(ChatFormatting.RED + "I have told you several times that you should not eat cookies."), Util.NIL_UUID);
+						player.sendSystemMessage(MutableComponent.create(new LiteralContents("I have told you several times that you should not eat cookies.")).withStyle(ChatFormatting.RED));
 					else
-						player.sendMessage(new TextComponent(ChatFormatting.RED + "How the.... what? You survived?"), Util.NIL_UUID);
+						player.sendSystemMessage(MutableComponent.create(new LiteralContents("How the.... what? You survived?")).withStyle(ChatFormatting.RED));
 				}
 			}
 		}

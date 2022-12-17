@@ -7,15 +7,14 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class EntityRegistry
 {
-	public static DeferredRegister<EntityType<?>> ENTITY_REGISTRY = DeferredRegister.create(ForgeRegistries.ENTITIES, References.MODID);
-	public static DeferredRegister<DataSerializerEntry> SERIALIZER_REGISTRY = DeferredRegister.create(ForgeRegistries.Keys.DATA_SERIALIZERS, References.MODID);
+	public static DeferredRegister<EntityType<?>> ENTITY_REGISTRY = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, References.MODID);
+	public static DeferredRegister<EntityDataSerializer<?>> SERIALIZER_REGISTRY = DeferredRegister.create(ForgeRegistries.Keys.ENTITY_DATA_SERIALIZERS, References.MODID);
 	
 	public static RegistryObject<EntityType<MorphEntity>> MORPH_ENTITY = ENTITY_REGISTRY.register("morph_entity", () ->
 	{
@@ -28,7 +27,7 @@ public class EntityRegistry
 				.build("bmorph:morph_entity");
 	});
 	
-	public static RegistryObject<DataSerializerEntry> MORPH_SERIALIZER = SERIALIZER_REGISTRY.register("morph_serializer", () -> new DataSerializerEntry(new EntityDataSerializer<MorphItem>()
+	public static RegistryObject<EntityDataSerializer<?>> MORPH_SERIALIZER = SERIALIZER_REGISTRY.register("morph_serializer", () -> new EntityDataSerializer<MorphItem>()
 	{
 		@Override
 		public void write(FriendlyByteBuf buffer, MorphItem item)
@@ -48,5 +47,5 @@ public class EntityRegistry
 			// Nah Im not gonna create a copy constructor here... lol
 			return MorphHandler.deserializeMorphItem(item.serialize());
 		}
-	}));
+	});
 }

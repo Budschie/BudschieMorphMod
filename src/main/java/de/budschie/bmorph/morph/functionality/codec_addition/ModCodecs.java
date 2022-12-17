@@ -52,7 +52,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.tags.ITag;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
@@ -67,7 +67,7 @@ public class ModCodecs
 		@Override
 		public <T> DataResult<T> encode(SoundEvent input, DynamicOps<T> ops, T prefix)
 		{
-			return DataResult.success(ops.createString(input.getRegistryName().toString()));
+			return DataResult.success(ops.createString(ForgeRegistries.SOUND_EVENTS.getKey(input).toString()));
 		}
 	}, new Decoder<SoundEvent>()
 	{
@@ -94,12 +94,12 @@ public class ModCodecs
 		}
 	});
 	
-	public static final Codec<Attribute> ATTRIBUTE = getForgeRegistryCodec(ForgeRegistries.ATTRIBUTES::getValue);
-	public static final Codec<MobEffect> EFFECTS = getForgeRegistryCodec(ForgeRegistries.MOB_EFFECTS::getValue);
-	public static final Codec<EntityType<?>> ENTITIES = getForgeRegistryCodec(ForgeRegistries.ENTITIES::getValue);
-	public static final Codec<Block> BLOCKS = getForgeRegistryCodec(ForgeRegistries.BLOCKS::getValue);
-	public static final Codec<Fluid> FLUIDS = getForgeRegistryCodec(ForgeRegistries.FLUIDS::getValue);
-	public static final Codec<ParticleType<?>> PARTICLE_TYPE = getForgeRegistryCodec(ForgeRegistries.PARTICLE_TYPES::getValue);
+	public static final Codec<Attribute> ATTRIBUTE = getForgeRegistryCodec(() -> ForgeRegistries.ATTRIBUTES);
+	public static final Codec<MobEffect> EFFECTS = getForgeRegistryCodec(() -> ForgeRegistries.MOB_EFFECTS);
+	public static final Codec<EntityType<?>> ENTITY_TYPES = getForgeRegistryCodec(() -> ForgeRegistries.ENTITY_TYPES);
+	public static final Codec<Block> BLOCKS = getForgeRegistryCodec(() -> ForgeRegistries.BLOCKS);
+	public static final Codec<Fluid> FLUIDS = getForgeRegistryCodec(() -> ForgeRegistries.FLUIDS);
+	public static final Codec<ParticleType<?>> PARTICLE_TYPE = getForgeRegistryCodec(() -> ForgeRegistries.PARTICLE_TYPES);
 	
 	public static final Codec<Selector> SELECTOR_ENUM = getEnumCodec(Selector.class, Selector::values);
 	public static final Codec<Direction> DIRECTION_ENUM = getEnumCodec(Direction.class, Direction::values);
@@ -377,14 +377,15 @@ public class ModCodecs
 //	}
 
 	
-	private static <A extends IForgeRegistryEntry<A>> Codec<A> getForgeRegistryCodec(Function<ResourceLocation, A> registryRetrieval)
+	private static <A> Codec<A> getForgeRegistryCodec(Supplier<IForgeRegistry<A>> forgeRegistry)
 	{
 		return new Codec<>()
 		{
 			@Override
 			public <T> DataResult<T> encode(A input, DynamicOps<T> ops, T prefix)
 			{
-				return DataResult.<T>success(ops.createString(input.getRegistryName().toString()));
+				// Use Registry#getKey instead
+				return DataResult.<T>success(ops.createString(forgeRegistry.get().getKey(input).toString()));
 			}
 
 			@Override
@@ -396,7 +397,7 @@ public class ModCodecs
 				{
 					ResourceLocation result = new ResourceLocation(rl.result().get());
 					
-					A retrieved = registryRetrieval.apply(result);
+					A retrieved = forgeRegistry.get().getValue(result);
 					
 					if(retrieved == null)
 						return DataResult.error(String.format("The resource location %s did not yield any registry entry when tried to resolve into an actual instance.", result));

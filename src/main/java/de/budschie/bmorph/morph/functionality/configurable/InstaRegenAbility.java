@@ -48,7 +48,7 @@ public class InstaRegenAbility extends Ability
 	{
 		if(isTracked(event.getEntity()))
 		{
-			Player player = (Player) event.getEntityLiving();
+			Player player = (Player) event.getEntity();
 			
 			if(itemTag.isPresent() ? itemTag.get().test(event.getItem().getItem()) : event.getItem().isEdible())
 			{

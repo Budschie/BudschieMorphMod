@@ -74,7 +74,7 @@ public class DataTransformer implements IDynamicRegistryObject
 			}
 			else
 			{
-				LOGGER.error(MessageFormat.format("Skipped data modifier of type {0} whilst deserializing data transformer {1}. If you see this, please report it as a bug.", modifierHolder.getRegistryName(), resourceLocation));
+				LOGGER.error(MessageFormat.format("Skipped data modifier of type {0} whilst deserializing data transformer {1}. If you see this, please report it as a bug.", DataModifierRegistry.REGISTRY.get().getKey(modifierHolder), resourceLocation));
 			}
 		}
 		

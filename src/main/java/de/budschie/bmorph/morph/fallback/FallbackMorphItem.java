@@ -19,7 +19,7 @@ public class FallbackMorphItem extends MorphItem
 		super("fallback_morph_item");
 		this.entityData = entityData;
 		this.entityType = entityType;
-		entityData.putString("id", entityType.getRegistryName().toString());
+		entityData.putString("id", ForgeRegistries.ENTITY_TYPES.getKey(entityType).toString());
 	}
 	
 	public FallbackMorphItem(EntityType<?> entityType)
@@ -44,7 +44,7 @@ public class FallbackMorphItem extends MorphItem
 		Entity entityLoaded = EntityType.loadEntityRecursive(entityData, world, entity -> entity);
 		
 		if(entityLoaded == null)
-			throw new NullPointerException("The morph item \"" + entityType.getRegistryName().toString() + "\" could *NOT* be initialized, thus being null now.");
+			throw new NullPointerException("The morph item \"" + ForgeRegistries.ENTITY_TYPES.getKey(entityType).toString() + "\" could *NOT* be initialized, thus being null now.");
 		
 		return entityLoaded;
 	}
@@ -52,7 +52,7 @@ public class FallbackMorphItem extends MorphItem
 	@Override
 	public void deserializeAdditional(CompoundTag nbt)
 	{
-		this.entityType = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(nbt.getString("id")));
+		this.entityType = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(nbt.getString("id")));
 		this.entityData = nbt;
 	}
 

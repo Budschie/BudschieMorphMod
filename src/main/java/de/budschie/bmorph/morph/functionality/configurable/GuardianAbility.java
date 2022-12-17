@@ -195,7 +195,7 @@ public class GuardianAbility extends Ability
 	{
 		if(isTracked(event.getEntity()) && isAbilityActive((Player)event.getEntity()) && !mayMove)
 		{
-			event.getEntityLiving().setDeltaMovement(event.getEntityLiving().getDeltaMovement().x, 0, event.getEntityLiving().getDeltaMovement().z);
+			event.getEntity().setDeltaMovement(event.getEntity().getDeltaMovement().x, 0, event.getEntity().getDeltaMovement().z);
 		}
 	}
 	

@@ -73,8 +73,7 @@ public class AbilityRegistry
 	
 	public static DeferredRegister<ConfigurableAbility<? extends Ability>> ABILITY_REGISTRY = DeferredRegister.<ConfigurableAbility<? extends Ability>>create(ABILITY_REGISTRY_ID, References.MODID); 
 	
-	@SuppressWarnings("unchecked")
-	public static Supplier<IForgeRegistry<ConfigurableAbility<? extends Ability>>> REGISTRY = ABILITY_REGISTRY.<ConfigurableAbility<? extends Ability>>makeRegistry((Class<ConfigurableAbility<?>>)((Class<?>)ConfigurableAbility.class), () -> new RegistryBuilder<ConfigurableAbility<?>>().disableSaving().setName(ABILITY_REGISTRY_ID));
+	public static Supplier<IForgeRegistry<ConfigurableAbility<? extends Ability>>> REGISTRY = ABILITY_REGISTRY.makeRegistry(() -> new RegistryBuilder<ConfigurableAbility<?>>().disableSaving().setName(ABILITY_REGISTRY_ID));
 	
 	public static RegistryObject<ConfigurableAbility<Boom>> BOOM = ABILITY_REGISTRY.register("boom", () -> new ConfigurableAbility<>(Boom.CODEC));
 	public static RegistryObject<ConfigurableAbility<AttackYeetAbility>> ATTACK_YEET = ABILITY_REGISTRY.register("yeet", () -> new ConfigurableAbility<>(AttackYeetAbility.CODEC));

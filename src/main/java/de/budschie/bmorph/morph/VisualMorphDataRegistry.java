@@ -8,6 +8,7 @@ import de.budschie.bmorph.util.BudschieUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class VisualMorphDataRegistry
 {
@@ -31,7 +32,7 @@ public class VisualMorphDataRegistry
 	
 	public VisualMorphData getDataForMorph(MorphItem morphItem)
 	{
-		return getDataForMorph(morphItem.getEntityType().getRegistryName());
+		return getDataForMorph(ForgeRegistries.ENTITY_TYPES.getKey(morphItem.getEntityType()));
 	}
 	
 	public void clear()

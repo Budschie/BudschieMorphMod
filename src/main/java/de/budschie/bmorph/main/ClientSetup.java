@@ -28,8 +28,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -62,22 +62,29 @@ public class ClientSetup
 	public static final KeyMapping DROP_CURRENT_MORPH = new KeyMapping("key.bmorph.drop_current", GLFW.GLFW_KEY_R, "key.bmorph.bmorph_category");
 	
 	@SubscribeEvent
+	public static void onRegisterKeyBindings(RegisterKeyMappingsEvent event)
+	{
+		event.register(USE_ABILITY_KEY);
+		event.register(SCROLL_DOWN_MORPH_UI);
+		event.register(SCROLL_UP_MORPH_UI);
+		event.register(SCROLL_LEFT_MORPH_UI);
+		event.register(SCROLL_RIGHT_MORPH_UI);
+		event.register(TOGGLE_MORPH_UI);
+		event.register(TOGGLE_MORPH_FAVOURITE);
+		event.register(NEXT_MORPH_UI);
+		event.register(PREVIOUS_MORPH_UI);
+		event.register(MORPH_UI);
+		
+		event.register(DELETE_CURRENT_MORPH);
+		event.register(DROP_CURRENT_MORPH);
+	}
+	
+	@SubscribeEvent
 	public static void onClientSetup(final FMLClientSetupEvent event)
 	{		
 		EntityRenderers.register(EntityRegistry.MORPH_ENTITY.get(), manager -> new MorphEntityRenderer(manager));
-		ClientRegistry.registerKeyBinding(USE_ABILITY_KEY);
-		ClientRegistry.registerKeyBinding(SCROLL_DOWN_MORPH_UI);
-		ClientRegistry.registerKeyBinding(SCROLL_UP_MORPH_UI);
-		ClientRegistry.registerKeyBinding(SCROLL_LEFT_MORPH_UI);
-		ClientRegistry.registerKeyBinding(SCROLL_RIGHT_MORPH_UI);
-		ClientRegistry.registerKeyBinding(TOGGLE_MORPH_UI);
-		ClientRegistry.registerKeyBinding(TOGGLE_MORPH_FAVOURITE);
-		ClientRegistry.registerKeyBinding(NEXT_MORPH_UI);
-		ClientRegistry.registerKeyBinding(PREVIOUS_MORPH_UI);
-		ClientRegistry.registerKeyBinding(MORPH_UI);
+		// FIXME: Where's client registry?
 		
-		ClientRegistry.registerKeyBinding(DELETE_CURRENT_MORPH);
-		ClientRegistry.registerKeyBinding(DROP_CURRENT_MORPH);
 		
 		EntitySynchronizerRegistry.addEntitySynchronizer(new CommonEntitySynchronizer());
 		EntitySynchronizerRegistry.addEntitySynchronizer(new LivingEntitySynchronzier());
@@ -127,7 +134,7 @@ public class ClientSetup
 	{
 		
 		@SubscribeEvent
-		public static void onPlayerNotInWorld(ClientPlayerNetworkEvent.LoggedOutEvent event)
+		public static void onPlayerNotInWorld(ClientPlayerNetworkEvent.LoggingOut event)
 		{
 			// Unregister every ability when leaving world
 			if(event.getPlayer() != null)

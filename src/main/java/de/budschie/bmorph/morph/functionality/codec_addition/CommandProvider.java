@@ -32,7 +32,7 @@ public class CommandProvider
 	/** Executes the given command as the given command source. **/
 	public void executeAs(CommandSourceStack commandSource)
 	{
-		commandSource.getServer().getCommands().performCommand(commandSource, command);
+		commandSource.getServer().getCommands().performPrefixedCommand(commandSource, command);
 	}
 	
 	/** Executes the stored command as the given player. **/

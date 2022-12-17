@@ -1,9 +1,9 @@
 package de.budschie.bmorph.morph;
 
-import net.minecraftforge.registries.ForgeRegistryEntry;
-
 // This looks a bit cursed lol
-public class MorphReason extends ForgeRegistryEntry<MorphReason>
+// Even more cursed since the removal of the concept of IForgeRegistryEntry
+// TODO: Investigate whether we can put this into an (extensible) enum or not
+public class MorphReason
 {
 
 }

@@ -69,17 +69,17 @@ public class CowMilkAbility extends Ability
 	@SubscribeEvent
 	public void onGettingInteractedWith(PlayerInteractEvent.EntityInteract event)
 	{
-		if(event.getHand() == InteractionHand.MAIN_HAND && !event.getWorld().isClientSide() && isTracked(event.getTarget()) && event.getItemStack().is(Items.BUCKET))
+		if(event.getHand() == InteractionHand.MAIN_HAND && !event.getLevel().isClientSide() && isTracked(event.getTarget()) && event.getItemStack().is(Items.BUCKET))
 		{
 			if(canMilk((Player) event.getTarget()))
 			{	
 				milkerEntityEffect.ifPresent(effect -> effect.playEffect(event.getEntity()));
 				milkedEntityEffect.ifPresent(effect -> effect.playEffect(event.getTarget()));
 				
-		        ItemStack milkStack = ItemUtils.createFilledResult(event.getItemStack(), event.getPlayer(), Items.MILK_BUCKET.getDefaultInstance());	
+		        ItemStack milkStack = ItemUtils.createFilledResult(event.getItemStack(), event.getEntity(), Items.MILK_BUCKET.getDefaultInstance());	
 		        decrementHungerAndSaturation((Player) event.getTarget());
 		        
-		        event.getPlayer().setItemInHand(event.getHand(), milkStack);
+		        event.getEntity().setItemInHand(event.getHand(), milkStack);
 			}
 			else
 			{

@@ -29,7 +29,7 @@ public class DamageImmunityAbility extends Ability
 	@SubscribeEvent
 	public void onPlayerTakingDamage(LivingAttackEvent event)
 	{
-		if(event.getSource().getMsgId().equals(immuneTo) && event.getEntity() instanceof Player && trackedPlayers.contains(event.getEntityLiving().getUUID()))
+		if(event.getSource().getMsgId().equals(immuneTo) && event.getEntity() instanceof Player && trackedPlayers.contains(event.getEntity().getUUID()))
 		{
 			event.setCanceled(true);
 		}

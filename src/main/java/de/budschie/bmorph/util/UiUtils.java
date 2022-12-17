@@ -41,7 +41,7 @@ public class UiUtils
 		vertexUploader.vertex(matrix, maxX, minY, 0).color(r, g, b, a).endVertex();
 		
 		vertexUploader.end();
-		BufferUploader.end(vertexUploader);
+		vertexUploader.end();
 		RenderSystem.enableTexture();
 		RenderSystem.disableBlend();
 	}

@@ -18,7 +18,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
-public class ConfigurableAbility<A extends Ability> extends ForgeRegistryEntry<ConfigurableAbility<? extends Ability>>
+public class ConfigurableAbility<A extends Ability>
 {
 	private static final Logger LOGGER = LogManager.getLogger();
 	
@@ -60,7 +60,8 @@ public class ConfigurableAbility<A extends Ability> extends ForgeRegistryEntry<C
 				return Optional.of(new CompoundTag());
 		}
 		else
-			LOGGER.warn(MessageFormat.format("There was an error serializing the ability {0} with its codec {1}: {2}", ability.getResourceLocation(), this.getRegistryName(), nbt.get().right().get().message()));
+			// FIXME: FIX THIS LOG MESSAGE ASAP
+			LOGGER.warn(MessageFormat.format("There was an error serializing the ability {0} with its codec {1}: {2}", ability.getResourceLocation(), "FIXME", nbt.get().right().get().message()));
 		
 		return Optional.empty();
 	}
@@ -74,25 +75,25 @@ public class ConfigurableAbility<A extends Ability> extends ForgeRegistryEntry<C
 			return Optional.empty();
 	}
 	
-	@Override
-	public int hashCode()
-	{
-		return this.getRegistryName().hashCode();
-	}
-	
-	@Override
-	public boolean equals(Object obj)
-	{
-		if(obj instanceof ConfigurableAbility)
-		{
-			ConfigurableAbility<?> otherConfigAbility = (ConfigurableAbility<?>) obj;
-			
-			if(otherConfigAbility.getRegistryName().equals(this.getRegistryName()))
-				return true;
-		}
-		
-		return false;
-	}
+//	@Override
+//	public int hashCode()
+//	{
+//		return this.getRegistryName().hashCode();
+//	}
+//	
+//	@Override
+//	public boolean equals(Object obj)
+//	{
+//		if(obj instanceof ConfigurableAbility)
+//		{
+//			ConfigurableAbility<?> otherConfigAbility = (ConfigurableAbility<?>) obj;
+//			
+//			if(otherConfigAbility.getRegistryName().equals(this.getRegistryName()))
+//				return true;
+//		}
+//		
+//		return false;
+//	}
 	
 	public static class SerializationResult
 	{

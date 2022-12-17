@@ -72,7 +72,7 @@ public abstract class MorphItem
 		}
 		else if(abilityListFromEntity.isPresent())
 		{
-			nbt.putString("ability_list_from_entity", abilityListFromEntity.get().getRegistryName().toString());
+			nbt.putString("ability_list_from_entity", ForgeRegistries.ENTITY_TYPES.getKey(abilityListFromEntity.get()).toString());
 		}
 		
 		return nbt;
@@ -103,7 +103,7 @@ public abstract class MorphItem
 			}
 			else if(nbt.contains("ability_list_from_entity", Tag.TAG_STRING))
 			{
-				setAbilityListFromEntity(ForgeRegistries.ENTITIES.getValue(new ResourceLocation(nbt.getString("ability_list_from_entity"))));
+				setAbilityListFromEntity(ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(nbt.getString("ability_list_from_entity"))));
 			}
 		}
 	}
@@ -121,7 +121,7 @@ public abstract class MorphItem
 			
 			if(abilities == null)
 			{
-				LOGGER.warn(MessageFormat.format("The custom ability list {0} for the entity type {1} does not exist. Defaulting to an empty list of abilities.", customAbilityList.get().toString(), getEntityType().getRegistryName().toString()));
+				LOGGER.warn(MessageFormat.format("The custom ability list {0} for the entity type {1} does not exist. Defaulting to an empty list of abilities.", customAbilityList.get().toString(), ForgeRegistries.ENTITY_TYPES.getKey(getEntityType()).toString()));
 				return Arrays.asList();
 			}
 			

@@ -7,6 +7,7 @@ import de.budschie.bmorph.morph.fallback.IMorphNBTHandler;
 import de.budschie.bmorph.morph.functionality.data_transformers.DataTransformer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class JsonMorphNBTHandler implements IMorphNBTHandler
 {
@@ -42,7 +43,7 @@ public class JsonMorphNBTHandler implements IMorphNBTHandler
 	@Override
 	public int getHashCodeFor(FallbackMorphItem item)
 	{
-		int hashCode = item.getEntityType().getRegistryName().toString().hashCode();
+		int hashCode = ForgeRegistries.ENTITY_TYPES.getKey(item.getEntityType()).toString().hashCode();
 		CompoundTag nbt = item.serializeAdditional();
 		
 //		// Generate a hash code for every nbt element 

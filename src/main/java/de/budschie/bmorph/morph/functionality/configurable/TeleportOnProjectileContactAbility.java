@@ -59,9 +59,9 @@ public class TeleportOnProjectileContactAbility extends Ability
 			algorithm:
 			for(int i = 0; i < maxTries; i++)
 			{
-				int x = (int) (event.getEntityLiving().getRandom().nextInt(searchRadius.getX() * 2) - searchRadius.getX() + event.getEntity().getX());
-				int y = (int) (event.getEntityLiving().getRandom().nextInt(searchRadius.getY() * 2) - searchRadius.getY() + event.getEntity().getY());
-				int z = (int) (event.getEntityLiving().getRandom().nextInt(searchRadius.getZ() * 2) - searchRadius.getZ() + event.getEntity().getZ());
+				int x = (int) (event.getEntity().getRandom().nextInt(searchRadius.getX() * 2) - searchRadius.getX() + event.getEntity().getX());
+				int y = (int) (event.getEntity().getRandom().nextInt(searchRadius.getY() * 2) - searchRadius.getY() + event.getEntity().getY());
+				int z = (int) (event.getEntity().getRandom().nextInt(searchRadius.getZ() * 2) - searchRadius.getZ() + event.getEntity().getZ());
 				
 				foundBlock = new BlockPos(x, y, z);
 				
@@ -72,7 +72,7 @@ public class TeleportOnProjectileContactAbility extends Ability
 					
 					if(!blockAtPos.getMaterial().blocksMotion() && !blockAtPos.getFluidState().is(FluidTags.WATER))
 					{
-						if(event.getEntityLiving().randomTeleport(x, y, z, false))
+						if(event.getEntity().randomTeleport(x, y, z, false))
 						{
 							teleportationEffect.ifPresent(ave -> ave.playEffect(event.getEntity()));
 							break algorithm;

@@ -22,7 +22,7 @@ public class ProjectileShootingAbility extends StunAbility
 {
 	public static final Codec<ProjectileShootingAbility> CODEC = RecordCodecBuilder
 			.create(instance -> instance.group(
-					ModCodecs.ENTITIES.fieldOf("projectile_entity").forGetter(ProjectileShootingAbility::getProjectileEntityType),
+					ModCodecs.ENTITY_TYPES.fieldOf("projectile_entity").forGetter(ProjectileShootingAbility::getProjectileEntityType),
 					Codec.INT.optionalFieldOf("stun", 0).forGetter(ProjectileShootingAbility::getStun),
 					Codec.DOUBLE.optionalFieldOf("motion", 0.0D).forGetter(ProjectileShootingAbility::getMotion),
 					CompoundTag.CODEC.optionalFieldOf("nbt", new CompoundTag()).forGetter(ProjectileShootingAbility::getNbtData),

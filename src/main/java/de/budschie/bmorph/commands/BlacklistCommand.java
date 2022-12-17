@@ -5,14 +5,15 @@ import com.mojang.brigadier.context.CommandContext;
 
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntitySummonArgument;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.synchronization.SuggestionProviders;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.ChatFormatting;
 
 public class BlacklistCommand
 {
@@ -33,13 +34,13 @@ public class BlacklistCommand
 		
 		if(blacklist.isInBlacklist(arg))
 		{
-			ctx.getSource().sendFailure(new TextComponent("Failed to add entry " + arg.toString() + " to the entity blacklist because that entry already exists."));
+			ctx.getSource().sendFailure(MutableComponent.create(new LiteralContents("Failed to add entry " + arg.toString() + " to the entity blacklist because that entry already exists.")));
 		}
 		else
 		{
 			blacklist.addBlacklist(arg);
 			
-			ctx.getSource().sendSuccess(new TextComponent(ChatFormatting.GREEN + "Successfully added " + arg.toString() + " to the blacklist!"), true);
+			ctx.getSource().sendSuccess(MutableComponent.create(new LiteralContents("Successfully added " + arg.toString() + " to the blacklist!")).withStyle(ChatFormatting.GREEN), true);
 			
 			blacklist.writeToFile(ctx.getSource().getServer());
 		}
@@ -60,7 +61,7 @@ public class BlacklistCommand
 		
 		builder.append("There ").append(isSingular ? "is" : "are").append(" currently ").append(blacklist.getBlacklist().size()).append(isSingular ? " entry" : " entries").append(" in the blacklist: ").append(conc);
 		
-		ctx.getSource().sendSuccess(new TextComponent(builder.toString()), false);
+		ctx.getSource().sendSuccess(MutableComponent.create(new LiteralContents(builder.toString())), false);
 		
 		return 0;
 	}
@@ -74,12 +75,12 @@ public class BlacklistCommand
 		if(blacklist.isInBlacklist(arg))
 		{
 			blacklist.removeBlacklist(arg);
-			ctx.getSource().sendSuccess(new TextComponent(ChatFormatting.GREEN + "Successfully removed " + arg.toString() + " from the entity blacklist."), false);
+			ctx.getSource().sendSuccess(MutableComponent.create(new LiteralContents("Successfully removed " + arg.toString() + " from the entity blacklist.")).withStyle(ChatFormatting.GREEN), false);
 			blacklist.writeToFile(ctx.getSource().getServer());
 		}
 		else
 		{
-			ctx.getSource().sendFailure(new TextComponent("Failed to remove entry " + arg.toString() + " from the entity blacklist because that entry doesn't exist yet."));
+			ctx.getSource().sendFailure(MutableComponent.create(new LiteralContents("Failed to remove entry " + arg.toString() + " from the entity blacklist because that entry doesn't exist yet.")));
 		}
 		
 		return 0;

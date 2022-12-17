@@ -180,11 +180,11 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 //					
 //				});
 				
-				if(ForgeRegistries.ENTITIES.tags().isKnownTagName(tagKey))
+				if(ForgeRegistries.ENTITY_TYPES.tags().isKnownTagName(tagKey))
 				{
-					ForgeRegistries.ENTITIES.tags().getTag(tagKey).forEach(entityType ->
+					ForgeRegistries.ENTITY_TYPES.tags().getTag(tagKey).forEach(entityType ->
 					{
-						MorphAbilityEntry entry = abilityEntries.computeIfAbsent(new MorphAbilityKey(entityType.getRegistryName(), MorphAbilityEntryType.ENTITY), keyLambda -> new MorphAbilityEntry());
+						MorphAbilityEntry entry = abilityEntries.computeIfAbsent(new MorphAbilityKey(ForgeRegistries.ENTITY_TYPES.getKey(entityType), MorphAbilityEntryType.ENTITY), keyLambda -> new MorphAbilityEntry());
 						entry.mergeWith(entityTagTupel.getValue());
 					});
 				}
@@ -200,13 +200,13 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 				{
 					if(entity.type == MorphAbilityEntryType.ENTITY)
 					{						
-						if(!ForgeRegistries.ENTITIES.containsKey(entity.name))
+						if(!ForgeRegistries.ENTITY_TYPES.containsKey(entity.name))
 						{
 							LOGGER.warn(String.format("The given entity %s is not known to the game. Skipping this entry. Please make sure to only load this when the mod for the entity is present. You can do this by putting this JSON file in \"data/<modname>/morph_abilities\".", entity));
 						}
 						else
 						{
-							EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(entity.name);
+							EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(entity.name);
 							entityAbilityLookup.put(entityType, entry.resolve());
 						}
 					}

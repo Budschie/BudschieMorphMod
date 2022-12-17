@@ -65,11 +65,12 @@ public class BurnInSunAbility extends Ability
 				if (player.level.isDay() && !player.level.isClientSide)
 				{
 					// Taken from Mob class and slightly changed
-					float currentBrightness = player.getBrightness();
 					BlockPos blockpos = new BlockPos(player.getEyePosition());
 					
+					float brightnessMagic = player.getLightLevelDependentMagicValue();
+					
 					boolean shallBeImmuneToFire = player.isInWaterRainOrBubble() || player.isInPowderSnow || player.wasInPowderSnow;
-					if (currentBrightness > 0.5F && player.getRandom().nextFloat() * 30 < (currentBrightness - 0.4f) * 2.0f && !shallBeImmuneToFire
+					if (brightnessMagic > 0.5F && player.getRandom().nextFloat() * 30 < (brightnessMagic - 0.4f) * 2.0f && !shallBeImmuneToFire
 							&& player.level.canSeeSky(blockpos))
 					{
 						ItemStack hatItem = player.getItemBySlot(EquipmentSlot.HEAD);

@@ -2,10 +2,11 @@ package de.budschie.bmorph.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+
+import net.minecraft.util.RandomSource;
 
 public class WeightedList<T>
 {
@@ -26,7 +27,7 @@ public class WeightedList<T>
 		this.weights.sort((o1, o2) -> Integer.compare(o2.getWeight(), o1.getWeight()));
 	}
 	
-	public T getRandom(Random rand)
+	public T getRandom(RandomSource rand)
 	{
 		int toAchieve = rand.nextInt(accumulated);
 		

@@ -37,7 +37,7 @@ public class PlayerMorphItem extends MorphItem
 	public Entity createEntity(Level world)
 	{		
 		// -69420 points for code style... TODO: This is f****** stupid...
-		return world.isClientSide ? UglyHackThatDoesntWork.thisisstupid.apply(gameProfile, world) : new Player(world, new BlockPos(0, 0, 0), 0, gameProfile)
+		return world.isClientSide ? UglyHackThatDoesntWork.thisisstupid.apply(gameProfile, world) : new Player(world, new BlockPos(0, 0, 0), 0, gameProfile, null)
 		{
 			@Override
 			public boolean isSpectator()
