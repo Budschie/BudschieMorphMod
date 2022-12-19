@@ -13,10 +13,11 @@ import com.google.gson.JsonObject;
 
 import de.budschie.bmorph.json_integration.JsonMorphNBTHandler;
 import de.budschie.bmorph.json_integration.NBTPath;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.HashCache;
 import net.minecraft.data.DataProvider;
 import net.minecraft.world.entity.EntityType;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class NBTHandlerProvider implements DataProvider
 {
@@ -30,10 +31,10 @@ public class NBTHandlerProvider implements DataProvider
 	}
 	
 	@Override
-	public void run(HashCache cache) throws IOException
+	public void run(CachedOutput cache) throws IOException
 	{
 		for(Map.Entry<EntityType<?>, JsonMorphNBTHandler> entry : data.entrySet())
-			DataProvider.save(GSON, cache, serializeJsonMorphNBTHandler(entry.getKey(), entry.getValue()), generator.getOutputFolder().resolve(FileSystems.getDefault().getPath("data", entry.getKey().getRegistryName().getNamespace(), "morph_nbt", entry.getKey().getRegistryName().getPath() + ".json")));
+			DataProvider.save(GSON, cache, serializeJsonMorphNBTHandler(entry.getKey(), entry.getValue()), generator.getOutputFolder().resolve(FileSystems.getDefault().getPath("data", ForgeRegistries.ENTITY_TYPES.getKey(entry.getKey()).getNamespace(), "morph_nbt", ForgeRegistries.ENTITY_TYPES.getKey(entry.getKey()).getPath() + ".json")));
 	}
 	
 	private JsonElement serializeJsonMorphNBTHandler(EntityType<?> type, JsonMorphNBTHandler nbtHandler)
@@ -41,7 +42,7 @@ public class NBTHandlerProvider implements DataProvider
 		JsonObject root = new JsonObject();
 		
 		// Set entity type
-		root.addProperty("entity_type", type.getRegistryName().toString());
+		root.addProperty("entity_type", ForgeRegistries.ENTITY_TYPES.getKey(type).toString());
 		
 		// Set tracked nbt tags
 		JsonArray trackedNbtJSON = new JsonArray();

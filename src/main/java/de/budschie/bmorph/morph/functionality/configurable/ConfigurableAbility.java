@@ -16,7 +16,6 @@ import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 public class ConfigurableAbility<A extends Ability>
 {

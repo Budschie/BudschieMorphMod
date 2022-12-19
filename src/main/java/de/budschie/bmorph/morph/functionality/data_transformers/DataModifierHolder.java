@@ -15,7 +15,6 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 /** This class is a singleton holding a codec and a name for IDataModifiers. **/
 public class DataModifierHolder<T extends DataModifier>
@@ -76,7 +75,7 @@ public class DataModifierHolder<T extends DataModifier>
 				return Optional.of(new CompoundTag());
 		}
 		else
-			LOGGER.warn(MessageFormat.format("There was an error serializing a data modifier with its codec {0}: {1}", this.getRegistryName(), nbt.get().right().get().message()));
+			LOGGER.warn(MessageFormat.format("There was an error serializing a data modifier with its codec {0}: {1}", DataModifierRegistry.REGISTRY.get().getKey(this), nbt.get().right().get().message()));
 		
 		return Optional.empty();
 	}

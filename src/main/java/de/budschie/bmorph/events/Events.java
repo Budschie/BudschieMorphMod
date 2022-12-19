@@ -95,8 +95,8 @@ import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.EntityLeaveWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -156,9 +156,9 @@ public class Events
 	
 	// Add additional target selector to iron golem entity
 	@SubscribeEvent
-	public static void onEntityCreated(EntityJoinWorldEvent event)
+	public static void onEntityCreated(EntityJoinLevelEvent event)
 	{
-		if(event.getWorld().isClientSide())
+		if(event.getLevel().isClientSide())
 			return;
 		
 		if(event.getEntity() instanceof IronGolem ironGolem)
@@ -194,7 +194,7 @@ public class Events
 	{	
 		if(!event.getEntity().level.isClientSide())
 		{
-			Player player = event.getPlayer();
+			Player player = event.getEntity();
 			
 			LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			
@@ -244,7 +244,7 @@ public class Events
 	}
 	
 	@SubscribeEvent
-	public static void onEntityLeftWorld(EntityLeaveWorldEvent event)
+	public static void onEntityLeftWorld(EntityLeaveLevelEvent event)
 	{
 		if(event.getEntity() instanceof Player player)
 		{

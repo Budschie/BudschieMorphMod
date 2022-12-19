@@ -114,14 +114,14 @@ public class DataTransformer implements IDynamicRegistryObject
 			if(toSerialize.isPresent())
 			{
 				CompoundTag modTag = new CompoundTag();
-				modTag.putString("ModifierId", modifier.getDataModifierHolder().getRegistryName().toString());
+				modTag.putString("ModifierId", DataModifierRegistry.REGISTRY.get().getKey(modifier.getDataModifierHolder()).toString());
 				modTag.put("Data", toSerialize.get());
 				
 				tag.put(Integer.valueOf(i++).toString(), modTag);
 			}
 			else
 			{
-				LOGGER.warn(MessageFormat.format("Skipped data modifier of type {0} in {1} because it could not be serialized. This data can consequently not be used. Skipping this modifier.", modifier.getDataModifierHolder().getRegistryName(), getResourceLocation()));
+				LOGGER.warn(MessageFormat.format("Skipped data modifier of type {0} in {1} because it could not be serialized. This data can consequently not be used. Skipping this modifier.", DataModifierRegistry.REGISTRY.get().getKey(modifier.getDataModifierHolder()), getResourceLocation()));
 			}
 		}
 		

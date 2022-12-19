@@ -88,15 +88,15 @@ public class RenderHandler
 			return;
 		
 		veryDodgyStackOverflowPreventionHackJesJes = true;
-		IRenderDataCapability renderDataCapability = event.getPlayer().getCapability(RenderDataCapabilityProvider.RENDER_CAP).resolve().orElse(null);
+		IRenderDataCapability renderDataCapability = event.getEntity().getCapability(RenderDataCapabilityProvider.RENDER_CAP).resolve().orElse(null);
 		
 		if(renderDataCapability != null)
 		{
-			LazyOptional<IMorphCapability> morph = event.getPlayer().getCapability(MorphCapabilityAttacher.MORPH_CAP);
+			LazyOptional<IMorphCapability> morph = event.getEntity().getCapability(MorphCapabilityAttacher.MORPH_CAP);
 			
 			if(renderDataCapability.hasAnimation())
 			{
-				renderDataCapability.renderAnimation(event.getPlayer(), event.getPoseStack(), event.getPartialTick(), event.getMultiBufferSource(), event.getPackedLight());
+				renderDataCapability.renderAnimation(event.getEntity(), event.getPoseStack(), event.getPartialTick(), event.getMultiBufferSource(), event.getPackedLight());
 				event.setCanceled(true);
 			}
 			else if(morph.isPresent())
@@ -107,7 +107,7 @@ public class RenderHandler
 				{
 					event.setCanceled(true);
 	
-					Player player = event.getPlayer();					
+					Player player = event.getEntity();					
 					Entity toRender = renderDataCapability.getOrCreateCachedEntity(player);
 					
 					renderDataCapability.getOrCreateCachedRotationSynchronizers(player).forEach(rotationSync -> rotationSync.updateMorphRotation(toRender, player));
@@ -170,7 +170,7 @@ public class RenderHandler
 			matrixStack.translate(0, 1, 0);
 		
 		// If we are crouching and we should not move down, offset the player up again.
-		if(player.isCrouching() && ForgeRegistries.ENTITIES.tags().getTag(ModEntityTypeTags.DISABLE_SNEAK_TRANSFORM).contains(toRender.getType()))
+		if(player.isCrouching() && ForgeRegistries.ENTITY_TYPES.tags().getTag(ModEntityTypeTags.DISABLE_SNEAK_TRANSFORM).contains(toRender.getType()))
 		{
 			toRender.setPose(Pose.STANDING);
 			matrixStack.translate(0, 0.125D, 0);

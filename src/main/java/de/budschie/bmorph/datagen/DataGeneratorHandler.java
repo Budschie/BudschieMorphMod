@@ -12,10 +12,10 @@ import de.budschie.bmorph.main.References;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 @EventBusSubscriber(bus = Bus.MOD, modid = References.MODID)
@@ -37,10 +37,10 @@ public class DataGeneratorHandler
 	
 	private static void registerNBTHandlerProviders(NBTHandlerProvider provider)
 	{		
-		List<EntityType<?>> entityTypes = ForgeRegistries.ENTITIES.getValues().parallelStream().filter(entityType -> entityType.getRegistryName().getNamespace().equals("betteranimalsplus"))
+		List<EntityType<?>> entityTypes = ForgeRegistries.ENTITY_TYPES.getValues().parallelStream().filter(entityType -> ForgeRegistries.ENTITY_TYPES.getKey(entityType).getNamespace().equals("betteranimalsplus"))
 				.filter(entityType ->
 		{
-			String entity = entityType.getRegistryName().getPath();
+			String entity = ForgeRegistries.ENTITY_TYPES.getKey(entityType).getPath();
 			
 			return !entity.equals("golden_goose_egg") && !entity.equals("goose_egg") 
 					&& !entity.equals("turkey_egg") && !entity.equals("pheasant_egg");
