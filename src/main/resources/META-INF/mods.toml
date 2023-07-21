@@ -44,7 +44,7 @@ This mod also features data-driven definition of abilities. This enables
 mod pack creators to create cool data packs for this mod that either extend already
 existing mobs or add compatiblity for added entities of mods.
 
-Currently, you are playing the 1.18.2 version of this mod.
+Currently, you are playing the 1.19.2 version of this mod.
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.bmorph]] #optional
@@ -63,6 +63,6 @@ Currently, you are playing the 1.18.2 version of this mod.
     modId="minecraft"
     mandatory=true
 # This version range declares a minimum of the current minecraft version up to but not including the next major version
-    versionRange="[1.18.2,1.19)"
+    versionRange="[1.19.2,1.19.3)"
     ordering="NONE"
     side="BOTH"

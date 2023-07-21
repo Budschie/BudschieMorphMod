@@ -11,8 +11,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Guardian;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
@@ -51,9 +51,9 @@ public class GuardianEntitySynchronizer implements IEntitySynchronizer
 	// Render the UI when shooting lasers
 	@SubscribeEvent
 	// FIXME: Needs work
-	public static void onPlayerRenderer(RenderGameOverlayEvent.Pre event)
+	public static void onPlayerRenderer(RenderGuiOverlayEvent.Pre event)
 	{
-		if(event.getType() != ElementType.TEXT)
+		if(event.getOverlay() != VanillaGuiOverlay.ITEM_NAME.type())
 			return;
 		
 		IGuardianBeamCapability beamCap = Minecraft.getInstance().player.getCapability(GuardianBeamCapabilityInstance.GUARDIAN_BEAM_CAP).resolve().orElse(null);
@@ -61,7 +61,7 @@ public class GuardianEntitySynchronizer implements IEntitySynchronizer
 		// Render beam
 		if(beamCap != null && beamCap.getAttackedEntity().isPresent())
 		{
-			float progression = beamCap.getAttackProgression() + event.getPartialTicks();
+			float progression = beamCap.getAttackProgression() + event.getPartialTick();
 			float linearProgression = progression / beamCap.getMaxAttackProgression();
 			float progressionSq = linearProgression * linearProgression;
 			float animationSpeed = .25f;
@@ -85,7 +85,7 @@ public class GuardianEntitySynchronizer implements IEntitySynchronizer
 //					Minecraft.getInstance().getWindow().getGuiScaledHeight(), animationMovement, animationMovement, scale, scale, r, g, b,
 //					a);
 			
-	        Gui.blit(event.getMatrixStack(), 0, 0, animationMovement, animationMovement, Minecraft.getInstance().getWindow().getGuiScaledWidth(), Minecraft.getInstance().getWindow().getGuiScaledHeight(), (int)(32 * scale), (int)(32 * scale));
+	        Gui.blit(event.getPoseStack(), 0, 0, animationMovement, animationMovement, Minecraft.getInstance().getWindow().getGuiScaledWidth(), Minecraft.getInstance().getWindow().getGuiScaledHeight(), (int)(32 * scale), (int)(32 * scale));
 	        
 			RenderSystem.disableBlend();
 		}

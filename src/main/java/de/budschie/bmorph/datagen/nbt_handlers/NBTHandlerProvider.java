@@ -34,7 +34,7 @@ public class NBTHandlerProvider implements DataProvider
 	public void run(CachedOutput cache) throws IOException
 	{
 		for(Map.Entry<EntityType<?>, JsonMorphNBTHandler> entry : data.entrySet())
-			DataProvider.save(GSON, cache, serializeJsonMorphNBTHandler(entry.getKey(), entry.getValue()), generator.getOutputFolder().resolve(FileSystems.getDefault().getPath("data", ForgeRegistries.ENTITY_TYPES.getKey(entry.getKey()).getNamespace(), "morph_nbt", ForgeRegistries.ENTITY_TYPES.getKey(entry.getKey()).getPath() + ".json")));
+			DataProvider.saveStable(cache, serializeJsonMorphNBTHandler(entry.getKey(), entry.getValue()), generator.getOutputFolder().resolve(FileSystems.getDefault().getPath("data", ForgeRegistries.ENTITY_TYPES.getKey(entry.getKey()).getNamespace(), "morph_nbt", ForgeRegistries.ENTITY_TYPES.getKey(entry.getKey()).getPath() + ".json")));
 	}
 	
 	private JsonElement serializeJsonMorphNBTHandler(EntityType<?> type, JsonMorphNBTHandler nbtHandler)

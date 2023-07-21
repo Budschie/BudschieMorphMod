@@ -1,6 +1,5 @@
 package de.budschie.bmorph.gui;
 
-import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
@@ -19,8 +18,9 @@ import de.budschie.bmorph.network.MorphRequestMorphIndexChange.RequestMorphIndex
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.InputEvent.KeyInputEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -186,7 +186,7 @@ public class MorphGuiHandler
 	}
 	
 	@SubscribeEvent
-	public static void onPressedKeyboardKeyRaw(KeyInputEvent event)
+	public static void onPressedKeyboardKeyRaw(InputEvent.Key event)
 	{
 		boolean shouldDropCurrentMorph = ClientSetup.DROP_CURRENT_MORPH.isDown();
 		boolean shouldDeleteCurrentMorph = ClientSetup.DELETE_CURRENT_MORPH.isDown();
@@ -240,11 +240,11 @@ public class MorphGuiHandler
 	}
 	
 	@SubscribeEvent
-	public static void onRenderOverlayEvent(RenderGameOverlayEvent.Post event)
+	public static void onRenderOverlayEvent(RenderGuiOverlayEvent.Post event)
 	{		
-		if(canGuiBeDisplayed() && event.getType() == ElementType.TEXT && currentMorphGui.isPresent())
+		if(canGuiBeDisplayed() && event.getOverlay() == VanillaGuiOverlay.ITEM_NAME.type() && currentMorphGui.isPresent())
 		{
-			currentMorphGui.get().render(event.getMatrixStack(), event.getPartialTicks());
+			currentMorphGui.get().render(event.getPoseStack(), event.getPartialTick());
 		}
 	}
 	

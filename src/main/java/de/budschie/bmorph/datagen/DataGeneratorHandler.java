@@ -30,8 +30,8 @@ public class DataGeneratorHandler
 			
 			registerNBTHandlerProviders(nbtHandlerProvider);
 			
-			event.getGenerator().addProvider(nbtHandlerProvider);
-			event.getGenerator().addProvider(new EntityTagsProvider(event.getGenerator(), Registry.ENTITY_TYPE, References.MODID, event.getExistingFileHelper()));
+			event.getGenerator().addProvider(true, nbtHandlerProvider);
+			event.getGenerator().addProvider(true, new EntityTagsProvider(event.getGenerator(), Registry.ENTITY_TYPE, References.MODID, event.getExistingFileHelper()));
 		}
 	}
 	

@@ -2,7 +2,7 @@ package de.budschie.bmorph.morph.functionality.configurable.client;
 
 import de.budschie.bmorph.morph.functionality.configurable.FovModificationAbility;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.client.event.FOVModifierEvent;
+import net.minecraftforge.client.event.ViewportEvent.ComputeFov;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -29,12 +29,12 @@ public class FovModificationAbilityAdapter implements IFovModificationAbilityAda
 	}
 	
 	@SubscribeEvent
-	public void onFovChanged(FOVModifierEvent event)
+	public void onFovChanged(ComputeFov event)
 	{
 		// Player is tracked, thus we shall modify their fov
 		if(this.ability.isTracked(Minecraft.getInstance().player))
 		{
-			event.setNewfov(event.getNewfov() * this.ability.getFovMultiplier() + this.ability.getFovAdd());
+			event.setFOV(event.getFOV() * this.ability.getFovMultiplier() + this.ability.getFovAdd());
 		}
 	}
 }

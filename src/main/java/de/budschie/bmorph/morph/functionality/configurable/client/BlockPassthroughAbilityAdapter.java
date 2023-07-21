@@ -1,7 +1,8 @@
 package de.budschie.bmorph.morph.functionality.configurable.client;
 
 import de.budschie.bmorph.morph.functionality.configurable.BlockPassthroughAbility;
-import net.minecraftforge.client.event.FOVModifierEvent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.client.event.ViewportEvent.ComputeFov;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -16,12 +17,12 @@ public class BlockPassthroughAbilityAdapter implements IBlockPassthroughAbilityA
 	}
 	
 	@SubscribeEvent
-	public void onFovModification(FOVModifierEvent event)
+	public void onFovModification(ComputeFov event)
 	{
-		if (this.ability.isInWeb(event.getEntity()))
+		if (event.getCamera().getEntity() instanceof Player player && this.ability.isInWeb(player))
 		{
 			if(ability.getSpeedMultiplier() != 0)
-				event.setNewfov((event.getNewfov() / (ability.getSpeedMultiplier())));
+				event.setFOV((event.getFOV() / (ability.getSpeedMultiplier())));
 		}
 	}
 
