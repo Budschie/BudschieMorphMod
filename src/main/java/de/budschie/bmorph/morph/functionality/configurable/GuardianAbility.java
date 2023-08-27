@@ -247,7 +247,7 @@ public class GuardianAbility extends Ability
 					Entity currentlyTargettedEntity = ((ServerLevel) event.getPlayer().level)
 							.getEntity(event.getCapability().getAttackedEntityServer().get());
 					
-					currentlyTargettedEntity.hurt(DamageSource.indirectMagic(event.getPlayer(), event.getPlayer()), damage);
+					currentlyTargettedEntity.hurt(event.getPlayer().level.damageSources().indirectMagic(event.getPlayer(), event.getPlayer()), damage);
 					
 					// Set the capability accordingly and sync it to the client
 					GuardianBeamCapabilityHandler.INSTANCE.unattackServer(event.getPlayer());

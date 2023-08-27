@@ -10,7 +10,7 @@ import de.budschie.bmorph.morph.functionality.codec_addition.AudioVisualEffect;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -50,7 +50,7 @@ public class TeleportOnProjectileContactAbility extends Ability
 		if(event.getEntity().level.isClientSide())
 			return;
 		
-		if(event.getSource().isProjectile())
+		if(event.getSource().is(DamageTypeTags.IS_PROJECTILE))
 		{
 			event.setCanceled(true);
 			

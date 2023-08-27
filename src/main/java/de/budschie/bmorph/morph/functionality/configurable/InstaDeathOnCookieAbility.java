@@ -60,7 +60,7 @@ public class InstaDeathOnCookieAbility extends Ability
 				}
 				else
 				{
-					player.hurt(DamageSource.badRespawnPointExplosion(), 420000000);
+					player.hurt(player.level.damageSources().badRespawnPointExplosion(player.position()), 420000000);
 					
 					if(player.isDeadOrDying())
 						player.sendSystemMessage(MutableComponent.create(new LiteralContents("I have told you several times that you should not eat cookies.")).withStyle(ChatFormatting.RED));

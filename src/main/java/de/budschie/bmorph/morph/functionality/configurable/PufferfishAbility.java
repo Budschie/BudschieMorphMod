@@ -120,7 +120,7 @@ public class PufferfishAbility extends StunAbility
 								if(entity == player || !entity.isAlive())
 									continue;
 	
-								if(entity.hurt(DamageSource.mobAttack(player), directDamage))
+								if(entity.hurt(player.level.damageSources().mobAttack(player), directDamage))
 								{
 									for(MobEffectInstance effect : effects)
 									{
