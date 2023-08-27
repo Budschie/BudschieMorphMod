@@ -56,9 +56,9 @@ import de.budschie.bmorph.tags.ModEntityTypeTags;
 import de.budschie.bmorph.util.BudschieUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.LiteralContents;
-import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.AgeableMob;
@@ -743,7 +743,7 @@ public class Events
 			{
 				event.setCanceled(true);
 				found = true;
-				event.getPlayer().sendSystemMessage(MutableComponent.create(new TranslatableContents("ui.bmorph.not_enough_space")).withStyle(ChatFormatting.RED));
+				event.getPlayer().sendSystemMessage(Component.translatable("ui.bmorph.not_enough_space").withStyle(ChatFormatting.RED));
 				break;
 			}
 			
