@@ -23,6 +23,7 @@ import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -172,7 +173,7 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 		{
 			for(Map.Entry<ResourceLocation, MorphAbilityEntry> entityTagTupel : abilityEntityTagEntries.entrySet())
 			{
-				TagKey<EntityType<?>> tagKey = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, entityTagTupel.getKey());
+				TagKey<EntityType<?>> tagKey = TagKey.create(Registries.ENTITY_TYPE, entityTagTupel.getKey());
 				
 				// Find every entity that has this tag
 //				ForgeRegistries.ENTITIES.tags().getTag(tagKey).forEach(entityType ->

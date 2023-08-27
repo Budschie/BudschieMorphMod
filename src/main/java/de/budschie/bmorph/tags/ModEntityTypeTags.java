@@ -2,6 +2,7 @@ package de.budschie.bmorph.tags;
 
 import de.budschie.bmorph.main.References;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
@@ -21,7 +22,7 @@ public class ModEntityTypeTags
 	
 	public static TagKey<EntityType<?>> createTag(ResourceLocation rl)
 	{
-		return TagKey.create(Registry.ENTITY_TYPE_REGISTRY, rl);
+		return TagKey.create(Registries.ENTITY_TYPE, rl);
 	}
 	
 	public static TagKey<EntityType<?>> createTag(String name)
