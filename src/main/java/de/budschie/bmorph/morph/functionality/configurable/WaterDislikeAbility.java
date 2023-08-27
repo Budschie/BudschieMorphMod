@@ -44,7 +44,7 @@ public class WaterDislikeAbility extends Ability
 				
 				if(player.isInWaterRainOrBubble() && trackedPlayers.contains(player.getUUID()))
 				{
-					player.hurt(DamageSource.DROWN, damageAmount);
+					player.hurt(player.level.damageSources().drown(), damageAmount);
 				}
 			}
 		}

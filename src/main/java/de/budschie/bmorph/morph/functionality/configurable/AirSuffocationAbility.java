@@ -26,7 +26,7 @@ public class AirSuffocationAbility extends Ability
 				{
 					event.player.setAirSupply(0);
 					
-					event.player.hurt(DamageSource.DROWN, 2);
+					event.player.hurt(event.player.level.damageSources().drown(), 2);
 				}
 			}
 		}
