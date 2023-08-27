@@ -9,7 +9,7 @@ import de.budschie.bmorph.datagen.tags.EntityTagsProvider;
 import de.budschie.bmorph.json_integration.JsonMorphNBTHandler;
 import de.budschie.bmorph.json_integration.NBTPath;
 import de.budschie.bmorph.main.References;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.data.event.GatherDataEvent;
@@ -26,12 +26,12 @@ public class DataGeneratorHandler
 	{
 		if(event.includeServer())
 		{
-			NBTHandlerProvider nbtHandlerProvider = new NBTHandlerProvider(event.getGenerator());
+			NBTHandlerProvider nbtHandlerProvider = new NBTHandlerProvider(event.getGenerator().getPackOutput());
 			
 			registerNBTHandlerProviders(nbtHandlerProvider);
 			
 			event.getGenerator().addProvider(true, nbtHandlerProvider);
-			event.getGenerator().addProvider(true, new EntityTagsProvider(event.getGenerator(), Registry.ENTITY_TYPE, References.MODID, event.getExistingFileHelper()));
+			event.getGenerator().addProvider(true, new EntityTagsProvider(event.getGenerator().getPackOutput(), Registries.ENTITY_TYPE, event.getLookupProvider(), References.MODID, event.getExistingFileHelper()));
 		}
 	}
 	
