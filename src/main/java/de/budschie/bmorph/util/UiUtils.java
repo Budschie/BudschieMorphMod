@@ -1,12 +1,12 @@
 package de.budschie.bmorph.util;
 
+import org.joml.Matrix4f;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Matrix4f;
 
 import net.minecraft.client.renderer.GameRenderer;
 
@@ -29,7 +29,8 @@ public class UiUtils
 		BufferBuilder vertexUploader = Tesselator.getInstance().getBuilder();
 		
 		RenderSystem.enableBlend();
-		RenderSystem.disableTexture();
+		// TODO: Does not work
+//		RenderSystem.disableTexture();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 		
@@ -40,9 +41,9 @@ public class UiUtils
 		vertexUploader.vertex(matrix, maxX, maxY, 0).color(r, g, b, a).endVertex();
 		vertexUploader.vertex(matrix, maxX, minY, 0).color(r, g, b, a).endVertex();
 		
+//		vertexUploader.end();
 		vertexUploader.end();
-		vertexUploader.end();
-		RenderSystem.enableTexture();
+//		RenderSystem.enableTexture();
 		RenderSystem.disableBlend();
 	}
 }
