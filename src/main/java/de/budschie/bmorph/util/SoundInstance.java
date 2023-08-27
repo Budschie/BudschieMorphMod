@@ -9,6 +9,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class SoundInstance
 {
@@ -38,6 +39,11 @@ public class SoundInstance
 	private float randomPitchDelta;
 	private float volume;
 		
+	public SoundInstance(SoundEvent soundEvent, SoundSource soundCategory, float pitch, float randomPitchDelta, float volume)
+	{
+		this(ForgeRegistries.SOUND_EVENTS.getHolder(ForgeRegistries.SOUND_EVENTS.getResourceKey(soundEvent).get()).get(), soundCategory, pitch, randomPitchDelta, volume);
+	}
+	
 	public SoundInstance(Holder<SoundEvent> soundEvent, SoundSource soundCategory, float pitch, float randomPitchDelta, float volume)
 	{
 		this.soundEvent = soundEvent;
