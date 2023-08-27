@@ -8,6 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.budschie.bmorph.main.ServerSetup;
 import de.budschie.bmorph.morph.functionality.Ability;
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
@@ -66,7 +67,7 @@ public class BlockTrailAbility extends Ability
 			
 			BlockState blockState = trailBlock.getState(player.getRandom(), blockPos);
 			
-			if (player.level.isEmptyBlock(blockPos) && (player.level.getBiome(blockPos).value().shouldSnowGolemBurn(blockPos) || !shouldSpawnOnlyInColdBiome()) && blockState.canSurvive(player.level, blockPos))
+			if (player.level.isEmptyBlock(blockPos) && (player.level.getBiome(blockPos).is(BiomeTags.SNOW_GOLEM_MELTS) || !shouldSpawnOnlyInColdBiome()) && blockState.canSurvive(player.level, blockPos))
 			{
 				player.level.setBlockAndUpdate(blockPos, trailBlock.getState(player.getRandom(), blockPos));
 			}
