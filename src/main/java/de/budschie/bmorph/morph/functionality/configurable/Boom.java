@@ -7,13 +7,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.EntityBasedExplosionDamageCalculator;
-import net.minecraft.world.level.Explosion.BlockInteraction;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.Level.ExplosionInteraction;
 
 public class Boom extends Ability
 {
@@ -54,13 +54,13 @@ public class Boom extends Ability
 	{
 		if(!player.isCreative() && player.tickCount > 80)
 		{
+			Explosion explosion = player.level.explode(player, null, new EntityBasedExplosionDamageCalculator(player), player.getX(), player.getY(), player.getZ(), explosionSize, causesFire, ExplosionInteraction.BLOCK);
+
 			if(isInstantKill())
 			{
-				player.hurt(DamageSource.explosion(player), 69420);
+				player.hurt(player.level.damageSources().explosion(explosion), 69420);
 			}
-			
-			player.level.explode(player, DamageSource.explosion(player), new EntityBasedExplosionDamageCalculator(player), player.getX(), player.getY(), player.getZ(), explosionSize, causesFire, BlockInteraction.BREAK);
-			
+						
 			Random rand = new Random();
 			
 			Level playerWorld = player.level;
