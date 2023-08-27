@@ -21,7 +21,7 @@ public class AdvancedAbstractClientPlayerEntity extends AbstractClientPlayer
 	
 	public AdvancedAbstractClientPlayerEntity(ClientLevel world, GameProfile profile)
 	{
-		super(world, profile, null);
+		super(world, profile);
 	}
 	
 	@Override
