@@ -5,21 +5,22 @@ import java.util.Optional;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import de.budschie.bmorph.morph.LazyTag;
 import de.budschie.bmorph.morph.functionality.Ability;
-import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class InstaRegenAbility extends Ability
 {	
 	public static final Codec<InstaRegenAbility> CODEC = RecordCodecBuilder
-			.create(instance -> instance.group(ModCodecs.LAZY_ITEM_TAGS.optionalFieldOf("consumed_item_tag").forGetter(InstaRegenAbility::getItemTag),
+			.create(instance -> instance.group(TagKey.codec(Registries.ITEM).optionalFieldOf("consumed_item_tag").forGetter(InstaRegenAbility::getItemTag),
 					Codec.FLOAT.fieldOf("health_regenerated").forGetter(InstaRegenAbility::getHealthRegenerated)).apply(instance, InstaRegenAbility::new));
 	
-	private Optional<LazyTag<Item>> itemTag;
+	private Optional<TagKey<Item>> itemTag;
 	private float healthRegenerated;
 	
 	/**
@@ -27,13 +28,13 @@ public class InstaRegenAbility extends Ability
 	 * 
 	 * It checks when
 	 **/
-	public InstaRegenAbility(Optional<LazyTag<Item>> itemTag, float healthRegenerated)
+	public InstaRegenAbility(Optional<TagKey<Item>> itemTag, float healthRegenerated)
 	{
 		this.healthRegenerated = healthRegenerated;
 		this.itemTag = itemTag;
 	}
 	
-	public Optional<LazyTag<Item>> getItemTag()
+	public Optional<TagKey<Item>> getItemTag()
 	{
 		return itemTag;
 	}
@@ -50,7 +51,7 @@ public class InstaRegenAbility extends Ability
 		{
 			Player player = (Player) event.getEntity();
 			
-			if(itemTag.isPresent() ? itemTag.get().test(event.getItem().getItem()) : event.getItem().isEdible())
+			if(itemTag.isPresent() ? ForgeRegistries.ITEMS.tags().getTag(itemTag.get()).contains(event.getItem().getItem()) : event.getItem().isEdible())
 			{
 				player.setHealth(Math.min(player.getMaxHealth(), player.getHealth() + healthRegenerated));
 			}

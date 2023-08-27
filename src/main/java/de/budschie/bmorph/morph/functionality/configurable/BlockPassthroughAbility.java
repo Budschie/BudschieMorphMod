@@ -9,13 +9,12 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.events.MotionMultiplierEvent;
-import de.budschie.bmorph.main.ServerSetup;
-import de.budschie.bmorph.morph.LazyTag;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.Ability;
-import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
 import de.budschie.bmorph.morph.functionality.configurable.client.BlockPassthroughAbilityAdapter;
 import de.budschie.bmorph.morph.functionality.configurable.client.IBlockPassthroughAbilityAdapter;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
@@ -28,6 +27,7 @@ import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
 public class BlockPassthroughAbility extends Ability
@@ -35,12 +35,12 @@ public class BlockPassthroughAbility extends Ability
 	public static final Codec<BlockPassthroughAbility> CODEC = RecordCodecBuilder
 			.create(instance -> instance
 					.group(Codec.DOUBLE.fieldOf("speed_multiplier").forGetter(BlockPassthroughAbility::getWebSpeedMultiplier),
-							ModCodecs.LAZY_BLOCK_TAGS.fieldOf("applies_to").forGetter(BlockPassthroughAbility::getAppliesTo))
+							TagKey.codec(Registries.BLOCK).fieldOf("applies_to").forGetter(BlockPassthroughAbility::getAppliesTo))
 					.apply(instance, BlockPassthroughAbility::new));
 	
 	private double webSpeedMultiplier;
 	private LazyOptional<AttributeModifier> am;
-	private LazyTag<Block> appliesTo;
+	private TagKey<Block> appliesTo;
 	private Optional<IBlockPassthroughAbilityAdapter> adapter;
 	
 	// TODO: This is dumb.
@@ -48,7 +48,7 @@ public class BlockPassthroughAbility extends Ability
 	
 	// Custom block tags are probably not loaded in yet when this is being created; this causes this ability to only be loaded when we execute "/reload".
 	// => do everything lazily.
-	public BlockPassthroughAbility(double webSpeedMultiplier, LazyTag<Block> appliesTo)
+	public BlockPassthroughAbility(double webSpeedMultiplier, TagKey<Block> appliesTo)
 	{
 		this.webSpeedMultiplier = webSpeedMultiplier;
 		this.appliesTo = appliesTo;
@@ -65,7 +65,7 @@ public class BlockPassthroughAbility extends Ability
 		});
 	}
 	
-	public LazyTag<Block> getAppliesTo()
+	public TagKey<Block> getAppliesTo()
 	{
 		return appliesTo;
 	}
@@ -115,7 +115,7 @@ public class BlockPassthroughAbility extends Ability
 	@SubscribeEvent
 	public void onMotionMultiplierEvent(MotionMultiplierEvent event)
 	{
-		if(isTracked(event.getEntity()) && appliesTo.test(event.getBlockState().getBlock()))
+		if(isTracked(event.getEntity()) && ForgeRegistries.BLOCKS.tags().getTag(appliesTo).contains(event.getBlockState().getBlock()))
 		{
 			event.setCanceled(true);
 			
