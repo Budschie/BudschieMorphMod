@@ -6,22 +6,24 @@ import com.mojang.brigadier.context.CommandContext;
 import de.budschie.bmorph.capabilities.blacklist.BlacklistData;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.EntitySummonArgument;
+import net.minecraft.commands.arguments.ResourceArgument;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.synchronization.SuggestionProviders;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.resources.ResourceLocation;
 
 public class BlacklistCommand
 {
-	public static void registerCommand(CommandDispatcher<CommandSourceStack> dispatcher)
+	public static void registerCommand(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context)
 	{
 		dispatcher.register(Commands.literal("morphblacklist")
 				.requires(src -> src.hasPermission(2))
-				.then(Commands.literal("add").then(Commands.argument("entity", EntitySummonArgument.id()).suggests(SuggestionProviders.SUMMONABLE_ENTITIES).executes(BlacklistCommand::addBlacklist)))
+				.then(Commands.literal("add").then(Commands.argument("entity", ResourceArgument.resource(context, Registries.ENTITY_TYPE)).suggests(SuggestionProviders.SUMMONABLE_ENTITIES).executes(BlacklistCommand::addBlacklist)))
 				.then(Commands.literal("remove").then(Commands.argument("entity", ResourceLocationArgument.id()).suggests(RemovableSuggestionProvider.INSTANCE).executes(BlacklistCommand::removeBlacklist)))
 				.then(Commands.literal("list").executes(BlacklistCommand::listBlacklist)));
 	}

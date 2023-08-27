@@ -30,8 +30,8 @@ public class ServerSetup
 	@SubscribeEvent
 	public static void onServerReloaded(RegisterCommandsEvent event)
 	{
-		MorphCommand.registerCommands(event.getDispatcher());
-		BlacklistCommand.registerCommand(event.getDispatcher());
+		MorphCommand.registerCommands(event.getDispatcher(), event.getBuildContext());
+		BlacklistCommand.registerCommand(event.getDispatcher(), event.getBuildContext());
 		
 		LOGGER.info("Registered morph commands.");
 	}

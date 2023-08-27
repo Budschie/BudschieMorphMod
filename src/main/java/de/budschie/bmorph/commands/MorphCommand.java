@@ -26,13 +26,15 @@ import de.budschie.bmorph.morph.functionality.AbilityRegistry;
 import de.budschie.bmorph.network.MainNetworkChannel;
 import de.budschie.bmorph.network.MorphItemDisabled.MorphItemDisabledPacket;
 import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.CompoundTagArgument;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.commands.arguments.EntitySummonArgument;
+import net.minecraft.commands.arguments.ResourceArgument;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.commands.synchronization.SuggestionProviders;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.MutableComponent;
@@ -46,13 +48,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class MorphCommand
 {
-	public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher)
+	public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context)
 	{
 		dispatcher.register(Commands.literal("morph")
 				.requires(sender -> sender.hasPermission(2))
 				.then(
-						Commands.argument("player", EntityArgument.players()).then(						
-							Commands.argument("entity", EntitySummonArgument.id())
+						Commands.argument("player", EntityArgument.players()).then(	
+							Commands.argument("entity", EntityArgument.entity())
 							.suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
 							.executes(ctx -> 
 							{
@@ -116,7 +118,7 @@ public class MorphCommand
 				.requires(sender -> sender.hasPermission(2))
 				.then(
 						Commands.argument("player", EntityArgument.players()).then(						
-									Commands.argument("entity", EntitySummonArgument.id())
+									Commands.argument("entity", ResourceArgument.resource(context, Registries.ENTITY_TYPE))
 									.suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
 									.executes(ctx -> 
 									{
@@ -136,7 +138,7 @@ public class MorphCommand
 				.then(Commands.argument("disabled_for", IntegerArgumentType.integer(0))
 				.then(Commands.literal("everything")
 						.then(Commands.literal("matching")
-						.then(Commands.argument("entity_type", EntitySummonArgument.id()).suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
+						.then(Commands.argument("entity_type", ResourceArgument.resource(context, Registries.ENTITY_TYPE)).suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
 							.then(Commands.argument("nbt", CompoundTagArgument.compoundTag())
 							.executes(ctx -> disableMorphItems(ctx, getMorphFilter(ctx.getArgument("entity_type", ResourceLocation.class), Optional.of(ctx.getArgument("nbt", CompoundTag.class))))))
 						.executes(ctx -> disableMorphItems(ctx, getMorphFilter(ctx.getArgument("entity_type", ResourceLocation.class), Optional.empty())))))
