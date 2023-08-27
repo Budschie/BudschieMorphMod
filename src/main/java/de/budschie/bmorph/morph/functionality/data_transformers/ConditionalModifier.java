@@ -154,7 +154,7 @@ public class ConditionalModifier extends DataModifier
 		OperatorType type = OperatorType.getOperatorByName(convertToOp);
 		
 		if(type == null)
-			return DataResult.error(String.format("Unknown operator type \"%s\" in your conditional_modifier."));
+			return DataResult.error(() -> String.format("Unknown operator type \"%s\" in your conditional_modifier."));
 		else
 			return DataResult.success(type);
 	}, opType -> DataResult.success(opType.getOperatorName()));
@@ -165,7 +165,7 @@ public class ConditionalModifier extends DataModifier
 		DataType type = DataType.getDataTypeByName(convertToOp);
 		
 		if(type == null)
-			return DataResult.error(String.format("Unknown data type \"%s\" in your conditional_modifier."));
+			return DataResult.error(() -> String.format("Unknown data type \"%s\" in your conditional_modifier."));
 		else
 			return DataResult.success(type);
 	}, opType -> DataResult.success(opType.getDataTypeName()));
@@ -274,22 +274,15 @@ public class ConditionalModifier extends DataModifier
 	private static Tag convertToTag(byte tag, double originalValue)
 	{
 		// I need some eye bleach
-		switch (tag)
+		return switch (tag)
 		{
-		case Tag.TAG_BYTE:	
-			return ByteTag.valueOf((byte)originalValue);
-		case Tag.TAG_INT:
-			return IntTag.valueOf((int)originalValue);
-		case Tag.TAG_DOUBLE:
-			return DoubleTag.valueOf(originalValue);
-		case Tag.TAG_FLOAT:
-			return FloatTag.valueOf((float)originalValue);
-		case Tag.TAG_LONG:
-			return LongTag.valueOf((long)originalValue);
-		case Tag.TAG_SHORT:
-			return ShortTag.valueOf((short)originalValue);
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + originalValue);
-		}
+		case Tag.TAG_BYTE -> ByteTag.valueOf((byte)originalValue);
+		case Tag.TAG_INT -> IntTag.valueOf((int)originalValue);
+		case Tag.TAG_DOUBLE -> DoubleTag.valueOf(originalValue);
+		case Tag.TAG_FLOAT -> FloatTag.valueOf((float)originalValue);
+		case Tag.TAG_LONG -> LongTag.valueOf((long)originalValue);
+		case Tag.TAG_SHORT -> ShortTag.valueOf((short)originalValue);
+		default -> throw new IllegalArgumentException("Unexpected value: " + originalValue);
+		};
 	}
 }
