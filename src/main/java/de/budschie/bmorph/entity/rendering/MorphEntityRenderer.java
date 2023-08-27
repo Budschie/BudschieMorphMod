@@ -5,10 +5,11 @@ import java.util.WeakHashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.AxisAngle4f;
+import org.joml.Quaternionf;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
 
 import de.budschie.bmorph.entity.MorphEntity;
 import net.minecraft.client.Minecraft;
@@ -80,7 +81,7 @@ public class MorphEntityRenderer extends EntityRenderer<MorphEntity>
 
 		toRender.setPos(entity.getX(), entity.getY(), entity.getZ());
 
-		matrixStack.mulPose(Vector3f.YP.rotationDegrees(((toRender.tickCount + partialTicks) * 5f) % 360));
+		matrixStack.mulPose(new Quaternionf(new AxisAngle4f((float) Math.toRadians((toRender.tickCount + partialTicks) * 5f), 0, 1, 0)));
 		matrixStack.translate(0, Math.sin((toRender.tickCount + partialTicks) * 0.25f) * 0.15f + 0.15f, 0);
 
 		manager.render(toRender, 0, partialTicks, matrixStack, renderType ->
