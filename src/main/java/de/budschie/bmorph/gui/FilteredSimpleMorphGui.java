@@ -9,10 +9,11 @@ import java.util.function.BiPredicate;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.AxisAngle4f;
+import org.joml.Quaternionf;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
@@ -250,8 +251,17 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 		
 		public static final float ENTITY_SCALE_FACTOR = 30;
 		
-		public static final Quaternion ENTITY_ROTATION = new Quaternion(10, 45, 0, true);
-		public static final Quaternion NAMEPLATE_ORIENTATION = new Quaternion(0, 180 - 45, 0, true);
+		private static final Quaternionf fromEuler(float eulerDegX, float eulerDegY, float eulerDegZ)
+		{
+			AxisAngle4f xAxis = new AxisAngle4f((float) Math.toRadians(eulerDegX), 1, 0, 0);
+			AxisAngle4f yAxis = new AxisAngle4f((float) Math.toRadians(eulerDegY), 0, 1, 0);
+			AxisAngle4f zAxis = new AxisAngle4f((float) Math.toRadians(eulerDegZ), 0, 0, 1);
+			
+			return new Quaternionf(xAxis).mul(new Quaternionf(yAxis).mul(new Quaternionf(zAxis)));
+		}
+		
+		public static final Quaternionf ENTITY_ROTATION = fromEuler(10, 45, 0);
+		public static final Quaternionf NAMEPLATE_ORIENTATION = fromEuler(0, 180 - 45, 0);
 		
 		
 		private static final ResourceLocation MORPH_WINDOW_NORMAL = new ResourceLocation(References.MODID, "textures/gui/morph_window_normal.png");
@@ -335,7 +345,7 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 					
 					dumbFix = this.morphEntity.get();
 					
-					Minecraft.getInstance().getEntityRenderDispatcher().overrideCameraOrientation(new Quaternion(0, 0, 0, false));
+					Minecraft.getInstance().getEntityRenderDispatcher().overrideCameraOrientation(new Quaternionf());
 					
 					// We have to set the position or else name tags won't get rendered because there is a distance check
 					BlockPos position = Minecraft.getInstance().getEntityRenderDispatcher().camera.getBlockPosition();
