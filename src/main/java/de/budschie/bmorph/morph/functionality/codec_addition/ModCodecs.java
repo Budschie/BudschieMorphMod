@@ -15,9 +15,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.Decoder;
 import com.mojang.serialization.DynamicOps;
-import com.mojang.serialization.Encoder;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.json_integration.ability_groups.AbilityGroupRegistry.AbilityGroup;
@@ -31,13 +29,10 @@ import de.budschie.bmorph.util.DynamicRegistry;
 import de.budschie.bmorph.util.IDynamicRegistryObject;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.BossEvent.BossBarColor;
 import net.minecraft.world.BossEvent.BossBarOverlay;
 import net.minecraft.world.effect.MobEffect;
@@ -45,7 +40,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -61,39 +55,7 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 public class ModCodecs
 {	
 	private static final Logger LOGGER = LogManager.getLogger();
-	
-	public static final Codec<SoundEvent> SOUND_EVENT_CODEC = Codec.of(new Encoder<SoundEvent>()
-	{
-		@Override
-		public <T> DataResult<T> encode(SoundEvent input, DynamicOps<T> ops, T prefix)
-		{
-			return DataResult.success(ops.createString(ForgeRegistries.SOUND_EVENTS.getKey(input).toString()));
-		}
-	}, new Decoder<SoundEvent>()
-	{
-		@Override
-		public <T> DataResult<Pair<SoundEvent, T>> decode(DynamicOps<T> ops, T input)
-		{
-			DataResult<String> id = ops.getStringValue(input);
-			
-			if(id.result().isPresent())
-			{
-				SoundEvent soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation(id.result().get()));
-				
-				if(soundEvent == null)
-				{
-					return SoundEvent.CODEC.decode(ops, input);
-				}
-				else
-				{
-					return DataResult.success(Pair.of(soundEvent, input));
-				}
-			}
-			else
-				return DataResult.error(id.error().get().message());
-		}
-	});
-	
+		
 	public static final Codec<Attribute> ATTRIBUTE = getForgeRegistryCodec(() -> ForgeRegistries.ATTRIBUTES);
 	public static final Codec<MobEffect> EFFECTS = getForgeRegistryCodec(() -> ForgeRegistries.MOB_EFFECTS);
 	public static final Codec<EntityType<?>> ENTITY_TYPES = getForgeRegistryCodec(() -> ForgeRegistries.ENTITY_TYPES);
@@ -106,11 +68,7 @@ public class ModCodecs
 	
 	public static final Codec<BossBarColor> BOSSBAR_COLOR_ENUM = getEnumCodec(BossBarColor.class, BossBarColor::values);
 	public static final Codec<BossBarOverlay> BOSSBAR_OVERLAY_ENUM = getEnumCodec(BossBarOverlay.class, BossBarOverlay::values);
-	
-	public static final Codec<LazyTag<Block>> LAZY_BLOCK_TAGS = getLazyTagCodec(rl -> ForgeRegistries.BLOCKS.tags().getTag(TagKey.create(Registry.BLOCK_REGISTRY, rl)));
-	
-	public static final Codec<LazyTag<Item>> LAZY_ITEM_TAGS = getLazyTagCodec(rl -> ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, rl)));
-	
+		
 	public static final Codec<LazyOptional<Ability>> ABILITY = getLazyDynamicRegistry(() -> BMorphMod.DYNAMIC_ABILITY_REGISTRY, "ability", Optional.empty());
 	public static final Codec<LazyOptional<AbilityGroup>> ABILITY_GROUP = getLazyDynamicRegistry(() -> BMorphMod.ABILITY_GROUPS, "ability group", Optional.of("#"));
 	public static final Codec<LazyOptional<DataTransformer>> DATA_TRANSFORMER = getLazyDynamicRegistry(() -> BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY, "data transformer", Optional.empty());
@@ -127,7 +85,7 @@ public class ModCodecs
 		}
 		catch(CommandSyntaxException ex)
 		{
-			return DataResult.error("Could not parse NBT data: " + ex.getMessage());
+			return DataResult.error(() -> "Could not parse NBT data: " + ex.getMessage());
 		}
 		
 		return DataResult.success(tag);
@@ -143,7 +101,7 @@ public class ModCodecs
 		}
 		catch(CommandSyntaxException ex)
 		{
-			return DataResult.error("Could not parse NBT compound data: " + ex.getMessage());
+			return DataResult.error(() -> "Could not parse NBT compound data: " + ex.getMessage());
 		}
 		
 		return DataResult.success(tag);
@@ -172,7 +130,7 @@ public class ModCodecs
 				if (input.isPresent())
 					return DataResult.success(ops.createString(idPrefix.orElse("") + input.resolve().get().getResourceLocation().toString()));
 				else
-					return DataResult.error("The given " + typeName + " entry could not be encoded because it is null.");
+					return DataResult.error(() -> "The given " + typeName + " entry could not be encoded because it is null.");
 			}
 
 			@Override
@@ -192,7 +150,8 @@ public class ModCodecs
 						}
 						else
 						{
-							return DataResult.error(MessageFormat.format("The given registry entry id {0} did not have {1} as its prefix.", str, idPrefix.get()));
+							final String copiedResourceLocation = str;
+							return DataResult.error(() -> MessageFormat.format("The given registry entry id {0} did not have {1} as its prefix.", copiedResourceLocation, idPrefix.get()));
 						}
 					}
 					
@@ -204,13 +163,13 @@ public class ModCodecs
 					}
 					catch(ResourceLocationException ex)
 					{
-						return DataResult.error(ex.getMessage());
+						return DataResult.error(() -> ex.getMessage());
 					}
 
 					return DataResult.success(Pair.of(LazyOptional.of(() -> registry.get().getEntry(result)), input));
 				} 
 				else
-					return DataResult.error(rl.error().get().message());
+					return DataResult.error(() -> rl.error().get().message());
 			}
 		};
 	};
@@ -235,23 +194,7 @@ public class ModCodecs
 	public static final Codec<CommandProvider> COMMAND_PROVIDER = RecordCodecBuilder
 			.create(instance -> instance.group(Codec.STRING.fieldOf("command").forGetter(CommandProvider::getCommand), SELECTOR_ENUM.optionalFieldOf("selector", Selector.SELF).forGetter(CommandProvider::getSelector))
 					.apply(instance, CommandProvider::new));
-	
-//	public static final <T> Codec<LazyTag<T>> getLazyTagCodec(Function<ResourceLocation, Tag<T>> resolveFunction)
-//	{
-//		return ResourceLocation.CODEC.flatXmap((resourceLocation) ->
-//		{
-//			if(resourceLocation == null)
-//			{
-//				return DataResult.error("The resource location was null; thus there was no tag present.");
-//			}
-//			
-//			return DataResult.success(new LazyTag<>(resourceLocation, resolveFunction));
-//		}, (fromLazyTag) ->
-//		{
-//			return DataResult.success(fromLazyTag.getTagName());
-//		});
-//	}
-	
+		
 	/** Creates a codec that can convert any given resource location to an object and vice versa (all in a lazy manner so that registry entries can be loaded in properly) **/
 	public static final <T> Codec<LazyRegistryWrapper<T>> getLazyMCRegistryObjectCodec(Function<ResourceLocation, T> toObject, String name)
 	{
@@ -259,7 +202,7 @@ public class ModCodecs
 		{
 			if(resourceLocation == null)
 			{
-				return DataResult.error("The resource location was null; thus there was no " + name + " present.");
+				return DataResult.error(() -> "The resource location was null; thus there was no " + name + " present.");
 			}
 			
 			return DataResult.success(new LazyRegistryWrapper<>(resourceLocation, toObject));
@@ -276,7 +219,7 @@ public class ModCodecs
 		{
 			if(resourceLocation == null)
 			{
-				return DataResult.error("The resource location was null; thus there was no tag present.");
+				return DataResult.error(() -> "The resource location was null; thus there was no tag present.");
 			}
 			
 			return DataResult.success(new LazyTag<>(resourceLocation, toObject));
@@ -324,7 +267,7 @@ public class ModCodecs
 								.collect(Collectors.joining(", "))));
 					
 					return DataResult
-							.error(String.format("The %s %s is unknown. Here is a list of valid operations: %s", clazz.getName(), str,
+							.error(() -> String.format("The %s %s is unknown. Here is a list of valid operations: %s", clazz.getName(), str,
 									Stream.of(values.get()).map(validEnum -> validEnum.name().toLowerCase())
 											.collect(Collectors.joining(", "))));
 				}
@@ -349,7 +292,7 @@ public class ModCodecs
 			
 			if(op == null)
 				return DataResult
-						.error(String.format("The Operation %s is unknown. Here is a list of valid operations: %s", str,
+						.error(() -> String.format("The Operation %s is unknown. Here is a list of valid operations: %s", str,
 								Stream.of(Operation.values()).map(operation -> operation.name().toLowerCase())
 										.collect(Collectors.joining(", "))));
 			else
@@ -400,12 +343,12 @@ public class ModCodecs
 					A retrieved = forgeRegistry.get().getValue(result);
 					
 					if(retrieved == null)
-						return DataResult.error(String.format("The resource location %s did not yield any registry entry when tried to resolve into an actual instance.", result));
+						return DataResult.error(() -> String.format("The resource location %s did not yield any registry entry when tried to resolve into an actual instance.", result));
 					else
 						return DataResult.<Pair<A, T>>success(Pair.of(retrieved, input));
 				}
 				else
-					return DataResult.error(rl.error().get().message());
+					return DataResult.error(() -> rl.error().get().message());
 			}
 		};
 	}
