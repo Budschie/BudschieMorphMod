@@ -130,7 +130,7 @@ public class MorphEntity extends Entity
 	@Override
 	protected void moveTowardsClosestSpace(double x, double y, double z)
 	{
-		BlockPos blockpos = new BlockPos(x, y, z);
+		BlockPos blockpos = new BlockPos((int)x, (int)y, (int)z);
 		Vec3 vector3d = new Vec3(x - blockpos.getX(), y - blockpos.getY(),
 				z - blockpos.getZ());
 		BlockPos.MutableBlockPos blockpos$mutable = new BlockPos.MutableBlockPos();

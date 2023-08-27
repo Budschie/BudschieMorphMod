@@ -85,6 +85,7 @@ import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
@@ -591,7 +592,8 @@ public class Events
 			
 			event.player.getCapability(StandOnFluidInstance.STAND_ON_FLUID_CAP).ifPresent(cap ->
 			{
-		         FluidState state = event.player.level.getFluidState(new BlockPos(event.player.position().add(0, 0.5, 0)));
+				Vec3 adjustedPlayerPosition = event.player.position().add(0, 0.5, 0);
+		         FluidState state = event.player.level.getFluidState(new BlockPos((int)adjustedPlayerPosition.x, (int)adjustedPlayerPosition.y, (int)adjustedPlayerPosition.z));
 		         
 				if (cap.containsFluid(state.getType()) && event.player.isAffectedByFluids())
 				{

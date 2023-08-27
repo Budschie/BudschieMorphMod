@@ -150,7 +150,7 @@ public class EvokerSpellCapabilityHandler extends CommonCapabilityHandler<IEvoke
 
 	private static void createSpellEntity(Player player, double p_32673_, double p_32674_, double p_32675_, double p_32676_, float p_32677_, int p_32678_)
 	{
-		BlockPos blockpos = new BlockPos(p_32673_, p_32676_, p_32674_);
+		BlockPos blockpos = new BlockPos((int)p_32673_, (int)p_32676_, (int)p_32674_);
 		boolean flag = false;
 		double d0 = 0.0D;
 

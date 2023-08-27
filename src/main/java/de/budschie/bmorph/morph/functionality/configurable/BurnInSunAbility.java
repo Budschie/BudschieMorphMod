@@ -65,7 +65,7 @@ public class BurnInSunAbility extends Ability
 				if (player.level.isDay() && !player.level.isClientSide)
 				{
 					// Taken from Mob class and slightly changed
-					BlockPos blockpos = new BlockPos(player.getEyePosition());
+					BlockPos blockpos = new BlockPos((int)player.getEyePosition().x, (int)player.getEyePosition().y, (int)player.getEyePosition().z);
 					
 					float brightnessMagic = player.getLightLevelDependentMagicValue();
 					
