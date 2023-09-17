@@ -20,5 +20,5 @@ public class MorphGuiRegistry
 	new FilteredSimpleMorphGui(null, "morph_gui.bmorph.simple_default", (resolved, input) -> true));
 	
 	public static final RegistryObject<FilteredSimpleMorphGui> FAVOURITE_MORPH_GUI = MORPH_GUI_REGISTRY.register("simple_favourite", () -> 
-	new FilteredSimpleMorphGui(null, "morph_gui.bmorph.simple_favourite", (resolved, input) -> resolved.getFavouriteList().containsMorphItem(resolved.getMorphList().getMorphArrayList().get(input))));
+	new FilteredSimpleMorphGui(null, "morph_gui.bmorph.simple_favourite", (resolved, input) -> resolved.getFavouriteList().containsMorphItem(input)));
 }
