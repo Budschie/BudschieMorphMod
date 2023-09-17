@@ -25,19 +25,7 @@ public abstract class Ability implements IDynamicRegistryObject
 	
 	private ResourceLocation resourceLocation;
 	private ConfigurableAbility<? extends Ability> configurableAbility;
-	
-	/**
-	 * @deprecated <b>THIS METHOD IS MARKED FOR REMOVAL!</b> It may be removed in
-	 *             the future. It is still being called, but it might disappear in a
-	 *             few versions.<br><br>
-	 * 
-	 *             It will be replaced by
-	 *             {@link Ability#enableAbility(Player, MorphItem, MorphItem, List)},
-	 *             which has more arguments.
-	 **/
-	@Deprecated(since = "1.18.1-3.0.0", forRemoval = true)
-	public void enableAbility(Player player, MorphItem enabledItem) { }
-	
+		
 	/**
 	 * If you plan on overriding this method, you will NEED to call the super method
 	 * as this method actually contains some code by default
@@ -53,26 +41,11 @@ public abstract class Ability implements IDynamicRegistryObject
 	 **/
 	public void enableAbility(Player player, MorphItem enabledItem, MorphItem oldMorph, List<Ability> oldAbilities, AbilityChangeReason reason)
 	{
-		// Call old method for compat reasons
-		enableAbility(player, enabledItem);
-		
 		// Add player to the tracked player list if we listen for events
 		if(isAbleToReceiveEvents())
 			trackedPlayers.add(player.getUUID());
 	}
-	
-	/**
-	 * @deprecated <b>THIS METHOD IS MARKED FOR REMOVAL!</b> It may be removed in
-	 *             the future. It is still being called, but it might disappear in a
-	 *             few versions.<br><br>
-	 * 
-	 *             It will be replaced by
-	 *             {@link Ability#disableAbility(Player, MorphItem, MorphItem, List)},
-	 *             which has more arguments.
-	 **/
-	@Deprecated(since = "1.18.1-3.0.0", forRemoval = true)
-	public void disableAbility(Player player, MorphItem disabledItem) {}
-	
+		
 	/**
 	 * If you plan on overriding this method, you will NEED to call the super method
 	 * as this method actually contains some code by default
@@ -88,8 +61,7 @@ public abstract class Ability implements IDynamicRegistryObject
 	 **/
 	public void disableAbility(Player player, MorphItem disabledItem, MorphItem newMorph, List<Ability> newAbilities, AbilityChangeReason reason)
 	{
-		// Call old method for compatibility reasons.
-		disableAbility(player, disabledItem);		
+		
 	}
 	
 	/**

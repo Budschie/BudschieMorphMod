@@ -1,6 +1,5 @@
 package de.budschie.bmorph.morph;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -9,6 +8,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.EntityType;
 
@@ -17,8 +18,6 @@ public class MorphList implements Iterable<MorphItem>
 	private HashMap<EntityType<?>, Integer> entityCount = new HashMap<>();
 	
 	private HashSet<MorphItem> playerMorphItems = new HashSet<>();
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	private ArrayList<MorphItem> morphArrayList = new ArrayList<>();
 	private HashMap<UUID, MorphItem> uuidToMorphItem = new HashMap<>();
 	
 	private FavouriteList favouriteList;
@@ -26,16 +25,19 @@ public class MorphList implements Iterable<MorphItem>
 	public CompoundTag serializeNBT()
 	{
 		CompoundTag rootTag = new CompoundTag();
+		ListTag listTag = new ListTag();
 				
-		for(int i = 0; i < morphArrayList.size(); i++)
+		uuidToMorphItem.forEach((key, value) ->
 		{
-			rootTag.put(Integer.valueOf(i).toString(), morphArrayList.get(i).serialize());
-		}
+			listTag.add(value.serialize());
+		}) ;
+		
+		rootTag.put("data", listTag);
 		
 		return rootTag;
 	}
 	
-	public void deserializeNBT(CompoundTag tag)
+	private void deserializeNBTOld(CompoundTag tag)
 	{
 		Set<String> keys = tag.getAllKeys();
 		
@@ -45,94 +47,74 @@ public class MorphList implements Iterable<MorphItem>
 			
 			MorphItem item = MorphHandler.deserializeMorphItem(morphTag);
 			playerMorphItems.add(item);
-			morphArrayList.add(item);
 			uuidToMorphItem.put(item.getUUID(), item);
 			incrementEntityCount(item.getEntityType());
 		}
 	}
 	
+	private void deserializeNBTNew(CompoundTag tag)
+	{
+		ListTag list = tag.getList("data", Tag.TAG_COMPOUND);
+		
+		for(int i = 0; i < list.size(); i++)
+		{
+			CompoundTag morphItemCompound = list.getCompound(i);
+			
+			MorphItem morphItem = MorphHandler.deserializeMorphItem(morphItemCompound);
+			playerMorphItems.add(morphItem);
+			uuidToMorphItem.put(morphItem.getUUID(), morphItem);
+			incrementEntityCount(morphItem.getEntityType());
+		}
+	}
+	
+	public void deserializeNBT(CompoundTag tag)
+	{
+		if(tag.contains("data", Tag.TAG_COMPOUND))
+		{
+			deserializeNBTNew(tag);
+		}
+		else
+		{
+			deserializeNBTOld(tag);
+		}
+	}
+	
 	public void serializePacket(FriendlyByteBuf packet)
 	{
-		packet.writeInt(morphArrayList.size());
+		packet.writeInt(uuidToMorphItem.size());
 		
-		for(MorphItem item : morphArrayList)
+		uuidToMorphItem.forEach((uuid, morphItem) ->
 		{
-			packet.writeNbt(item.serialize());
-		}
+			packet.writeNbt(morphItem.serialize());
+		});
 	}
 	
 	public void deserializePacket(FriendlyByteBuf packet)
 	{		
 		int amount = packet.readInt();
 		
-		morphArrayList = new ArrayList<>(amount);
 		playerMorphItems = new HashSet<>(amount);
 		uuidToMorphItem = new HashMap<>(amount);
 		
 		for(int i = 0; i < amount; i++)
 		{
-			addToMorphList(MorphHandler.deserializeMorphItem(packet.readNbt()));
+			addMorphItem(MorphHandler.deserializeMorphItem(packet.readNbt()));
 		}
 	}
-	
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	public int addToMorphList(MorphItem item)
+		
+	public void addMorphItem(MorphItem item)
 	{
 		playerMorphItems.add(item);
-		morphArrayList.add(item);
 		uuidToMorphItem.put(item.getUUID(), item);
 		
 		incrementEntityCount(item.getEntityType());
-				
-		return morphArrayList.size() - 1;
 	}
-	
-	public void addMorphItem(MorphItem item)
-	{
-//		playerMorphItems.add(item);
-//		morphArrayList.add(item);
-//		uuidToMorphItem.put(item.getUUID(), item);
-//		
-//		incrementEntityCount(item.getEntityType());
-//				
-//		return morphArrayList.size() - 1;
-		
-		addToMorphList(item);
-	}
-	
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	public void removeFromMorphList(int index)
-	{
-		MorphItem item = morphArrayList.remove(index);
-		playerMorphItems.remove(item);
-		uuidToMorphItem.remove(item.getUUID());
-		
-		favouriteList.removeFavourite(item.getUUID());
-		
-		decrementEntityCount(item.getEntityType());
-	}
-	
-	// Returns the index of the given morph item. Deprecated, DO NOT USE THIS.
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	public Optional<Integer> indexOf(MorphItem morphItem)
-	{
-		for(int i = 0; i < morphArrayList.size(); i++)
-		{
-			if(morphArrayList.get(i).equals(morphItem))
-			{
-				return Optional.of(i);
-			}
-		}
-		
-		return Optional.empty();
-	}
-	
+			
 	public void removeMorphItem(UUID morphItemKey)
 	{
 		if(uuidToMorphItem.containsKey(morphItemKey))
 		{
 			MorphItem associatedMorphItem = uuidToMorphItem.get(morphItemKey);
-			morphArrayList.remove(associatedMorphItem);
 			playerMorphItems.remove(associatedMorphItem);
 			uuidToMorphItem.remove(morphItemKey);
 			
@@ -160,12 +142,6 @@ public class MorphList implements Iterable<MorphItem>
 	public boolean contains(UUID uuid)
 	{
 		return uuidToMorphItem.containsKey(uuid);
-	}
-	
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	public ArrayList<MorphItem> getMorphArrayList()
-	{
-		return morphArrayList;
 	}
 	
 	public void setFavouriteList(FavouriteList favouriteList)

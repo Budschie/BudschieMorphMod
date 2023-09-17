@@ -63,15 +63,6 @@ public class MorphAbilityManager extends SimpleJsonResourceReloadListener
 	}
 	
 	@Nullable
-	@Deprecated(forRemoval = true)
-	/** This method will return null if there is no ability for the given entity type.
-	 * @deprecated Use {@link MorphItem#getAbilities()} instead. This is the method this method calls now. **/
-	public List<Ability> getAbilitiesForItem(MorphItem morphItem)
-	{
-		return morphItem.getAbilities();
-	}
-	
-	@Nullable
 	/** This method will return null if there is no list of abilities for the given custom ability list key. **/
 	public List<Ability> getAbilitiesForCustomAbilityList(ResourceLocation customAbilityListName)
 	{

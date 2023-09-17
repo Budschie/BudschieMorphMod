@@ -39,14 +39,7 @@ public abstract class AbstractMorphGui
 	
 	/** Scrolls around in the morph menu. When scrolling up, {@code amount} is negative, when scrolling down, {@code amount} is positive. **/
 	public abstract void scroll(int amount);
-	
-	/**
-	 *  This method returns the morph index.
-	 * @return An integer representing the morph index. Any negative number shall represent a demorph, everything else represents a morph.
-	**/
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	public abstract int getMorphIndex();
-	
+		
 	/**
 	 * This method shall return the currently selected morph item, or null if there isn't any selection.
 	 */

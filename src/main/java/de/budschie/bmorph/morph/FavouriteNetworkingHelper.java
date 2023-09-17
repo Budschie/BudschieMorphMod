@@ -17,19 +17,6 @@ public class FavouriteNetworkingHelper
 {
 	private static final Logger LOGGER = LogManager.getLogger();
 	
-	// DRY CODE
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	private static void internalAddFavouriteMorph(boolean add, int indexInMorphArray)
-	{
-		LazyOptional<IMorphCapability> cap = Minecraft.getInstance().player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
-		
-		if(cap.isPresent())
-		{
-			IMorphCapability resolved = cap.resolve().get();
-			internalAddFavouriteMorph(add, resolved.getMorphList().getMorphArrayList().get(indexInMorphArray).getUUID());
-		}
-	}
-	
 	private static void internalAddFavouriteMorph(boolean add, UUID morphItemKey)
 	{
 		Player player = Minecraft.getInstance().player;
@@ -53,19 +40,7 @@ public class FavouriteNetworkingHelper
 			LOGGER.warn("Can't " + (add ? "add" : "remove") + "morph " + morphItemKey + " as a favourite, as the capability for morphs is not loaded yet.");
 		}
 	}
-	
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	public static void addFavouriteMorph(int indexInMorphArray)
-	{
-		internalAddFavouriteMorph(true, indexInMorphArray);
-	}
-	
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	public static void removeFavouriteMorph(int indexInMorphArray)
-	{
-		internalAddFavouriteMorph(false, indexInMorphArray);
-	}
-	
+		
 	public static void addFavouriteMorph(UUID morphItemKey)
 	{
 		internalAddFavouriteMorph(true, morphItemKey);

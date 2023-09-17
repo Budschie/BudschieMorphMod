@@ -32,27 +32,14 @@ public interface IMorphCapability
 	
 	/** Getter for the value returned in {@link IMorphCapability#getAbilitySerializationContext()} **/
 	public void setAbilitySerializationContext(AbilitySerializationContext context);
-	
-	/** Returns the current morph. Deprecated, please use {@link #getCurrentMorph()}. **/
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	public Optional<MorphItem> getCurrentMorphItem();
-	/** Returns an integer representing the current morph index of the morph item you are currently morphed in. Note that this does not apply to the /morph command. **/
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	public Optional<Integer> getCurrentMorphIndex();
-	
+		
 	/** Returns the morph that this player is currently morphed into. **/
 	public Optional<MorphItem> getCurrentMorph();
 	/** Returns the entity which the morph that this player is currently morphed into represents. **/
 	public Optional<Entity> getCurrentMorphEntity();
 	
-	/** This method adds the given morph item to the morph list and returns the index of the added morph. Deprecated, use {@link #addMorphItem(MorphItem)} instead. **/
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	public int addToMorphList(MorphItem morphItem);
 	/** This method adds the given morph item to the morph list. **/
 	public void addMorphItem(MorphItem morphItem);
-	/** This method removes the given index from the morph list. Deprecated, please use {@link #removeMorphItem(MorphItem)} or {@link #removeMorphItem(UUID)} instead. **/
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	public void removeFromMorphList(int index);
 	/** Removes a given morph item from the morph list. **/
 	public void removeMorphItem(MorphItem morphItem);
 	/** Removes a given morph associated with the given key from the morph list. **/
@@ -62,15 +49,6 @@ public interface IMorphCapability
 	/** This is a setter for the morph list. **/
 	public void setMorphList(MorphList list);
 	
-	/** This sets the morph index, and its value can be retrieved by invoking {@link IMorphCapability#getCurrentMorphIndex()}. Deprecated, please use {@link #setMorph(MorphItem, boolean)}.
-	 * There is no guarantee that this method still works. **/
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	public void setMorph(int index);
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	public void setMorph(int index, MorphReason reason);
-	/** This sets the morph item, and its value can be retrieved by invoking {@link IMorphCapability#getCurrentMorph()}. Deprecated, please use {@link #setMorph(MorphItem, boolean)}. **/
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	public void setMorph(MorphItem morph);
 	/** This sets the morph item, and its value can be retrieved by invoking {@link IMorphCapability#getCurrentMorph()}. **/
 	public void setMorph(MorphItem morph, MorphReason reason);
 	
@@ -78,15 +56,7 @@ public interface IMorphCapability
 	 * Returns the reason why this player morphed. You can find a list of default reasons in {@link MorphReasonRegistry}
 	 */
 	public MorphReason getMorphReason();
-	
-	/**
-	 * The purpose of this method is to clear the Optionals holding the current
-	 * morph data. {@link IMorphCapability#getCurrentMorph()} will return an empty
-	 * optional. Deprecated, use {@link #demorph(MorphReason)} instead.
-	 **/
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	public void demorph();
-	
+		
 	/**
 	 * The purpose of this method is to clear the Optionals holding the current
 	 * morph data. {@link IMorphCapability#getCurrentMorph()} will return an empty
@@ -119,9 +89,6 @@ public interface IMorphCapability
 	public void syncMorphChange();
 	/** This method synchronizes the acquisition of a morph to all players. **/
 	public void syncMorphAcquisition(MorphItem item);
-	/** This method synchronizes the removal of a morph to all players. Deprecated, please use {@link #syncMorphRemoval(UUID)} instead. **/
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	public void syncMorphRemoval(int index);
 	/** This method synchronizes the removal of a morph to all tracking players. **/
 	public void syncMorphRemoval(UUID... morphItemKeys);
 	

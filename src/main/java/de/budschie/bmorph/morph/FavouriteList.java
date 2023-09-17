@@ -93,41 +93,7 @@ public class FavouriteList
 			}
 		}
 	}
-	
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	/** Deprecated. There will be no replacement for this method, as it just unnecessarily reveals internal state. **/
-	public HashSet<FavouriteMorphItem> getFavourites()
-	{
-		HashSet<FavouriteMorphItem> favouriteMorphItem = new HashSet<>();
 		
-		// TODO: Remove this bs. This is pure madness. I'll be so happy when I am finally able to remove this.
-		for(MorphItem item : favourites)
-		{
-			Optional<Integer> indexOfItem = morphList.indexOf(item);
-			
-			if(indexOfItem.isPresent())
-			{
-				favouriteMorphItem.add(new FavouriteMorphItem(item, indexOfItem.get()));
-			}
-		}
-		
-		return favouriteMorphItem;
-	}
-	
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	/** Deprecated. Use {@link #addFavourite(UUID)} instead. **/
-	public void addFavourite(int indexInMorphList)
-	{
-		favourites.add(morphList.getMorphArrayList().get(indexInMorphList));
-	}
-	
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	/** Deprecated. Use {@link #removeFavourite(UUID)} instead. **/
-	public void removeFavourite(int indexInMorphList)
-	{
-		favourites.remove(morphList.getMorphArrayList().get(indexInMorphList));
-	}
-	
 	public void addFavourite(UUID favourite)
 	{
 		if(morphList.contains(favourite))
@@ -148,40 +114,5 @@ public class FavouriteList
 	{
 		// haha yes funny number
 		return favourites.contains(morphItem);
-	}
-	
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	public static class FavouriteMorphItem
-	{
-		private MorphItem morphItem;
-		private int morphListIndex;
-		
-		public FavouriteMorphItem(MorphItem morphItem, int morphListIndex)
-		{
-			this.morphItem = morphItem;
-			this.morphListIndex = morphListIndex;
-		}
-		
-		public MorphItem getMorphItem()
-		{
-			return morphItem;
-		}
-		
-		public int getMorphListIndex()
-		{
-			return morphListIndex;
-		}
-		
-		@Override
-		public int hashCode()
-		{
-			return morphItem.hashCode();
-		}
-		
-		@Override
-		public boolean equals(Object obj)
-		{
-			return obj instanceof FavouriteMorphItem && ((FavouriteMorphItem)obj).morphItem.equals(this.morphItem);
-		}
 	}
 }
