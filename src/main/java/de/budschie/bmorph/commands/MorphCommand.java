@@ -17,6 +17,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
+import de.budschie.bmorph.entity.EntityRegistry;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphManagerHandlers;
 import de.budschie.bmorph.morph.MorphReasonRegistry;
@@ -34,12 +35,12 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.ResourceArgument;
 import net.minecraft.commands.arguments.selector.EntitySelector;
 import net.minecraft.commands.synchronization.SuggestionProviders;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.LiteralContents;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -54,16 +55,16 @@ public class MorphCommand
 				.requires(sender -> sender.hasPermission(2))
 				.then(
 						Commands.argument("player", EntityArgument.players()).then(	
-							Commands.argument("entity", EntityArgument.entity())
-							.suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
+							Commands.argument("entity", ResourceArgument.resource(context, Registries.ENTITY_TYPE))
+							.suggests(SuggestionProviders.SUMMONABLE_ENTITIES)							
 							.executes(ctx -> 
 							{
-								return createEntityMorph(ctx.getArgument("player", EntitySelector.class).findPlayers(ctx.getSource()), ctx.getArgument("entity", ResourceLocation.class), new CompoundTag());
+								return createEntityMorph(ctx.getArgument("player", EntitySelector.class).findPlayers(ctx.getSource()), ctx.getArgument("entity", Holder.Reference.class), new CompoundTag());
 							})
 							.then(Commands.argument("nbt", CompoundTagArgument.compoundTag())
 							.executes(ctx -> 
 							{
-								return createEntityMorph(ctx.getArgument("player", EntitySelector.class).findPlayers(ctx.getSource()), ctx.getArgument("entity", ResourceLocation.class), ctx.getArgument("nbt", CompoundTag.class));
+								return createEntityMorph(ctx.getArgument("player", EntitySelector.class).findPlayers(ctx.getSource()), ctx.getArgument("entity", Holder.Reference.class), ctx.getArgument("nbt", CompoundTag.class));
 							})))
 						));
 		
@@ -122,12 +123,12 @@ public class MorphCommand
 									.suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
 									.executes(ctx -> 
 									{
-										return addMorph(ctx.getArgument("player", EntitySelector.class).findPlayers(ctx.getSource()), ctx.getArgument("entity", ResourceLocation.class), new CompoundTag());
+										return addMorph(ctx.getArgument("player", EntitySelector.class).findPlayers(ctx.getSource()), ctx.getArgument("entity", Holder.Reference.class), new CompoundTag());
 									})
 									.then(Commands.argument("nbt", CompoundTagArgument.compoundTag())
 									.executes(ctx -> 
 									{
-										return addMorph(ctx.getArgument("player", EntitySelector.class).findPlayers(ctx.getSource()), ctx.getArgument("entity", ResourceLocation.class), ctx.getArgument("nbt", CompoundTag.class));
+										return addMorph(ctx.getArgument("player", EntitySelector.class).findPlayers(ctx.getSource()), ctx.getArgument("entity", Holder.Reference.class), ctx.getArgument("nbt", CompoundTag.class));
 									}))
 								)
 						));
@@ -140,8 +141,8 @@ public class MorphCommand
 						.then(Commands.literal("matching")
 						.then(Commands.argument("entity_type", ResourceArgument.resource(context, Registries.ENTITY_TYPE)).suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
 							.then(Commands.argument("nbt", CompoundTagArgument.compoundTag())
-							.executes(ctx -> disableMorphItems(ctx, getMorphFilter(ctx.getArgument("entity_type", ResourceLocation.class), Optional.of(ctx.getArgument("nbt", CompoundTag.class))))))
-						.executes(ctx -> disableMorphItems(ctx, getMorphFilter(ctx.getArgument("entity_type", ResourceLocation.class), Optional.empty())))))
+							.executes(ctx -> disableMorphItems(ctx, getMorphFilter(ctx.getArgument("entity_type", Holder.Reference.class), Optional.of(ctx.getArgument("nbt", CompoundTag.class))))))
+						.executes(ctx -> disableMorphItems(ctx, getMorphFilter(ctx.getArgument("entity_type", Holder.Reference.class), Optional.empty())))))
 					.executes(ctx -> disableMorphItems(ctx, (cap, consumer) -> cap.getMorphList().forEach(consumer))))
 				.then(Commands.literal("current_morph_item")
 						.executes(ctx -> disableMorphItems(ctx, (cap, consumer) -> cap.getCurrentMorph().ifPresent(consumer))))))
@@ -153,15 +154,13 @@ public class MorphCommand
 				.then(Commands.argument("player", EntityArgument.player()).executes(ctx -> listAbilities(ctx.getSource(), EntityArgument.getPlayer(ctx, "player")))));
 	}
 	
-	private static BiConsumer<IMorphCapability, Consumer<MorphItem>> getMorphFilter(ResourceLocation entity, Optional<CompoundTag> nbtToMatch)
+	private static BiConsumer<IMorphCapability, Consumer<MorphItem>> getMorphFilter(Holder.Reference<EntityType<?>> entityType, Optional<CompoundTag> nbtToMatch)
 	{
-		EntityType<?> resultingEntityType = ForgeRegistries.ENTITY_TYPES.getValue(entity);
-		
 		return (cap, consumer) ->
 		{
 			for(MorphItem morph : cap.getMorphList())
 			{
-				if(morph.getEntityType() == resultingEntityType &&
+				if(morph.getEntityType() == entityType.get() &&
 						(nbtToMatch.isEmpty() || (nbtToMatch.isPresent() && NbtUtils.compareNbt(nbtToMatch.get(), morph.serializeAdditional(), true))))
 				{
 					consumer.accept(morph);
@@ -245,9 +244,9 @@ public class MorphCommand
 		return 0;
 	}
 	
-	private static int addMorph(List<ServerPlayer> entities, ResourceLocation rs, CompoundTag nbtData)
+	private static int addMorph(List<ServerPlayer> entities, Holder.Reference<EntityType<?>> entityType, CompoundTag nbtData)
 	{
-		MorphItem morphItemToAdd = MorphManagerHandlers.FALLBACK.createMorph(ForgeRegistries.ENTITY_TYPES.getValue(rs), nbtData, null, true);
+		MorphItem morphItemToAdd = MorphManagerHandlers.FALLBACK.createMorph(entityType.get(), nbtData, null, true);
 		
 		for(ServerPlayer entity : entities)
 		{
@@ -257,7 +256,7 @@ public class MorphCommand
 				entity.sendSystemMessage(MutableComponent.create(new LiteralContents("You may not add a morph to your list that is already present.")).withStyle(ChatFormatting.RED));
 			else
 			{
-				entity.sendSystemMessage(MutableComponent.create(new LiteralContents("Added " + rs.toString() + " with its NBT data to your morph list.")));
+				entity.sendSystemMessage(MutableComponent.create(new LiteralContents("Added " + ForgeRegistries.ENTITY_TYPES.getKey(entityType.get()).toString() + " with its NBT data to your morph list.")));
 				
 				capability.addMorphItem(morphItemToAdd);
 				capability.syncMorphAcquisition(morphItemToAdd);
@@ -267,16 +266,16 @@ public class MorphCommand
 		return 0;
 	}
 	
-	private static int createEntityMorph(List<ServerPlayer> entities, ResourceLocation rs, CompoundTag nbtData)
+	private static int createEntityMorph(List<ServerPlayer> entities, Holder.Reference<EntityType<?>> entityType, CompoundTag nbtData)
 	{
 		for(ServerPlayer entity : entities)
 		{
-			if(rs.toString().equals("bmorph:morph_entity"))
+			if(entityType.get() == EntityRegistry.MORPH_ENTITY.get())
 				throw new IllegalArgumentException("You may not morph yourself into the morph entity.");
 			
-			nbtData.putString("id", rs.toString());
+			nbtData.putString("id", ForgeRegistries.ENTITY_TYPES.getKey(entityType.get()).toString());
 			
-			MorphUtil.morphToServer(Optional.of(MorphManagerHandlers.FALLBACK.createMorph(ForgeRegistries.ENTITY_TYPES.getValue(rs), nbtData, null, true)), MorphReasonRegistry.MORPHED_BY_COMMAND.get(), entity);
+			MorphUtil.morphToServer(Optional.of(MorphManagerHandlers.FALLBACK.createMorph(entityType.get(), nbtData, null, true)), MorphReasonRegistry.MORPHED_BY_COMMAND.get(), entity);
 		}
 		
 		return 0;
