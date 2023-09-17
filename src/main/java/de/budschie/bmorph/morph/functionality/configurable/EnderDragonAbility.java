@@ -42,7 +42,11 @@ public class EnderDragonAbility extends Ability
 	{
 		super.disableAbility(player, disabledItem, newMorph, newAbilities, reason);
 		player.setNoGravity(false);
-		player.getAbilities().mayfly = false;
+		
+		if(!player.isCreative() && !player.isSpectator())
+		{
+			player.getAbilities().mayfly = false;
+		}
 	}
 	
 	@SubscribeEvent
