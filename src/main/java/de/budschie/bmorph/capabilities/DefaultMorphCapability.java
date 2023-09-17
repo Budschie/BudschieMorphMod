@@ -150,15 +150,6 @@ public class DefaultMorphCapability implements IMorphCapability
 		else
 			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)getOwner()), new MorphAddedSynchronizer.MorphAddedPacket(getOwner().getUUID(), item));
 	}
-
-	@Override
-	public void syncMorphRemoval(int index)
-	{
-		if(getOwner().level.isClientSide)
-			throw new IllegalAccessError("This method may not be called on client side.");
-		else
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)getOwner()), new MorphRemovedPacket(getOwner().getUUID(), morphList.getMorphArrayList().get(index).getUUID()));
-	}
 	
 	@Override
 	public void syncMorphRemoval(UUID... morphItemKeys)
@@ -207,19 +198,7 @@ public class DefaultMorphCapability implements IMorphCapability
 			return toString;
 		}
 	}
-	
-	@Override
-	public int addToMorphList(MorphItem morphItem)
-	{
-		return morphList.addToMorphList(morphItem);
-	}
-
-	@Override
-	public void removeFromMorphList(int index)
-	{
-		morphList.removeFromMorphList(index);
-	}
-	
+		
 	@Override
 	public void addMorphItem(MorphItem morphItem)
 	{
@@ -289,18 +268,6 @@ public class DefaultMorphCapability implements IMorphCapability
 	}
 	
 	@Override
-	public Optional<Integer> getCurrentMorphIndex()
-	{
-		return (morphReason == MorphReasonRegistry.MORPHED_BY_UI.get() && morph.isPresent()) ? morphList.indexOf(morph.get()) : Optional.empty();
-	}
-
-	@Override
-	public Optional<MorphItem> getCurrentMorphItem()
-	{
-		return morph;
-	}
-
-	@Override
 	public Optional<MorphItem> getCurrentMorph()
 	{
 		if(morph.isPresent())
@@ -310,35 +277,10 @@ public class DefaultMorphCapability implements IMorphCapability
 	}
 
 	@Override
-	public void setMorph(int index)
-	{
-		setMorph(index, MorphReasonRegistry.MORPHED_BY_UI.get());
-	}
-
-	@Override
-	public void setMorph(MorphItem morph)
-	{
-		setMorph(morph, MorphReasonRegistry.MORPHED_BY_COMMAND.get());
-	}
-	
-	@Override
-	public void setMorph(int index, MorphReason reason)
-	{
-		setMorph(morphList.getMorphArrayList().get(index), reason);
-	}
-
-	@Override
 	public void setMorph(MorphItem morph, MorphReason reason)
 	{
 		this.morph = Optional.of(morph);
 		setMorphReason(reason);
-		resetEntityCache();
-	}
-
-	@Override
-	public void demorph()
-	{
-		demorph(MorphReasonRegistry.MORPHED_BY_COMMAND.get());
 		resetEntityCache();
 	}
 	
