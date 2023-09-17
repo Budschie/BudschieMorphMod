@@ -54,7 +54,7 @@ public class MorphList implements Iterable<MorphItem>
 	
 	private void deserializeNBTNew(CompoundTag tag)
 	{
-		ListTag list = tag.getList("data", Tag.TAG_COMPOUND);
+		ListTag list = tag.getList("data", Tag.TAG_LIST);
 		
 		for(int i = 0; i < list.size(); i++)
 		{
@@ -69,7 +69,7 @@ public class MorphList implements Iterable<MorphItem>
 	
 	public void deserializeNBT(CompoundTag tag)
 	{
-		if(tag.contains("data", Tag.TAG_COMPOUND))
+		if(tag.contains("data", Tag.TAG_LIST))
 		{
 			deserializeNBTNew(tag);
 		}
