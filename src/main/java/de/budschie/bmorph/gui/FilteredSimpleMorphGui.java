@@ -48,11 +48,9 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 	private int scroll = 0;
 	private int horizontalScroll = 0;
 	// private BiFunction<IMorphCapability, List<MorphItem>, List<MorphItem>> filter;
-	BiPredicate<IMorphCapability, Integer> filter;
+	BiPredicate<IMorphCapability, MorphItem> filter;
 	
-	@Deprecated(since = "1.18.2-1.0.2", forRemoval = true)
-	/** Deprecated. I cannot provide a smooth deprecation transition here because of type erasure and ambiguity of arguments. **/
-	public FilteredSimpleMorphGui(ResourceLocation morphGuiTypeIcon, String unlocalizedGuiType, BiPredicate<IMorphCapability, Integer> filter)
+	public FilteredSimpleMorphGui(ResourceLocation morphGuiTypeIcon, String unlocalizedGuiType, BiPredicate<IMorphCapability, MorphItem> filter)
 	{
 		super(morphGuiTypeIcon, unlocalizedGuiType);
 		
@@ -71,25 +69,31 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 			IMorphCapability resolved = cap.resolve().get();
 	
 			// Create a list of indices of morphs
-			List<Integer> morphList = new ArrayList<>();
+			List<MorphItem> morphList = new ArrayList<>();
 			
 			// This is dumb
-			for(int i = 0; i < resolved.getMorphList().getMorphArrayList().size(); i++)
+//			for(int i = 0; i < resolved.getMorphList().getMorphArrayList().size(); i++)
+//			{
+//				if(filter.test(resolved, i))
+//					morphList.add(i);
+//			}
+			
+			resolved.getMorphList().forEach(morph ->
 			{
-				if(filter.test(resolved, i))
-					morphList.add(i);
-			}
+				if(filter.test(resolved, morph))
+				{
+					morphList.add(morph);
+				}
+			});
 			
 			// Nice
-			morphWidgets.add(new MorphWidget(null, false, -1, 69));
+			morphWidgets.add(new MorphWidget(null, false, 69));
 			
 			HashMap<EntityType<?>, Pair<MorphWidget, Integer>> currentWidgetHeads = new HashMap<>();
 			
 			for(int i = 0; i < morphList.size(); i++)
 			{
-				int indexOfMorph = morphList.get(i);
-				
-				MorphItem item = resolved.getMorphList().getMorphArrayList().get(indexOfMorph);
+				MorphItem item = morphList.get(i);
 				
 				float morphScale = 1;
 				VisualMorphData visualData = BMorphMod.VISUAL_MORPH_DATA.getDataForMorph(item);
@@ -97,7 +101,7 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 				if(visualData != null)
 					morphScale = visualData.getScale();
 				
-				MorphWidget widget = new MorphWidget(item, resolved.getFavouriteList().containsMorphItem(item), indexOfMorph, morphScale);
+				MorphWidget widget = new MorphWidget(item, resolved.getFavouriteList().containsMorphItem(item), morphScale);
 				
 				Pair<MorphWidget, Integer> currentWidgetHead = currentWidgetHeads.get(widget.morphItem.getEntityType());
 				
@@ -192,13 +196,7 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 			advanceY += MorphWidget.getHeight();
 		}
 	}
-	
-	@Override
-	public int getMorphIndex()
-	{
-		return morphWidgets.get(scroll).traverse(horizontalScroll).morphListIndex;
-	}
-	
+		
 	@Override
 	public void scroll(int amount)
 	{
@@ -279,14 +277,11 @@ public class FilteredSimpleMorphGui extends AbstractMorphGui
 		// This is dumb
 		int depth;
 		boolean crashed = false;
-		
-		int morphListIndex;
-		
-		public MorphWidget(MorphItem morphItem, boolean isFavourite, int morphListIndex, float morphScale)
+				
+		public MorphWidget(MorphItem morphItem, boolean isFavourite, float morphScale)
 		{
 			this.morphItem = morphItem;
 			this.isFavourite = isFavourite;
-			this.morphListIndex = morphListIndex;
 			this.morphScale = morphScale;
 		}
 		
