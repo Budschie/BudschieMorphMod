@@ -35,7 +35,7 @@ public class PassiveTickAbility extends Ability
 	{
 		if(event.phase == Phase.START)
 		{
-			int tickCounter = ServerLifecycleHooks.getCurrentServer().getTickCount();
+			int tickCounter = event.getServer().getTickCount();
 			
 			if(tickCounter >= (lastUpdate + updateDuration))
 			{
@@ -43,7 +43,7 @@ public class PassiveTickAbility extends Ability
 				
 				for(UUID uuid : trackedPlayers)
 				{
-					Player player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(uuid);
+					Player player = event.getServer().getPlayerList().getPlayer(uuid);
 					
 					if(player != null)
 					{
