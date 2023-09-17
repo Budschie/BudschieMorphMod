@@ -22,16 +22,6 @@ public class YeetAbility extends StunAbility
 	}
 
 	@Override
-	public void enableAbility(Player player, MorphItem enabledItem)
-	{
-	}
-
-	@Override
-	public void disableAbility(Player player, MorphItem disabledItem)
-	{
-	}
-
-	@Override
 	public void onUsedAbility(Player player, MorphItem currentMorph)
 	{
 		if(!isCurrentlyStunned(player.getUUID()))
