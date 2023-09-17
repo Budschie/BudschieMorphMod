@@ -40,13 +40,6 @@ public class FavouriteList
 	
 	public void deserialize(CompoundTag nbt)
 	{
-		int[] favouriteIndices = nbt.getIntArray("favouriteIndices");
-		
-		for(int favourite : favouriteIndices)
-		{
-			favourites.add(morphList.getMorphArrayList().get(favourite));
-		}
-		
 		ListTag uuidList = nbt.getList("favouriteMorphs", Tag.TAG_INT_ARRAY);
 		
 		for(int i = 0; i < uuidList.size(); i++)
