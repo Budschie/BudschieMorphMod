@@ -2,6 +2,7 @@ package de.budschie.bmorph.render_handler;
 
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 
 public class AbstractPlayerSynchronizer implements IEntitySynchronizer
@@ -31,5 +32,18 @@ public class AbstractPlayerSynchronizer implements IEntitySynchronizer
 				entity.stopFallFlying();
 			}
 		}
+		
+		Pose poseToAdapt;
+		
+		if(player.getForcedPose() == null)
+		{
+			poseToAdapt = player.getPose();
+		}
+		else
+		{
+			poseToAdapt = player.getForcedPose();
+		}
+		
+		entity.setForcedPose(poseToAdapt);
 	}
 }
