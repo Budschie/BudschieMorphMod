@@ -88,7 +88,6 @@ public class MorphCapabilityAttacher implements ICapabilitySerializable<Compound
 		instance.getMorphList().deserializeNBT(capTag.getCompound("morphList"));
 		
 		boolean hasItem = capTag.contains("currentMorphItem");
-		boolean hasIndex = capTag.contains("currentMorphIndex");
 		String morphReasonString = capTag.getString("morphReason");
 		MorphReason morphReason = morphReasonString == null ? MorphReasonRegistry.NONE.get() : (MorphReasonRegistry.REGISTRY.get().getValue(new ResourceLocation(morphReasonString)));		
 		
@@ -103,14 +102,9 @@ public class MorphCapabilityAttacher implements ICapabilitySerializable<Compound
 			{
 				instance.setMorph(MorphHandler.deserializeMorphItem(capTag.getCompound("currentMorphItem")), morphReason);
 			}
-			if(hasIndex)
+			else
 			{
-				instance.setMorph(instance.getMorphList().getMorphArrayList().get(capTag.getInt("currentMorphIndex")), morphReason);
-			}
-			
-			if(!(hasIndex || hasItem))
-			{
-				instance.demorph(morphReason);
+				instance.demorph(MorphReasonRegistry.NONE.get());
 			}
 		}
 		catch(IllegalArgumentException | IndexOutOfBoundsException ex)
