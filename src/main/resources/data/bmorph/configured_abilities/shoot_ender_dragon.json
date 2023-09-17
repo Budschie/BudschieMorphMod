@@ -10,7 +10,10 @@
             "sounds":
             [
                 {
-                    "sound": "minecraft:entity.ender_dragon.shoot"
+                    "sound":
+					{
+						"sound_id": "minecraft:entity.ender_dragon.shoot"
+					}
                 }
             ]
         }

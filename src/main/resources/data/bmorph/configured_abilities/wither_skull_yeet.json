@@ -11,7 +11,10 @@
             "sounds":
             [
                 {
-                    "sound": "minecraft:entity.wither.shoot"
+                    "sound": 
+{
+    "sound_id": "minecraft:entity.wither.shoot"
+}
                 }
             ]
         }

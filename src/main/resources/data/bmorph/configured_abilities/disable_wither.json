@@ -13,7 +13,10 @@
                     "sounds":
                     [
                         {
-                            "sound": "minecraft:entity.wither.hurt",
+                            "sound": 
+{
+    "sound_id": "minecraft:entity.wither.hurt"
+},
                             "pitch": 0
                         }
                     ]

@@ -10,7 +10,10 @@
             "sounds":
             [
                 {
-                    "sound": "minecraft:entity.hoglin.converted_to_zombified"
+                    "sound": 
+{
+    "sound_id": "minecraft:entity.hoglin.converted_to_zombified"
+}
                 }
             ]
         }

@@ -7,7 +7,10 @@
         "motion": 1.5,
         "sound":
         {
-            "sound": "minecraft:entity.snowball.throw",
+            "sound": 
+{
+    "sound_id": "minecraft:entity.snowball.throw"
+},
             "pitch": 0.0
         }
     }

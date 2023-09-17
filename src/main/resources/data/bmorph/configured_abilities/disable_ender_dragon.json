@@ -13,7 +13,10 @@
                     "sounds":
                     [
                         {
-                            "sound": "minecraft:entity.ender_dragon.hurt",
+                            "sound": 
+{
+    "sound_id": "minecraft:entity.ender_dragon.hurt"
+},
                             "pitch": 0
                         }
                     ]
@@ -44,7 +47,10 @@
                     "sounds":
                     [
                         {
-                            "sound": "minecraft:entity.ender_dragon.death"
+                            "sound": 
+{
+    "sound_id": "minecraft:entity.ender_dragon.death"
+}
                         }
                     ],
                     "particles":

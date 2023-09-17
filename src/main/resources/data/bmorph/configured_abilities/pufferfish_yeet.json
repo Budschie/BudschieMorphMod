@@ -10,7 +10,10 @@
             "sounds":
             [
                 {
-                    "sound": "minecraft:entity.llama.spit",
+                    "sound": 
+{
+    "sound_id": "minecraft:entity.llama.spit"
+},
                     "pitch": 0.9
                 }
             ]

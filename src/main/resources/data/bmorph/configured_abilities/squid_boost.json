@@ -42,7 +42,10 @@
 	    "sounds":
 	    [
 		{
-		    "sound": "minecraft:entity.squid.squirt",
+		    "sound": 
+{
+    "sound_id": "minecraft:entity.squid.squirt"
+},
 		    "volume": 10
 		}
 	    ]

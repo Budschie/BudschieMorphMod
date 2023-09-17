@@ -14,7 +14,10 @@
             "sounds":
             [
                 {
-                    "sound": "minecraft:entity.enderman.teleport"
+                    "sound": 
+{
+    "sound_id": "minecraft:entity.enderman.teleport"
+}
                 }
             ],
             "particles":

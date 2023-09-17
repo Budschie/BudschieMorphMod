@@ -14,7 +14,10 @@
             "sounds":
             [
                 {
-                    "sound": "minecraft:entity.ghast.shoot"
+                    "sound": 
+{
+    "sound_id": "minecraft:entity.ghast.shoot"
+}
                 }
             ]
         }

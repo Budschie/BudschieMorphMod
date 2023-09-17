@@ -7,7 +7,10 @@
             "sounds":
             [
                 {
-                    "sound": "minecraft:entity.ender_dragon.growl",
+                    "sound": 
+{
+    "sound_id": "minecraft:entity.ender_dragon.growl"
+},
                     "volume": 10
                 }
             ],

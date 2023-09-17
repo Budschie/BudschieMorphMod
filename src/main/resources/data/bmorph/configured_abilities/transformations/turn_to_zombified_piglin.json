@@ -16,7 +16,10 @@
             "sounds":
             [
                 {
-                    "sound": "minecraft:entity.piglin.converted_to_zombified"
+                    "sound": 
+{
+    "sound_id": "minecraft:entity.piglin.converted_to_zombified"
+}
                 }
             ]
         }

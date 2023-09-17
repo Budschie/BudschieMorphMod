@@ -8,14 +8,20 @@
 		{
 			"sounds":
 			[
-				{ "sound": "minecraft:entity.cow.milk"  }
+				{ "sound": 
+{
+    "sound_id": "minecraft:entity.cow.milk"
+}  }
 			]
 		},
 		"milked_entity_effect":
 		{
 			"sounds":
 			[
-				{ "sound": "minecraft:entity.cow.milk"  }
+				{ "sound": 
+{
+    "sound_id": "minecraft:entity.cow.milk"
+}  }
 			]
 		},
 		"not_enough_food_feedback_effect":
@@ -23,7 +29,10 @@
 			"sounds":
 			[
 				{
-					"sound": "minecraft:entity.cow.ambient",
+					"sound": 
+{
+    "sound_id": "minecraft:entity.cow.ambient"
+},
 					"pitch": 1.2
 				}
 			]

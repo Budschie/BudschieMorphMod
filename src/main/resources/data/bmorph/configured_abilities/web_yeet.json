@@ -10,7 +10,10 @@
             "sounds":
             [
                 {
-                    "sound": "minecraft:entity.spider.step",
+                    "sound": 
+{
+    "sound_id": "minecraft:entity.spider.step"
+},
                     "pitch": 0.25
                 }
             ]

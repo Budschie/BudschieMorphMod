@@ -6,7 +6,10 @@
         "transformed_entity_effect": {
             "sounds": [
                 {
-                    "sound": "minecraft:entity.zombie.infect"
+                    "sound": 
+{
+    "sound_id": "minecraft:entity.zombie.infect"
+}
                 }
             ]
         },

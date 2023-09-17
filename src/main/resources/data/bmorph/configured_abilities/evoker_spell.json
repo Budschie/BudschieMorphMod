@@ -11,7 +11,10 @@
             "sounds":
             [
                 {
-                    "sound": "minecraft:entity.evoker.prepare_attack"
+                    "sound": 
+{
+    "sound_id": "minecraft:entity.evoker.prepare_attack"
+}
                 }
             ]
         }

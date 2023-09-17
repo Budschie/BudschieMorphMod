@@ -10,7 +10,10 @@
             "sounds":
             [
                 {
-                    "sound": "minecraft:entity.egg.throw",
+                    "sound": 
+{
+    "sound_id": "minecraft:entity.egg.throw"
+},
                     "pitch": 0.0
                 }
             ]

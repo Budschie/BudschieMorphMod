@@ -21,7 +21,10 @@
             "sounds":
             [
                 {
-                    "sound": "minecraft:entity.witch.throw",
+                    "sound": 
+{
+    "sound_id": "minecraft:entity.witch.throw"
+},
                     "pitch": 0.1,
                     "random_pitch_delta": 0.4
                 }
