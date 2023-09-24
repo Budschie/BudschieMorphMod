@@ -35,6 +35,7 @@ import de.budschie.bmorph.morph.functionality.configurable.ImmuneToDamageIfAbili
 import de.budschie.bmorph.morph.functionality.configurable.InstaDeathOnCookieAbility;
 import de.budschie.bmorph.morph.functionality.configurable.InstaJumpAbility;
 import de.budschie.bmorph.morph.functionality.configurable.InstaRegenAbility;
+import de.budschie.bmorph.morph.functionality.configurable.ItemStealAbility;
 import de.budschie.bmorph.morph.functionality.configurable.JesusAbility;
 import de.budschie.bmorph.morph.functionality.configurable.MobAttackAbility;
 import de.budschie.bmorph.morph.functionality.configurable.MorphAbility;
@@ -129,5 +130,6 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<EvokerSpellAbility>> EVOKER_SPELL = ABILITY_REGISTRY.register("evoker_spell", () -> new ConfigurableAbility<>(EvokerSpellAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<ConditionalAbility>> CONDITIONAL_ABILITY = ABILITY_REGISTRY.register("conditional_ability", () -> new ConfigurableAbility<>(ConditionalAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<RideAbility>> RIDE_ABILITY = ABILITY_REGISTRY.register("ride_ability", () -> new ConfigurableAbility<>(RideAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<ItemStealAbility>> ITEM_STEAL_ABILITY = ABILITY_REGISTRY.register("item_steal_ability", () -> new ConfigurableAbility<>(ItemStealAbility.CODEC));
 }
 

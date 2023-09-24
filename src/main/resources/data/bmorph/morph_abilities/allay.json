@@ -1,0 +1,12 @@
+{
+	"entity_type": "minecraft:allay",
+	"grant":
+	[
+		"bmorph:flying",
+		"bmorph:allay_steal"
+	],
+	"revoke":
+	[
+		
+	]
+}

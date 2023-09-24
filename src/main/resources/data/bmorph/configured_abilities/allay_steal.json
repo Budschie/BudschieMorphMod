@@ -1,0 +1,20 @@
+{
+	"ability": "bmorph:item_steal_ability",
+	"config":
+	{
+		"stun": 600,
+		"reach": 3,
+		"steal_effect":
+		{
+			"sounds":
+			[
+				{
+					"sound":
+					{
+						"sound_id": "minecraft:entity.allay.ambient_with_item"
+					}
+				}
+			]
+		}
+	}
+}
