@@ -51,6 +51,7 @@ import de.budschie.bmorph.morph.functionality.configurable.PufferfishAbility;
 import de.budschie.bmorph.morph.functionality.configurable.RandomDelegatingOnUseAbility;
 import de.budschie.bmorph.morph.functionality.configurable.RideAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SheepEatGrassAbility;
+import de.budschie.bmorph.morph.functionality.configurable.SonicBoomAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SoundOnUseAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SquidBoostAbility;
 import de.budschie.bmorph.morph.functionality.configurable.TeleportAbility;
@@ -130,6 +131,8 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<EvokerSpellAbility>> EVOKER_SPELL = ABILITY_REGISTRY.register("evoker_spell", () -> new ConfigurableAbility<>(EvokerSpellAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<ConditionalAbility>> CONDITIONAL_ABILITY = ABILITY_REGISTRY.register("conditional_ability", () -> new ConfigurableAbility<>(ConditionalAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<RideAbility>> RIDE_ABILITY = ABILITY_REGISTRY.register("ride_ability", () -> new ConfigurableAbility<>(RideAbility.CODEC));
-	public static RegistryObject<ConfigurableAbility<ItemStealAbility>> ITEM_STEAL_ABILITY = ABILITY_REGISTRY.register("item_steal_ability", () -> new ConfigurableAbility<>(ItemStealAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<ItemStealAbility>> ITEM_STEAL_ABILITY = ABILITY_REGISTRY.register("item_steal", () -> new ConfigurableAbility<>(ItemStealAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<SonicBoomAbility>> SONIC_BOOM_ABILITY = ABILITY_REGISTRY.register("sonic_boom", () -> new ConfigurableAbility<>(SonicBoomAbility.CODEC));
+
 }
 

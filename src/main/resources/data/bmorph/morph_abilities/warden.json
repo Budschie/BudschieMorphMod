@@ -1,0 +1,11 @@
+{
+	"entity_type": "minecraft:warden",
+	"grant":
+	[
+		"bmorph:warden_sonic_boom"
+	],
+	"revoke":
+	[
+		
+	]
+}

@@ -6,6 +6,8 @@ import java.util.function.Predicate;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
+import de.budschie.bmorph.events.Events;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.functionality.StunAbility;
 import de.budschie.bmorph.morph.functionality.codec_addition.AudioVisualEffect;
@@ -71,12 +73,13 @@ public class ItemStealAbility extends StunAbility
 		if(entityHit != null && entityHit.getEntity() != null)
 		{
 			shouldStun = switchItems(player, entityHit.getEntity());
-			stealEffect.ifPresent(effect -> effect.playEffect(player));
 		}
 		
 		if(shouldStun)
 		{
 			stun(player.getUUID());
+			stealEffect.ifPresent(effect -> effect.playEffect(player));
+			Events.aggro(player.getCapability(MorphCapabilityAttacher.MORPH_CAP).resolve().get(), getStun());
 		}
 	}
 	

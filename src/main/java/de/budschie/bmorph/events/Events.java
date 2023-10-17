@@ -765,7 +765,8 @@ public class Events
 		}
 	}
 	
-	private static void aggro(IMorphCapability capability, int aggroDuration)
+	// TODO: Find better place for this function
+	public static void aggro(IMorphCapability capability, int aggroDuration)
 	{
 		capability.setLastAggroTimestamp(ServerLifecycleHooks.getCurrentServer().getTickCount());
 		capability.setLastAggroDuration(aggroDuration);

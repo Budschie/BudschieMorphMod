@@ -1,5 +1,5 @@
 {
-	"ability": "bmorph:item_steal_ability",
+	"ability": "bmorph:item_steal",
 	"config":
 	{
 		"stun": 600,

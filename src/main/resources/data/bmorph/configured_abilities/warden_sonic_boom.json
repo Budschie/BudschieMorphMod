@@ -1,0 +1,7 @@
+{
+	"ability": "bmorph:sonic_boom",
+	"config":
+	{
+		"stun": 1
+	}
+}
