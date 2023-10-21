@@ -30,7 +30,7 @@ public class MorphList implements Iterable<MorphItem>
 		uuidToMorphItem.forEach((key, value) ->
 		{
 			listTag.add(value.serialize());
-		}) ;
+		});
 		
 		rootTag.put("data", listTag);
 		
@@ -54,7 +54,7 @@ public class MorphList implements Iterable<MorphItem>
 	
 	private void deserializeNBTNew(CompoundTag tag)
 	{
-		ListTag list = tag.getList("data", Tag.TAG_LIST);
+		ListTag list = tag.getList("data", Tag.TAG_COMPOUND);
 		
 		for(int i = 0; i < list.size(); i++)
 		{
