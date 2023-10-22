@@ -293,11 +293,11 @@ public class DefaultMorphCapability implements IMorphCapability
 		else
 		{
 			// xD why is this a legal identifier
-			Entity thisisnotveryperformantoranythinglikethisbutidontcarealsothisnameisverystupidsoidkmaybeishouldhchangethislaterbutontheotherhandthisisalsobtwyouhavejustfoundaneasteregginmycode = getCurrentMorph().get().createEntity(getOwner().level);
+			Entity finallyThisHasBecomeMuchMorePerformantSinceIveImplementedAnExcellentEntityCacheWhichCanBeUsedQuiteEasily = getCurrentMorphEntity().orElse(null);
 			
-			if(thisisnotveryperformantoranythinglikethisbutidontcarealsothisnameisverystupidsoidkmaybeishouldhchangethislaterbutontheotherhandthisisalsobtwyouhavejustfoundaneasteregginmycode instanceof LivingEntity)
+			if(finallyThisHasBecomeMuchMorePerformantSinceIveImplementedAnExcellentEntityCacheWhichCanBeUsedQuiteEasily instanceof LivingEntity)
 			{
-				float maxHealthOfEntity = ((LivingEntity)thisisnotveryperformantoranythinglikethisbutidontcarealsothisnameisverystupidsoidkmaybeishouldhchangethislaterbutontheotherhandthisisalsobtwyouhavejustfoundaneasteregginmycode).getMaxHealth();
+				float maxHealthOfEntity = ((LivingEntity)finallyThisHasBecomeMuchMorePerformantSinceIveImplementedAnExcellentEntityCacheWhichCanBeUsedQuiteEasily).getMaxHealth();
 				getOwner().getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHealthOfEntity);
 				getOwner().setHealth(maxHealthOfEntity * playerHealthPercentage);
 			}
