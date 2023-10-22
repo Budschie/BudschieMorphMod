@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphCapabilityAttacher;
+import de.budschie.bmorph.capabilities.MorphStateMachine;
 import de.budschie.bmorph.morph.FavouriteList;
 import de.budschie.bmorph.morph.MorphHandler;
 import de.budschie.bmorph.morph.MorphList;
@@ -35,6 +36,7 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 	{		
 		buffer.writeUUID(packet.player);
 		packet.morphList.serializePacket(buffer);
+		packet.morphStateMachine.serializePacket(buffer);
 		packet.favouriteList.serializePacket(buffer);
 		buffer.writeBoolean(packet.morphItemNbt.isPresent());
 		packet.getMorphItemNbt().ifPresent(data -> buffer.writeNbt(data));
@@ -54,6 +56,9 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 		// Hmmm yeah the floor is made out of floor
 		MorphList morphList = new MorphList();
 		morphList.deserializePacket(buffer);
+		
+		MorphStateMachine morphStateMachine = new MorphStateMachine();
+		morphStateMachine.deserializePacket(buffer);
 		
 		FavouriteList favouriteList = new FavouriteList(morphList);
 		favouriteList.deserializePacket(buffer);
@@ -76,7 +81,7 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 		for(int i = 0; i < amountOfAbilities; i++)
 			abilities.add(buffer.readUtf());
 		
-		return new MorphPacket(toMorph, reason, morphList, favouriteList, abilities, playerUUID);
+		return new MorphPacket(toMorph, reason, morphList, morphStateMachine, favouriteList, abilities, playerUUID);
 	}
 	
 	@Override
@@ -120,16 +125,18 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 		private Optional<CompoundTag> morphItemNbt;
 		private ResourceLocation reason;
 		private MorphList morphList;
+		private MorphStateMachine morphStateMachine;
 		private FavouriteList favouriteList;
 		private ArrayList<String> abilities;
 		private UUID player;
 		
-		public MorphPacket(Optional<CompoundTag> morphItemNbt, ResourceLocation reason, MorphList morphList, FavouriteList favouriteList, ArrayList<String> abilities, UUID player)
+		public MorphPacket(Optional<CompoundTag> morphItemNbt, ResourceLocation reason, MorphList morphList, MorphStateMachine morphStateMachine, FavouriteList favouriteList, ArrayList<String> abilities, UUID player)
 		{
 			this.morphItemNbt = morphItemNbt;
 			this.reason = reason;
 			this.player = player;
 			this.morphList = morphList;
+			this.morphStateMachine = morphStateMachine;
 			this.favouriteList = favouriteList;
 			this.abilities = abilities;
 		}
@@ -157,6 +164,11 @@ public class MorphCapabilityFullSynchronizer implements ISimpleImplPacket<MorphP
 		public MorphList getMorphList()
 		{
 			return morphList;
+		}
+		
+		public MorphStateMachine getMorphStateMachine()
+		{
+			return morphStateMachine;
 		}
 		
 		public FavouriteList getFavouriteList()

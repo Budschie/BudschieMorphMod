@@ -6,12 +6,15 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import de.budschie.bmorph.capabilities.MorphStateMachine.MorphStateMachineChangeRecorder;
+import de.budschie.bmorph.capabilities.MorphStateMachine.MorphStateMachineRecordedChanges;
 import de.budschie.bmorph.morph.FavouriteList;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
 import de.budschie.bmorph.morph.MorphReason;
 import de.budschie.bmorph.morph.MorphReasonRegistry;
 import de.budschie.bmorph.morph.functionality.Ability;
+import de.budschie.bmorph.network.MorphStateMachineChangedSync.MorphStateMachineChangedSyncPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
@@ -50,6 +53,12 @@ public interface IMorphCapability
 	public void setMorphList(MorphList list);
 	/** Retrieves the MorphStateMachine. It can be used by abilities to implement complex FSM behaviour. **/
 	public MorphStateMachine getMorphStateMachine();
+	/** Sets the morph state machine. **/
+	public void setMorphStateMachine(MorphStateMachine morphStateMachine);
+	/** Starts recording MorphStateMachine changes. **/
+	public MorphStateMachineChangeRecorder createMorphStateMachineChangeRecorder();
+	/** Creates recorded changes from a MorphStateMachineChangedSyncPacket. **/
+	public MorphStateMachineRecordedChanges createRecordedChangesFromPacket(MorphStateMachineChangedSyncPacket packet);
 	
 	/** This sets the morph item, and its value can be retrieved by invoking {@link IMorphCapability#getCurrentMorph()}. **/
 	public void setMorph(MorphItem morph, MorphReason reason);
@@ -87,6 +96,8 @@ public interface IMorphCapability
 	/** This method is much like the method described above, just with an network manager as a target instead of a player as a target. **/
 	public void syncWithConnection(Connection connection);
 	
+	/** Syncs the changes which have been recorded to the MorphStateMachine to the clients around this player. **/
+	public void syncMorphStateMachineRecordedChanges(MorphStateMachineRecordedChanges recordedChanges);
 	/** This method synchronizes a morph change to all players. **/
 	public void syncMorphChange();
 	/** This method synchronizes the acquisition of a morph to all players. **/

@@ -23,6 +23,7 @@ import de.budschie.bmorph.network.MorphRequestAbilityUsage.MorphRequestAbilityUs
 import de.budschie.bmorph.network.MorphRequestFavouriteChange.MorphRequestFavouriteChangePacket;
 import de.budschie.bmorph.network.MorphRequestMorphIndexChange.RequestMorphIndexChangePacket;
 import de.budschie.bmorph.network.MorphSheepSheared.MorphSheepShearedPacket;
+import de.budschie.bmorph.network.MorphStateMachineChangedSync.MorphStateMachineChangedSyncPacket;
 import de.budschie.bmorph.network.ParrotDanceSync.ParrotDanceSyncPacket;
 import de.budschie.bmorph.network.ProxyEntityEvent.ProxyEntityEventPacket;
 import de.budschie.bmorph.network.PufferfishPuff.PufferfishPuffPacket;
@@ -35,7 +36,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 public class MainNetworkChannel
 {
-	public static final String PROTOCOL_VERSION = "6";
+	public static final String PROTOCOL_VERSION = "7";
 	
 	public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(References.MODID, "main"), 
 			() -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
@@ -72,6 +73,7 @@ public class MainNetworkChannel
 		registerSimpleImplPacket(ProxyEntityEventPacket.class, new ProxyEntityEvent(), NetworkDirection.PLAY_TO_CLIENT);
 		registerSimpleImplPacket(EntityMovementChangedPacket.class, new EntityMovementChanged(), NetworkDirection.PLAY_TO_CLIENT);
 		registerSimpleImplPacket(ChangeUsingSpeedOfMorphPacket.class, new ChangeUsingSpeedOfMorph(), NetworkDirection.PLAY_TO_CLIENT);
+		registerSimpleImplPacket(MorphStateMachineChangedSyncPacket.class, new MorphStateMachineChangedSync(), NetworkDirection.PLAY_TO_CLIENT);
 	}
 	
 	public static <T> void registerSimpleImplPacket(Class<T> packetClass, ISimpleImplPacket<T> packet, NetworkDirection netDir)

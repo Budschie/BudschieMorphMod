@@ -8,6 +8,8 @@ import java.util.UUID;
 
 import com.google.common.collect.Lists;
 
+import de.budschie.bmorph.capabilities.MorphStateMachine.MorphStateMachineChangeRecorder;
+import de.budschie.bmorph.capabilities.MorphStateMachine.MorphStateMachineRecordedChanges;
 import de.budschie.bmorph.morph.FavouriteList;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphList;
@@ -21,6 +23,7 @@ import de.budschie.bmorph.network.MorphAddedSynchronizer;
 import de.budschie.bmorph.network.MorphCapabilityFullSynchronizer;
 import de.budschie.bmorph.network.MorphChangedSynchronizer;
 import de.budschie.bmorph.network.MorphRemovedSynchronizer.MorphRemovedPacket;
+import de.budschie.bmorph.network.MorphStateMachineChangedSync.MorphStateMachineChangedSyncPacket;
 import de.budschie.bmorph.util.LockableList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -96,6 +99,35 @@ public class DefaultMorphCapability implements IMorphCapability
 	public Player getOwner()
 	{
 		return owner;
+	}
+	
+	@Override
+	public MorphStateMachineChangeRecorder createMorphStateMachineChangeRecorder()
+	{
+		return new MorphStateMachineChangeRecorder(owner, morphStateMachine);
+	}
+
+	@Override
+	public MorphStateMachineRecordedChanges createRecordedChangesFromPacket(MorphStateMachineChangedSyncPacket packet)
+	{
+		// Invariant can be eliminated through fancy type magic, but I will not to that for now
+		if(!packet.getPlayer().equals(packet.getPlayer()))
+		{
+			throw new IllegalArgumentException("Packet contents do not refer to this player.");
+		}
+		
+		return new MorphStateMachineRecordedChanges(this.owner, this.morphStateMachine, packet.getChanges());
+	}
+
+	@Override
+	public void syncMorphStateMachineRecordedChanges(MorphStateMachineRecordedChanges recordedChanges)
+	{
+		if(getOwner().level.isClientSide)
+			throw new IllegalAccessError("This method may not be called on client side.");
+		else
+		{
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> getOwner()), recordedChanges.createNetworkPacket());
+		}
 	}
 	
 	@Override
@@ -233,6 +265,12 @@ public class DefaultMorphCapability implements IMorphCapability
 	public MorphList getMorphList()
 	{
 		return morphList;
+	}
+	
+	@Override
+	public void setMorphStateMachine(MorphStateMachine morphStateMachine)
+	{
+		this.morphStateMachine = morphStateMachine;
 	}
 	
 	@Override
