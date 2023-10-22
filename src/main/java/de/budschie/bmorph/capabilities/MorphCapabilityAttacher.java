@@ -68,6 +68,7 @@ public class MorphCapabilityAttacher implements ICapabilitySerializable<Compound
 		}
 		
 		capTag.put("morphList", instance.getMorphList().serializeNBT());
+		capTag.put("morphStateMachine", instance.getMorphStateMachine().serialize());
 		
 		capTag.put("favouriteList", instance.getFavouriteList().serialize());
 		

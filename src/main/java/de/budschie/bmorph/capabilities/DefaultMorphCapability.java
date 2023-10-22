@@ -45,6 +45,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	Optional<MorphItem> morph = Optional.empty();
 	
 	MorphList morphList = new MorphList();
+	MorphStateMachine morphStateMachine = new MorphStateMachine();
 	FavouriteList favouriteList = new FavouriteList(morphList);
 	
 	LockableList<Ability> currentAbilities = new LockableList<>();
@@ -232,6 +233,12 @@ public class DefaultMorphCapability implements IMorphCapability
 	public MorphList getMorphList()
 	{
 		return morphList;
+	}
+	
+	@Override
+	public MorphStateMachine getMorphStateMachine()
+	{
+		return morphStateMachine;
 	}
 
 	@Override

@@ -48,6 +48,8 @@ public interface IMorphCapability
 	public MorphList getMorphList();
 	/** This is a setter for the morph list. **/
 	public void setMorphList(MorphList list);
+	/** Retrieves the MorphStateMachine. It can be used by abilities to implement complex FSM behaviour. **/
+	public MorphStateMachine getMorphStateMachine();
 	
 	/** This sets the morph item, and its value can be retrieved by invoking {@link IMorphCapability#getCurrentMorph()}. **/
 	public void setMorph(MorphItem morph, MorphReason reason);
