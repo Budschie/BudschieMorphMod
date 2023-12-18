@@ -21,6 +21,7 @@ import de.budschie.bmorph.morph.functionality.configurable.ConditionalAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ConfigurableAbility;
 import de.budschie.bmorph.morph.functionality.configurable.CowMilkAbility;
 import de.budschie.bmorph.morph.functionality.configurable.DamageImmunityAbility;
+import de.budschie.bmorph.morph.functionality.configurable.DelayedAbility;
 import de.budschie.bmorph.morph.functionality.configurable.DelegateOnDamageAbility;
 import de.budschie.bmorph.morph.functionality.configurable.DisableMorphItem;
 import de.budschie.bmorph.morph.functionality.configurable.EffectOnAttackEntity;
@@ -40,6 +41,7 @@ import de.budschie.bmorph.morph.functionality.configurable.JesusAbility;
 import de.budschie.bmorph.morph.functionality.configurable.MobAttackAbility;
 import de.budschie.bmorph.morph.functionality.configurable.MorphAbility;
 import de.budschie.bmorph.morph.functionality.configurable.NoFlames;
+import de.budschie.bmorph.morph.functionality.configurable.NoInteractAbility;
 import de.budschie.bmorph.morph.functionality.configurable.NoKnockbackAbility;
 import de.budschie.bmorph.morph.functionality.configurable.ParrotDanceAbility;
 import de.budschie.bmorph.morph.functionality.configurable.PassiveEffectAbility;
@@ -54,6 +56,8 @@ import de.budschie.bmorph.morph.functionality.configurable.SheepEatGrassAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SonicBoomAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SoundOnUseAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SquidBoostAbility;
+import de.budschie.bmorph.morph.functionality.configurable.StateMachineAbilityManager;
+import de.budschie.bmorph.morph.functionality.configurable.StateMachineChangeOnUseAbility;
 import de.budschie.bmorph.morph.functionality.configurable.TeleportAbility;
 import de.budschie.bmorph.morph.functionality.configurable.TeleportOnProjectileContactAbility;
 import de.budschie.bmorph.morph.functionality.configurable.TransformEntityOnDeath;
@@ -133,6 +137,10 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<RideAbility>> RIDE_ABILITY = ABILITY_REGISTRY.register("ride_ability", () -> new ConfigurableAbility<>(RideAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<ItemStealAbility>> ITEM_STEAL_ABILITY = ABILITY_REGISTRY.register("item_steal", () -> new ConfigurableAbility<>(ItemStealAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<SonicBoomAbility>> SONIC_BOOM_ABILITY = ABILITY_REGISTRY.register("sonic_boom", () -> new ConfigurableAbility<>(SonicBoomAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<DelayedAbility>> DELAYED_ABILITY = ABILITY_REGISTRY.register("delayed", () -> new ConfigurableAbility<>(DelayedAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<NoInteractAbility>> NO_INTERACT_ABILITY = ABILITY_REGISTRY.register("no_interact", () -> new ConfigurableAbility<>(NoInteractAbility.CODEC));
+	public static RegistryObject<ConfigurableAbility<StateMachineAbilityManager>> STATE_MACHINE_ABILITY_MANAGER = ABILITY_REGISTRY.register("state_machine", () -> new ConfigurableAbility<>(StateMachineAbilityManager.CODEC));
+	public static RegistryObject<ConfigurableAbility<StateMachineChangeOnUseAbility>> STATE_MACHINE_CHANGE_ON_USE = ABILITY_REGISTRY.register("state_machine_change", () -> new ConfigurableAbility<>(StateMachineChangeOnUseAbility.CODEC));
 
 }
 
