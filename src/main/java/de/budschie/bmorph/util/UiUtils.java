@@ -4,6 +4,7 @@ import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -41,9 +42,7 @@ public class UiUtils
 		vertexUploader.vertex(matrix, maxX, maxY, 0).color(r, g, b, a).endVertex();
 		vertexUploader.vertex(matrix, maxX, minY, 0).color(r, g, b, a).endVertex();
 		
-//		vertexUploader.end();
-		vertexUploader.end();
-//		RenderSystem.enableTexture();
+		BufferUploader.drawWithShader(vertexUploader.end());
 		RenderSystem.disableBlend();
 	}
 }
