@@ -166,7 +166,16 @@ public class ModCodecs
 						return DataResult.error(() -> ex.getMessage());
 					}
 
-					return DataResult.success(Pair.of(LazyOptional.of(() -> registry.get().getEntry(result)), input));
+					return DataResult.success(Pair.of(LazyOptional.of(() ->
+					{
+						if(!registry.get().hasEntry(result))
+						{
+							// TODO: Find better exception for this
+							throw new IllegalArgumentException(MessageFormat.format("The given resource location {0} of objects of type {1} did not yield any results.", result, typeName));
+						}
+						
+						return registry.get().getEntry(result);
+					}), input));
 				} 
 				else
 					return DataResult.error(() -> rl.error().get().message());
