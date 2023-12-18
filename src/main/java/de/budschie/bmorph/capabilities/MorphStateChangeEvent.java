@@ -2,6 +2,8 @@ package de.budschie.bmorph.capabilities;
 
 import java.util.Optional;
 
+import de.budschie.bmorph.capabilities.MorphStateMachine.MorphStateMachineEntry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -12,28 +14,28 @@ public class MorphStateChangeEvent extends Event
 {
 	public static class MorphStateChange
 	{
-		private String stateKey;
-		private Optional<String> oldValue;
-		private Optional<String> newValue;
+		private ResourceLocation stateKey;
+		private Optional<MorphStateMachineEntry> oldValue;
+		private Optional<MorphStateMachineEntry> newValue;
 		
-		public MorphStateChange(String stateKey, Optional<String> oldValue, Optional<String> newValue)
+		public MorphStateChange(ResourceLocation stateKey, Optional<MorphStateMachineEntry> oldValue, Optional<MorphStateMachineEntry> newValue)
 		{
 			this.stateKey = stateKey;
 			this.oldValue = oldValue;
 			this.newValue = newValue;
 		}
 		
-		public String getStateKey()
+		public ResourceLocation getStateKey()
 		{
 			return stateKey;
 		}
 		
-		public Optional<String> getOldValue()
+		public Optional<MorphStateMachineEntry> getOldValue()
 		{
 			return oldValue;
 		}
 		
-		public Optional<String> getNewValue()
+		public Optional<MorphStateMachineEntry> getNewValue()
 		{
 			return newValue;
 		}

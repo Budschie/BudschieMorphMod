@@ -2,13 +2,16 @@ package de.budschie.bmorph.capabilities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import com.google.common.collect.Lists;
 
 import de.budschie.bmorph.capabilities.MorphStateMachine.MorphStateMachineChangeRecorder;
+import de.budschie.bmorph.capabilities.MorphStateMachine.MorphStateMachineEntry;
 import de.budschie.bmorph.capabilities.MorphStateMachine.MorphStateMachineRecordedChanges;
 import de.budschie.bmorph.morph.FavouriteList;
 import de.budschie.bmorph.morph.MorphItem;
@@ -24,9 +27,12 @@ import de.budschie.bmorph.network.MorphCapabilityFullSynchronizer;
 import de.budschie.bmorph.network.MorphChangedSynchronizer;
 import de.budschie.bmorph.network.MorphRemovedSynchronizer.MorphRemovedPacket;
 import de.budschie.bmorph.network.MorphStateMachineChangedSync.MorphStateMachineChangedSyncPacket;
+import de.budschie.bmorph.network.MorphStateMachineChangedSync.NetworkMorphStateMachineEntry;
 import de.budschie.bmorph.util.LockableList;
+import de.budschie.bmorph.util.TickTimestamp;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -116,7 +122,14 @@ public class DefaultMorphCapability implements IMorphCapability
 			throw new IllegalArgumentException("Packet contents do not refer to this player.");
 		}
 		
-		return new MorphStateMachineRecordedChanges(this.owner, this.morphStateMachine, packet.getChanges());
+		HashMap<ResourceLocation, MorphStateMachineEntry> changes = new HashMap<>();
+		
+		for(Map.Entry<ResourceLocation, NetworkMorphStateMachineEntry> change : packet.getChanges().entrySet())
+		{
+			changes.put(change.getKey(), new MorphStateMachineEntry(change.getValue().deltaTicks().map(deltaTicks -> new TickTimestamp(deltaTicks)), change.getValue().value()));
+		}
+		
+		return new MorphStateMachineRecordedChanges(this.owner, this.morphStateMachine, changes);
 	}
 
 	@Override
@@ -137,7 +150,7 @@ public class DefaultMorphCapability implements IMorphCapability
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> getOwner()), new MorphCapabilityFullSynchronizer.MorphPacket(morph.map(MorphItem::serialize), MorphReasonRegistry.REGISTRY.get().getKey(morphReason), morphList, favouriteList, serializeAbilities(), getOwner().getUUID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> getOwner()), new MorphCapabilityFullSynchronizer.MorphPacket(morph.map(MorphItem::serialize), MorphReasonRegistry.REGISTRY.get().getKey(morphReason), morphList, morphStateMachine, favouriteList, serializeAbilities(), getOwner().getUUID()));
 		}
 	}
 	
@@ -148,7 +161,7 @@ public class DefaultMorphCapability implements IMorphCapability
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTo), new MorphCapabilityFullSynchronizer.MorphPacket(morph.map(MorphItem::serialize), MorphReasonRegistry.REGISTRY.get().getKey(morphReason), morphList, favouriteList, serializeAbilities(), getOwner().getUUID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTo), new MorphCapabilityFullSynchronizer.MorphPacket(morph.map(MorphItem::serialize), MorphReasonRegistry.REGISTRY.get().getKey(morphReason), morphList, morphStateMachine, favouriteList, serializeAbilities(), getOwner().getUUID()));
 		}
 	}
 	
@@ -159,7 +172,7 @@ public class DefaultMorphCapability implements IMorphCapability
 			throw new IllegalAccessError("This method may not be called on client side.");
 		else
 		{
-			MainNetworkChannel.INSTANCE.send(PacketDistributor.NMLIST.with(() -> Lists.newArrayList(connection)), new MorphCapabilityFullSynchronizer.MorphPacket(morph.map(MorphItem::serialize), MorphReasonRegistry.REGISTRY.get().getKey(morphReason), morphList, favouriteList, serializeAbilities(), getOwner().getUUID()));
+			MainNetworkChannel.INSTANCE.send(PacketDistributor.NMLIST.with(() -> Lists.newArrayList(connection)), new MorphCapabilityFullSynchronizer.MorphPacket(morph.map(MorphItem::serialize), MorphReasonRegistry.REGISTRY.get().getKey(morphReason), morphList, morphStateMachine, favouriteList, serializeAbilities(), getOwner().getUUID()));
 		}
 	}
 	

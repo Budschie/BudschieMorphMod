@@ -6,23 +6,58 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 import de.budschie.bmorph.network.MorphStateMachineChangedSync.MorphStateMachineChangedSyncPacket;
+import de.budschie.bmorph.util.TickTimestamp;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 
 public class MorphStateMachine
 {
+	public static class MorphStateMachineEntry
+	{
+		private Optional<TickTimestamp> timeElapsed;
+		private Optional<String> value;
+		
+		public MorphStateMachineEntry(Optional<TickTimestamp> timeElapsedSinceChange, Optional<String> value)
+		{
+			this.timeElapsed = timeElapsedSinceChange;
+			this.value = value;
+		}
+
+		public Optional<TickTimestamp> getTimeElapsedSinceChange()
+		{
+			return timeElapsed;
+		}
+		
+		public Optional<String> getValue()
+		{
+			return value;
+		}
+		
+		@Override
+		public boolean equals(Object obj)
+		{
+			if(!(obj instanceof MorphStateMachineEntry entry))
+			{
+				return false;
+			}
+			
+			return entry.getValue().equals(this.getValue()) && entry.getTimeElapsedSinceChange().equals(this.getTimeElapsedSinceChange());
+		}
+	}
+	
 	public static class MorphStateMachineRecordedChanges
 	{
-		private HashMap<String, String> changes;
+		private HashMap<ResourceLocation, MorphStateMachineEntry> changes;
 		private Player player;
 		// FIXME: Investigate edge case where setting the morph state machine via IMorphCapability#setMorphStateMachine whilst still having a state change recorded may cause changes.
 		private MorphStateMachine morphStateMachine;
 		
-		MorphStateMachineRecordedChanges(Player player, MorphStateMachine morphStateMachine, HashMap<String, String> changes)
+		MorphStateMachineRecordedChanges(Player player, MorphStateMachine morphStateMachine, HashMap<ResourceLocation, MorphStateMachineEntry> changes)
 		{
 			this.player = player;
 			this.morphStateMachine = morphStateMachine;
@@ -43,15 +78,15 @@ public class MorphStateMachine
 			recorder.morphStateMachine = null;
 		}
 		
-		private boolean areDifferent(String key)
+		private boolean areDifferent(ResourceLocation key)
 		{
-			return changes.get(key) != morphStateMachine.states.get(key);
+			return changes.get(key) != null && changes.get(key).equals(morphStateMachine.states.get(key));
 		}
 		
 		public void applyChanges()
 		{
 			// Fire event
-			for(Entry<String, String> change : changes.entrySet())
+			for(Entry<ResourceLocation, MorphStateMachineEntry> change : changes.entrySet())
 			{
 				// If a change indeed happened
 				if(areDifferent(change.getKey()))
@@ -64,29 +99,21 @@ public class MorphStateMachine
 				}
 			}
 			
-			for(Entry<String, String> change : changes.entrySet())
+			for(Entry<ResourceLocation, MorphStateMachineEntry> change : changes.entrySet())
 			{
-				// Clear the state if a change of a key to the value null has been recorded.
-				if(change.getValue() == null)
-				{
-					this.morphStateMachine.removeStateEventUnaware(change.getKey());
-				}
-				else
-				{
-					this.morphStateMachine.setStateEventUnaware(change.getKey(), change.getValue());
-				}
+				this.morphStateMachine.setStateEventUnaware(change.getKey(), change.getValue());
 			}
 		}
 		
 		MorphStateMachineChangedSyncPacket createNetworkPacket()
 		{
-			return new MorphStateMachineChangedSyncPacket(changes, this.player.getUUID());
+			return MorphStateMachineChangedSyncPacket.fromChanges(changes, this.player.getUUID());
 		}
 	}
 	
 	public static class MorphStateMachineChangeRecorder
 	{
-		private HashMap<String, String> changes;
+		private HashMap<ResourceLocation, MorphStateMachineEntry> changes;
 		private Player player;
 		private MorphStateMachine morphStateMachine;
 		
@@ -96,15 +123,17 @@ public class MorphStateMachine
 			this.morphStateMachine = morphStateMachine;
 		}
 		
-		public MorphStateMachineChangeRecorder recordChange(String stateKey, String stateValue)
+		// NOT THREAD SAFE
+		public MorphStateMachineChangeRecorder recordChange(ResourceLocation stateKey, MorphStateMachineEntry stateValue)
 		{
 			changes.put(stateKey, stateValue);
 			return this;
 		}
 		
-		public MorphStateMachineChangeRecorder recordChange(String stateKey)
+		// NOT THREAD SAFE
+		public MorphStateMachineChangeRecorder recordChange(ResourceLocation stateKey)
 		{
-			return recordChange(stateKey, null);
+			return recordChange(stateKey, new MorphStateMachineEntry(Optional.of(new TickTimestamp()), Optional.empty()));
 		}
 		
 		/**
@@ -118,7 +147,7 @@ public class MorphStateMachine
 	}
 	
 	// TODO: Add change reasons so that we may fire events when states change, but only when they do so through abilities or sth like that
-	private HashMap<String, String> states = new HashMap<>();
+	private HashMap<ResourceLocation, MorphStateMachineEntry> states = new HashMap<>();
 	
 	public MorphStateMachine()
 	{
@@ -139,21 +168,16 @@ public class MorphStateMachine
 	 * @param stateKey
 	 * @return the stateValue.
 	 */
-	public Optional<String> query(String stateKey)
+	public Optional<MorphStateMachineEntry> query(ResourceLocation stateKey)
 	{
 		return Optional.ofNullable(states.get(stateKey));
 	}
 			
-	private void setStateEventUnaware(String stateKey, String stateValue)
+	private void setStateEventUnaware(ResourceLocation stateKey, MorphStateMachineEntry stateEntry)
 	{
-		states.put(stateKey, stateValue);
+		states.put(stateKey, stateEntry);
 	}
-	
-	private void removeStateEventUnaware(String stateKey)
-	{
-		states.remove(stateKey);
-	}
-	
+		
 	public void deserialize(CompoundTag tag)
 	{
 		clear();
@@ -162,7 +186,15 @@ public class MorphStateMachine
 		for(int i = 0; i < stateEntries.size(); i++)
 		{
 			CompoundTag stateEntry = stateEntries.getCompound(i);
-			setStateEventUnaware(stateEntry.getString("stateKey"), stateEntry.getString("stateValue"));
+			
+			Optional<TickTimestamp> tickTimestamp = Optional.empty();
+			
+			if(stateEntry.contains("stateTimeElapsed", Tag.TAG_INT))
+			{
+				tickTimestamp = Optional.of(new TickTimestamp(stateEntry.getInt("stateTimeElapsed")));
+			}
+			
+			setStateEventUnaware(new ResourceLocation(stateEntry.getString("stateKey")), new MorphStateMachineEntry(tickTimestamp, Optional.ofNullable(stateEntry.getString("stateValue"))));
 		}
 	}
 	
@@ -173,11 +205,13 @@ public class MorphStateMachine
 		
 		tag.put("states", stateEntries);
 		
-		for(Map.Entry<String, String> stateEntry : states.entrySet())
+		for(Map.Entry<ResourceLocation, MorphStateMachineEntry> stateEntry : states.entrySet())
 		{
 			CompoundTag entryTag = new CompoundTag();
-			entryTag.putString("stateKey", stateEntry.getKey());
-			entryTag.putString("stateValue", stateEntry.getValue());
+			entryTag.putString("stateKey", stateEntry.getKey().toString());
+			
+			stateEntry.getValue().getValue().ifPresent(value -> entryTag.putString("stateValue", value));
+			stateEntry.getValue().getTimeElapsedSinceChange().ifPresent(timeElapsed -> entryTag.putInt("stateTimeElapsed", timeElapsed.getTimeElapsed()));
 			
 			stateEntries.add(entryTag);
 		}
@@ -185,6 +219,7 @@ public class MorphStateMachine
 		return tag;
 	}
 	
+	// FIXME: !!! RACE CONDITION POSSIBLE !!!
 	public void deserializePacket(FriendlyByteBuf buf)
 	{
 		clear();
@@ -192,7 +227,23 @@ public class MorphStateMachine
 		
 		for(int i = 0; i < size; i++)
 		{
-			states.put(buf.readUtf(), buf.readUtf());
+			boolean stateValuePresent = buf.readBoolean();
+			boolean stateTimeElapsedSinceChangePresent = buf.readBoolean();
+			
+			Optional<String> stateValue = Optional.empty();
+			Optional<TickTimestamp> stateTimestamp = Optional.empty();
+			
+			if(stateValuePresent)
+			{
+				stateValue = Optional.of(buf.readUtf());
+			}
+			
+			if(stateTimeElapsedSinceChangePresent)
+			{
+				stateTimestamp = Optional.of(new TickTimestamp(buf.readInt()));
+			}
+			
+			states.put(new ResourceLocation(buf.readUtf()), new MorphStateMachineEntry(stateTimestamp, stateValue));
 		}
 	}
 	
@@ -200,10 +251,15 @@ public class MorphStateMachine
 	{
 		buf.writeInt(states.size());
 		
-		for(Map.Entry<String, String> stateEntry : states.entrySet())
+		for(Map.Entry<ResourceLocation, MorphStateMachineEntry> stateEntry : states.entrySet())
 		{
-			buf.writeUtf(stateEntry.getKey());
-			buf.writeUtf(stateEntry.getValue());
+			buf.writeUtf(stateEntry.getKey().toString());
+			buf.writeBoolean(stateEntry.getValue().getValue().isPresent());
+			buf.writeBoolean(stateEntry.getValue().getTimeElapsedSinceChange().isPresent());
+			
+			stateEntry.getValue().getValue().ifPresent(stateValue -> buf.writeUtf(stateValue));
+			// Not exact, but approximate; may cause desync if we're not cautious with this
+			stateEntry.getValue().getTimeElapsedSinceChange().ifPresent(stateTimeElapsedSinceChange -> buf.writeInt(stateTimeElapsedSinceChange.getTimeElapsed()));
 		}
 	}
 }
