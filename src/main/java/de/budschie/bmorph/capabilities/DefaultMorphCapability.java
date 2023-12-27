@@ -393,7 +393,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	@Override
 	public void deapplyAbilities(MorphItem aboutToMorphTo, List<Ability> newAbilities)
 	{
-		if(getCurrentAbilities() != null)
+		if(getCurrentAbilities() != null && getCurrentAbilities().size() > 0)
 		{
 			currentAbilities.lock();
 			currentAbilities.getList().forEach(ability ->
@@ -409,6 +409,8 @@ public class DefaultMorphCapability implements IMorphCapability
 			
 			if(!getOwner().level.isClientSide())
 				context.clearTransientData();
+			
+			currentAbilities.getList().clear();
 		}
 	}
 
@@ -418,7 +420,10 @@ public class DefaultMorphCapability implements IMorphCapability
 		if(getCurrentAbilities() != null)
 		{
 			currentAbilities.lock();
-			currentAbilities.getList().forEach(ability -> ability.onUsedAbility(getOwner(), getCurrentMorph().get()));
+			currentAbilities.getList().forEach(ability -> 
+			{
+				ability.onUsedAbility(getOwner(), getCurrentMorph().get());
+			});
 			currentAbilities.unlock();
 		}
 	}
