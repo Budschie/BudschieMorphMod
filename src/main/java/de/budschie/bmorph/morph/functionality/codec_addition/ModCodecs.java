@@ -1,6 +1,8 @@
 package de.budschie.bmorph.morph.functionality.codec_addition;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -12,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -68,13 +71,53 @@ public class ModCodecs
 	
 	public static final Codec<BossBarColor> BOSSBAR_COLOR_ENUM = getEnumCodec(BossBarColor.class, BossBarColor::values);
 	public static final Codec<BossBarOverlay> BOSSBAR_OVERLAY_ENUM = getEnumCodec(BossBarOverlay.class, BossBarOverlay::values);
-		
+	
 	public static final Codec<LazyOptional<Ability>> ABILITY = getLazyDynamicRegistry(() -> BMorphMod.DYNAMIC_ABILITY_REGISTRY, "ability", Optional.empty());
 	public static final Codec<LazyOptional<AbilityGroup>> ABILITY_GROUP = getLazyDynamicRegistry(() -> BMorphMod.ABILITY_GROUPS, "ability group", Optional.of("#"));
 	public static final Codec<LazyOptional<DataTransformer>> DATA_TRANSFORMER = getLazyDynamicRegistry(() -> BMorphMod.DYNAMIC_DATA_TRANSFORMER_REGISTRY, "data transformer", Optional.empty());
 	
 	public static final Codec<LazyRegistryWrapper<LootItemCondition>> PREDICATE = getLazyMCRegistryObjectCodec(rl -> ServerLifecycleHooks.getCurrentServer().getPredicateManager().get(rl), "predicate");
+	
+	// Might introduce problems when trying to convert back as ability group data will be lost
+	public static final Codec<LazyOptional<List<Ability>>> ABILITY_LIST = Codec.either(ABILITY_GROUP, ABILITY).listOf().<LazyOptional<List<Ability>>>flatXmap((list) ->
+	{
+		return DataResult.success(LazyOptional.of(() ->
+		{
+			List<Ability> abilities = new ArrayList<>();
+			
+			for(Either<LazyOptional<AbilityGroup>, LazyOptional<Ability>> entry : list)
+			{	
+				if (entry.left().isPresent())
+				{
+					abilities.addAll(entry.left().get().resolve().get().getAbilities());
+				} 
+				else if (entry.right().isPresent())
+				{
+					abilities.add(entry.right().get().resolve().get());
+				} 
+				else
+				{
+					throw new IllegalArgumentException("The either is null, bad invariant assumption");
+				}
+			}
+			
+			return abilities;
+		}));
+	}, 
+	(abilitiesUnresolved) ->
+	{
+		List<Either<LazyOptional<AbilityGroup>, LazyOptional<Ability>>> eitherList = new ArrayList<>();
 		
+		List<Ability> abilities = abilitiesUnresolved.resolve().get();
+		
+		for(Ability ability : abilities)
+		{
+			eitherList.add(Either.right(LazyOptional.of(() -> ability)));
+		}
+		
+		return DataResult.success(eitherList);
+	});
+	
 	public static final Codec<net.minecraft.nbt.Tag> NBT_TAG = Codec.STRING.flatXmap(str ->
 	{
 		net.minecraft.nbt.Tag tag;
@@ -159,7 +202,7 @@ public class ModCodecs
 					
 					try
 					{
-						result = new ResourceLocation(rl.result().get());
+						result = new ResourceLocation(str);
 					}
 					catch(ResourceLocationException ex)
 					{
