@@ -4,13 +4,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import de.budschie.bmorph.capabilities.AbilitySerializationContext;
+import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphStateChangeEvent;
+import de.budschie.bmorph.capabilities.MorphStateMachine.MorphStateMachineEntry;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphUtil;
@@ -31,9 +34,9 @@ public class StateMachineAbilityManager extends Ability
 	public static class StateMachineListener 
 	{
 		private String stateValue;
-		private List<LazyOptional<Ability>> abilities;
+		private LazyOptional<List<Ability>> abilities;
 		
-		public StateMachineListener(String stateValue, List<LazyOptional<Ability>> abilities)
+		public StateMachineListener(String stateValue, LazyOptional<List<Ability>> abilities)
 		{
 			this.stateValue = stateValue;
 			this.abilities = abilities;
@@ -44,7 +47,7 @@ public class StateMachineAbilityManager extends Ability
 			return stateValue;
 		}
 		
-		public List<LazyOptional<Ability>> getAbilities()
+		public LazyOptional<List<Ability>> getAbilities()
 		{
 			return abilities;
 		}
@@ -53,7 +56,7 @@ public class StateMachineAbilityManager extends Ability
 	public static final Codec<StateMachineListener> STATE_MACHINE_LISTENER = RecordCodecBuilder.create(instance ->
 		instance.group(
 				Codec.STRING.fieldOf("state_value").forGetter(StateMachineListener::getStateValue), 
-				ModCodecs.ABILITY.listOf().fieldOf("abilities").forGetter(StateMachineListener::getAbilities))
+				ModCodecs.ABILITY_LIST.fieldOf("abilities").forGetter(StateMachineListener::getAbilities))
 		.apply(instance, StateMachineListener::new)
 	);
 	
@@ -61,15 +64,15 @@ public class StateMachineAbilityManager extends Ability
 			instance.group(
 					ResourceLocation.CODEC.fieldOf("state_key").forGetter(StateMachineAbilityManager::getStateKey),
 					STATE_MACHINE_LISTENER.listOf().optionalFieldOf("state_listeners", Arrays.asList()).forGetter(StateMachineAbilityManager::getStateListeners),
-					ModCodecs.ABILITY.listOf().optionalFieldOf("default", Arrays.asList()).forGetter(StateMachineAbilityManager::getDefaultCase))
+					ModCodecs.ABILITY_LIST.optionalFieldOf("default", LazyOptional.of(() -> Arrays.asList())).forGetter(StateMachineAbilityManager::getDefaultCase))
 			.apply(instance, StateMachineAbilityManager::new));
 	
 	private ResourceLocation stateKey;
 	private List<StateMachineListener> stateListeners;
-	private List<LazyOptional<Ability>> defaultCase;
+	private LazyOptional<List<Ability>> defaultCase;
 	private HashMap<UUID, List<ResourceLocation>> currentlyAppliedAbilities = new HashMap<>();
 	
-	public StateMachineAbilityManager(ResourceLocation stateKey, List<StateMachineListener> stateListeners, List<LazyOptional<Ability>> defaultCase)
+	public StateMachineAbilityManager(ResourceLocation stateKey, List<StateMachineListener> stateListeners, LazyOptional<List<Ability>> defaultCase)
 	{
 		this.stateKey = stateKey;
 		this.stateListeners = stateListeners;
@@ -81,7 +84,10 @@ public class StateMachineAbilityManager extends Ability
 	{	
 		super.enableAbility(player, enabledItem, oldMorph, oldAbilities, reason);
 		currentlyAppliedAbilities.put(player.getUUID(), new ArrayList<>());
-		enableAssociatedAbilities(player, defaultCase);
+		// enableAssociatedAbilities(player, defaultCase);
+		
+		IMorphCapability cap = MorphUtil.getCapOrNull(player);
+		handleState(player, cap.getMorphStateMachine().query(stateKey));
 	}
 	
 	@Override
@@ -139,27 +145,66 @@ public class StateMachineAbilityManager extends Ability
 	{
 		MorphUtil.processCap(player, cap ->
 		{
-			for(ResourceLocation resourceLocation : currentlyAppliedAbilities.get(player.getUUID()))
+			List<ResourceLocation> appliedAbilities = currentlyAppliedAbilities.get(player.getUUID());
+			
+			if(appliedAbilities == null)
+			{
+				return;
+			}
+			
+			for(ResourceLocation resourceLocation : appliedAbilities)
 			{
 				cap.deapplyAbility(BMorphMod.DYNAMIC_ABILITY_REGISTRY.getEntry(resourceLocation));
 			}
 		});
 		
-		currentlyAppliedAbilities.get(player.getUUID()).clear();
+		List<ResourceLocation> currentlyAppliedAbilitiesForPlayer = currentlyAppliedAbilities.get(player.getUUID());
+		
+		if(currentlyAppliedAbilitiesForPlayer != null)
+		{
+			currentlyAppliedAbilitiesForPlayer.clear();
+		}
 	}
 	
-	private void enableAssociatedAbilities(Player player, List<LazyOptional<Ability>> abilities)
+	private void enableAssociatedAbilities(Player player, LazyOptional<List<Ability>> abilities)
 	{
 		MorphUtil.processCap(player, cap ->
 		{
-			List<ResourceLocation> temporaryAbilities = currentlyAppliedAbilities.computeIfAbsent(player.getUUID(), (uuid) -> new ArrayList<>());
+			List<ResourceLocation> temporaryAbilities = new ArrayList<>();
+			currentlyAppliedAbilities.put(player.getUUID(), temporaryAbilities);
 			
-			for(LazyOptional<Ability> ability : abilities)
+			for(Ability ability : abilities.resolve().get())
 			{
-				cap.applyAbility(ability.resolve().get());
-				temporaryAbilities.add(ability.resolve().get().getResourceLocation());
+				cap.applyAbility(ability);
+				temporaryAbilities.add(ability.getResourceLocation());
 			}
 		});
+	}
+	
+	private void handleState(Player player, Optional<MorphStateMachineEntry> value)
+	{
+		if(value.isEmpty())
+		{
+			enableAssociatedAbilities(player, defaultCase);
+			return;
+		}
+		
+		if(value.get().getValue().isEmpty())
+		{
+			enableAssociatedAbilities(player, defaultCase);
+			return;
+		}
+		
+		for(StateMachineListener listener : this.stateListeners)
+		{
+			if(listener.getStateValue().equals(value.get().getValue().get()))
+			{
+				enableAssociatedAbilities(player, listener.getAbilities());
+				return;
+			}
+		}
+		
+		enableAssociatedAbilities(player, defaultCase);
 	}
 	
 	@SubscribeEvent
@@ -183,30 +228,10 @@ public class StateMachineAbilityManager extends Ability
 		// Disable old abilities
 		disableAssociatedAbilities(event.getPlayer());
 		
-		for(StateMachineListener listener : this.stateListeners)
-		{
-			if(event.getMorphStateChange().getNewValue().isEmpty())
-			{
-				continue;
-			}
-			
-			if(event.getMorphStateChange().getNewValue().get().getValue().isEmpty())
-			{
-				continue;
-			}
-			
-			if(listener.getStateValue().equals(event.getMorphStateChange().getNewValue().get().getValue().get()))
-			{
-				enableAssociatedAbilities(event.getPlayer(), listener.getAbilities());
-				return;
-			}
-		}
-		
-		// FIXME: Introduces bug where timers could be reset due to reapplying the default case when switching between two unrecognized state values
-		enableAssociatedAbilities(event.getPlayer(), defaultCase);
+		handleState(event.getPlayer(), event.getMorphStateChange().getNewValue());
 	}
 	
-	public List<LazyOptional<Ability>> getDefaultCase()
+	public LazyOptional<List<Ability>> getDefaultCase()
 	{
 		return defaultCase;
 	}
