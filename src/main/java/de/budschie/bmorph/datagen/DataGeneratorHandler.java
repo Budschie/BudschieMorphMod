@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import de.budschie.bmorph.datagen.nbt_handlers.NBTHandlerProvider;
+import de.budschie.bmorph.datagen.tags.AttributeTagsProvider;
 import de.budschie.bmorph.datagen.tags.EntityTagsProvider;
 import de.budschie.bmorph.json_integration.JsonMorphNBTHandler;
 import de.budschie.bmorph.json_integration.NBTPath;
@@ -32,6 +33,7 @@ public class DataGeneratorHandler
 			
 			event.getGenerator().addProvider(nbtHandlerProvider);
 			event.getGenerator().addProvider(new EntityTagsProvider(event.getGenerator(), Registry.ENTITY_TYPE, References.MODID, event.getExistingFileHelper()));
+			event.getGenerator().addProvider(new AttributeTagsProvider(event.getGenerator(), Registry.ATTRIBUTE, References.MODID, event.getExistingFileHelper()));
 		}
 	}
 	
