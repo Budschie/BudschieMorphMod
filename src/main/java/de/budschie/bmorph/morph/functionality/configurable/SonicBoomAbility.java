@@ -65,7 +65,7 @@ public class SonicBoomAbility extends StunAbility
 		AABB aabb = new AABB(from, to);
 		EntityHitResult result = ProjectileUtil.getEntityHitResult(player.level, player, from, to, aabb, entity -> entity instanceof LivingEntity);
 		
-		if(result.getEntity() != null && result.getEntity() instanceof LivingEntity livingEntity)
+		if(result != null && result.getEntity() != null && result.getEntity() instanceof LivingEntity livingEntity)
 		{
 			stun(player.getUUID());
 			sonicBoom(player, livingEntity, (ServerLevel) player.level);
