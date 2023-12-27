@@ -6,8 +6,7 @@ import org.apache.logging.log4j.Logger;
 import de.budschie.bmorph.capabilities.blacklist.ConfigManager;
 import de.budschie.bmorph.commands.BlacklistCommand;
 import de.budschie.bmorph.commands.MorphCommand;
-import net.minecraft.client.Minecraft;
-import net.minecraft.server.MinecraftServer;
+import de.budschie.bmorph.commands.StateMachineCommand;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
@@ -32,6 +31,7 @@ public class ServerSetup
 	{
 		MorphCommand.registerCommands(event.getDispatcher(), event.getBuildContext());
 		BlacklistCommand.registerCommand(event.getDispatcher(), event.getBuildContext());
+		StateMachineCommand.registerCommands(event.getDispatcher(), event.getBuildContext());
 		
 		LOGGER.info("Registered morph commands.");
 	}
