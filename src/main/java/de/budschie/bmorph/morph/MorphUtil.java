@@ -129,6 +129,7 @@ public class MorphUtil
 	
 	private static void morphToClient(Optional<MorphItem> morphItem, Optional<UUID> morphId, MorphReason reason, ArrayList<String> abilities, Player player)
 	{
+		// TODO: Investigate why this is called twice when calling /demorph
 		if(player != null)
 		{
 			LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
