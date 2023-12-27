@@ -1,0 +1,7 @@
+{
+	"ability": "bmorph:secondary_ability",
+	"config":
+	{
+		"secondary_ability": "bmorph:warden/transition_to_emerge"
+	}
+}

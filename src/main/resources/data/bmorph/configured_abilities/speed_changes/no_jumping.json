@@ -1,0 +1,11 @@
+{
+	"ability": "bmorph:passive_effect",
+	"config":
+	{
+		"effect_instance":
+		{
+			"potion_effect": "minecraft:jump_boost",
+			"amplifier": 128
+		}
+	}
+}

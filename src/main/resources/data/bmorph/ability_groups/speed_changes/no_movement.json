@@ -1,0 +1,3 @@
+{
+    "abilities": [ "bmorph:speed_changes/no_walking", "bmorph:speed_changes/no_walking_fov", "bmorph:speed_changes/no_jumping" ]
+}

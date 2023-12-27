@@ -1,0 +1,8 @@
+{
+	"ability": "bmorph:state_machine_change",
+	"config":
+	{
+		"state_key": "bmorph:warden_state",
+		"state_value": "default"
+	}
+}

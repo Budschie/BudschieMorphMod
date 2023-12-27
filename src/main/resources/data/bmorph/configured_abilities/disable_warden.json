@@ -1,0 +1,38 @@
+{
+    "ability": "bmorph:disable_morph_item",
+    "config":
+    {
+        "time_until_demorph": 2000,
+        "disable_morph_for": 5000,
+        "warning_effects":
+        [
+            {
+                "ticks_left": 100,
+                "audiovisual_effect":
+                {
+                    "sounds":
+                    [
+                        {
+                            "sound": 
+{
+    "sound_id": "minecraft:entity.warden.hurt"
+},
+                            "pitch": 0.3
+                        }
+                    ]
+                }
+            },
+            {
+                "ticks_left": 70,
+                "mob_effects":
+                [
+                    {
+                        "potion_effect": "minecraft:nausea",
+                        "duration": 200,
+                        "amplifier": 3
+                    }
+                ]
+            }
+        ]
+    }
+}

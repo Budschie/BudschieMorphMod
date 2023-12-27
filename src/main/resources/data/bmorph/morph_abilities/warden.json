@@ -2,7 +2,10 @@
 	"entity_type": "minecraft:warden",
 	"grant":
 	[
-		"bmorph:warden_sonic_boom"
+		"bmorph:warden_sonic_boom",
+		"bmorph:blindnessa",
+		"bmorph:disable_warden",
+		"bmorph:warden/warden_state_ability"
 	],
 	"revoke":
 	[

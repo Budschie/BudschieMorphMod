@@ -1,0 +1,10 @@
+{
+    "ability": "bmorph:attribute_modifier",
+    "config":
+    {
+        "attribute": "generic.movement_speed",
+        "operation": "multiply_total",
+        "name": "Slowness Normal",
+        "amount": -1.0
+    }
+}

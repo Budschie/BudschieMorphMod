@@ -1,0 +1,8 @@
+{
+	"ability": "bmorph:delayed",
+	"config":
+	{
+		"delay": 1000,
+		"one_shot": ["bmorph:warden/transition_to_emerge"]
+	}
+}
