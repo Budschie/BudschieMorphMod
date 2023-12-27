@@ -27,7 +27,7 @@ displayName="Budschie's Morph Mod" #mandatory
 # A URL for the "homepage" for this mod, displayed in the mod UI
 #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="assets/bmorph/logo/bmorph_logo.png" #optional
+logoFile="bmorph_logo.png" #optional
 # A text field displayed in the mod UI
 credits="Credits to the Forge Discord for existing" #optional
 # A text field displayed in the mod UI
