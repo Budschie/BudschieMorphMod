@@ -80,7 +80,23 @@ public class MorphStateMachine
 		
 		private boolean areDifferent(ResourceLocation key)
 		{
-			return changes.get(key) != null && changes.get(key).equals(morphStateMachine.states.get(key));
+			MorphStateMachineEntry change = changes.get(key);
+			MorphStateMachineEntry current = morphStateMachine.states.get(key);
+			
+			// Both are the same => return false
+			if(change == current)
+			{
+				return false;
+			}
+			
+			// Change is null, other is not => return true
+			if(change == null)
+			{
+				return true;
+			}
+			
+			// Do more sophisitcated checks
+			return !change.equals(current);
 		}
 		
 		public void applyChanges()
@@ -113,7 +129,7 @@ public class MorphStateMachine
 	
 	public static class MorphStateMachineChangeRecorder
 	{
-		private HashMap<ResourceLocation, MorphStateMachineEntry> changes;
+		private HashMap<ResourceLocation, MorphStateMachineEntry> changes = new HashMap<>();
 		private Player player;
 		private MorphStateMachine morphStateMachine;
 		
@@ -171,6 +187,11 @@ public class MorphStateMachine
 	public Optional<MorphStateMachineEntry> query(ResourceLocation stateKey)
 	{
 		return Optional.ofNullable(states.get(stateKey));
+	}
+	
+	public HashMap<ResourceLocation, MorphStateMachineEntry> getStates()
+	{
+		return states;
 	}
 			
 	private void setStateEventUnaware(ResourceLocation stateKey, MorphStateMachineEntry stateEntry)
