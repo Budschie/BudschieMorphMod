@@ -42,29 +42,45 @@ public class WardenSynchronizer implements IEntitySynchronizer
 		
 		Optional<AnimationState> animationState = Optional.empty();
 		
+		AnimationState[] controlledAnimations = {warden.diggingAnimationState, warden.emergeAnimationState, warden.sonicBoomAnimationState};
+		
 		switch (wardenStateMachine.get().getValue().get())
 		{
 		case WardenStates.DIG:
 		{
 			animationState = Optional.of(warden.diggingAnimationState);
+			break;
 		}
 		case WardenStates.EMERGING:
 		{
 			animationState = Optional.of(warden.emergeAnimationState);
+			break;
 		}
 		case WardenStates.SONIC_BOOM:
 		{
 			animationState = Optional.of(warden.sonicBoomAnimationState);
+			break;
 		}
 		default:
+			for(AnimationState state : controlledAnimations)
+			{
+				state.stop();
+			}
 			
-		}
-		
-		if(animationState.isEmpty())
-		{
 			return;
 		}
 		
-		animationState.get().start(timestamp.getTimestamp());
+		// Rebalance this relative to the age of the entity
+		animationState.get().startIfStopped(warden.tickCount - timestamp.getTimeElapsed());
+		
+		for(AnimationState state : controlledAnimations)
+		{
+			if(state == animationState.get())
+			{
+				continue;
+			}
+			
+			state.stop();
+		}
 	} 
 }
