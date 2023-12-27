@@ -209,7 +209,7 @@ dependencies {
 
 	implementation fg.deobf("curse.maven:shrink-426386:4479694")
 
-	implementation fg.deobf("curse.maven:epic-fight-mod-405076:4922089")
+	// implementation fg.deobf("curse.maven:epic-fight-mod-405076:4922089")
 	// TOBEADDEDAGAIN implementation fg.deobf("curse.maven:betteranimalsplus-303557:4318518")
 	// implementation fg.deobf("curse.maven:firstpersonmodel-333287:3556530")
 	

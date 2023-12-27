@@ -33,7 +33,7 @@ public class DataGeneratorHandler
 			
 			event.getGenerator().addProvider(true, nbtHandlerProvider);
 			event.getGenerator().addProvider(true, new EntityTagsProvider(event.getGenerator().getPackOutput(), Registries.ENTITY_TYPE, event.getLookupProvider(), References.MODID, event.getExistingFileHelper()));
-			event.getGenerator().addProvider(true, new AttributeTagsProvider(event.getGenerator().getPackOutput(), Registries.ATTRIBUTE, event.getLookupProvider(), References.MODID, event.getExistingFileHelper()));
+//			event.getGenerator().addProvider(true, new AttributeTagsProvider(event.getGenerator().getPackOutput(), Registries.ATTRIBUTE, event.getLookupProvider(), References.MODID, event.getExistingFileHelper()));
 		}
 	}
 	
