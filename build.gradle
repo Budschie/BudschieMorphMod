@@ -193,7 +193,7 @@ dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.84'
+    minecraft 'net.minecraftforge:forge:1.18.2-40.2.14'
 
     // implementation fg.deobf("curse.maven:shrink-426386:3458658")
     // implementation fg.deobf("curse.maven:quark-243121:3394265")
@@ -215,6 +215,8 @@ dependencies {
 	
 	implementation fg.deobf("curse.maven:artifacts-312353:3736897")
 	implementation fg.deobf("curse.maven:expandability-465066:3678612")
+	
+	implementation fg.deobf("curse.maven:epic-fight-mod-405076:4922082")
 	
         
     // You may put jars on which you depend on in ./libs or you may define them like so..
