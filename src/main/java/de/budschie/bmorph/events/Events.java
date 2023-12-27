@@ -52,6 +52,7 @@ import de.budschie.bmorph.morph.MorphReasonRegistry;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.network.ChangeUsingSpeedOfMorph;
 import de.budschie.bmorph.network.MainNetworkChannel;
+import de.budschie.bmorph.tags.ModAttributeTags;
 import de.budschie.bmorph.tags.ModEntityTypeTags;
 import de.budschie.bmorph.util.BudschieUtils;
 import net.minecraft.ChatFormatting;
@@ -650,6 +651,11 @@ public class Events
 			
 			for(Attribute playerAttributes : DefaultAttributes.getSupplier(EntityType.PLAYER).instances.keySet())
 			{
+				if(ForgeRegistries.ATTRIBUTES.tags().getTag(ModAttributeTags.ATTRIBUTES_BLACKLISTED_FOR_COPY).contains(playerAttributes))
+				{
+					continue;
+				}
+				
 				if(playerAttributes == Attributes.MOVEMENT_SPEED)
 				{
 					if(!copySpeed && !isDefault)
