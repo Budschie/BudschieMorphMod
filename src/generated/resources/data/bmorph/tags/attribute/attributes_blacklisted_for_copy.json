@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    "epicfight:staminar",
+    "epicfight:stamina_regen",
+    "epicfight:stun_armor",
+    "epicfight:weight",
+    "epicfight:max_strikes",
+    "epicfight:armor_negation",
+    "epicfight:impact",
+    "epicfight:offhand_attack_speed",
+    "epicfight:offhand_max_strikes",
+    "epicfight:offhand_armor_negation",
+    "epicfight:offhand_impact",
+    "epicfight:execution_resistance"
+  ]
+}
