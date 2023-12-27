@@ -52,6 +52,7 @@ import de.budschie.bmorph.morph.functionality.configurable.ProjectileShootingAbi
 import de.budschie.bmorph.morph.functionality.configurable.PufferfishAbility;
 import de.budschie.bmorph.morph.functionality.configurable.RandomDelegatingOnUseAbility;
 import de.budschie.bmorph.morph.functionality.configurable.RideAbility;
+import de.budschie.bmorph.morph.functionality.configurable.SecondaryAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SheepEatGrassAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SonicBoomAbility;
 import de.budschie.bmorph.morph.functionality.configurable.SoundOnUseAbility;
@@ -141,6 +142,6 @@ public class AbilityRegistry
 	public static RegistryObject<ConfigurableAbility<NoInteractAbility>> NO_INTERACT_ABILITY = ABILITY_REGISTRY.register("no_interact", () -> new ConfigurableAbility<>(NoInteractAbility.CODEC));
 	public static RegistryObject<ConfigurableAbility<StateMachineAbilityManager>> STATE_MACHINE_ABILITY_MANAGER = ABILITY_REGISTRY.register("state_machine", () -> new ConfigurableAbility<>(StateMachineAbilityManager.CODEC));
 	public static RegistryObject<ConfigurableAbility<StateMachineChangeOnUseAbility>> STATE_MACHINE_CHANGE_ON_USE = ABILITY_REGISTRY.register("state_machine_change", () -> new ConfigurableAbility<>(StateMachineChangeOnUseAbility.CODEC));
-
+	public static RegistryObject<ConfigurableAbility<SecondaryAbility>> SECONDARY_ABILITY = ABILITY_REGISTRY.register("secondary_ability", () -> new ConfigurableAbility<>(SecondaryAbility.CODEC));
 }
 
