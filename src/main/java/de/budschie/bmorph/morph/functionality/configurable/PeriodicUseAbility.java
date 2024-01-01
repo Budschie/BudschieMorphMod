@@ -71,6 +71,14 @@ public class PeriodicUseAbility extends Ability
     }
 
     @Override
+    public void disableAbility(Player player, MorphItem disabledItem, MorphItem newMorph, List<Ability> newAbilities, AbilityChangeReason reason)
+    {
+        super.disableAbility(player, disabledItem, newMorph, newAbilities, reason);
+
+        playerTimestamps.remove(player.getUUID());
+    }
+
+    @Override
     public void serialize(Player player, AbilitySerializationContext context, boolean canSaveTransientData)
     {
         super.serialize(player, context, canSaveTransientData);
