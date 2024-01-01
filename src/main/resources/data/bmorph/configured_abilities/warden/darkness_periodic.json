@@ -4,7 +4,6 @@
         "abilities_to_use": ["bmorph:warden/darkness"],
         "period_length": 120,
         "initial_lag": 0,
-        "preserve_time_between_morphs": false,
-        "affects_self": true
+        "preserve_time_between_morphs": false
     }
 }

@@ -13,6 +13,7 @@
                 "show_icon": true
             }
         ],
-        "radius": 20
+        "radius": 20,
+        "affects_self": true
     }
 }
