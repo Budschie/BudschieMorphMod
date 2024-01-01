@@ -19,6 +19,7 @@ import de.budschie.bmorph.morph.MorphItem;
 import de.budschie.bmorph.morph.MorphUtil;
 import de.budschie.bmorph.morph.functionality.Ability;
 import de.budschie.bmorph.morph.functionality.codec_addition.ModCodecs;
+import de.budschie.bmorph.util.TickTimestamp;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -64,19 +65,22 @@ public class StateMachineAbilityManager extends Ability
 			instance.group(
 					ResourceLocation.CODEC.fieldOf("state_key").forGetter(StateMachineAbilityManager::getStateKey),
 					STATE_MACHINE_LISTENER.listOf().optionalFieldOf("state_listeners", Arrays.asList()).forGetter(StateMachineAbilityManager::getStateListeners),
-					ModCodecs.ABILITY_LIST.optionalFieldOf("default", LazyOptional.of(() -> Arrays.asList())).forGetter(StateMachineAbilityManager::getDefaultCase))
+					ModCodecs.ABILITY_LIST.optionalFieldOf("default", LazyOptional.of(() -> Arrays.asList())).forGetter(StateMachineAbilityManager::getDefaultCase),
+					Codec.STRING.optionalFieldOf("reset_value").forGetter(StateMachineAbilityManager::getResetValue))
 			.apply(instance, StateMachineAbilityManager::new));
 	
 	private ResourceLocation stateKey;
 	private List<StateMachineListener> stateListeners;
 	private LazyOptional<List<Ability>> defaultCase;
 	private HashMap<UUID, List<ResourceLocation>> currentlyAppliedAbilities = new HashMap<>();
+	private Optional<String> resetValue;
 	
-	public StateMachineAbilityManager(ResourceLocation stateKey, List<StateMachineListener> stateListeners, LazyOptional<List<Ability>> defaultCase)
+	public StateMachineAbilityManager(ResourceLocation stateKey, List<StateMachineListener> stateListeners, LazyOptional<List<Ability>> defaultCase, Optional<String> resetValue)
 	{
 		this.stateKey = stateKey;
 		this.stateListeners = stateListeners;
 		this.defaultCase = defaultCase;
+		this.resetValue = resetValue;
 	}
 	
 	@Override
@@ -87,7 +91,13 @@ public class StateMachineAbilityManager extends Ability
 		// enableAssociatedAbilities(player, defaultCase);
 		
 		IMorphCapability cap = MorphUtil.getCapOrNull(player);
-		handleState(player, cap.getMorphStateMachine().query(stateKey));
+		
+		if(resetValue.isPresent())
+		{
+//			cap.createMorphStateMachineChangeRecorder().recordChange(stateKey, new MorphStateMachineEntry(Optional.of(new TickTimestamp()), resetValue)).finishRecording().applyChanges();
+		}
+		
+		handleState(player, cap.getMorphStateMachine().query(stateKey));	
 	}
 	
 	@Override
@@ -244,6 +254,11 @@ public class StateMachineAbilityManager extends Ability
 	public List<StateMachineListener> getStateListeners()
 	{
 		return stateListeners;
+	}
+	
+	public Optional<String> getResetValue()
+	{
+		return resetValue;
 	}
 	
 	@Override
