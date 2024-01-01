@@ -9,6 +9,7 @@ import de.budschie.bmorph.morph.functionality.state_machine.WardenStates;
 import de.budschie.bmorph.util.TickTimestamp;
 import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.player.Player;
 
@@ -44,6 +45,8 @@ public class WardenSynchronizer implements IEntitySynchronizer
 		
 		AnimationState[] controlledAnimations = {warden.diggingAnimationState, warden.emergeAnimationState, warden.sonicBoomAnimationState};
 		
+		warden.getEntityData().set(Warden.CLIENT_ANGER_LEVEL, 1000);
+		
 		switch (wardenStateMachine.get().getValue().get())
 		{
 		case WardenStates.DIG:
@@ -61,6 +64,10 @@ public class WardenSynchronizer implements IEntitySynchronizer
 			animationState = Optional.of(warden.sonicBoomAnimationState);
 			break;
 		}
+		case WardenStates.UNDER_GROUND:
+		{
+			warden.setInvisible(true);
+		}
 		default:
 			for(AnimationState state : controlledAnimations)
 			{
@@ -69,9 +76,19 @@ public class WardenSynchronizer implements IEntitySynchronizer
 			
 			return;
 		}
-		
-		// Rebalance this relative to the age of the entity
+				
+		// Rebalance this relative to the age of the entity		
 		animationState.get().startIfStopped(warden.tickCount - timestamp.getTimeElapsed());
+		
+		switch (wardenStateMachine.get().getValue().get())
+		{
+		case WardenStates.EMERGING:
+		case WardenStates.DIG:
+			warden.clientDiggingParticles(animationState.get());
+			break;
+		default:
+			
+		}
 		
 		for(AnimationState state : controlledAnimations)
 		{
