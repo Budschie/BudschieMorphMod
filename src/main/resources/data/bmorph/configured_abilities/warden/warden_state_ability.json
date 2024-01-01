@@ -7,17 +7,18 @@
 		[
 			{
 				"state_value": "emerge",
-				"abilities": ["bmorph:no_interact", "#bmorph:speed_changes/no_movement", "bmorph:warden/transition_to_default_automatic"]
+				"abilities": ["bmorph:no_interact", "#bmorph:speed_changes/no_movement", "bmorph:warden/transition_to_default_automatic", "bmorph:warden/emerging_ave"]
 			},
 			{
 				"state_value": "dig",
-				"abilities": ["bmorph:no_interact", "#bmorph:speed_changes/no_movement", "bmorph:warden/transition_to_under_ground_automatic"]
+				"abilities": ["bmorph:no_interact", "#bmorph:speed_changes/no_movement", "bmorph:warden/transition_to_under_ground_automatic", "bmorph:warden/digging_ave"]
 			},
 			{
 				"state_value": "under_ground",
 				"abilities": ["bmorph:no_interact", "bmorph:warden/transition_to_emerge_automatic", "bmorph:warden/transition_to_emerge_secondary"]
 			}
 		],
-		"default": ["bmorph:warden/transition_to_dig_secondary"]
+		"default": ["bmorph:warden/transition_to_dig_secondary", "bmorph:warden/sonic_boom"],
+		"reset_value": "emerge"
 	}
 }

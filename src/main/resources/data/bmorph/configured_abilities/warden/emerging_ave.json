@@ -1,0 +1,21 @@
+{
+	"ability": "bmorph:audiovisual_effect_on_enable",
+	"config":
+	{
+		"audiovisual_effect":
+		{
+			"sounds":
+			[
+				{
+					"sound":
+					{
+						"sound_id": "minecraft:entity.warden.emerge"
+					},
+					"pitch": 1.0,
+					"random_pitch_delta": 0.1,
+					"volume": 2.0
+				}
+			]
+		}
+	}
+}

@@ -1,0 +1,18 @@
+{
+    "ability": "bmorph:effect_within_radius",
+    "config":
+    {
+        "effects":
+        [
+            {
+                "potion_effect": "darkness",
+                "duration": 400,
+                "amplifier": 3,
+                "show_particles": false,
+                "ambient": false,
+                "show_icon": true
+            }
+        ],
+        "radius": 20
+    }
+}

@@ -4,7 +4,7 @@
     {
         "attribute": "generic.movement_speed",
         "operation": "multiply_total",
-        "name": "Slowness Normal",
+        "name": "Slowness No Walking",
         "amount": -1.0
     }
 }
