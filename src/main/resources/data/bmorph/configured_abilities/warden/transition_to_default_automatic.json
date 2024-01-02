@@ -2,7 +2,7 @@
 	"ability": "bmorph:delayed",
 	"config":
 	{
-		"delay": 80,
+		"delay": 140,
 		"one_shot": ["bmorph:warden/transition_to_default"]
 	}
 }
