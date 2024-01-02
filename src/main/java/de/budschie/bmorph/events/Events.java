@@ -231,7 +231,7 @@ public class Events
 		{
 			bossbarCap.getBossbar().ifPresent(bossbar ->
 			{
-				BudschieUtils.getPlayersTrackingEntityAndSelf((ServerPlayer) player).forEach(trackingPlayer -> bossbar.addPlayer(trackingPlayer));
+				BudschieUtils.getPlayersTrackingEntityAndSelf((ServerPlayer) player).forEach(bossbar::addPlayer);
 			});
 		});
 	}
@@ -241,7 +241,7 @@ public class Events
 	{
 		if(!event.getEntity().level.isClientSide())
 		{
-			event.getEntity().getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(bossbarCap -> bossbarCap.clearBossbar());
+			event.getEntity().getCapability(BossbarCapabilityInstance.BOSSBAR_CAP).ifPresent(IBossbarCapability::clearBossbar);
 		}
 	}
 	
@@ -252,14 +252,11 @@ public class Events
 		{
 			if(player.isRemoved() && player.getRemovalReason() == RemovalReason.UNLOADED_WITH_PLAYER)
 			{
-				MorphUtil.processCap(player, cap ->
-				{
-					cap.removePlayerReferences();
-				});
+				MorphUtil.processCap(player, IMorphCapability::removePlayerReferences);
 			}
 			
 			if(event.getEntity().getRemovalReason() != RemovalReason.CHANGED_DIMENSION && event.getEntity().level.isClientSide())
-				player.getCapability(RenderDataCapabilityProvider.RENDER_CAP).ifPresent(cap -> cap.invalidateCache());
+				player.getCapability(RenderDataCapabilityProvider.RENDER_CAP).ifPresent(IRenderDataCapability::invalidateCache);
 		}
 	}
 	
@@ -451,10 +448,7 @@ public class Events
 	{
 		if(!event.getEntity().level.isClientSide)
 		{
-			MorphUtil.processCap(event.getEntity(), resolved ->
-			{
-				resolved.syncWithClients();
-			});
+			MorphUtil.processCap(event.getEntity(), IMorphCapability::syncWithClients);
 		}
 	}
 	
