@@ -20,6 +20,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 
 public class DelayedAbility extends Ability
 {
@@ -103,7 +104,7 @@ public class DelayedAbility extends Ability
 		{
 			return;
 		}
-		
+
 		ArrayList<UUID> toRemove = new ArrayList<>();
 		
 		for(Map.Entry<UUID, TickTimestamp> playersToWatch : this.enabledAbilities.entrySet())
