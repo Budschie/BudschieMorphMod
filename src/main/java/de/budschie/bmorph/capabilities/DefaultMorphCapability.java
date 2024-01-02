@@ -1,5 +1,6 @@
 package de.budschie.bmorph.capabilities;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,9 +40,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.PacketDistributor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DefaultMorphCapability implements IMorphCapability
 {
+	private static final Logger LOGGER = LogManager.getLogger();
+
 	MorphReason morphReason = MorphReasonRegistry.NONE.get();
 	
 	Player owner;
@@ -117,7 +122,7 @@ public class DefaultMorphCapability implements IMorphCapability
 	public MorphStateMachineRecordedChanges createRecordedChangesFromPacket(MorphStateMachineChangedSyncPacket packet)
 	{
 		// Invariant can be eliminated through fancy type magic, but I will not to that for now
-		if(!packet.getPlayer().equals(packet.getPlayer()))
+		if(!packet.getPlayer().equals(this.owner.getUUID()))
 		{
 			throw new IllegalArgumentException("Packet contents do not refer to this player.");
 		}
@@ -377,17 +382,31 @@ public class DefaultMorphCapability implements IMorphCapability
 //			abilityCopy.forEach(ability -> ability.enableAbility(player, getCurrentMorph().get()));
 //		}
 		
-		if(getCurrentAbilities() != null && getCurrentMorph().isPresent())
+		if(getCurrentAbilities() == null || getCurrentMorph().isEmpty())
 		{
-			currentAbilities.lock();
-			currentAbilities.getList().forEach(ability ->
-			{
-				if(!getOwner().level.isClientSide())
-					ability.deserialize(getOwner(), context);
-				ability.enableAbility(getOwner(), getCurrentMorph().get(), oldMorphItem, oldAbilities, AbilityChangeReason.MORPHED);
-			});
-			currentAbilities.unlock();
+			return;
 		}
+
+		currentAbilities.lock();
+
+		for(Ability ability : currentAbilities.getList())
+		{
+			if (!getOwner().level.isClientSide())
+			{
+				ability.deserialize(getOwner(), context);
+			}
+
+			try
+			{
+				ability.enableAbility(getOwner(), getCurrentMorph().get(), oldMorphItem, oldAbilities, AbilityChangeReason.MORPHED);
+			}
+			catch(Exception exception)
+			{
+				LOGGER.error(MessageFormat.format("Skipped applying ability %s as there were errors loading it: %s\n%s", ability.getResourceLocation().toString(), exception.getMessage(), exception.getStackTrace()));
+			}
+		}
+
+		currentAbilities.unlock();
 	}
 
 	@Override
