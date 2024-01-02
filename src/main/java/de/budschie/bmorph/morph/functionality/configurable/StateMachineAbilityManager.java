@@ -13,6 +13,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import de.budschie.bmorph.capabilities.AbilitySerializationContext;
 import de.budschie.bmorph.capabilities.IMorphCapability;
 import de.budschie.bmorph.capabilities.MorphStateChangeEvent;
+import de.budschie.bmorph.capabilities.MorphStateMachine;
 import de.budschie.bmorph.capabilities.MorphStateMachine.MorphStateMachineEntry;
 import de.budschie.bmorph.main.BMorphMod;
 import de.budschie.bmorph.morph.MorphItem;
@@ -28,6 +29,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class StateMachineAbilityManager extends Ability
 {
@@ -89,15 +91,18 @@ public class StateMachineAbilityManager extends Ability
 		super.enableAbility(player, enabledItem, oldMorph, oldAbilities, reason);
 		currentlyAppliedAbilities.put(player.getUUID(), new ArrayList<>());
 		// enableAssociatedAbilities(player, defaultCase);
-		
+
 		IMorphCapability cap = MorphUtil.getCapOrNull(player);
 		
 		if(resetValue.isPresent())
 		{
-//			cap.createMorphStateMachineChangeRecorder().recordChange(stateKey, new MorphStateMachineEntry(Optional.of(new TickTimestamp()), resetValue)).finishRecording().applyChanges();
+			MorphStateMachine.MorphStateMachineRecordedChanges changes = cap.createMorphStateMachineChangeRecorder().recordChange(stateKey, new MorphStateMachineEntry(Optional.of(new TickTimestamp()), resetValue)).finishRecording();
+			changes.applyChanges();
 		}
-		
-		handleState(player, cap.getMorphStateMachine().query(stateKey));	
+		else
+		{
+			handleState(player, cap.getMorphStateMachine().query(stateKey));
+		}
 	}
 	
 	@Override
@@ -153,10 +158,10 @@ public class StateMachineAbilityManager extends Ability
 	
 	private void disableAssociatedAbilities(Player player)
 	{
+		List<ResourceLocation> appliedAbilities = currentlyAppliedAbilities.get(player.getUUID());
+
 		MorphUtil.processCap(player, cap ->
 		{
-			List<ResourceLocation> appliedAbilities = currentlyAppliedAbilities.get(player.getUUID());
-			
 			if(appliedAbilities == null)
 			{
 				return;
@@ -167,12 +172,10 @@ public class StateMachineAbilityManager extends Ability
 				cap.deapplyAbility(BMorphMod.DYNAMIC_ABILITY_REGISTRY.getEntry(resourceLocation));
 			}
 		});
-		
-		List<ResourceLocation> currentlyAppliedAbilitiesForPlayer = currentlyAppliedAbilities.get(player.getUUID());
-		
-		if(currentlyAppliedAbilitiesForPlayer != null)
+
+		if(appliedAbilities != null)
 		{
-			currentlyAppliedAbilitiesForPlayer.clear();
+			appliedAbilities.clear();
 		}
 	}
 	
@@ -191,8 +194,10 @@ public class StateMachineAbilityManager extends Ability
 		});
 	}
 	
-	private void handleState(Player player, Optional<MorphStateMachineEntry> value)
+	private void handleState(Player player, @NotNull Optional<MorphStateMachineEntry> value)
 	{
+		disableAssociatedAbilities(player);
+
 		if(value.isEmpty())
 		{
 			enableAssociatedAbilities(player, defaultCase);
@@ -220,11 +225,6 @@ public class StateMachineAbilityManager extends Ability
 	@SubscribeEvent
 	public void onStateChanged(MorphStateChangeEvent event)
 	{
-		if(event.getPlayer().level.isClientSide())
-		{
-			return;
-		}
-		
 		if(!isTracked(event.getPlayer()))
 		{
 			return;
@@ -234,10 +234,7 @@ public class StateMachineAbilityManager extends Ability
 		{
 			return;
 		}
-		
-		// Disable old abilities
-		disableAssociatedAbilities(event.getPlayer());
-		
+
 		handleState(event.getPlayer(), event.getMorphStateChange().getNewValue());
 	}
 	
