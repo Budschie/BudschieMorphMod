@@ -25,15 +25,23 @@ public abstract class LookAtGoalMixin extends Goal
 	@Inject(method = "canUse()Z", at = @At("TAIL"), cancellable = true)
 	private void canUse(CallbackInfoReturnable<Boolean> callback)
 	{
-		if(this.lookAt != null && ServerLifecycleHooks.getCurrentServer().getGameRules().getBoolean(BMorphMod.PREVENT_LOOKAT) && this.lookAt instanceof Player)
+		if(!(this.lookAt instanceof Player player))
 		{
-			// Get capability and check if entity is morphed.
-			IMorphCapability cap = MorphUtil.getCapOrNull((Player) this.lookAt);
-			
-			if(cap != null)
-			{
-				callback.setReturnValue(!cap.getCurrentMorph().isPresent());
-			}
+			callback.setReturnValue(true);
 		}
+
+		IMorphCapability cap = MorphUtil.getCapOrNull((Player) this.lookAt);
+
+		if(cap == null)
+		{
+			callback.setReturnValue(true);
+		}
+
+		if(!cap.isGhost() && !(ServerLifecycleHooks.getCurrentServer().getGameRules().getBoolean(BMorphMod.PREVENT_LOOKAT) && cap.getCurrentMorph().isPresent()))
+		{
+			callback.setReturnValue(true);
+		}
+
+		callback.setReturnValue(false);
 	}
 }

@@ -777,34 +777,46 @@ public class Events
 	{
 		if(event.getEntity().level.isClientSide())
 			return;
-		
-		// This iron golem exception is needed because we don't want players morphed as zombies to sneak around iron golems 
-		if(event.getEntity() instanceof Mob && event.getNewTarget() instanceof Player && event.getNewTarget() != event.getEntity().getLastHurtByMob() && !(event.getEntity() instanceof IronGolem || event.getEntity() instanceof EnderMan))
+
+		if(!(event.getNewTarget() instanceof Player player))
 		{
-			Player player = (Player) event.getNewTarget();
-			
-			LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
-			
-			if(cap.isPresent())
+			return;
+		}
+
+		LazyOptional<IMorphCapability> cap = player.getCapability(MorphCapabilityAttacher.MORPH_CAP);
+
+		if(!cap.isPresent())
+		{
+			return;
+		}
+
+		IMorphCapability resolved = cap.resolve().get();
+
+		// Immediately cancel the event and return if the given player is to be treated as a ghost
+		if(resolved.isGhost())
+		{
+			event.setCanceled(true);
+			return;
+		}
+
+		// This iron golem exception is needed because we don't want players morphed as zombies to sneak around iron golems 
+		if(event.getEntity() instanceof Mob && event.getNewTarget() != event.getEntity().getLastHurtByMob() && !(event.getEntity() instanceof IronGolem || event.getEntity() instanceof EnderMan))
+		{
+			if (resolved.getCurrentMorph().isPresent())
 			{
-				IMorphCapability resolved = cap.resolve().get();
-				
-				if(resolved.getCurrentMorph().isPresent())
+				if (!resolved.shouldMobsAttack() && (event.getEntity().getServer().getTickCount() - resolved.getLastAggroTimestamp()) > resolved.getLastAggroDuration())
 				{
-					if(!resolved.shouldMobsAttack() && (event.getEntity().getServer().getTickCount() - resolved.getLastAggroTimestamp()) > resolved.getLastAggroDuration())
-					{
-						event.setCanceled(true);
-					}
-					else
-					{
-						aggro(resolved, event.getEntity().getServer().getGameRules().getInt(BMorphMod.MORPH_AGGRO_DURATION));
-					}
+					event.setCanceled(true);
 				}
-				// Do this so that we can't morph to player, wait the 10 sec, and move back.
 				else
 				{
 					aggro(resolved, event.getEntity().getServer().getGameRules().getInt(BMorphMod.MORPH_AGGRO_DURATION));
 				}
+			}
+			// Do this so that we can't morph to player, wait the 10 sec, and move back.
+			else
+			{
+				aggro(resolved, event.getEntity().getServer().getGameRules().getInt(BMorphMod.MORPH_AGGRO_DURATION));
 			}
 		}		
 	}
@@ -826,11 +838,19 @@ public class Events
 				{					
 					try
 					{
-						Entity createdEntity = item.createEntity(event.getEntity().level);
-						createdEntity.setPose(event.getPose());
+						// Entity createdEntity = resolved.getCurrentMorphEntity().get();
+						// createdEntity.setPose(event.getPose());
 						
 						// We do this as we apply our own sneaking logic as I couldn't figure out how to get the multiplier for the eye height... F in the chat plz
-						EntityDimensions newSize = createdEntity.getDimensions(Pose.STANDING);
+						// EntityDimensions newSize = createdEntity.getDimensions(Pose.STANDING);
+						EntityDimensions newSize = resolved.getOverrideEntityDimensions().orElseGet(() ->
+						{
+							// State leakage of the Pose, please consider changing this!!!
+							// wut, why are we setting the pose; only to reset it??? huhhhh
+							Entity createdEntity = resolved.getCurrentMorphEntity().get();
+							createdEntity.setPose(event.getPose());
+							return createdEntity.getDimensions(Pose.STANDING);
+						});
 						
 						if(ShrinkAPIInteractor.getInteractor().isShrunk(player))
 						{

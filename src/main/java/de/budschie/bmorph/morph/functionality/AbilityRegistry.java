@@ -84,6 +84,9 @@ public class AbilityRegistry
     public static RegistryObject<ConfigurableAbility<SecondaryAbility>> SECONDARY_ABILITY = ABILITY_REGISTRY.register("secondary_ability", () -> new ConfigurableAbility<>(SecondaryAbility.CODEC));
     public static RegistryObject<ConfigurableAbility<PeriodicUseAbility>> PERIODIC_USE_ABILITY = ABILITY_REGISTRY.register("periodic_use", () -> new ConfigurableAbility<>(PeriodicUseAbility.CODEC));
     public static RegistryObject<ConfigurableAbility<EffectWithinRadiusAbility>> EFFECT_WITHIN_RADIUS_ABILITY = ABILITY_REGISTRY.register("effect_within_radius", () -> new ConfigurableAbility<>(EffectWithinRadiusAbility.CODEC));
+    public static RegistryObject<ConfigurableAbility<ChangePlayerDimensionsAbility>> CHANGE_PLAYER_DIMENSIONS_ABILITY = ABILITY_REGISTRY.register("change_player_dimensions", () -> new ConfigurableAbility<>(ChangePlayerDimensionsAbility.CODEC));
+    public static RegistryObject<ConfigurableAbility<GhostAbility>> GHOST_ABILITY = ABILITY_REGISTRY.register("ghost", () -> new ConfigurableAbility<>(GhostAbility.CODEC));
+
 
 }
 

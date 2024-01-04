@@ -36,6 +36,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -55,8 +56,12 @@ public class DefaultMorphCapability implements IMorphCapability
 	
 	int aggroTimestamp = 0;
 	int aggroDuration = 0;
+
+	boolean ghost = false;
 	
 	Optional<MorphItem> morph = Optional.empty();
+
+	Optional<EntityDimensions> overrideEntityDimensions = Optional.empty();
 	
 	MorphList morphList = new MorphList();
 	MorphStateMachine morphStateMachine = new MorphStateMachine();
@@ -67,7 +72,31 @@ public class DefaultMorphCapability implements IMorphCapability
 	AbilitySerializationContext context = new AbilitySerializationContext();
 	
 	private Optional<Entity> cachedEntity = Optional.empty();
-	
+
+	@Override
+	public Optional<EntityDimensions> getOverrideEntityDimensions()
+	{
+		return overrideEntityDimensions;
+	}
+
+	@Override
+	public void setOverrideEntityDimensions(Optional<EntityDimensions> overrideEntityDimensions)
+	{
+		this.overrideEntityDimensions = overrideEntityDimensions;
+	}
+
+	@Override
+	public boolean isGhost()
+	{
+		return ghost;
+	}
+
+	@Override
+	public void setGhost(boolean ghost)
+	{
+		this.ghost = ghost;
+	}
+
 	// TODO: Merge this morph entity system with the system from the IRenderDataCapability
 	@Override
 	public Optional<Entity> getCurrentMorphEntity()

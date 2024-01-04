@@ -19,7 +19,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
 
 public interface IMorphCapability
 {
@@ -59,6 +61,20 @@ public interface IMorphCapability
 	public MorphStateMachineChangeRecorder createMorphStateMachineChangeRecorder();
 	/** Creates recorded changes from a MorphStateMachineChangedSyncPacket. **/
 	public MorphStateMachineRecordedChanges createRecordedChangesFromPacket(MorphStateMachineChangedSyncPacket packet);
+
+	public Optional<EntityDimensions> getOverrideEntityDimensions();
+	public void setOverrideEntityDimensions(Optional<EntityDimensions> overrideEntityDimensions);
+
+	/**
+	 * @return whether the player in question is a ghost and should therefor not be attacked by mobs
+	 * in their surrounding whatsoever.
+	 */
+	public boolean isGhost();
+
+	/**
+	 * @param value New value for {@link IMorphCapability#isGhost()}. Cannot be synced to the client.
+	 */
+	public void setGhost(boolean value);
 	
 	/** This sets the morph item, and its value can be retrieved by invoking {@link IMorphCapability#getCurrentMorph()}. **/
 	public void setMorph(MorphItem morph, MorphReason reason);
