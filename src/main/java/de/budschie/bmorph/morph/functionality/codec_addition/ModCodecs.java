@@ -200,7 +200,7 @@ public class ModCodecs
 					
 					try
 					{
-						result = new ResourceLocation(rl.result().get());
+						result = new ResourceLocation(str);
 					}
 					catch(ResourceLocationException ex)
 					{
